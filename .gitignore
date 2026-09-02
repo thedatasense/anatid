@@ -1,0 +1,36 @@
+# python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# os
+.DS_Store
+
+# vendored duckdb checkouts (submodules; see ext/README.md)
+ext/duckdb
+ext/extension-ci-tools
+ext/build/
+spike/extension/duckdb
+spike/extension/extension-ci-tools
+spike/extension/build/
+
+# benchmark artifacts: generated data and multi-GB engine files.
+# The result JSON and REPORT are kept as evidence; the databases are not.
+spike/data/
+spike/results/*.duckdb
+spike/results/*.duckdb.wal
+spike/results/*.lbdb
+spike/results/*.lbdb.wal
+spike/results/*.grafeo
+spike/results/*.log
+spike/*.log
+
+# the original attachment this project started from
+Kimi_Agent_AI Graph DB Builder.zip
+
+# the spike build tree is superseded by ext/ (and carries its own .git)
+spike/extension

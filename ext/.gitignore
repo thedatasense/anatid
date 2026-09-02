@@ -1,0 +1,7 @@
+# out-of-source cmake/ninja build trees (make release -> build/release)
+build/
+.cache/
+duckdb_unittest_tempdir/
+testext/
+test/python/__pycache__/
+.DS_Store

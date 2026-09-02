@@ -1,0 +1,110 @@
+# name: test/sql/anatid_csr_stats.test
+# description: anatid_csr_stats() / anatid_csr_tenants() -- what is in memory, for a health
+#              endpoint and for diagnosing "why did graph_expand return only the seed?".
+# group: [anatid]
+
+require anatid
+
+# Before any build both functions return zero rows rather than raising: "is a CSR loaded?" is a
+# question, not an error.
+query I
+SELECT count(*) FROM anatid_csr_stats();
+----
+0
+
+query I
+SELECT count(*) FROM anatid_csr_tenants();
+----
+0
+
+statement ok
+CREATE TABLE rel(edge_id BIGINT, src BIGINT, dst BIGINT, tenant_id INTEGER,
+                 valid_to TIMESTAMP, tx_to TIMESTAMP);
+
+statement ok
+INSERT INTO rel VALUES
+    (0, 1, 2, 0, NULL, NULL),
+    (1, 2, 3, 0, NULL, NULL),
+    (2, 3, 4, 0, NULL, NULL),
+    (3, 4, 5, 0, NULL, NULL),
+    (4, 1, 9, 0, TIMESTAMP '2024-01-01 00:00:00', NULL),
+    (5, 1, 8, 0, NULL, TIMESTAMP '2024-01-01 00:00:00'),
+    (6, 101, 102, 1, NULL, NULL),
+    (7, 102, 103, 1, NULL, NULL);
+
+statement ok
+SELECT * FROM anatid_build_csr('rel');
+
+query TTIIII
+SELECT edge_table, current_filter, tenants, vertices, edges, bytes > 0 FROM anatid_csr_stats();
+----
+rel	valid_to IS NULL AND tx_to IS NULL	2	8	6	true
+
+# built_at is a real UTC timestamp, not a placeholder
+query II
+SELECT built_at IS NOT NULL, built_at > TIMESTAMP '2020-01-01' FROM anatid_csr_stats();
+----
+true	true
+
+query I
+SELECT build_ms >= 0 FROM anatid_csr_stats();
+----
+true
+
+# per-tenant detail, ordered by tenant_id
+query IIIIII
+SELECT tenant_id, vertices, edges, min_entity_id, max_entity_id, bytes > 0 FROM anatid_csr_tenants();
+----
+0	5	4	1	5	true
+1	3	2	101	103	true
+
+# the per-tenant rows add up to the summary
+query II
+SELECT (SELECT sum(vertices) FROM anatid_csr_tenants()) = (SELECT vertices FROM anatid_csr_stats()),
+       (SELECT sum(edges) FROM anatid_csr_tenants()) = (SELECT edges FROM anatid_csr_stats());
+----
+true	true
+
+# a rebuild replaces the snapshot: same functions, new numbers
+statement ok
+INSERT INTO rel VALUES (8, 201, 202, 2, NULL, NULL);
+
+statement ok
+SELECT * FROM anatid_build_csr('rel');
+
+query III
+SELECT tenants, vertices, edges FROM anatid_csr_stats();
+----
+3	10	7
+
+query III
+SELECT tenant_id, min_entity_id, max_entity_id FROM anatid_csr_tenants() WHERE tenant_id = 2;
+----
+2	201	202
+
+# building from a different table repoints the snapshot
+statement ok
+CREATE TABLE rel2(src BIGINT, dst BIGINT, tenant_id INTEGER);
+
+statement ok
+INSERT INTO rel2 VALUES (7, 8, 4);
+
+statement ok
+SELECT * FROM anatid_build_csr('rel2');
+
+query TII
+SELECT edge_table, tenants, edges FROM anatid_csr_stats();
+----
+rel2	1	1
+
+# and graph_expand now answers over rel2, not rel
+query II
+SELECT entity_id, depth FROM graph_expand(0, 1, 2);
+----
+1	0
+
+query II
+SELECT entity_id, depth FROM graph_expand(4, 7, 1) ORDER BY entity_id;
+----
+7	0
+8	1

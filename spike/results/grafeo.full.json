@@ -1,0 +1,50 @@
+{
+ "engine": "grafeo",
+ "engine_version": "0.5.42",
+ "scale": "full",
+ "host": "BinMAX-2.local macOS-27.0-arm64-arm-64bit arm64 cpus=10 python=3.12.9",
+ "load": {
+  "seconds": 1231.7972221669916,
+  "db_bytes": 909237248,
+  "index_notes": "import via polars import_df (nodes: Entity 0.3 s, Memory 10.1 s; edges: RELATES_TO 0.7 s, ABOUT 5.4 s, SUPERSEDES 0.1 s) into an in-memory GrafeoDB, save() 11.2 s, reopen file-backed 13.6 s; property indexes entity_id+memory_id 0.49 s; BM25 text index Memory(content) 2.8 s; HNSW vector index Memory(embedding) cosine m=16 ef_construction=128 1186.6 s wall / 1184.4 s CPU (single-threaded); indexes are not persisted (rebuilt on every open); node/edge counts {'Entity': 100000, 'Memory': 1000000, 'RELATES_TO': 284819, 'ABOUT': 1962376, 'SUPERSEDES': 50000}; storage tiers {'VectorStore': 'in_memory', 'TextIndex': 'in_memory', 'LpgStore': 'in_memory'}",
+  "breakdown_s": {
+   "entities": 0.2827973330131499,
+   "memories": 10.13330774998758,
+   "edges_relates": 0.7334584999916842,
+   "edges_about": 5.418907333994866,
+   "edges_supersedes": 0.09544525000092108,
+   "save": 11.154036667008768,
+   "reopen": 13.580061832995852,
+   "property_indexes": 0.4910580420109909,
+   "text_index": 2.7501676669926383,
+   "vector_index": 1186.554177166996,
+   "vector_index_cpu_s": 1184.352579,
+   "total": 1231.7972221669916
+  }
+ },
+ "phases": {
+  "r1_only": null,
+  "r2_only": null,
+  "mixed": null,
+  "concurrent": null
+ },
+ "verify": {
+  "r1": {}
+ },
+ "peak_rss_mb": 14704.203125,
+ "notes": [
+  "config: grafeo 0.5.42 (simd neon) python 3.12.9; db=/Users/bineshkumar/Documents/GitHub/anatid/spike/results/anatid.grafeo; load-path=save; writes=cypher; vector sync after cypher writes=True; vector_k=2000; text_k=2000; hnsw m=16 ef_construction=128; phases=['load', 'warmup', 'r1_only', 'r2_only', 'mixed', 'concurrent', 'verify']",
+  "implementation: R1 = 2 statements per op: (1) GQL `MATCH seed RETURN e UNION MATCH seed-[r1:RELATES_TO]-h1 WHERE r1.valid_to IS NULL AND r1.tenant_id=$t RETURN h1 UNION MATCH seed-[r1]-h1-[r2]-h2 WHERE ... RETURN h2` -> frontier entity ids, (2) Cypher `MATCH (e:Entity) WHERE e.entity_id IN $ids WITH e MATCH (e)<-[:ABOUT]-(m:Memory) WHERE m.valid_to IS NULL AND m.tenant_id=$t RETURN DISTINCT m.memory_id, m.ctime ORDER BY ctime DESC, memory_id DESC LIMIT $limit`; R2 = vector_search (HNSW) + text_search (BM25) over-fetched and post-filtered to the tenant's current memories via get_property_batch, top 50 each, RRF k=60 in Python, ABOUT names via one GQL `WHERE m.memory_id IN $mids ... collect(e.name)`; W1 = one GQL `MATCH (e0:Entity {entity_id:$d0}), ... INSERT (m:Memory {...}), (m)-[:ABOUT {...}]->(e0), ...` in begin_transaction()/commit(); W2 = one GQL `MATCH (o:Memory {memory_id:$old}) INSERT (n:Memory {...})-[:SUPERSEDES {...}]->(o) SET o.valid_to=$now` in a transaction; after each cypher write set_node_property(node, 'embedding', ...) re-indexes the node in the HNSW index (INSERT statements do not); timestamps stored as INT64 microseconds; created_at stored as `ctime`",
+  "grafeo 0.5.42 limitations found while building this runner (each verified against common.reference_r1): (a) variable-length patterns `-[:RELATES_TO*0..2 {valid_to: null}]-` apply the property filter only to the first hop, and `ALL(r IN rs WHERE r.valid_to IS NULL)` returns no rows, so the SPEC's `*0..2` formulation cannot express the validity filter (122/150 frontier mismatches) -> explicit 1-hop/2-hop patterns; (b) ORDER BY/LIMIT after UNION binds to the last branch only, so the frontier UNION cannot be composed with the memory lookup in one statement (no CALL {} subqueries, GQL has no WITH/NEXT composition that avoids a full node scan); (c) property indexes only annotate equality lookups in read queries (a lookup by indexed memory_id still costs a label scan: ~3.6 ms per 100k nodes) and are never used in INSERT/SET statements (nested lookups are cartesian scans: a 3-entity W1 is one statement but ~3 Entity scans); (d) identifiers containing 'created' in a query take a slow path (+1.4 ms / +7 ms per query at 100k memories) -> created_at stored and returned as `ctime`; (e) naive datetime parameters are shifted by the local UTC offset -> INT64 microseconds everywhere; (f) the HNSW index ignores nodes created by INSERT/CREATE statements (the text index does not) and vector_search filters cannot express IS NULL (filters={'valid_to': None} matches nothing); (g) indexes (property/text/vector) are not persisted: they are rebuilt after every open, and the HNSW build is single-threaded (~55 s per 100k 64-d vectors)",
+  "host load average (1/5/15 min) at start: 6.4/6.5/5.4 on 10 cpus (SPEC: numbers are only comparable if nothing else was running)",
+  "dataset: queries.parquet has 2,000 rows at both scales (schedule addresses query_ids 0..1999); everything else is /10 at small",
+  "dataset: query_text is 2..3 distinct topic words of the seed (an entity owns 3 topic words; SPEC says 2..4)",
+  "dataset: writes_supersedes columns are new_memory_id, old_memory_id, tenant_id; new ids are every 10th writes_memories row, the other 90% are the W1 pool",
+  "dataset: RELATES_TO out-degree ~ Zipf(2.2) capped at 500 -> ~2.8 avg out-degree (~280k edges at full), 5% of RELATES_TO edges expired; ABOUT edges all current",
+  "dataset: query seeds are re-drawn until their 2-hop frontier holds >= 30 current memories",
+  "harness: `now` for mixed-phase op seq is T0 + (seq+1) s (deterministic, not wall clock); the written memory's created_at = valid_from = tx_from = now",
+  "harness: concurrent-phase W1 rows use created_at=1990-01-01 and memory ids >= 1e9 (edge ids >= 2e9) so they cannot enter any R1 top-20 and verify stays comparable across engines",
+  "peak RSS after load (engine + polars frames, before any numpy reference state): 14704 MB; the final peak_rss_mb also includes the harness's pure-numpy reference R1/R2 states used for the correctness checks"
+ ],
+ "written_at": "2026-09-02T18:38:34.719260+00:00"
+}

@@ -1,0 +1,155 @@
+# name: test/sql/anatid_csr.test
+# description: anatid_build_csr + graph_expand on a tiny inline edge table: hops 0/1/2, tenant
+#              scoping, the temporal filter, and the snapshot contract.
+# group: [anatid]
+
+require anatid
+
+query I
+SELECT anatid_version() LIKE 'anatid 0.1.0 (DuckDB %)';
+----
+true
+
+# A RELATES_TO-shaped edge table.
+#   tenant 0: path 1-2-3-4-5, plus edge 1-9 expired by valid_to and edge 1-8 retracted by tx_to
+#   tenant 1: path 101-102-103
+statement ok
+CREATE TABLE rel(edge_id BIGINT, src BIGINT, dst BIGINT, tenant_id INTEGER,
+                 valid_to TIMESTAMP, tx_to TIMESTAMP);
+
+statement ok
+INSERT INTO rel VALUES
+    (0, 1, 2, 0, NULL, NULL),
+    (1, 2, 3, 0, NULL, NULL),
+    (2, 3, 4, 0, NULL, NULL),
+    (3, 4, 5, 0, NULL, NULL),
+    (4, 1, 9, 0, TIMESTAMP '2024-01-01 00:00:00', NULL),
+    (5, 1, 8, 0, NULL, TIMESTAMP '2024-01-01 00:00:00'),
+    (6, 101, 102, 1, NULL, NULL),
+    (7, 102, 103, 1, NULL, NULL);
+
+# 8 rows in, 6 current: valid_to IS NULL AND tx_to IS NULL, anatid's current-state predicate.
+query IIII
+SELECT tenants, vertices, edges, build_ms >= 0 FROM anatid_build_csr('rel');
+----
+2	8	6	true
+
+# hops = 0 -> only the seed
+query II
+SELECT entity_id, depth FROM graph_expand(0, 3, 0);
+----
+3	0
+
+# hops = 1, undirected: both directions of every current edge
+query II
+SELECT entity_id, depth FROM graph_expand(0, 3, 1) ORDER BY depth, entity_id;
+----
+3	0
+2	1
+4	1
+
+# hops = 2
+query II
+SELECT entity_id, depth FROM graph_expand(0, 3, 2) ORDER BY depth, entity_id;
+----
+3	0
+2	1
+4	1
+1	2
+5	2
+
+# from an end of the path, two hops only reach two vertices
+query II
+SELECT entity_id, depth FROM graph_expand(0, 1, 2) ORDER BY depth, entity_id;
+----
+1	0
+2	1
+3	2
+
+# the valid_to-expired edge 1-9 and the tx_to-retracted edge 1-8 are not in the CSR
+query I
+SELECT count(*) FROM graph_expand(0, 1, 1) WHERE entity_id IN (8, 9);
+----
+0
+
+# tenant scoping: tenant 1 sees only its own edges
+query II
+SELECT entity_id, depth FROM graph_expand(1, 101, 2) ORDER BY depth, entity_id;
+----
+101	0
+102	1
+103	2
+
+# a seed that belongs to another tenant returns just the seed (same as the pure-SQL fallback)
+query II
+SELECT entity_id, depth FROM graph_expand(1, 3, 2);
+----
+3	0
+
+# a seed no tenant has ever seen returns just the seed
+query II
+SELECT entity_id, depth FROM graph_expand(0, 777, 2);
+----
+777	0
+
+# an UNKNOWN TENANT returns just the seed -- graph_expand is not a tenant-existence oracle, and
+# anatid's pure-SQL expansion returns exactly this
+query II
+SELECT entity_id, depth FROM graph_expand(42, 1, 2);
+----
+1	0
+
+# it composes with normal SQL: this is the shape of anatid's 2-hop recall
+statement ok
+CREATE TABLE about(src BIGINT, dst BIGINT, tenant_id INTEGER);
+
+statement ok
+INSERT INTO about VALUES (10, 1, 0), (11, 2, 0), (12, 3, 0), (13, 5, 0), (14, 102, 1);
+
+query I
+SELECT src FROM about WHERE tenant_id = 0 AND dst IN (SELECT entity_id FROM graph_expand(0, 1, 2)) ORDER BY src;
+----
+10
+11
+12
+
+# ---------------------------------------------------------------- the snapshot contract
+# The CSR is a snapshot. A new edge is invisible until anatid_build_csr() runs again.
+statement ok
+INSERT INTO rel VALUES (8, 5, 6, 0, NULL, NULL);
+
+query I
+SELECT count(*) FROM graph_expand(0, 4, 2);
+----
+4
+
+query I
+SELECT edges FROM anatid_build_csr('rel');
+----
+7
+
+query II
+SELECT entity_id, depth FROM graph_expand(0, 4, 2) ORDER BY depth, entity_id;
+----
+4	0
+3	1
+5	1
+2	2
+6	2
+
+# A table with no valid_to / tx_to column is treated as an all-current edge list.
+statement ok
+CREATE TABLE plain(src BIGINT, dst BIGINT, tenant_id INTEGER);
+
+statement ok
+INSERT INTO plain VALUES (1, 2, 0), (2, 3, 0);
+
+query II
+SELECT tenants, edges FROM anatid_build_csr('plain');
+----
+1	2
+
+query T
+SELECT current_filter FROM anatid_csr_stats();
+----
+all rows (no valid_to/tx_to column)

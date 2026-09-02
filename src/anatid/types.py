@@ -1,0 +1,586 @@
+"""Value types returned by anatid.
+
+Every row type is a frozen dataclass carrying the full system-column set, so a caller can always
+answer "when was this true, when was it recorded, who wrote it, what evidence backs it" without a
+second query.
+
+System columns (bitemporal, on every node and edge table by default)
+-------------------------------------------------------------------
+``valid_from`` / ``valid_to``
+    *Valid time*: when the fact was true in the world.  ``valid_to IS NULL`` means "still true".
+``tx_from`` / ``tx_to``
+    *Transaction time*: when anatid recorded / retired the row.  ``tx_to IS NULL`` means "live".
+``writer``
+    Identity of the agent, tool or human that wrote the row.
+``episode_id``
+    The :class:`Episode` (raw source material) this row was derived from -- "evidence before
+    belief": the source text is stored first and derived facts point back at it.
+``confidence``
+    Caller-supplied belief strength in ``[0, 1]``.
+
+Intervals are half-open ``[from, to)``.  A row is visible "as of T" when
+``valid_from <= T < valid_to`` (NULL ``valid_to`` = open) and ``tx_from <= T < tx_to``.
+
+Timestamps are naive ``datetime`` objects in UTC, because the underlying DuckDB columns are
+``TIMESTAMP`` (no zone).  Use :func:`utcnow` and :func:`to_utc_naive` to stay consistent; every
+verb accepts an explicit ``now=`` so a run can be made deterministic.
+"""
+
+from __future__ import annotations
+
+import datetime as _dt
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Iterable, Sequence
+
+__all__ = [
+    "utcnow",
+    "to_utc_naive",
+    "Isolation",
+    "Namespace",
+    "AsOf",
+    "CURRENT",
+    "Memory",
+    "Entity",
+    "Edge",
+    "Episode",
+    "RecallHit",
+    "RecallHits",
+    "Provenance",
+    "ForgetReceipt",
+    "PruneReport",
+    "FtsStatus",
+    "EdgeType",
+    "SchemaInfo",
+    "ABOUT",
+    "RELATES_TO",
+    "SUPERSEDES",
+]
+
+
+# --------------------------------------------------------------------------- time helpers
+
+def utcnow() -> _dt.datetime:
+    """Current UTC time as a naive ``datetime`` (what anatid stores in TIMESTAMP columns)."""
+    return _dt.datetime.now(_dt.timezone.utc).replace(tzinfo=None)
+
+
+def to_utc_naive(value: _dt.datetime | None) -> _dt.datetime | None:
+    """Normalise a datetime to naive UTC.  Aware inputs are converted; naive ones pass through."""
+    if value is None:
+        return None
+    if not isinstance(value, _dt.datetime):
+        raise TypeError(f"expected datetime, got {type(value).__name__}")
+    if value.tzinfo is not None:
+        return value.astimezone(_dt.timezone.utc).replace(tzinfo=None)
+    return value
+
+
+def _tuple_or_none(v: Any) -> tuple[float, ...] | None:
+    if v is None:
+        return None
+    return tuple(float(x) for x in v)
+
+
+# --------------------------------------------------------------------------- isolation
+
+class Isolation(str, Enum):
+    """How a :class:`Namespace` is separated from other namespaces.
+
+    ``FILE_PER_TENANT``
+        Real isolation: the tenant lives in its own DuckDB file and a handle opened for that
+        tenant refuses to touch any other tenant's rows (:class:`anatid.errors.TenantIsolationError`).
+        The enforcement is anatid's wrapper plus the filesystem -- DuckDB has no access control
+        of its own.
+    ``SCOPED``
+        NOT isolation.  Several tenants share one file and are separated only by the
+        ``tenant_id`` column that anatid puts in every predicate.  Anything with a connection to
+        the file can read every tenant in it.  Use this for a single-user or single-trust-domain
+        deployment, never as a security boundary between mutually distrusting tenants.
+    """
+
+    FILE_PER_TENANT = "file_per_tenant"
+    SCOPED = "scoped"
+
+
+@dataclass(frozen=True, slots=True)
+class Namespace:
+    """A tenant / namespace identity plus the isolation level anatid will enforce for it.
+
+    ``tenant_id`` is the integer written into every row's ``tenant_id`` column (an INTEGER, so it
+    stays cheap in zone maps and joins).  ``label`` is a human name for logs and path templates.
+    """
+
+    tenant_id: int
+    label: str | None = None
+    isolation: Isolation = Isolation.SCOPED
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "tenant_id", int(self.tenant_id))
+        object.__setattr__(self, "isolation", Isolation(self.isolation))
+
+    @property
+    def is_isolated(self) -> bool:
+        """True when this namespace is a real boundary (its own file), not just a column filter."""
+        return self.isolation is Isolation.FILE_PER_TENANT
+
+    @property
+    def name(self) -> str:
+        return self.label if self.label is not None else f"tenant-{self.tenant_id}"
+
+    @classmethod
+    def coerce(cls, value: "int | Namespace | None", default: "Namespace | None" = None) -> "Namespace":
+        """Accept an int, a Namespace or None (-> ``default``) and return a Namespace."""
+        if value is None:
+            if default is None:
+                raise ValueError("no tenant given and no default namespace available")
+            return default
+        if isinstance(value, Namespace):
+            return value
+        if isinstance(value, bool):  # bool is an int; almost certainly a caller mistake
+            raise TypeError("tenant must be an int or Namespace, not bool")
+        if isinstance(value, int):
+            iso = default.isolation if default is not None else Isolation.SCOPED
+            return cls(tenant_id=value, isolation=iso)
+        raise TypeError(f"tenant must be int | Namespace | None, got {type(value).__name__}")
+
+
+# --------------------------------------------------------------------------- time travel
+
+@dataclass(frozen=True, slots=True)
+class AsOf:
+    """A point-in-time scope for reads.
+
+    IMPORTANT: DuckDB has **no** ``AS OF SYSTEM TIME`` clause.  This is anatid's own filter over
+    the ``valid_from``/``valid_to`` and ``tx_from``/``tx_to`` columns, compiled into the WHERE
+    clause of every query it scopes.  Nothing in the engine rewinds; rows that were hard-purged
+    are gone from every as-of view too.
+
+    ``valid_time``
+        See the world as it was believed to be true at this instant.
+    ``tx_time``
+        See only rows the database had already recorded (and not yet retired) at this instant.
+
+    ``AsOf(None, None)`` is :data:`CURRENT`: ``valid_to IS NULL AND tx_to IS NULL``.
+    """
+
+    valid_time: _dt.datetime | None = None
+    tx_time: _dt.datetime | None = None
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "valid_time", to_utc_naive(self.valid_time))
+        object.__setattr__(self, "tx_time", to_utc_naive(self.tx_time))
+
+    @property
+    def is_current(self) -> bool:
+        """True when this scope means "the current state" (no historical filter)."""
+        return self.valid_time is None and self.tx_time is None
+
+    @classmethod
+    def coerce(cls, value: "AsOf | _dt.datetime | None") -> "AsOf":
+        if value is None:
+            return CURRENT
+        if isinstance(value, AsOf):
+            return value
+        if isinstance(value, _dt.datetime):
+            ts = to_utc_naive(value)
+            return cls(valid_time=ts, tx_time=ts)
+        raise TypeError(f"as_of must be AsOf | datetime | None, got {type(value).__name__}")
+
+
+CURRENT = AsOf()
+"""The default read scope: current valid time and current transaction time."""
+
+
+# --------------------------------------------------------------------------- edge types
+
+class EdgeType(str, Enum):
+    """The three built-in edge types.  Each is its own table (edge type -> table)."""
+
+    ABOUT = "ABOUT"                # memory -> entity
+    RELATES_TO = "RELATES_TO"      # entity -> entity
+    SUPERSEDES = "SUPERSEDES"      # newer memory -> older memory
+
+
+ABOUT = EdgeType.ABOUT
+RELATES_TO = EdgeType.RELATES_TO
+SUPERSEDES = EdgeType.SUPERSEDES
+
+
+# --------------------------------------------------------------------------- rows
+
+@dataclass(frozen=True, slots=True)
+class Memory:
+    """One memory (node label ``memory`` -> table ``memories``).
+
+    ``embedding`` is ``None`` when the row was read without hydrating the vector column.
+    """
+
+    memory_id: int
+    tenant_id: int
+    content: str
+    kind: str | None = None
+    embedding: tuple[float, ...] | None = None
+    created_at: _dt.datetime | None = None
+    valid_from: _dt.datetime | None = None
+    valid_to: _dt.datetime | None = None
+    tx_from: _dt.datetime | None = None
+    tx_to: _dt.datetime | None = None
+    writer: str | None = None
+    episode_id: int | None = None
+    confidence: float | None = None
+    access_count: int = 0
+    last_access_at: _dt.datetime | None = None
+
+    @property
+    def is_current(self) -> bool:
+        """True when the row is neither superseded/forgotten (valid) nor retired (tx)."""
+        return self.valid_to is None and self.tx_to is None
+
+    @classmethod
+    def from_row(cls, row: Sequence[Any]) -> "Memory":
+        """Build from a row selected with :data:`anatid.schema.MEMORY_COLUMNS` order."""
+        return cls(
+            memory_id=int(row[0]),
+            tenant_id=int(row[1]),
+            content=row[2],
+            kind=row[3],
+            embedding=_tuple_or_none(row[4]),
+            created_at=row[5],
+            valid_from=row[6],
+            valid_to=row[7],
+            tx_from=row[8],
+            tx_to=row[9],
+            writer=row[10],
+            episode_id=None if row[11] is None else int(row[11]),
+            confidence=None if row[12] is None else float(row[12]),
+            access_count=0 if row[13] is None else int(row[13]),
+            last_access_at=row[14],
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class Entity:
+    """One entity (node label ``entity`` -> table ``entities``)."""
+
+    entity_id: int
+    tenant_id: int
+    name: str
+    kind: str | None = None
+    valid_from: _dt.datetime | None = None
+    valid_to: _dt.datetime | None = None
+    tx_from: _dt.datetime | None = None
+    tx_to: _dt.datetime | None = None
+    writer: str | None = None
+    episode_id: int | None = None
+    confidence: float | None = None
+
+    @property
+    def is_current(self) -> bool:
+        return self.valid_to is None and self.tx_to is None
+
+    @classmethod
+    def from_row(cls, row: Sequence[Any]) -> "Entity":
+        """Build from a row selected with :data:`anatid.schema.ENTITY_COLUMNS` order."""
+        return cls(
+            entity_id=int(row[0]),
+            tenant_id=int(row[1]),
+            kind=row[2],
+            name=row[3],
+            valid_from=row[4],
+            valid_to=row[5],
+            tx_from=row[6],
+            tx_to=row[7],
+            writer=row[8],
+            episode_id=None if row[9] is None else int(row[9]),
+            confidence=None if row[10] is None else float(row[10]),
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class Edge:
+    """One edge from any of the edge tables.
+
+    ``weight`` is only meaningful for ABOUT edges and ``rel_kind`` only for RELATES_TO edges;
+    the other is ``None``.  SUPERSEDES edges carry only ``tx_from`` (they are a record of a
+    write, never re-dated).
+    """
+
+    edge_id: int
+    edge_type: EdgeType
+    src: int
+    dst: int
+    tenant_id: int
+    weight: float | None = None
+    rel_kind: str | None = None
+    valid_from: _dt.datetime | None = None
+    valid_to: _dt.datetime | None = None
+    tx_from: _dt.datetime | None = None
+    tx_to: _dt.datetime | None = None
+    writer: str | None = None
+    episode_id: int | None = None
+    confidence: float | None = None
+
+    @property
+    def is_current(self) -> bool:
+        return self.valid_to is None and self.tx_to is None
+
+
+@dataclass(frozen=True, slots=True)
+class Episode:
+    """Raw source material a memory was derived from ("evidence before belief").
+
+    An episode is written BEFORE the facts extracted from it, and every derived row carries its
+    ``episode_id``, so :meth:`anatid.Anatid.provenance` can always walk back to the text a belief
+    came from and the writer that produced it.
+    """
+
+    episode_id: int
+    tenant_id: int
+    content: str
+    source: str | None = None
+    kind: str | None = None
+    created_at: _dt.datetime | None = None
+    valid_from: _dt.datetime | None = None
+    valid_to: _dt.datetime | None = None
+    tx_from: _dt.datetime | None = None
+    tx_to: _dt.datetime | None = None
+    writer: str | None = None
+
+    @classmethod
+    def from_row(cls, row: Sequence[Any]) -> "Episode":
+        """Build from a row selected with :data:`anatid.schema.EPISODE_COLUMNS` order."""
+        return cls(
+            episode_id=int(row[0]),
+            tenant_id=int(row[1]),
+            source=row[2],
+            content=row[3],
+            kind=row[4],
+            created_at=row[5],
+            valid_from=row[6],
+            valid_to=row[7],
+            tx_from=row[8],
+            tx_to=row[9],
+            writer=row[10],
+        )
+
+
+# --------------------------------------------------------------------------- recall results
+
+@dataclass(frozen=True, slots=True)
+class RecallHit:
+    """One fused retrieval result.
+
+    ``score`` is the RRF score (sum of ``1 / (rrf_k + rank)`` over the lists that produced it).
+    ``vector_rank`` / ``text_rank`` / ``graph_rank`` are 1-based ranks in the contributing lists,
+    or ``None`` when that list did not return the memory.
+    """
+
+    memory: Memory
+    score: float
+    rank: int
+    vector_rank: int | None = None
+    text_rank: int | None = None
+    graph_rank: int | None = None
+    vector_score: float | None = None
+    text_score: float | None = None
+    about: tuple[str, ...] = ()
+
+    @property
+    def memory_id(self) -> int:
+        return self.memory.memory_id
+
+    @property
+    def content(self) -> str:
+        return self.memory.content
+
+    @property
+    def sources(self) -> tuple[str, ...]:
+        """Which retrieval arms produced this hit: any of ``"vector"``, ``"text"``, ``"graph"``."""
+        out = []
+        if self.vector_rank is not None:
+            out.append("vector")
+        if self.text_rank is not None:
+            out.append("text")
+        if self.graph_rank is not None:
+            out.append("graph")
+        return tuple(out)
+
+
+class RecallHits(list):
+    """``list[RecallHit]`` that also carries how the search was answered.
+
+    It *is* a plain list, so callers can ignore the extra attributes entirely.  They exist so
+    :meth:`anatid.Anatid.recall` can state -- rather than hide -- that the BM25 arm was stale or
+    absent:
+
+    ``bm25_available``
+        False when no fts index exists on ``memories`` yet.
+    ``bm25_stale``
+        True when rows have been written since the last ``PRAGMA create_fts_index``.  DuckDB's
+        fts index is NOT incremental; those rows cannot be found by the BM25 arm until
+        :meth:`anatid.Anatid.rebuild_fts_index` runs.
+    ``pending_fts_rows``
+        How many ``memories`` rows are not in the index (``count(*) - fts_indexed_rows``).
+    ``arms``
+        The arms that actually ran, e.g. ``("vector", "text", "graph")``.
+    """
+
+    __slots__ = ("bm25_available", "bm25_stale", "pending_fts_rows", "arms", "as_of", "notes")
+
+    def __init__(
+        self,
+        hits: Iterable[RecallHit] = (),
+        *,
+        bm25_available: bool = False,
+        bm25_stale: bool = False,
+        pending_fts_rows: int = 0,
+        arms: tuple[str, ...] = (),
+        as_of: AsOf = CURRENT,
+        notes: tuple[str, ...] = (),
+    ) -> None:
+        super().__init__(hits)
+        self.bm25_available = bm25_available
+        self.bm25_stale = bm25_stale
+        self.pending_fts_rows = pending_fts_rows
+        self.arms = arms
+        self.as_of = as_of
+        self.notes = notes
+
+    @property
+    def memory_ids(self) -> list[int]:
+        return [h.memory.memory_id for h in self]
+
+
+# --------------------------------------------------------------------------- provenance
+
+@dataclass(frozen=True, slots=True)
+class Provenance:
+    """The evidence trail behind one memory.
+
+    ``chain`` is the SUPERSEDES chain newest-first: ``chain[0]`` is the memory asked about and
+    ``chain[-1]`` is the original assertion nothing supersedes.  ``episodes`` holds the source
+    material for the chain in the same order (an entry is absent when a link has no episode).
+    ``writers`` is every distinct writer in the chain, newest-first.
+    """
+
+    memory_id: int
+    chain: tuple[Memory, ...] = ()
+    episodes: tuple[Episode, ...] = ()
+    edges: tuple[Edge, ...] = ()
+    writers: tuple[str, ...] = ()
+
+    @property
+    def root(self) -> Memory | None:
+        """The oldest memory in the chain -- the original assertion."""
+        return self.chain[-1] if self.chain else None
+
+    @property
+    def source_text(self) -> str | None:
+        """Raw text of the oldest episode in the chain, if any."""
+        return self.episodes[-1].content if self.episodes else None
+
+    @property
+    def depth(self) -> int:
+        """How many supersessions deep the memory is (0 = never superseded anything)."""
+        return max(0, len(self.chain) - 1)
+
+
+# --------------------------------------------------------------------------- write receipts
+
+@dataclass(frozen=True, slots=True)
+class ForgetReceipt:
+    """What :meth:`anatid.Anatid.forget` actually did.
+
+    A *hard* purge leaves no row **in the memory graph** referencing the memory -- not in
+    ``memories``, not in any edge table, not the embedding (it is a column of the purged row),
+    not the episode when nothing else cites it, and not in ``anatid_audit`` (neither as
+    ``memory_id`` nor as the ``related_memory_id`` of some other memory's supersede).  That is
+    the point of erasure, so the receipt is returned to the caller to log outside the database if
+    they need a record.
+
+    It does **not** reach tables anatid does not own.  Anything else you write into the file --
+    most importantly a conversation transcript, which quotes memory content and ids verbatim --
+    is covered only if you register it: see :meth:`anatid.Anatid.register_erasure_hook`.
+    ``anatid.integrations.openai_agents.AnatidSession`` registers one for its ``agent_messages``
+    table, and the rows those hooks removed are counted in :attr:`extra_rows_deleted`.
+    """
+
+    memory_id: int
+    tenant_id: int
+    hard: bool
+    at: _dt.datetime
+    memories_deleted: int = 0
+    about_edges_deleted: int = 0
+    supersedes_edges_deleted: int = 0
+    episodes_deleted: int = 0
+    audit_rows_deleted: int = 0
+    audit_rows_written: int = 0
+    #: Rows removed by :meth:`anatid.Anatid.register_erasure_hook` hooks (transcripts, etc).
+    extra_rows_deleted: int = 0
+    reason: str | None = None
+
+    @property
+    def rows_removed(self) -> int:
+        return (
+            self.memories_deleted
+            + self.about_edges_deleted
+            + self.supersedes_edges_deleted
+            + self.episodes_deleted
+            + self.audit_rows_deleted
+            + self.extra_rows_deleted
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class PruneReport:
+    """What :meth:`anatid.Anatid.prune` did, or would do when ``dry_run=True``."""
+
+    dry_run: bool
+    hard: bool
+    at: _dt.datetime
+    memory_ids: tuple[int, ...] = ()
+    receipts: tuple[ForgetReceipt, ...] = ()
+    older_than: _dt.datetime | None = None
+    max_access_count: int | None = None
+
+    @property
+    def count(self) -> int:
+        return len(self.memory_ids)
+
+
+@dataclass(frozen=True, slots=True)
+class FtsStatus:
+    """State of the (non-incremental) BM25 index on ``memories``."""
+
+    available: bool
+    stale: bool
+    indexed_rows: int | None
+    current_rows: int
+    pending_rows: int
+    indexed_at: _dt.datetime | None
+    newest_row_at: _dt.datetime | None = None
+    policy: str = ""
+    #: Largest ``memory_id`` present when the index was last built (schema v2).  Row *count*
+    #: alone cannot see an insert that is cancelled out by a hard purge; ids are time-ordered,
+    #: so this watermark can.
+    indexed_max_id: int | None = None
+    #: Largest ``memory_id`` in ``memories`` now.
+    current_max_id: int | None = None
+
+
+# --------------------------------------------------------------------------- misc
+
+@dataclass(frozen=True, slots=True)
+class SchemaInfo:
+    """Contents of the ``anatid_meta`` catalog row."""
+
+    schema_version: int
+    created_at: _dt.datetime
+    embedding_dim: int
+    anatid_version: str
+    duckdb_version: str
+    fts_indexed_at: _dt.datetime | None
+    fts_indexed_rows: int | None
+    contract: str
+    extras: dict[str, Any] = field(default_factory=dict)

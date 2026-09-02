@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "anatid"
+version = "0.1.0.dev0"
+description = "An open-source embedded graph database for AI agents, built on DuckDB."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "anatid contributors" }]
+keywords = ["duckdb", "graph", "memory", "agents", "embedded", "database", "bitemporal"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Database :: Database Engines/Servers",
+]
+dependencies = ["duckdb>=1.5"]
+
+[project.optional-dependencies]
+agents = ["openai-agents>=0.22"]
+mcp = ["mcp>=2.1"]
+# `dev` deliberately pulls in BOTH integrations: without them tests/test_mcp.py and
+# tests/test_openai_agents.py `importorskip` at module level and CI runs 59 of 147 tests
+# green while the two headline integrations are never exercised.
+dev = ["pytest>=9", "openai-agents>=0.22", "mcp>=2.1"]
+
+[project.urls]
+Homepage = "https://github.com/anatid-db/anatid"
+Source = "https://github.com/anatid-db/anatid"
+
+[project.scripts]
+# The module is owned by the MCP integration agent; the entry point is declared here so the
+# console script exists as soon as that module lands.
+anatid-mcp = "anatid.integrations.mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/anatid"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/anatid", "tests", "README.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "slow: tests that load the 100k-memory spike dataset",
+    "oracle: correctness tests against the Phase 0 spike reference implementation",
+]

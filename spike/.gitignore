@@ -1,0 +1,21 @@
+# generated datasets (regenerate with: .venv/bin/python bench/gen_dataset.py --scale small|full)
+data/
+
+# engine database files created by the runners (results/*.json and REPORT.md are checked in)
+results/*.duckdb
+results/*.duckdb.*
+results/*.duckdb-*
+results/*.lbdb
+results/*.lbdb.*
+results/*.lbdb-*
+results/*.lbdb/
+results/*.wal
+results/*.lock
+results/*.tmp
+
+# extension build tree
+extension/build/
+
+# python
+__pycache__/
+*.pyc
