@@ -34,3 +34,9 @@ Kimi_Agent_AI Graph DB Builder.zip
 
 # the spike build tree is superseded by ext/ (and carries its own .git)
 spike/extension
+
+# secrets - never commit
+.env
+.env.*
+!.env.example
+*.pypirc

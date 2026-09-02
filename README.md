@@ -29,7 +29,7 @@ pip install "anatid[agents]"          # + the OpenAI Agents SDK integration
 pip install "anatid[mcp]"             # + the MCP server
 ```
 
-The version in this repository is `0.1.0` and is not on PyPI yet. Until it is:
+Released on PyPI as [`anatid` 0.1.0](https://pypi.org/project/anatid/0.1.0/). To track `main` instead:
 
 ```bash
 pip install "git+https://github.com/thedatasense/anatid"

@@ -61,6 +61,11 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
       - name: Publish to PyPI
         if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.target == 'pypi')
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # 0.1.0 was uploaded by hand before trusted publishing was configured;
+          # skip-existing keeps a re-run from failing on a version already there.
+          skip-existing: true
