@@ -40,3 +40,7 @@ spike/extension
 .env.*
 !.env.example
 *.pypirc
+
+# example scratch database
+examples/*.anatid
+examples/*.anatid.*

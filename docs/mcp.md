@@ -1,11 +1,11 @@
 # anatid over MCP
 
-`anatid-mcp` serves an anatid database over the [Model Context Protocol](https://modelcontextprotocol.io),
-so Claude Code, Claude Desktop, Cursor — anything that speaks MCP — gets a persistent,
-bitemporal, graph-shaped memory backed by one embedded DuckDB file. No server to run, no
-container, no API key.
+`anatid-mcp` serves an anatid database over the [Model Context Protocol](https://modelcontextprotocol.io).
+Claude Code, Claude Desktop, Cursor, and anything else that speaks MCP get a persistent,
+bitemporal, graph-shaped memory backed by one embedded DuckDB file. There is no server process to
+run, no container, and no API key.
 
-Built against **mcp 2.x** (`mcp.server.mcpserver.MCPServer`, the class mcp 1.x called `FastMCP`).
+Built against mcp 2.x (`mcp.server.mcpserver.MCPServer`, the class mcp 1.x called `FastMCP`).
 
 ## Install
 
@@ -13,8 +13,8 @@ Built against **mcp 2.x** (`mcp.server.mcpserver.MCPServer`, the class mcp 1.x c
 pip install 'anatid[mcp]'          # or: pip install anatid 'mcp>=2.1'
 ```
 
-That puts an `anatid-mcp` console script on your PATH. Find its absolute path — you will need
-it below, because GUI apps do not inherit your shell's PATH:
+That puts an `anatid-mcp` console script on your PATH. GUI apps do not inherit your shell's PATH,
+so find its absolute path first; the config block below needs it.
 
 ```sh
 which anatid-mcp
@@ -44,12 +44,12 @@ Where it goes:
 
 | Client | File |
 | --- | --- |
-| **Claude Desktop** (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` |
-| **Claude Desktop** (Windows) | `%APPDATA%\Claude\claude_desktop_config.json` |
-| **Claude Code** (per project) | `.mcp.json` in the project root |
-| **Claude Code** (per user) | `~/.claude.json`, under `"mcpServers"` |
-| **Cursor** (per project) | `.cursor/mcp.json` |
-| **Cursor** (per user) | `~/.cursor/mcp.json` |
+| Claude Desktop (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Claude Desktop (Windows) | `%APPDATA%\Claude\claude_desktop_config.json` |
+| Claude Code (per project) | `.mcp.json` in the project root |
+| Claude Code (per user) | `~/.claude.json`, under `"mcpServers"` |
+| Cursor (per project) | `.cursor/mcp.json` |
+| Cursor (per user) | `~/.cursor/mcp.json` |
 
 Restart the client afterwards. Claude Desktop and Cursor only read the file at launch.
 
@@ -61,8 +61,8 @@ claude mcp add anatid --env ANATID_DB=$HOME/.anatid/memory.anatid -- "$(which an
 
 ### If it is not on your PATH
 
-Point at the interpreter instead — this always works, and is the form to use inside a
-virtualenv or a checkout:
+Point at the interpreter instead. This form does not depend on PATH at all, and is the one to use
+inside a virtualenv or a checkout.
 
 ```json
 {
@@ -78,18 +78,18 @@ virtualenv or a checkout:
 
 ## Configuration
 
-Every setting reads an environment variable — which is all a client config block can set — and
-has a matching command-line flag for running it by hand.
+Every setting reads an environment variable, which is all a client config block can set, and has a
+matching command-line flag for running the server by hand.
 
 | Env | Flag | Default | Meaning |
 | --- | --- | --- | --- |
 | `ANATID_DB` | `--db` | `~/.anatid/memory.anatid` | Database file, or `:memory:`. Parent directories are created. |
 | `ANATID_TENANT` | `--tenant` | `0` | Tenant id. Every tool is pinned to it. |
-| `ANATID_EMBEDDING_DIM` | `--embedding-dim` | `1536` | `N` in `FLOAT[N]`. Only used when creating a **new** file; an existing file keeps its own. |
+| `ANATID_EMBEDDING_DIM` | `--embedding-dim` | `1536` | `N` in `FLOAT[N]`. Only used when creating a new file; an existing file keeps its own. |
 | `ANATID_READ_ONLY` | `--read-only` | off | Open the database read-only. No write tools are registered at all. |
 | `ANATID_SQL_TOOL` | `--no-sql-tool` | on | `off` removes the SQL escape hatch entirely. |
 | `ANATID_MAX_ROWS` | `--max-rows` | `200` | Row cap for the SQL tool. |
-| `ANATID_MCP_TRANSPORT` | `--transport` | `stdio` | `stdio`, `streamable-http` or `sse`. |
+| `ANATID_MCP_TRANSPORT` | `--transport` | `stdio` | `stdio`, `streamable-http`, or `sse`. |
 | `ANATID_MCP_HOST` / `ANATID_MCP_PORT` | `--host` / `--port` | `127.0.0.1:8765` | Bind address for the HTTP transports. |
 
 ### Over HTTP instead of stdio
@@ -108,65 +108,64 @@ then point the client at `http://127.0.0.1:8765/mcp`.
 | `relate` | write | A RELATES_TO edge between two entities. Traversed undirected. This is what lets recall reach past one hop. |
 | `supersede` | write | Replace a memory with a corrected version. The old row survives, closed, with a SUPERSEDES edge. |
 | `reinforce` | write | Bump `access_count` / `last_access_at`, optionally set confidence. |
-| `forget` | **destructive** | `hard=false` (default) closes validity and keeps the history; `hard=true` is a right-to-erasure purge. |
-| `prune` | **destructive** | Forget by age and/or usage. `dry_run=true` by default. Needs at least one policy argument. |
+| `forget` | destructive | `hard=false` (default) closes validity and keeps the history; `hard=true` is a right-to-erasure purge. |
+| `prune` | destructive | Forget by age and/or usage. `dry_run=true` by default. Needs at least one policy argument. |
 | `rebuild_fts_index` | write | Rebuild the BM25 index. See "BM25 is not incremental" below. |
 | `recall` | read-only | Hybrid retrieval: BM25 + graph expansion + optional cosine, fused with RRF. |
-| `context` | read-only | Everything about one entity. `hops=0` direct, `1` neighbours, `2` two hops. |
+| `context` | read-only | Everything about one entity. `hops=0` direct, `1` neighbors, `2` two hops. |
 | `get` | read-only | One memory by id, with its entities. |
 | `provenance` | read-only | Walk the SUPERSEDES chain back to the original assertion and its source text. |
 | `stats` | read-only | Row counts, schema metadata, BM25 staleness, the graph-expansion path in use. |
-| `sql` | read-only | Read-only SQL escape hatch — see below. |
+| `sql` | read-only | Read-only SQL escape hatch, described below. |
 
-`forget` and `prune` carry `destructiveHint: true` in their MCP tool annotations, so a client
-can prompt before running them. MCP annotations are per *tool*, not per *argument*, so both are
-marked even though only `forget(hard=true)` and `prune(dry_run=false)` actually remove anything.
+`forget` and `prune` carry `destructiveHint: true` in their MCP tool annotations, so a client can
+prompt before running them. MCP annotations apply to a whole tool rather than to individual
+arguments, so both are marked even though only `forget(hard=true)` and `prune(dry_run=false)`
+actually remove anything.
 
 Every read takes `as_of` (an ISO-8601 timestamp) to ask what the database believed at that time.
-Time travel is anatid's own filter over the valid-time and transaction-time columns — DuckDB has
-no `AS OF SYSTEM TIME`, nothing rewinds, and rows removed by a hard purge are gone from every
-as-of view too.
+Time travel is anatid's own filter over the valid-time and transaction-time columns. DuckDB has no
+`AS OF SYSTEM TIME`, nothing rewinds, and rows removed by a hard purge are gone from every as-of
+view too.
 
 ## The `sql` tool is read-only, and DuckDB is what enforces it
 
-Three layers. None of them is a regex over the SQL text.
+Enforcement is three layers, and none of them is a regex over the SQL text.
 
-1. **DuckDB's parser classifies every statement.** `extract_statements()` returns one
-   `duckdb.StatementType` per statement in the text; only `SELECT` and `EXPLAIN` run, and *all*
-   of them must pass — so `SELECT 1; DELETE FROM memories` is refused on the second rather than
-   half-executed. Because the classification is DuckDB's, it sees through things a regex cannot:
+1. DuckDB's parser classifies every statement. `extract_statements()` returns one
+   `duckdb.StatementType` per statement in the text; only `SELECT` and `EXPLAIN` run, and every
+   one of them must pass, so `SELECT 1; DELETE FROM memories` is refused on the second rather than
+   half-executed. Because the classification is DuckDB's, it sees through things a regex cannot.
    `PRAGMA create_fts_index(...)` expands at bind time into the `CREATE`/`INSERT`/`UPDATE` it
-   really is, and is refused on those. `EXPLAIN ANALYZE <stmt>` *executes* what it explains and
+   really is, and is refused on those. `EXPLAIN ANALYZE <stmt>` executes what it explains and
    DuckDB still types the whole thing `EXPLAIN`, so an `EXPLAIN` is accepted only when the
    statement it wraps is itself a `SELECT`.
-2. **The parse tree is scanned for anything that reads outside the database.**
-   `json_serialize_sql()` gives DuckDB's own AST, and two things in it are checked.
-   *Functions*: any `read_csv`, `read_parquet`, `glob`, `read_text`, `postgres_scan`,
-   `duckdb_secrets`, … is refused, and so are `query()` / `query_table()`, which take SQL as a
-   *string* — a denied function nested inside one is a plain string constant in the AST and would
-   otherwise be invisible to this scan. *Base-table names*: each must be a plain identifier.
-   That is not pedantry. DuckDB's **replacement scan** makes `SELECT * FROM '/etc/passwd.csv'` an
-   ordinary `SELECT` whose AST contains no function at all — the path *is* the table name — and
-   the same trick reaches globs (`FROM '/data/*.parquet'`) and, by autoloading `httpfs`,
-   arbitrary URLs (`FROM 'https://attacker.example/x.csv'`), which would make the MCP host issue
-   outbound requests a prompt-injected model chose. A function deny-list cannot see any of that,
-   so table names are allow-listed by shape instead.
-3. **The statement runs in `BEGIN TRANSACTION READ ONLY`** on a private cursor, and is always
-   `ROLLBACK`ed. DuckDB's transaction manager refuses any write to the database regardless of
-   what got past layers 1 and 2.
+2. The parse tree is scanned for anything that reads outside the database.
+   `json_serialize_sql()` gives DuckDB's own AST, and two things in it are checked. Function
+   names: any `read_csv`, `read_parquet`, `glob`, `read_text`, `postgres_scan`, `duckdb_secrets`,
+   and so on is refused, and so are `query()` and `query_table()`, which take SQL as a string; a
+   denied function nested inside one of those is a plain string constant in the AST and would
+   otherwise be invisible to this scan. Base-table names: each must be a plain identifier. DuckDB's
+   replacement scan makes `SELECT * FROM '/etc/passwd.csv'` an ordinary `SELECT` whose AST contains
+   no function at all, because the path itself is the table name, and the same trick reaches globs
+   (`FROM '/data/*.parquet'`) and, by autoloading `httpfs`, arbitrary URLs
+   (`FROM 'https://attacker.example/x.csv'`), which would make the MCP host issue outbound requests
+   a prompt-injected model chose. A function deny-list cannot see any of that, so table names are
+   allow-listed by shape instead.
+3. The statement runs in `BEGIN TRANSACTION READ ONLY` on a private cursor, and is always
+   `ROLLBACK`ed. DuckDB's transaction manager refuses any write to the database regardless of what
+   got past layers 1 and 2.
 
-Layer 1 is not redundant: a read-only transaction alone does **not** stop `ATTACH`,
-`COPY … TO 'file'`, `INSTALL` or `CHECKPOINT`, because those do not write the current database.
-Layer 1 rejects all four by statement type before layer 3 is reached. Nor is layer 2 redundant:
-every construct in its paragraph above is classified `SELECT` by layer 1 and blocked by layer 3
-only from *writing*, so without it the tool reads any file the server process can read.
+Layer 1 is not redundant: a read-only transaction alone does not stop `ATTACH`,
+`COPY … TO 'file'`, `INSTALL`, or `CHECKPOINT`, because those do not write the current database.
+Layer 1 rejects all four by statement type before layer 3 is reached. Layer 2 is not redundant
+either: every construct in its paragraph above is classified `SELECT` by layer 1 and blocked by
+layer 3 only from writing, so without it the tool reads any file the server process can read.
 
-Two things it deliberately does not do:
-
-* **It is not tenant-filtered.** `Isolation.SCOPED` is a column predicate that anatid's *verbs*
-  add; raw SQL does not get it. Add `WHERE tenant_id = <n>` yourself, or use one file per tenant.
-* **It does not make a `SELECT` cheap.** Output is capped by `ANATID_MAX_ROWS`, but a full scan
-  of a large table costs what it costs.
+The tool does two things a caller might not expect. It is not tenant-filtered: `Isolation.SCOPED`
+is a column predicate that anatid's verbs add, and raw SQL does not get it, so add
+`WHERE tenant_id = <n>` yourself, or use one file per tenant. It also does not make a `SELECT`
+cheap; output is capped by `ANATID_MAX_ROWS`, but a full scan of a large table costs what it costs.
 
 Set `ANATID_SQL_TOOL=off` to remove the tool entirely.
 
@@ -176,10 +175,10 @@ and the view `relates_undirected`. Current rows are `valid_to IS NULL AND tx_to 
 
 ## Multi-tenant
 
-The server is pinned to one tenant, and no tool takes a `tenant` argument. DuckDB has no
-row-level security, so a `tenant_id` column is *scoping*, not isolation — anything that reaches
-raw SQL sees the whole file. Real isolation is one file per tenant, which over MCP means one
-server entry per tenant:
+The server is pinned to one tenant, and no tool takes a `tenant` argument. DuckDB has no row-level
+security, so a `tenant_id` column scopes queries without isolating them: anything that reaches raw
+SQL sees the whole file. Real isolation is one file per tenant, which over MCP means one server
+entry per tenant:
 
 ```json
 {
@@ -202,29 +201,36 @@ own `ANATID_DB`. A second client trying to open the same file gets a DuckDB file
 ## BM25 is not incremental
 
 DuckDB's `fts` extension builds a static index: rows written after the last build are invisible
-to the **text arm** of `recall` until it is rebuilt. anatid does not hide this — `recall` reports
-`bm25_stale` and `pending_fts_rows` on every result, and `stats` reports the same. Call
-`rebuild_fts_index` after a batch of writes, or whenever `bm25_stale` is true. The graph and
-vector arms are always current, so recall keeps working meanwhile; it just cannot match on words
-in the newest rows.
+to the text arm of `recall` until it is rebuilt. `recall` reports `bm25_stale` and
+`pending_fts_rows` on every result, and `stats` reports the same. Call `rebuild_fts_index` after a
+batch of writes, or whenever `bm25_stale` is true. The graph and vector arms are always current, so
+recall keeps working meanwhile, but cannot match on words in the newest rows.
 
-The vector arm is a brute-force cosine scan (DuckDB ships no ANN index). Comfortable to roughly
-100,000 memories per tenant; linear beyond that.
+The vector arm is a brute-force cosine scan, because DuckDB ships no ANN index. Its cost is linear
+in the tenant's current row count at every size, and past roughly 100,000 memories per tenant it is
+the wrong tool.
 
 ## Troubleshooting
 
-**"Server disconnected" / the server never appears.** The client could not run `command`. Use an
-absolute path — GUI apps do not inherit your shell PATH. Check the client's MCP log; on macOS
-Claude Desktop writes to `~/Library/Logs/Claude/mcp-server-anatid.log`.
+### "Server disconnected", or the server never appears
 
-**`IO Error: Could not set lock on file`.** Another process holds that database read-write.
-Close the other client, or give this one its own `ANATID_DB`.
+The client could not run `command`. Use an absolute path, since GUI apps do not inherit your shell
+PATH. Check the client's MCP log; on macOS Claude Desktop writes to
+`~/Library/Logs/Claude/mcp-server-anatid.log`.
 
-**Tools appear but every call errors.** Run it by hand to see stderr:
-`ANATID_DB=/tmp/t.anatid anatid-mcp` — it should sit silently waiting for JSON-RPC on stdin.
+### `IO Error: Could not set lock on file`
 
-**Everything is read-only and the write tools are missing.** `ANATID_READ_ONLY` is set, or the
-database file is not writable by the client's user.
+Another process holds that database read-write. Close the other client, or give this one its own
+`ANATID_DB`.
+
+### Tools appear but every call errors
+
+Run the server by hand to see stderr: `ANATID_DB=/tmp/t.anatid anatid-mcp`. It should sit silently
+waiting for JSON-RPC on stdin.
+
+### Everything is read-only and the write tools are missing
+
+`ANATID_READ_ONLY` is set, or the database file is not writable by the client's user.
 
 ## Embedding it in your own server
 

@@ -1,23 +1,19 @@
-# Phase 0 benchmark: does DuckDB hold up as a graph memory engine?
+# Phase 0 benchmark: DuckDB as a graph memory engine
 
-anatid exists because Kuzu was archived on 2025-10-10. Before writing a line of the library we ran
-a spike to answer one question with numbers rather than taste:
+anatid exists because Kuzu was archived on 2025-10-10. Before any of the library was written, a
+spike measured whether DuckDB could carry the workload:
 
-> **Kill criterion.** If DuckDB 2-hop recall is more than **5x slower** than LadybugDB (the
-> maintained MIT fork of Kuzu) at 1M facts, abandon the DuckDB angle.
+> Kill criterion. If DuckDB 2-hop recall is more than 5x slower than LadybugDB (the maintained MIT
+> fork of Kuzu) at 1M facts, abandon the DuckDB angle.
 
-**Verdict: PASS, by a wide margin.** DuckDB is not within 5x of LadybugDB on 2-hop recall; it is
-**2.6x faster** in plain SQL and **3.6x faster** with a C++ CSR extension, at p50, with identical
-result id-lists. The full numbers, the methodology, and the things this benchmark does *not* tell
-you are all below.
+DuckDB passed. At 1M facts its 2-hop recall p50 is 2.5x faster than LadybugDB's in plain SQL and
+3.6x faster with a C++ CSR extension, with identical result id-lists. The full numbers, the
+methodology, and the limits of the measurement are below.
 
-The contract everything ran against is `spike/SPEC.md` and the raw results are checked in as
-`spike/results/*.full.json`, per-operation latency arrays included. (The runner logs and the
-database files themselves are gitignored — they are hundreds of megabytes and are reproducible.)
-Nothing in this document is retyped from memory; every number below was computed from those JSON
-files.
-
----
+The contract everything ran against is `spike/SPEC.md`. The raw results are checked in as
+`spike/results/*.full.json`, per-operation latency arrays included. The runner logs and the database
+files themselves are gitignored; they run to hundreds of megabytes and are reproducible. Every
+number in this document was computed from those JSON files.
 
 ## 1. Methodology
 
@@ -38,7 +34,7 @@ kill-criterion scale is `full`; `small` is the same generator with everything di
 | `writes_supersedes.parquet` | 10,000 | the W2 pool |
 
 Ten tenants (`tenant_id` 0..9); no edge crosses a tenant. The data carries deliberate signal so
-recall has something to find: each entity has a hidden 64-d centroid and owns 3 topic words; a
+recall has something to find. Each entity has a hidden 64-d centroid and owns 3 topic words; a
 memory's embedding is the mean of its ABOUT entities' centroids plus N(0, 0.35) noise, and its text
 is 12-30 words drawn 60% from those entities' topic words. `RELATES_TO` out-degree follows a
 Zipf(2.2) distribution capped at 500 (~2.8 average), so 2-hop frontiers range from a handful of
@@ -50,68 +46,66 @@ current memories.
 Identical semantics on every engine. All timestamps are UTC and `now` is passed in by the harness,
 never taken from the engine's clock, so every engine produces the same rows.
 
-- **R1 — `recall_2hop(tenant, seed_entity, limit=20)`**, the kill-criterion query. Frontier =
-  seed plus everything 1 or 2 hops away over current `RELATES_TO` edges, either direction, same
-  tenant. Return current memories ABOUT anything in the frontier, `ORDER BY created_at DESC,
-  memory_id DESC LIMIT 20`, as `(memory_id, created_at)`.
-- **R2 — `recall_hybrid(tenant, query_text, query_embedding, k=20)`**: top-50 by cosine, top-50 by
+- **R1**, `recall_2hop(tenant, seed_entity, limit=20)`, the kill-criterion query. Frontier = seed
+  plus everything 1 or 2 hops away over current `RELATES_TO` edges, either direction, same tenant.
+  Return current memories ABOUT anything in the frontier, `ORDER BY created_at DESC, memory_id DESC
+  LIMIT 20`, as `(memory_id, created_at)`.
+- **R2**, `recall_hybrid(tenant, query_text, query_embedding, k=20)`: top-50 by cosine, top-50 by
   BM25, fused with RRF (k=60), plus each hit's ABOUT entity names.
-- **W1 — `remember`**: one transaction inserting a memory and its 1..3 ABOUT edges.
-- **W2 — `supersede`**: one transaction inserting the new memory, setting `valid_to = now` on the
-  old one (never deleting it), and inserting a SUPERSEDES edge.
+- **W1**, `remember`: one transaction inserting a memory and its 1..3 ABOUT edges.
+- **W2**, `supersede`: one transaction inserting the new memory, setting `valid_to = now` on the old
+  one (never deleting it), and inserting a SUPERSEDES edge.
 
 ### Schedule
 
 Deterministic op list from `common.schedule(scale, seed=7)`, identical for every engine:
 
-1. **load** — bulk load all Parquet, build whatever indexes the engine needs. Record wall time and
+1. **load**: bulk load all Parquet, build whatever indexes the engine needs. Record wall time and
    on-disk size.
-2. **warmup** — 50 R1, untimed.
-3. **r1_only** — 1,000 R1 queries, single thread. *This is the kill-criterion measurement.*
-4. **r2_only** — 300 R2 queries, single thread.
-5. **mixed** — 10,000 ops, single thread, 70% writes (90% W1 / 10% W2) and 30% reads (80% R1 /
+2. **warmup**: 50 R1, untimed.
+3. **r1_only**: 1,000 R1 queries, single thread. This is the kill-criterion measurement.
+4. **r2_only**: 300 R2 queries, single thread.
+5. **mixed**: 10,000 ops, single thread, 70% writes (90% W1 / 10% W2) and 30% reads (80% R1 /
    20% R2).
-6. **concurrent** — 4 writer threads (W1) plus 2 reader threads (R1) for 30 s against the same open
+6. **concurrent**: 4 writer threads (W1) plus 2 reader threads (R1) for 30 s against the same open
    database, each thread on its own connection.
-7. **verify** — re-run R1 for query_ids 0..199 after the mixed phase and dump the id lists so the
+7. **verify**: re-run R1 for query_ids 0..199 after the mixed phase and dump the id lists so the
    engines can be compared row for row.
 
-Timing is `time.perf_counter_ns()` around the whole operation *including materializing results into
-Python lists*, so client-side marshalling is inside every number here. Peak RSS via
+Timing is `time.perf_counter_ns()` around the whole operation, including materializing results into
+Python lists, so client-side marshaling is inside every number here. Peak RSS via
 `resource.getrusage`.
 
 ### Correctness gate
 
-Latency numbers from an engine that returns the wrong rows are worthless, so every engine's output
-is checked against `spike/bench/common.py::reference_r1`, a pure-Python (numpy) oracle for 2-hop
-recall, and `reference_r2_truth` for hybrid recall.
+Every engine's output is checked against `spike/bench/common.py::reference_r1`, a pure-Python
+(numpy) oracle for 2-hop recall, and `reference_r2_truth` for hybrid recall.
 
 ### Machine
 
 One machine, macOS 27.0, Apple arm64, 10 cores, 64 GB, Python 3.12.9, DuckDB 1.5.5, LadybugDB
 0.20.2, Grafeo 0.5.42. Engines were run one at a time, sequentially, on 2026-09-02.
 
----
-
 ## 2. Results at 1,000,000 memories / 2.3M edges / 10 tenants
 
-### R1 — 2-hop recall, the kill criterion (1,000 queries, single thread)
+### R1: 2-hop recall, the kill criterion (1,000 queries, single thread)
 
 | engine | p50 ms | p95 ms | p99 ms | mean ms | ops/s | vs LadybugDB p50 |
 |---|---:|---:|---:|---:|---:|---:|
-| **duckdb_ext** (C++ CSR) | **2.040** | **3.072** | 3.649 | 2.178 | 459 | **0.28x** (3.60x faster) |
-| **duckdb_sql** (SQL macros) | **2.884** | **3.498** | 3.785 | 2.928 | 341 | **0.39x** (2.55x faster) |
+| duckdb_ext (C++ CSR) | 2.040 | 3.072 | 3.649 | 2.178 | 459 | 0.28x (3.60x faster) |
+| duckdb_sql (SQL macros) | 2.884 | 3.498 | 3.785 | 2.928 | 341 | 0.39x (2.55x faster) |
 | ladybug 0.20.2 | 7.347 | 28.729 | 43.467 | 11.813 | 85 | 1.00x |
-| grafeo 0.5.42 | not measured — see §4 | | | | | |
+| grafeo 0.5.42 | not measured, see §4 | | | | | |
 
-At p95 the gap is much larger: 3.07 / 3.50 ms against 28.73 ms, i.e. **0.11x and 0.12x**.
-LadybugDB's tail is wide because its cost depends strongly on frontier size (its own tuning notes
-record ~8 ms for frontiers ≤ 30 entities and ~36 ms above 500), while both DuckDB layers stay
-inside a 1.5 ms band from p50 to p99.
+The gap is wider at p95: 3.07 and 3.50 ms against 28.73 ms, or 0.11x and 0.12x. LadybugDB's tail is
+wide because its cost depends strongly on frontier size (its own tuning notes record ~8 ms for
+frontiers ≤ 30 entities and ~36 ms above 500), while both DuckDB layers stay inside a 1.5 ms band
+from p50 to p99.
 
-> **Kill criterion: 5.00x allowed, 0.39x observed (SQL) / 0.28x observed (CSR extension) — PASS.**
+The kill criterion allowed 5.00x. The observed ratios are 0.39x for the SQL path and 0.28x for the
+CSR extension, so DuckDB passes.
 
-### R2 — hybrid recall: cosine + BM25 + RRF (300 queries, single thread)
+### R2: hybrid recall, cosine + BM25 + RRF (300 queries, single thread)
 
 | engine | p50 ms | p95 ms | ops/s | recall@20 vs brute-force truth |
 |---|---:|---:|---:|---:|
@@ -119,10 +113,10 @@ inside a 1.5 ms band from p50 to p99.
 | duckdb_ext | 18.202 | 21.236 | 55.9 | 1.0000 (300/300) |
 | duckdb_sql | 19.956 | 22.723 | 49.5 | 1.0000 (300/300) |
 
-LadybugDB wins this one by ~20%. Worth being precise about why the comparison is close: **no engine
-here used an ANN index.** LadybugDB's `CREATE_VECTOR_INDEX` failed in this build (`function
-_CREATE_HNSW_INDEX does not exist`), and DuckDB ships none, so all three ran brute-force cosine over
-the tenant's current memories. Hybrid recall is bounded by that scan, not by the graph engine.
+LadybugDB is fastest here, by 11% over duckdb_ext and 22% over duckdb_sql. The comparison is close
+because no engine used an ANN index. LadybugDB's `CREATE_VECTOR_INDEX` failed in this build
+(`function _CREATE_HNSW_INDEX does not exist`), and DuckDB ships none, so all three ran brute-force
+cosine over the tenant's current memories. Hybrid recall is bounded by that scan.
 
 ### Mixed workload (10,000 ops, 70% write / 30% read, single thread)
 
@@ -132,148 +126,144 @@ the tenant's current memories. Hybrid recall is bounded by that scan, not by the
 | duckdb_sql | 2.383 / 2.859 | 2.422 / 2.909 | 3.029 / 3.626 | 19.765 / 22.766 | 36.2 s |
 | ladybug | 5.102 / 6.013 | 5.213 / 6.119 | 8.239 / 29.426 | 16.809 / 18.892 | 77.1 s |
 
-Op counts are identical across engines by construction: W1 6,283, W2 724, R1 2,407, R2 586.
-DuckDB finishes the same 10,000 ops in **less than half** the wall time.
+Op counts are identical across engines by construction: W1 6,283, W2 724, R1 2,407, R2 586. DuckDB
+finishes the same 10,000 ops in under half the wall time.
 
-Both DuckDB and LadybugDB report exactly **7,007 memories invisible to BM25** after this phase.
-Neither engine's full-text index is incremental, and both were honest about it — this is the number
-behind anatid's insistence that `rebuild_fts_index()` be explicit and that `recall()` report its own
-staleness.
+Both DuckDB and LadybugDB report exactly 7,007 memories invisible to BM25 after this phase. Neither
+engine's full-text index is incremental, and both report the count. That number is why anatid
+requires `rebuild_fts_index()` to be explicit and has `recall()` report its own staleness.
 
 ### Load, size, memory
 
 | engine | load | on disk | peak RSS | what dominates the load |
 |---|---:|---:|---:|---|
-| duckdb_sql | **4.6 s** | **434 MiB** (0.42 GiB) | 5,321 MB | fts index 3.4 s of the 4.6 s |
-| duckdb_ext | **4.8 s** | 481 MiB (0.47 GiB) | 5,270 MB | fts 3.2 s + bm25 postings 0.7 s; CSR build only 30 ms |
+| duckdb_sql | 4.6 s | 434 MiB (0.42 GiB) | 5,321 MB | fts index 3.4 s of the 4.6 s |
+| duckdb_ext | 4.8 s | 481 MiB (0.47 GiB) | 5,270 MB | fts 3.2 s + bm25 postings 0.7 s; CSR build 30 ms |
 | ladybug | 16.2 s | 1,158 MiB (1.13 GiB) | 6,206 MB | Term/Posting BM25 tables (13.3M postings) |
 | grafeo | 1,231.8 s | 867 MiB (0.85 GiB) | 14,704 MB | HNSW build 1,186.6 s, single-threaded |
 
-DuckDB loads **3.5x faster** and stores the same graph in **~37% of the space**. Peak RSS figures
-include the harness's own numpy reference state and are therefore an upper bound, not the engine's
-working set.
+DuckDB loads 3.5x faster than LadybugDB and stores the same graph in ~37% of the space. Peak RSS
+figures include the harness's own numpy reference state and so overstate the engine's working set.
 
 ### Concurrency (4 W1 writers + 2 R1 readers, 30 s, one connection per thread)
 
 | engine | W1 ops/s | W1 p50/p95 | R1 ops/s | R1 p50/p95 | errors |
 |---|---:|---:|---:|---:|---:|
-| duckdb_sql | 189.2 | 17.10 / 51.46 | **583.1** | 3.37 / 4.09 | **0** |
-| duckdb_ext | 152.1 | 20.07 / 67.74 | **825.0** | 2.38 / 2.97 | **0** |
-| ladybug (default) | 170.3 | 18.67 / 48.90 | 146.7 | 9.02 / 30.07 | 0, but **22,207 BEGIN retries** |
-| ladybug (`enable_multi_writes=True`) | **370.4** | 10.30 / — | 146.3 | 9.20 / — | 0, 0 retries |
+| duckdb_sql | 189.2 | 17.10 / 51.46 | 583.1 | 3.37 / 4.09 | 0 |
+| duckdb_ext | 152.1 | 20.07 / 67.74 | 825.0 | 2.38 / 2.97 | 0 |
+| ladybug (default) | 170.3 | 18.67 / 48.90 | 146.7 | 9.02 / 30.07 | 0, with 22,207 BEGIN retries |
+| ladybug (`enable_multi_writes=True`) | 370.4 | 10.30 / 12.97 | 146.3 | 9.20 / 30.25 | 0, 0 retries |
 
-Read this table carefully, because the honest reading is not "DuckDB wins":
+DuckDB recorded 0 errors and 0 retries, with no retry logic in the runner at all: its optimistic MVCC
+means concurrent appends never conflict. Read throughput is 4.0x LadybugDB's on the SQL path and 5.6x
+on the extension path.
 
-- **DuckDB's reads scale and its writes do not conflict.** 0 errors, 0 retries, no retry logic in
-  the runner at all — DuckDB's optimistic MVCC means appends never conflict. Read throughput is
-  **4-5.6x** LadybugDB's.
-- **LadybugDB is single-writer by default**, and it is loud about it: a second concurrent writer's
-  `BEGIN` fails immediately with "Only one write transaction at a time", which the runner retried
-  after 0.5 ms (22,207 retries, max 30 for a single op). With `enable_multi_writes=True` it commits
-  **more** W1 ops per second than DuckDB does (370.4 vs 189.2).
-- **DuckDB's write throughput drops under contention.** Writer-only baselines measured 396.8 W1/s
-  with 1 writer and 394.7 W1/s with 4 writers; adding 2 concurrent readers took it to 152-189 W1/s.
-  Write p50 goes from 2.5 ms solo to 17-20 ms mixed. Concurrent readers cost DuckDB writers real
-  throughput, and that is a genuine finding against DuckDB, not a rounding artifact.
+LadybugDB is single-writer by default and reports it directly. A second concurrent writer's `BEGIN`
+fails immediately with "Only one write transaction at a time", which the runner retried after 0.5 ms
+(22,207 retries, at most 30 for a single op). With `enable_multi_writes=True` it commits more W1 ops
+per second than DuckDB does, 370.4 against 189.2.
+
+DuckDB's write throughput drops under contention. Writer-only baselines measured 396.8 W1/s with 1
+writer and 394.7 W1/s with 4 writers; adding 2 concurrent readers took it to 152-189 W1/s, and write
+p50 from 2.5 ms solo to 17-20 ms mixed. Two readers cost the writers 52% to 62% of their solo
+throughput, which is far outside run-to-run noise and counts against DuckDB.
 
 ### Correctness
 
 | check | result |
 |---|---|
-| R1 vs pure-Python oracle, 1,000 queries, duckdb_sql | **0 mismatches** |
-| R1 vs pure-Python oracle, 1,000 queries, duckdb_ext | **0 mismatches** |
-| R1 vs pure-Python oracle, 1,000 queries, ladybug | **0 mismatches** |
-| verify phase after 10,000 mixed ops, 200 id lists, each engine vs oracle | **0 mismatches** each |
-| duckdb_sql vs duckdb_ext, 200 verify id lists, compared row for row | **0 mismatches** |
-| duckdb_sql vs ladybug, 200 verify id lists, compared row for row | **0 mismatches** |
-| R2 recall@20 vs brute-force truth, 300 queries, all three engines | **1.0000**, 300/300 exact |
-| mixed-phase write spot check (W1 visible to R1, W2 old row closed) | 10/10 and 10/10 per engine |
+| R1 vs pure-Python oracle, 1,000 queries, duckdb_sql | 0 mismatches |
+| R1 vs pure-Python oracle, 1,000 queries, duckdb_ext | 0 mismatches |
+| R1 vs pure-Python oracle, 1,000 queries, ladybug | 0 mismatches |
+| verify phase after 10,000 mixed ops, 200 id lists, each engine vs oracle | 0 mismatches each |
+| duckdb_sql vs duckdb_ext, 200 verify id lists, compared row for row | 0 mismatches |
+| duckdb_sql vs ladybug, 200 verify id lists, compared row for row | 0 mismatches |
+| R2 recall@20 vs brute-force truth, 300 queries, all three engines | 1.0000, 300/300 exact |
+| mixed-phase write spot check (W1 visible to R1, W2 old row closed) | 10/10 and 10/10 on duckdb_ext and ladybug; duckdb_sql checked one of each |
 
-The last two cross-engine rows were recomputed for this document directly from the `verify` blocks
-of the three JSON files, not taken from any engine's self-report.
+The two cross-engine rows were recomputed for this document directly from the `verify` blocks of the
+three JSON files rather than taken from any engine's self-report.
 
----
+## 3. Tuning applied to each engine
 
-## 3. What we changed to get these numbers
+Both sides were tuned before the timed phases ran.
 
-Both sides were tuned. This matters for reading the table fairly.
-
-**LadybugDB was given the benefit of a formulation search.** The runner A/B'd six Cypher
-formulations of R1 at two thread settings — 12 configurations, 100 queries each, all verified
-against the oracle — and kept the fastest for the timed phases:
+LadybugDB was given the benefit of a formulation search. The runner A/B'd six Cypher formulations of
+R1 at two thread settings, 12 configurations at 100 queries each, all verified against the oracle,
+and kept the fastest for the timed phases:
 
 | formulation | p50 ms (1 thread) | p50 ms (all cores) |
 |---|---:|---:|
-| **two_stmt_in** (chosen) | 11.189 | **7.298** |
+| two_stmt_in (chosen) | 11.189 | 7.298 |
 | rec_hint2 | 24.848 | 8.436 |
 | opt_hint | 28.211 | 25.308 |
 | rec_hint | 39.738 | 36.275 |
 | two_stmt | 40.532 | 37.439 |
 | rec (the SPEC's plain `-[:RELATES_TO*0..2]-`) | 123.118 | 118.571 |
 
-The naive Cypher formulation is **17x slower** than the tuned one. If we had reported `rec`, DuckDB
-would look 60x faster and the comparison would be dishonest. The number in the headline table is
-LadybugDB's best. R2 got the same treatment (73.550 ms single-threaded vs 16.676 ms with all cores;
-the faster one is reported).
+At the same thread setting the naive Cypher formulation is 16x slower than the tuned one, 118.571 ms
+against 7.298 ms. Reporting `rec` would have made DuckDB look 41x faster on the SQL path and 58x
+faster on the extension path, instead of 2.5x and 3.6x. The number in the headline table is
+LadybugDB's best. R2 got the same treatment, 73.550 ms single-threaded against 16.676 ms with all
+cores, and the faster one is reported.
 
-**DuckDB was tuned too**, and its A/Bs are in the logs: join-based frontier expansion beat a
-recursive CTE (2.996 vs 7.605 ms), ART indexes made no difference to R1 (2.909 with / 2.958
-without, so they were dropped except the one `supersede` needs), and the BM25 macro beat
-`match_bm25` (19.858 vs 29.244 ms).
+DuckDB was tuned too, and its A/Bs are in the `notes` arrays of its result files. Join-based frontier
+expansion beat a recursive CTE, 2.996 against 7.605 ms. ART indexes made no difference to R1, 2.909
+with against 2.958 without, so they were dropped except the one `supersede` needs. Reading the fts
+index tables directly beat the `match_bm25` macro, 19.858 against 29.244 ms.
 
----
+## 4. Limitations
 
-## 4. Limitations — what this benchmark does not tell you
+This was a spike, run once to settle one decision. Nine limits of the measurement follow.
 
-This is a spike, not a benchmark suite. Everything below is a real caveat.
-
-1. **The dataset is synthetic.** It was generated to have clean structure: Zipf degree
-   distribution, entity centroids, topic-word vocabulary of 5,000. Real agent memory is messier —
-   skewed tenants, duplicated text, embeddings from a real model at 768-3072 dims rather than 64.
-   The 64-dimension embedding in particular makes the vector arm cheaper than it would be in
-   production, and every engine benefits from that equally.
-2. **2-hop recall is one query shape.** It is the shape agent memory hits hardest, which is why the
-   kill criterion is built on it, but it is one query. Deep traversals, path queries, aggregation
-   over the graph, and pattern matching are not measured here at all. A graph engine that loses at
-   2-hop recall may well win at 6-hop.
-3. **One machine, one run, no repetitions.** Every number is a single run on a single laptop-class
-   machine. There are no confidence intervals and no cross-machine replication. Percentiles come
-   from 1,000 (R1) or 300 (R2) queries within that one run.
-4. **The machine was not idle.** `SPEC.md` says numbers are only comparable if nothing else is
-   running. The runners recorded the load average at start and found no other benchmark or compiler
-   process, but the 1-minute load average was **6.1-7.5 on 10 cores** at the start of every run —
-   this is a workstation, not a clean bench. All four engines ran under comparable conditions, but
-   absolute latencies are probably pessimistic for everyone, and small differences (the ~20% R2 gap,
-   for example) should not be over-read.
-5. **Every engine is reported at its best, and "best" was searched for unevenly.** LadybugDB's R1
-   is the fastest of six Cypher formulations across two thread settings (12 configurations, 100
-   queries each); DuckDB's is the faster of two frontier formulations plus an index and a BM25 A/B.
-   We think reporting each engine's best is the fair comparison, but the two searches were not
-   equal in effort, and someone who knows LadybugDB better may find something faster than
-   `two_stmt_in`. We would like to see it.
-6. **Grafeo has load numbers only.** Its run was terminated (SIGTERM, exit 143) 19 s into the
-   r1_only phase, after a 1,231.8 s load of which 1,186.6 s was a single-threaded HNSW build, and
-   with 14.7 GB peak RSS. So **there are no Grafeo query numbers here and nobody should infer any**.
+1. The dataset is synthetic. It was generated to have clean structure: Zipf degree distribution,
+   entity centroids, topic-word vocabulary of 5,000. Real agent memory is messier, with skewed
+   tenants, duplicated text, and embeddings from a real model at 768-3072 dims rather than 64. The
+   64-dimension embedding in particular makes the vector arm cheaper than it would be in production,
+   and every engine benefits from that equally.
+2. 2-hop recall is one query shape. It is the shape agent memory hits hardest, which is why the kill
+   criterion is built on it, but it is one query. Deep traversals, path queries, aggregation over the
+   graph, and pattern matching are not measured here at all. A graph engine that loses at 2-hop
+   recall may well win at 6-hop.
+3. One machine, one run, no repetitions. Every number is a single run on a single laptop-class
+   machine. There are no confidence intervals and no cross-machine replication. Percentiles come from
+   1,000 (R1) or 300 (R2) queries within that one run.
+4. The machine was not idle. `SPEC.md` says numbers are only comparable if nothing else is running.
+   The runners recorded the load average at start and found no other benchmark or compiler process,
+   but the 1-minute load average was 6.1 to 7.5 on 10 cores at the start of every run. All four
+   engines ran under comparable conditions on this workstation, but absolute latencies are probably
+   pessimistic for everyone, and small differences (the 11% to 22% R2 gap, for example) should not be
+   over-read.
+5. Every engine is reported at its best, and "best" was searched for unevenly. LadybugDB's R1 is the
+   fastest of six Cypher formulations across two thread settings (12 configurations, 100 queries
+   each); DuckDB's is the faster of two frontier formulations plus an index and a BM25 A/B. Reporting
+   each engine's best is the fairer comparison, but the two searches were not equal in effort, and
+   someone who knows LadybugDB better may find a formulation faster than `two_stmt_in`.
+6. Grafeo has load numbers only. Its run was terminated (SIGTERM, exit 143) 19 s into the r1_only
+   phase, after a 1,231.8 s load of which 1,186.6 s was a single-threaded HNSW build, and with
+   14.7 GB peak RSS. There are therefore no Grafeo query numbers here and none should be inferred.
    The load numbers are reported because they were completed and are informative about the engine's
    index-build cost and its non-persisted indexes (property, text and vector indexes are all rebuilt
-   on every open). The runner also documented seven correctness/API limitations found while writing
-   it — see the `notes` array in `spike/results/grafeo.full.json`. A completed Grafeo run is welcome
-   work.
-7. **No engine used an ANN index**, so R2 measures brute-force cosine plus BM25 on three engines.
-   That is a comparison of scan speed, not of vector search quality.
-8. **BM25 staleness was measured, not avoided.** 7,007 rows written during the mixed phase were
-   invisible to the text index on both DuckDB and LadybugDB. Neither engine's R2 numbers include
-   the cost of a rebuild (DuckDB's is 3.4 s at this scale, measured after the verify phase).
-9. **Latency includes the Python client.** Every timing wraps result materialization into Python
-   lists, and duckdb-python 1.5.5 has a measurable per-call overhead (it attempts `import pandas`
-   ~14 times per parameterized `execute()`). That is honest for a Python library — it is what a
-   caller experiences — but it is not a measurement of the storage engines alone.
+   on every open). The runner also documented seven correctness and API limitations found while
+   writing it; see the `notes` array in `spike/results/grafeo.full.json`.
+7. No engine used an ANN index, so R2 measures brute-force cosine plus BM25 on three engines. It
+   compares scan speed and says nothing about vector search quality.
+8. BM25 staleness is inside the numbers. 7,007 rows written during the mixed phase were invisible to
+   the text index on both DuckDB and LadybugDB, and neither engine's R2 numbers include the cost of a
+   rebuild (DuckDB's is 3.4 s at this scale, measured after the verify phase).
+9. Latency includes the Python client. Every timing wraps result materialization into Python lists.
+   duckdb-python 1.5.5 also attempts `import pandas` twice for every non-NULL bound parameter of a
+   parameterized `execute()`, and pandas is not installed in the spike's virtualenv, so each attempt
+   is a failed import: 14 attempts for a seven-parameter statement, 22 for the spike's
+   thirteen-parameter W1 INSERT. Measured on this machine, a seven-parameter `execute()` plus
+   `fetchall()` averages 0.757 ms against 0.069 ms for the same statement with its values inlined.
+   R1 escapes this because it runs as `EXECUTE r1(t, seed, 20)` with literal arguments; W1 and W2
+   do not. The cost is what a Python caller experiences, but it is not a measurement of the storage
+   engines alone.
 
----
+## 5. Reproducing the run
 
-## 5. Reproducing this
-
-The dataset is generated, not checked in (`spike/data/` is gitignored), so a reproduction is
+The dataset is generated at run time (`spike/data/` is gitignored), so a reproduction is
 self-contained:
 
 ```bash
@@ -292,22 +282,25 @@ python bench/report.py --scale full               # -> results/REPORT.md with th
 Results land in `spike/results/<engine>.full.json` with per-op latency arrays, the verify id lists,
 and a `notes` array recording everything that deviated from `SPEC.md`.
 
-`spike/` is read-only in this repository: it is the evidence behind the engine decision and editing
+`spike/` is read-only in this repository: it is the evidence behind the engine decision, and editing
 it after the fact would make it worthless. To re-run, copy it out or add a new runner alongside the
 existing ones.
 
----
-
 ## 6. What this changed about anatid
 
-- **DuckDB is the engine.** The kill criterion was not merely survived, it was inverted.
-- **The C++ CSR extension is an accelerator, not a requirement.** 2.04 ms vs 2.88 ms is a 29%
-  improvement, but the SQL path needs no build step, no unsigned-extension flag, and no dense
-  entity ids. anatid ships with the SQL path on by default and `use_csr_extension=True` opt-in.
-- **The fts index being non-incremental is a product decision, not an implementation detail.** The
-  7,007-row staleness window is why `recall()` returns `RecallHits` with `.bm25_stale` and
-  `.pending_fts_rows` on it, instead of a bare list.
-- **Concurrent readers cost DuckDB writers throughput.** anatid's docs say single-writer-process,
-  and this is one reason why.
-- **Vector search is the weak arm.** Brute-force cosine is fine to ~1e5 memories per tenant and
-  documented as such; an owned ANN index is the headline item of the v1.0 roadmap.
+DuckDB is the engine. It cleared the 5.00x kill criterion by a factor of 13 on the SQL path and 18
+on the extension path.
+
+The C++ CSR extension is an accelerator, and anatid treats it as one. 2.04 ms against 2.88 ms is a
+29% improvement, but the SQL path needs no build step, no unsigned-extension flag, and no dense
+entity ids. anatid ships with the SQL path on by default and `use_csr_extension=True` as an opt-in.
+
+The non-incremental fts index is surfaced in the API. The 7,007-row staleness window is why
+`recall()` returns `RecallHits` carrying `.bm25_stale` and `.pending_fts_rows`, instead of a bare
+list.
+
+Concurrent readers cost DuckDB writers throughput. anatid's docs specify a single writer process, and
+this measurement is one reason.
+
+Vector search is the weak arm. Brute-force cosine is adequate to ~1e5 memories per tenant and is
+documented as such; an owned ANN index is the headline item of the v1.0 roadmap.

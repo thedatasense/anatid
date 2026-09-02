@@ -1,16 +1,16 @@
-# `anatid` — the DuckDB extension
+# The anatid DuckDB extension
 
 The C++ half of [anatid](../README.md): an in-memory per-tenant CSR over the `RELATES_TO` edge
 table, plus a BFS table function, so that anatid's 2-hop recall frontier comes from C++ instead of
 SQL joins.
 
-Measured at 1,000,000 memories / 2.3M edges / 10 tenants — 2-hop recall p50 **2.04 ms** with this
-extension, **2.88 ms** with the equivalent pure SQL, **7.35 ms** with LadybugDB 0.20.2, all three
-returning identical id-lists.
+At 1,000,000 memories, 2.3M edges, and 10 tenants, 2-hop recall p50 is 2.04 ms with this
+extension, 2.88 ms with the equivalent pure SQL, and 7.35 ms with LadybugDB 0.20.2. All three
+return identical id-lists.
 
-**The full story — why it exists, the snapshot limitation, when to rebuild, the dense-id
-requirement, every error — is in [`docs/extension.md`](../docs/extension.md). Read that one.**
-This file is just the build card.
+[`docs/extension.md`](../docs/extension.md) is the reference: why the extension exists, the
+snapshot limitation, when to rebuild, the dense-id requirement, and every error it can raise. This
+file covers the build.
 
 ## Build
 
@@ -22,17 +22,18 @@ GEN=ninja make release
 
 Out:
 
-* `build/release/extension/anatid/anatid.duckdb_extension` — the loadable binary
-* `build/release/duckdb` — a shell with the extension linked in
-* `build/release/test/unittest` — the sqllogictest runner
+* `build/release/extension/anatid/anatid.duckdb_extension`: the loadable binary
+* `build/release/duckdb`: a shell with the extension linked in
+* `build/release/test/unittest`: the sqllogictest runner
 
-First build ≈ 10–20 min (it compiles DuckDB). Incremental rebuilds after editing
-`src/anatid_extension.cpp` are ≈ 5 s. `make debug` builds into `build/debug/` instead.
+The first build takes 10 to 20 minutes because it compiles DuckDB. After that, editing
+`src/anatid_extension.cpp` and re-running rebuilds in a few seconds. `make debug` builds into
+`build/debug/` instead.
 
-> In this working tree `duckdb/` and `extension-ci-tools/` are **symlinks** into
-> `../spike/extension/`, which already holds the exact pinned checkouts; the build reads them and
-> never writes there. Replace them with the submodules in [`.gitmodules`](.gitmodules) once `ext/`
-> is a real git checkout.
+In this working tree `duckdb/` and `extension-ci-tools/` are symlinks into `../spike/extension/`,
+which already holds the exact pinned checkouts; the build reads them and never writes there.
+Replace them with the submodules in [`.gitmodules`](.gitmodules) once `ext/` is a real git
+checkout.
 
 ## Try it
 
