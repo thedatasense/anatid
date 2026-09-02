@@ -7,7 +7,7 @@ welcome.
 ## Getting set up
 
 ```bash
-git clone https://github.com/anatid-db/anatid
+git clone https://github.com/thedatasense/anatid
 cd anatid
 uv venv                                    # or: python -m venv .venv
 uv pip install -e ".[dev]"                 # duckdb + pytest + both integrations
@@ -100,3 +100,21 @@ and that you have the right to license it that way. There is no CLA.
   show file sizes.
 - Public API additions come with a docstring that states the contract and its limits, and an
   entry in `docs/roadmap.md` if they change what a milestone means.
+
+## Releasing
+
+Publishing uses PyPI **trusted publishing**, so no API token is stored in the repo or on a laptop.
+
+One-time setup at <https://pypi.org/manage/account/publishing/>: add a pending publisher with
+owner `thedatasense`, repository `anatid`, workflow `release.yml`, environment `release`.
+
+Then for each release:
+
+1. Bump `version` in `pyproject.toml` and the two `__version__` strings (`src/anatid/__init__.py`,
+   `src/anatid/database.py`). They must match.
+2. `python -m pytest tests/` — all green.
+3. Tag and push: `git tag -a vX.Y.Z -m "vX.Y.Z" && git push origin vX.Y.Z`.
+4. Publish a GitHub Release for that tag. The `release` workflow builds, runs `twine check`,
+   smoke-tests the wheel in a clean virtualenv, and only then uploads.
+
+Use the workflow's manual `workflow_dispatch` run with target `testpypi` to rehearse first.

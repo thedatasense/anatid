@@ -29,10 +29,10 @@ pip install "anatid[agents]"          # + the OpenAI Agents SDK integration
 pip install "anatid[mcp]"             # + the MCP server
 ```
 
-The version in this repository is `0.1.0.dev0` and is not on PyPI yet. Until it is:
+The version in this repository is `0.1.0` and is not on PyPI yet. Until it is:
 
 ```bash
-pip install "git+https://github.com/anatid-db/anatid"
+pip install "git+https://github.com/thedatasense/anatid"
 ```
 
 Python 3.10-3.13, one required dependency (`duckdb>=1.5`). CI runs the test suite — including
