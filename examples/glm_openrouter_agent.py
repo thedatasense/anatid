@@ -11,7 +11,8 @@ It also shows the three things that separate a memory from a log:
   provenance   a fact can be traced back to the raw episode it came from, and to who wrote it
 
 Writes go through an approval gate, so the model proposes a change to its memory and a
-person decides whether it lands. Reads are not gated.
+person decides whether it lands. Every write goes through the gate. Reads run
+straight through.
 
 Setup:
 

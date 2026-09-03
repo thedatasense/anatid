@@ -46,3 +46,5 @@ examples/*.anatid
 examples/*.anatid.*
 .coverage
 .venv-studio/
+examples/dinner_demo.anatid
+examples/dinner_demo.anatid.*

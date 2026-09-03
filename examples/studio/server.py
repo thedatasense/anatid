@@ -1,9 +1,14 @@
-"""anatid studio: a local web UI that runs examples/glm_openrouter_agent.py one step at a time.
+"""anatid studio: a local web UI that runs examples/dinner_party.py one step at a time.
 
-The scenario is the one in the sibling example. A team briefs an assistant on day one, the
-assistant answers a question that needs a two-hop walk of the entity graph, a handover
-supersedes one fact, the model proposes a write that a person approves or declines, and then
-as_of and provenance replay history without any model at all.
+The story is the one in examples/scenarios.py. A household tells an assistant ordinary things
+over months, the cook asks a question that names no guest and no ingredient, the graph walk
+finds the guest who reacts to something on the menu, a belief later changes, the model proposes
+a write that a person approves or declines, and then as_of and provenance replay history with no
+model involved at all.
+
+Two stories ship with the studio: the dinner, which is the default, and the original on-call
+rotation. Both come from the same Scenario definition, so every step, every question and every
+explanation on screen changes with the story.
 
 Run it:
 
@@ -11,8 +16,9 @@ Run it:
     export OPEN_ROUTER_KEY=sk-or-...      # optional; only the "ask" steps need it
     python examples/studio/server.py      # serves http://127.0.0.1:8765
 
-The database lives beside this file as studio.anatid. POST /api/reset deletes it and rebuilds
-the day-one briefing. Every endpoint except /api/ask and /api/approve works without a key.
+It runs the same from the repository root or from this directory. The database lives beside this
+file as studio.anatid. POST /api/reset deletes it and rebuilds the story, optionally a different
+one. Every endpoint except /api/ask and /api/approve works without a key.
 
 The server binds 127.0.0.1 only, never logs the key, and never logs memory content.
 """
@@ -23,10 +29,19 @@ import datetime as _dt
 import json
 import os
 import pathlib
+import sys
 import threading
 import uuid
 from contextlib import asynccontextmanager
 from typing import Any
+
+HERE = pathlib.Path(__file__).resolve().parent
+EXAMPLES = HERE.parent
+
+# The scenarios module sits one directory up, beside dinner_party.py. Putting that directory on
+# sys.path is what lets the studio run from the repository root and from its own directory alike.
+if str(EXAMPLES) not in sys.path:
+    sys.path.insert(0, str(EXAMPLES))
 
 try:
     import anatid
@@ -35,8 +50,6 @@ try:
     from fastapi.responses import FileResponse, JSONResponse
     from pydantic import BaseModel
 except ImportError as exc:  # a plain, actionable message instead of a traceback
-    import sys
-
     sys.exit(
         f"anatid studio needs its dependencies ({exc.name} is missing).\n"
         "From the repository root, run:\n"
@@ -46,7 +59,14 @@ except ImportError as exc:  # a plain, actionable message instead of a traceback
         "    python -m venv .venv-studio && .venv-studio/bin/pip install -r examples/studio/requirements.txt"
     )
 
-HERE = pathlib.Path(__file__).resolve().parent
+try:
+    import scenarios
+except ImportError:
+    sys.exit(
+        f"anatid studio could not import scenarios.py. It expects to find it at "
+        f"{EXAMPLES / 'scenarios.py'}, beside dinner_party.py."
+    )
+
 DB_PATH = HERE / "studio.anatid"
 INDEX_HTML = HERE / "index.html"
 MODEL = "z-ai/glm-5.3-flash"
@@ -55,34 +75,10 @@ EMBEDDING_DIM = 64
 MAX_TOOL_ROUNDS = 6
 WRITER_MODEL = "glm-5.3-flash"
 
-# The same briefing as the example. Edges give the graph its shape; facts hang off entities.
-BRIEFING_EDGES = [
-    ("Ada", "Project Kestrel", "leads"),
-    ("Project Kestrel", "ingest-service", "owns"),
-    ("Bo", "ingest-service", "maintains"),
-    ("Project Kestrel", "postgres-primary", "depends_on"),
-]
-BRIEFING_FACTS = [
-    ("Ada leads Project Kestrel.", ["Ada", "Project Kestrel"]),
-    ("Bo maintains the ingest-service and is the person to page for it.", ["Bo", "ingest-service"]),
-    ("The ingest-service is owned by Project Kestrel.", ["ingest-service", "Project Kestrel"]),
-    ("postgres-primary has a nightly vacuum window at 02:00 UTC.", ["postgres-primary"]),
-    ("Project Kestrel ships on Fridays.", ["Project Kestrel"]),
-]
-BRIEFING_EPISODE = "Team onboarding doc, 2026-03-01"
-BRIEFING_WRITER = "onboarding"
-
-HANDOVER_CONTENT = "Cy maintains the ingest-service. Bo moved to Project Harrier on 2026-04-15."
-HANDOVER_ENTITIES = ["Cy", "ingest-service", "Bo"]
-HANDOVER_EPISODE = "Handover notes, 2026-04-15: Bo -> Harrier, Cy takes ingest-service."
-HANDOVER_WRITER = "handover-notes"
-
-SYSTEM_PROMPT = (
-    "You are an engineering-team assistant with a graph memory. "
-    "Always call recall before answering a question about the team, "
-    "passing seed_entity when the question names a person or project. "
-    "Answer only from what recall returns. Be brief."
-)
+# The retrieval budget every recall in the studio spends, the model's own tool calls and
+# the arms panel alike, so the table on screen is the table the model was handed. The
+# corpus is several times larger, which is the point of showing the ranks.
+RECALL_K = 8
 
 NO_KEY_MESSAGE = (
     "No OpenRouter key is configured, so the model steps are unavailable. "
@@ -90,52 +86,63 @@ NO_KEY_MESSAGE = (
     "then restart the server. Steps 1, 3, 5 and 6 work without a model."
 )
 
-# The tools the model can call. Reads run immediately; the write waits for a person.
-TOOLS = [
-    {
-        "type": "function",
-        "function": {
-            "name": "recall",
-            "description": (
-                "Search the team's memory. Combines BM25 text search with a two-hop walk "
-                "of the entity graph, so it returns facts connected to the subject even "
-                "when they do not contain the search words. Pass seed_entity when the "
-                "question is about a specific person, project or service."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string", "description": "words to search for"},
-                    "seed_entity": {
-                        "type": "string",
-                        "description": "an entity name to walk the graph from, e.g. 'Ada'",
-                    },
-                },
-                "required": ["query"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "remember",
-            "description": "Store a new durable fact. Requires human approval.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "content": {"type": "string"},
-                    "entities": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "the people, projects or services this fact is about",
-                    },
-                },
-                "required": ["content", "entities"],
-            },
-        },
-    },
-]
 WRITE_TOOLS = {"remember"}
+
+
+def tools_for(scenario: Any) -> list[dict]:
+    """The two tools the model can call, with the story's own seed entity as the example.
+
+    Reads run immediately. The write parks and waits for a person.
+    """
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": "recall",
+                "description": (
+                    "Search memory. Combines BM25 text search with a two-hop walk of the "
+                    "entity graph, so it returns facts about things connected to the seed "
+                    "even when those facts contain none of the search words. Always pass "
+                    "seed_entity, naming the event, person or thing the question is about, "
+                    "and read every returned fact before answering, including the ones that "
+                    "look unrelated."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "words to search for"},
+                        "seed_entity": {
+                            "type": "string",
+                            "description": (
+                                "an entity name to walk the graph out from, for example "
+                                f"'{scenario.seed_entity}'"
+                            ),
+                        },
+                    },
+                    "required": ["query"],
+                },
+            },
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "remember",
+                "description": "Store a new durable fact. Requires human approval.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "content": {"type": "string"},
+                        "entities": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "the people, events or things this fact is about",
+                        },
+                    },
+                    "required": ["content", "entities"],
+                },
+            },
+        },
+    ]
 
 
 # --------------------------------------------------------------------------------------
@@ -163,7 +170,8 @@ def load_key() -> str | None:
 
 
 # --------------------------------------------------------------------------------------
-# Process state. One database handle, one conversation, and the writes waiting on a person.
+# Process state. One database handle, one story, one conversation, and the writes waiting
+# on a person.
 # --------------------------------------------------------------------------------------
 
 
@@ -171,7 +179,8 @@ class State:
     def __init__(self) -> None:
         self.lock = threading.RLock()
         self.db: Anatid | None = None
-        self.history: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
+        self.scenario = scenarios.SCENARIOS[scenarios.DEFAULT]
+        self.history: list[dict] = []
         # pending id -> what the loop needs to carry on after the person decides
         self.pending: dict[str, dict] = {}
         self.api_key: str | None = None
@@ -187,6 +196,16 @@ def get_db() -> Anatid:
     return STATE.db
 
 
+def pick_scenario(key: str | None) -> Any:
+    if key is None:
+        return STATE.scenario
+    scenario = scenarios.SCENARIOS.get(key)
+    if scenario is None:
+        known = ", ".join(sorted(scenarios.SCENARIOS))
+        raise HTTPException(400, f"No scenario named {key!r}. The ones that exist are {known}.")
+    return scenario
+
+
 def delete_db_files() -> None:
     for suffix in ("", ".wal", ".shadow", ".tmp"):
         pathlib.Path(str(DB_PATH) + suffix).unlink(missing_ok=True)
@@ -196,26 +215,36 @@ def open_db() -> Anatid:
     return Anatid.open(DB_PATH, tenant=TENANT, embedding_dim=EMBEDDING_DIM)
 
 
-def brief(db: Anatid) -> None:
-    """Write the day-one briefing exactly as the example does."""
-    for src, dst, kind in BRIEFING_EDGES:
-        db.relate(src, dst, rel_kind=kind)
-    for content, entities in BRIEFING_FACTS:
-        db.remember(content, entities=entities, writer=BRIEFING_WRITER, episode=BRIEFING_EPISODE)
-    db.rebuild_fts_index()
-
-
-def reset_db() -> None:
+def reset_db(key: str | None = None) -> None:
+    """Delete the database and write one story into a fresh one."""
     with STATE.lock:
+        scenario = pick_scenario(key)
         if STATE.db is not None:
             STATE.db.close()
             STATE.db = None
         delete_db_files()
         db = open_db()
-        brief(db)
+        # Every row is written at the moment the story says it happened, so as_of reads later
+        # in the run replay a world that really was that way.
+        scenarios.build(db, scenario)
         STATE.db = db
-        STATE.history = [{"role": "system", "content": SYSTEM_PROMPT}]
+        STATE.scenario = scenario
+        STATE.history = [{"role": "system", "content": scenario.system_prompt}]
         STATE.pending.clear()
+
+
+def detect_scenario(db: Anatid) -> Any | None:
+    """Work out which story an existing database holds, by looking for its entities."""
+    names = {
+        row[0]
+        for row in db.connection.execute(
+            "SELECT name FROM entities WHERE tenant_id = ?", [TENANT]
+        ).fetchall()
+    }
+    for scenario in scenarios.SCENARIOS.values():
+        if {name for name, _ in scenario.entities} <= names:
+            return scenario
+    return None
 
 
 # --------------------------------------------------------------------------------------
@@ -281,6 +310,109 @@ def episode_dict(e: anatid.Episode) -> dict:
 
 
 # --------------------------------------------------------------------------------------
+# The three instants the as_of panel offers, and the seeds it reads at each one.
+# --------------------------------------------------------------------------------------
+
+
+def past_instant(scenario: Any) -> _dt.datetime:
+    return scenarios.parse_time(scenario.asof_time)
+
+
+def change_instant(db: Anatid) -> _dt.datetime | None:
+    """Just after the belief changed, read off the SUPERSEDES edge. None until it has."""
+    row = db.connection.execute(
+        "SELECT min(tx_from) FROM edges_supersedes WHERE tenant_id = ?", [TENANT]
+    ).fetchone()
+    if not row or row[0] is None:
+        return None
+    return row[0] + _dt.timedelta(milliseconds=1)
+
+
+def change_label(scenario: Any) -> str:
+    when = scenario.supersede.when
+    return f"after {scenarios.format_day(when)}" if when else "after the change"
+
+
+def asof_seeds(scenario: Any) -> list[str]:
+    """Two entities worth reading at each instant: the story's seed, and what changed.
+
+    The second seed is the entity named in the sentence the supersede closes, so the panel
+    shows the belief before and after alongside the wider view from the seed.
+    """
+    seeds = [scenario.seed_entity]
+    needle = scenario.supersede.match_text.lower()
+    other = next(
+        (n for n, _ in scenario.entities if n != scenario.seed_entity and n.lower() in needle),
+        None,
+    )
+    if other is None:
+        base = {n for n, _ in scenario.entities}
+        other = next(
+            (n for n in scenario.supersede.entities if n in base and n != scenario.seed_entity),
+            None,
+        )
+    if other:
+        seeds.append(other)
+    return seeds
+
+
+def chain_ids(db: Anatid) -> set[int]:
+    """Every memory that takes part in a supersession, old versions and new."""
+    rows = db.connection.execute(
+        "SELECT src, dst FROM edges_supersedes WHERE tenant_id = ?", [TENANT]
+    ).fetchall()
+    return {memory_id for row in rows for memory_id in row}
+
+
+def match_line(memories: list[anatid.Memory], needle: str, chain: set[int]) -> str:
+    """The belief this story turns on, as it stood at one instant.
+
+    Once the change has run, the row in the supersession chain is the exact answer. Before
+    that, it is the oldest row that mentions the phrase, which is the belief that has been
+    standing longest. recall_2hop returns the newest first, so that one is at the end. The
+    phrase passed in is supersede.match_text, which names the belief and nothing else; the
+    scenario's asof_match is a wider word used for highlighting.
+    """
+    for m in memories:
+        if m.memory_id in chain:
+            return m.content
+    for m in reversed(memories):
+        if needle.lower() in m.content.lower():
+            return m.content
+    return "(nothing on record)"
+
+
+def scenario_dict(scenario: Any) -> dict:
+    src, dst, rel_kind = scenario.relations[0]
+    return {
+        "key": scenario.key,
+        "title": scenario.title,
+        "one_liner": scenario.one_liner,
+        "explain": dict(scenario.explain),
+        "question": scenario.question,
+        "followup_question": scenario.followup_question,
+        "write_request": scenario.write_request,
+        "seed_entity": scenario.seed_entity,
+        "match": scenario.asof_match,
+        "example_edge": f"{src} {rel_kind} {dst}",
+        "supersede_episode": scenario.supersede.episode,
+        "supersede_writer": scenario.supersede.writer,
+        "available": [
+            {"key": s.key, "title": s.title, "one_liner": s.one_liner}
+            for s in scenarios.SCENARIOS.values()
+        ],
+        "asof": {
+            "seeds": asof_seeds(scenario),
+            "past_label": scenarios.format_day(scenario.asof_time),
+            "past_sentence": scenario.asof_label_past,
+            "change_label": change_label(scenario),
+            "now_label": "now",
+            "now_sentence": scenario.asof_label_now,
+        },
+    }
+
+
+# --------------------------------------------------------------------------------------
 # Read-only SQL helpers over db.connection. Everything is scoped to the studio tenant.
 # --------------------------------------------------------------------------------------
 
@@ -295,30 +427,6 @@ def about_names(db: Anatid) -> dict[int, list[str]]:
     for memory_id, name in rows:
         out.setdefault(memory_id, []).append(name)
     return out
-
-
-def scalar_ts(db: Anatid, sql: str, params: list) -> _dt.datetime | None:
-    row = db.connection.execute(sql, params).fetchone()
-    return row[0] if row else None
-
-
-def day_one_ts(db: Anatid) -> _dt.datetime | None:
-    """Day one is the instant just after the briefing landed, derived from the rows themselves."""
-    latest = scalar_ts(
-        db,
-        "SELECT max(created_at) FROM memories WHERE tenant_id = ? AND writer = ?",
-        [TENANT, BRIEFING_WRITER],
-    )
-    return None if latest is None else latest + _dt.timedelta(milliseconds=1)
-
-
-def handover_ts(db: Anatid) -> _dt.datetime | None:
-    first = scalar_ts(
-        db,
-        "SELECT min(created_at) FROM memories WHERE tenant_id = ? AND writer = ?",
-        [TENANT, HANDOVER_WRITER],
-    )
-    return None if first is None else first + _dt.timedelta(milliseconds=1)
 
 
 def entity_row(db: Anatid, name: str) -> tuple[int, str] | None:
@@ -408,7 +516,10 @@ def snapshot(db: Anatid) -> dict:
         fts_info = {"available": fts.available, "stale": fts.stale, "indexed_rows": fts.indexed_rows}
     except Exception:
         fts_info = {"available": None, "stale": None, "indexed_rows": None}
+    past = ts(past_instant(STATE.scenario))
+    change = ts(change_instant(db))
     return {
+        "scenario": scenario_dict(STATE.scenario),
         "entities": entities,
         "relates": relates,
         "supersedes": supersedes,
@@ -433,8 +544,11 @@ def snapshot(db: Anatid) -> dict:
                 {"name": "vector", "active": False, "reason": "no embeddings in this demo"},
             ],
         },
-        "day_one_ts": ts(day_one_ts(db)),
-        "handover_ts": ts(handover_ts(db)),
+        "past_ts": past,
+        "change_ts": change,
+        # The older names for the same two instants, kept so nothing that reads them breaks.
+        "day_one_ts": past,
+        "handover_ts": change,
         "now_ts": ts(utcnow()),
         "has_model_key": STATE.client is not None,
         "model": MODEL,
@@ -467,7 +581,8 @@ def reasoning_text(message: Any) -> str:
 
 
 def run_recall_tool(db: Anatid, args: dict) -> str:
-    hits = db.recall(args["query"], seed_entity=args.get("seed_entity"), k=5, on_stale_fts="ignore")
+    hits = db.recall(args["query"], seed_entity=args.get("seed_entity"), k=RECALL_K,
+                     on_stale_fts="ignore")
     if not hits:
         return "No memories matched."
     return json.dumps(
@@ -499,7 +614,7 @@ def call_model(history: list[dict]) -> Any:
         response = STATE.client.chat.completions.create(
             model=MODEL,
             messages=history,
-            tools=TOOLS,
+            tools=tools_for(STATE.scenario),
             extra_body={"reasoning": {"enabled": True}},
         )
     except Exception as exc:  # the key is never part of the message we return
@@ -602,12 +717,21 @@ async def lifespan(app: FastAPI):
         from openai import OpenAI
 
         STATE.client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=STATE.api_key)
+    opened = False
     if DB_PATH.exists():
         try:
-            STATE.db = open_db()
+            db = open_db()
+            found = detect_scenario(db)
+            if found is None:
+                db.close()
+            else:
+                STATE.db = db
+                STATE.scenario = found
+                STATE.history = [{"role": "system", "content": found.system_prompt}]
+                opened = True
         except Exception:
-            reset_db()
-    else:
+            opened = False
+    if not opened:
         reset_db()
     try:
         yield
@@ -621,8 +745,12 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="anatid studio", lifespan=lifespan, docs_url=None, redoc_url=None)
 
 
+class ResetBody(BaseModel):
+    scenario: str | None = None
+
+
 class AskBody(BaseModel):
-    question: str
+    question: str | None = None
 
 
 class ApproveBody(BaseModel):
@@ -644,12 +772,14 @@ def health() -> dict:
         "has_model_key": STATE.client is not None,
         "model": MODEL,
         "db_open": STATE.db is not None,
+        "scenario": STATE.scenario.key,
+        "scenarios": sorted(scenarios.SCENARIOS),
     }
 
 
 @app.post("/api/reset")
-def reset() -> dict:
-    reset_db()
+def reset(body: ResetBody | None = None) -> dict:
+    reset_db(body.scenario if body else None)
     with STATE.lock:
         return snapshot(get_db())
 
@@ -661,18 +791,18 @@ def state() -> dict:
 
 
 @app.post("/api/ask")
-def ask(body: AskBody) -> dict:
+def ask(body: AskBody | None = None) -> dict:
     if STATE.client is None:
         raise HTTPException(409, NO_KEY_MESSAGE)
     if STATE.pending:
         raise HTTPException(409, "A write is waiting for a decision. Approve or decline it first.")
-    question = body.question.strip()
-    if not question:
+    asked = (body.question if body and body.question else STATE.scenario.question).strip()
+    if not asked:
         raise HTTPException(400, "The question is empty.")
     db = get_db()
     mark = len(STATE.history)
-    STATE.history.append({"role": "user", "content": question})
-    steps: list[dict] = [{"type": "user", "text": question}]
+    STATE.history.append({"role": "user", "content": asked})
+    steps: list[dict] = [{"type": "user", "text": asked}]
     try:
         return run_loop(db, steps, MAX_TOOL_ROUNDS)
     except HTTPException:
@@ -723,35 +853,29 @@ def approve(body: ApproveBody) -> dict:
 @app.post("/api/supersede")
 def supersede() -> dict:
     db = get_db()
+    scenario = STATE.scenario
     with STATE.lock:
-        bo_fact = next(
-            (m for m in db.recall_2hop("ingest-service", limit=50)
-             if m.content.startswith("Bo maintains") and m.is_current),
-            None,
-        )
-        if bo_fact is None:
-            raise HTTPException(409, "The handover has already been applied. Reset to run it again.")
-        replacement = db.supersede(
-            bo_fact.memory_id,
-            HANDOVER_CONTENT,
-            entities=HANDOVER_ENTITIES,
-            writer=HANDOVER_WRITER,
-            episode=HANDOVER_EPISODE,
-        )
-        db.relate("Cy", "ingest-service", rel_kind="maintains")
-        db.rebuild_fts_index()
-        old = db.get(bo_fact.memory_id, with_embedding=False)
+        try:
+            old, replacement = scenarios.apply_supersede(db, scenario)
+        except LookupError:
+            raise HTTPException(409, "The change has already been applied. Reset to run it again.")
+        closed = db.get(old.memory_id, with_embedding=False)
         return {
-            "old_id": sid(bo_fact.memory_id),
+            "old_id": sid(old.memory_id),
             "new_id": sid(replacement.memory_id),
-            "old_is_current": old.is_current if old else None,
-            "old_valid_to": ts(old.valid_to) if old else None,
+            "old_content": old.content,
+            "new_content": replacement.content,
+            "old_is_current": closed.is_current if closed else None,
+            "old_valid_to": ts(closed.valid_to) if closed else None,
+            "new_edges": [
+                f"{src} {rel_kind} {dst}" for src, dst, rel_kind in scenario.supersede.extra_relations
+            ],
             "state": snapshot(db),
         }
 
 
 @app.get("/api/recall")
-def recall(seed: str = "", q: str = "", k: int = 10) -> dict:
+def recall(seed: str = "", q: str = "", k: int = RECALL_K) -> dict:
     seed = seed.strip()
     q = q.strip()
     if not seed and not q:
@@ -766,11 +890,14 @@ def recall(seed: str = "", q: str = "", k: int = 10) -> dict:
             raise HTTPException(404, f"No entity named {seed!r}.")
         if seed and walk is None:
             raise HTTPException(404, f"No entity named {seed!r}.")
+        stats = db.stats()
         return {
             "query": q or None,
             "seed": seed or None,
             "arms": list(hits.arms),
             "bm25_stale": hits.bm25_stale,
+            "corpus": stats["memories"],
+            "reachable": len(reached),
             "hits": [
                 {
                     **memory_dict(h.memory, list(h.about)),
@@ -792,32 +919,33 @@ def recall(seed: str = "", q: str = "", k: int = 10) -> dict:
         }
 
 
-def maintainer_line(memories: list[anatid.Memory]) -> str:
-    for m in memories:
-        if "maintains" in m.content:
-            return m.content
-    return "(nothing on record)"
-
-
 @app.get("/api/asof")
 def asof(t: str) -> dict:
     when = parse_ts(t)
     db = get_db()
+    scenario = STATE.scenario
     with STATE.lock:
         names = about_names(db)
+        chain = chain_ids(db)
         view = db.as_of(when)
-        out: dict[str, Any] = {"t": ts(when)}
-        for key, seed in (("ingest_service", "ingest-service"), ("ada", "Ada")):
+        views = []
+        for seed in asof_seeds(scenario):
             try:
                 found = view.recall_2hop(seed, limit=20)
             except NotFoundError:
                 found = []
-            out[key] = {
-                "seed": seed,
-                "memories": [memory_dict(m, names.get(m.memory_id, [])) for m in found],
-                "maintainer": maintainer_line(found),
-            }
-        return out
+            views.append(
+                {
+                    "seed": seed,
+                    "memories": [
+                        dict(memory_dict(m, names.get(m.memory_id, [])),
+                             changed=m.memory_id in chain)
+                        for m in found
+                    ],
+                    "match": match_line(found, scenario.supersede.match_text, chain),
+                }
+            )
+        return {"t": ts(when), "match_text": scenario.asof_match, "views": views}
 
 
 @app.get("/api/provenance/{memory_id}")
