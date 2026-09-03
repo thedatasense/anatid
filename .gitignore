@@ -45,3 +45,4 @@ spike/extension
 examples/*.anatid
 examples/*.anatid.*
 .coverage
+.venv-studio/

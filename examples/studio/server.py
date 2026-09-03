@@ -28,11 +28,23 @@ import uuid
 from contextlib import asynccontextmanager
 from typing import Any
 
-import anatid
-from anatid import Anatid, NotFoundError, utcnow
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, JSONResponse
-from pydantic import BaseModel
+try:
+    import anatid
+    from anatid import Anatid, NotFoundError, utcnow
+    from fastapi import FastAPI, HTTPException
+    from fastapi.responses import FileResponse, JSONResponse
+    from pydantic import BaseModel
+except ImportError as exc:  # a plain, actionable message instead of a traceback
+    import sys
+
+    sys.exit(
+        f"anatid studio needs its dependencies ({exc.name} is missing).\n"
+        "From the repository root, run:\n"
+        "    uv venv .venv-studio && uv pip install --python .venv-studio/bin/python -r examples/studio/requirements.txt\n"
+        "    .venv-studio/bin/python examples/studio/server.py\n"
+        "or, with plain pip:\n"
+        "    python -m venv .venv-studio && .venv-studio/bin/pip install -r examples/studio/requirements.txt"
+    )
 
 HERE = pathlib.Path(__file__).resolve().parent
 DB_PATH = HERE / "studio.anatid"
