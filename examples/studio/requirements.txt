@@ -1,0 +1,4 @@
+anatid>=0.1.1
+fastapi
+uvicorn[standard]
+openai

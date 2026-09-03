@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>anatid studio</title>
+<style>
+  :root {
+    --bg: #f6f6f4;
+    --panel: #ffffff;
+    --ink: #1c1c1c;
+    --muted: #6b6b6b;
+    --line: #d9d9d4;
+    --line-soft: #ebebe6;
+    --accent: #2457a6;
+    --accent-soft: #dce6f6;
+    --warn: #8a5a00;
+    --warn-soft: #fff3d6;
+    --bad: #9b2c2c;
+    --bad-soft: #fbe3e3;
+    --ok: #256b3a;
+    --ok-soft: #dff2e4;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  a { color: var(--accent); }
+  code, pre { font-family: var(--mono); font-size: 12.5px; }
+  pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+  button {
+    font: inherit;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button:disabled { color: var(--muted); cursor: default; border-color: var(--line-soft); }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button.primary:disabled { background: #a9b8d3; border-color: #a9b8d3; color: #fff; }
+  input[type=text] {
+    font: inherit; padding: 5px 8px; border: 1px solid var(--line); border-radius: 4px; width: 100%;
+  }
+  input[type=text]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    padding: 12px 20px;
+  }
+  header h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
+  header p.lede { margin: 0 0 8px; color: var(--muted); max-width: 90ch; }
+  .status {
+    display: flex; flex-wrap: wrap; gap: 6px 14px;
+    font-size: 12.5px; color: var(--muted);
+  }
+  .status span b { color: var(--ink); font-weight: 500; }
+  .status .on { color: var(--ok); }
+  .status .off { color: var(--warn); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px 20px 40px;
+    align-items: start;
+  }
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .step {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .step.done { border-left: 3px solid var(--ok); }
+  .step h2 { font-size: 14px; margin: 0 0 6px; font-weight: 600; }
+  .step h2 .n {
+    display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center;
+    border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-size: 12px; margin-right: 6px;
+  }
+  .step p { margin: 0 0 8px; color: #333; }
+  .step .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+  .step .result { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+  .step .result.bad { color: var(--bad); }
+
+  .main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px 14px;
+    min-width: 0;
+  }
+  .panel h2 { font-size: 14px; margin: 0 0 6px; font-weight: 600; }
+  .panel .hint { color: var(--muted); margin: 0 0 8px; }
+  .panel .empty { color: var(--muted); font-style: normal; }
+  .panel:target { outline: 2px solid var(--accent); }
+
+  /* graph */
+  #graph { width: 100%; height: auto; max-height: 480px; display: block; background: #fcfcfb; border: 1px solid var(--line-soft); border-radius: 4px; }
+  .link { stroke: #9a9a94; stroke-width: 1.5; transition: stroke .3s, stroke-width .3s, opacity .3s; }
+  .link.about { stroke: #cfcfc8; stroke-width: 1; }
+  .link.supersedes { stroke: #b08a3e; stroke-dasharray: 2 3; }
+  .link.closed { stroke-dasharray: 5 4; }
+  .link.lit { stroke: var(--accent); stroke-width: 3; }
+  .node circle { fill: #ffffff; stroke: #4a4a46; stroke-width: 1.5; transition: fill .3s, stroke .3s, stroke-width .3s, opacity .3s; }
+  .node rect { fill: #4a4a46; stroke: #4a4a46; stroke-width: 1.5; transition: fill .3s, stroke .3s, opacity .3s; }
+  .node.hollow rect { fill: #ffffff; }
+  .node text { font-size: 11.5px; fill: var(--ink); pointer-events: none; }
+  .node.lit circle { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 3; }
+  .node.seed circle { fill: var(--accent); stroke: var(--accent); }
+  .node.seed text { font-weight: 600; }
+  .node.hit rect { fill: var(--accent); stroke: var(--accent); }
+  .node.hit.hollow rect { fill: #fff; stroke: var(--accent); }
+  .link-label { font-size: 10.5px; fill: var(--muted); pointer-events: none; }
+  svg.walking .node:not(.lit):not(.hit):not(.seed) { opacity: .45; }
+  svg.walking .link:not(.lit) { opacity: .35; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .legend svg { vertical-align: middle; margin-right: 4px; }
+  .walk-trace { margin: 6px 0 0; font-size: 12.5px; }
+
+  /* tables */
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  th { font-weight: 600; color: var(--muted); }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .table-wrap { overflow-x: auto; }
+  tr.answer-row td { background: var(--accent-soft); }
+  .tag { display: inline-block; padding: 0 6px; border-radius: 3px; font-size: 11.5px; background: var(--line-soft); color: var(--ink); }
+  .tag.on { background: var(--accent-soft); color: var(--accent); }
+  .tag.closed { background: var(--warn-soft); color: var(--warn); }
+  .tag.current { background: var(--ok-soft); color: var(--ok); }
+
+  /* model transcript */
+  .transcript { display: flex; flex-direction: column; gap: 8px; }
+  .msg { border-left: 3px solid var(--line); padding: 4px 10px; }
+  .msg .who { display: block; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  .msg p { margin: 2px 0 0; }
+  .msg.user { border-left-color: #4a4a46; }
+  .msg.answer { border-left-color: var(--ok); }
+  .msg.call { border-left-color: var(--accent); }
+  .msg.call code { display: block; margin-top: 2px; }
+  .msg.error { border-left-color: var(--bad); background: var(--bad-soft); }
+  .msg.note { border-left-color: var(--warn); background: var(--warn-soft); }
+  details.msg summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
+  details.msg pre { margin-top: 6px; background: #f7f7f5; padding: 8px; border-radius: 4px; max-height: 320px; overflow: auto; }
+  .ask-row { display: flex; gap: 6px; margin-top: 10px; }
+  .ask-row input { flex: 1; }
+  .approval {
+    border: 1px solid var(--warn); background: var(--warn-soft); border-radius: 6px; padding: 10px 12px; margin: 8px 0;
+  }
+  .approval h3 { margin: 0 0 4px; font-size: 13.5px; }
+  .approval .content { font-family: var(--mono); background: #fff; padding: 6px 8px; border-radius: 4px; margin: 6px 0; }
+  .approval .actions { display: flex; gap: 6px; margin-top: 6px; }
+  .busy { color: var(--muted); font-size: 12.5px; }
+
+  /* as_of */
+  .timeline { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+  .timeline .t { font-size: 12px; color: var(--muted); }
+  .asof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 700px) { .asof-grid { grid-template-columns: 1fr; } }
+  .asof-grid h3 { font-size: 13px; margin: 0 0 4px; }
+  .asof-grid ul { margin: 0; padding-left: 18px; }
+  .asof-grid li.maint { background: var(--accent-soft); }
+  .asof-grid li .meta { color: var(--muted); font-size: 11.5px; }
+
+  /* provenance */
+  .chain { list-style: none; margin: 0; padding: 0; }
+  .chain li { border-left: 2px solid var(--line); padding: 6px 12px 10px; position: relative; }
+  .chain li::before {
+    content: ""; position: absolute; left: -6px; top: 12px; width: 10px; height: 10px; border-radius: 50%;
+    background: #fff; border: 2px solid var(--muted);
+  }
+  .chain li.current::before { background: var(--ok); border-color: var(--ok); }
+  .chain .content { font-weight: 500; }
+  .chain .meta { color: var(--muted); font-size: 12px; }
+  .chain .episode { margin-top: 4px; padding: 6px 8px; background: #f7f7f5; border-radius: 4px; font-size: 12.5px; }
+  .chain .episode .lbl { color: var(--muted); }
+  .prov-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+  select { font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 4px; max-width: 100%; }
+  .sr { position: absolute; left: -9999px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>anatid studio</h1>
+  <p class="lede">A guided run of examples/glm_openrouter_agent.py. The left column runs each step. The panels on the right show what the database did.</p>
+  <div class="status" id="status" aria-live="polite">
+    <span>loading</span>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="steps" aria-label="Steps">
+
+    <section class="step" id="step1">
+      <h2><span class="n">1</span>Brief the assistant</h2>
+      <p>A graph memory stores three things: entities such as people, projects and services; edges between entities, for example Ada leads Project Kestrel; and facts, each attached to the entities it is about. This step deletes the database and writes the day-one briefing: four edges and five facts, all with writer onboarding and the episode Team onboarding doc, 2026-03-01.</p>
+      <div class="actions"><button class="primary" id="btn-reset">Reset and brief</button></div>
+      <p class="result" id="res1"></p>
+    </section>
+
+    <section class="step" id="step2">
+      <h2><span class="n">2</span>Ask the two-hop question</h2>
+      <p>The question is: Ada's project is paging. Who should I wake up, and why? No stored sentence contains both Ada and paging, and Bo is not named in the question. Text search only finds what shares words with the query, and a vector store only finds what is similar to it; neither follows a chain of facts. The graph arm walks Ada to Project Kestrel to ingest-service to Bo and returns every fact attached to the entities it reaches. The walk is drawn in the graph panel as it runs.</p>
+      <div class="actions"><button class="primary" id="btn-ask1">Ask the model</button></div>
+      <p class="result" id="res2"></p>
+    </section>
+
+    <section class="step" id="step3">
+      <h2><span class="n">3</span>The world changes</h2>
+      <p>Bo hands ingest-service to Cy. supersede writes the new fact, closes the old one by setting its valid_to, and records a SUPERSEDES edge between the two versions. Nothing is deleted. Ask the same question again and the answer is Cy, because recall returns only facts that are current.</p>
+      <div class="actions">
+        <button class="primary" id="btn-supersede">Run the handover</button>
+        <button id="btn-ask2" disabled>Ask again</button>
+      </div>
+      <p class="result" id="res3"></p>
+    </section>
+
+    <section class="step" id="step4">
+      <h2><span class="n">4</span>The model proposes a write</h2>
+      <p>The user says: Remember this: the ingest-service must not be deployed during the postgres-primary vacuum window. The model calls the remember tool. The server does not write; it parks the call and waits for a decision. Approve to store the fact with writer glm-5.3-flash, or decline to send the model a refusal and let it finish its answer.</p>
+      <div class="actions"><button class="primary" id="btn-ask3">Send the request</button></div>
+      <p class="result" id="res4"></p>
+    </section>
+
+    <section class="step" id="step5">
+      <h2><span class="n">5</span>Time travel</h2>
+      <p>Every row carries two intervals: valid time, when the fact was believed true, and transaction time, when the database knew about it. as_of(t) filters on both, so a read at day one still returns Bo as the maintainer even though that row is closed now. This step needs no model. Pick a point on the timeline to re-run recall_2hop for ingest-service and for Ada.</p>
+      <div class="actions">
+        <button class="primary" id="btn-asof-day1">Day one</button>
+        <button id="btn-asof-handover" disabled>After handover</button>
+        <button id="btn-asof-now">Now</button>
+      </div>
+      <p class="result" id="res5"></p>
+    </section>
+
+    <section class="step" id="step6">
+      <h2><span class="n">6</span>Provenance</h2>
+      <p>provenance(id) walks the SUPERSEDES chain from a memory back to its first version and collects the episodes and writers along the way. For the current maintainer fact that is two versions, two episodes and two writers. This is how an answer is traced back to the handover note it came from. This step needs no model.</p>
+      <div class="actions"><button class="primary" id="btn-prov">Trace the maintainer fact</button></div>
+      <p class="result" id="res6"></p>
+    </section>
+
+  </nav>
+
+  <main class="main">
+
+    <section class="panel" id="panel-graph">
+      <h2>Graph</h2>
+      <p class="hint">Circles are entities, squares are facts attached to the entities they are about. Lines between entities are RELATES_TO edges with their kind. A hollow square is a fact that has been superseded. Drag nodes to rearrange.</p>
+      <svg id="graph" viewBox="0 0 800 460" role="img" aria-label="Entity graph"></svg>
+      <div class="legend">
+        <span><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#fff" stroke="#4a4a46" stroke-width="1.5"/></svg>entity</span>
+        <span><svg width="14" height="14"><rect x="2" y="2" width="10" height="10" fill="#4a4a46"/></svg>current fact</span>
+        <span><svg width="14" height="14"><rect x="2" y="2" width="10" height="10" fill="#fff" stroke="#4a4a46" stroke-width="1.5"/></svg>superseded fact</span>
+        <span><svg width="26" height="14"><line x1="1" y1="7" x2="25" y2="7" stroke="#9a9a94" stroke-width="1.5"/></svg>RELATES_TO</span>
+        <span><svg width="26" height="14"><line x1="1" y1="7" x2="25" y2="7" stroke="#cfcfc8" stroke-width="1"/></svg>ABOUT</span>
+        <span><svg width="26" height="14"><line x1="1" y1="7" x2="25" y2="7" stroke="#b08a3e" stroke-width="1.5" stroke-dasharray="2 3"/></svg>SUPERSEDES</span>
+        <span><svg width="26" height="14"><line x1="1" y1="7" x2="25" y2="7" stroke="#2457a6" stroke-width="3"/></svg>2-hop walk</span>
+      </div>
+      <p class="walk-trace" id="walk-trace"></p>
+    </section>
+
+    <section class="panel" id="panel-arms">
+      <h2>Recall arms</h2>
+      <p class="hint">recall fuses up to three arms with reciprocal rank fusion. The text arm is BM25 over the query words. The graph arm is a two-hop walk from the seed entity, newest fact first. The vector arm is inactive here because this demo stores no embeddings. A blank cell means that arm did not find the row.</p>
+      <div id="arms"><p class="empty">Run step 2 to fill this panel.</p></div>
+    </section>
+
+    <section class="panel" id="panel-model">
+      <h2>Model</h2>
+      <p class="hint">GLM 5.3 Flash via OpenRouter, with two tools: recall (runs at once) and remember (waits for a person). The model's reasoning_details are passed back unmodified on the next request. Tool results and reasoning are collapsed; open them to read the raw text.</p>
+      <div id="transcript" class="transcript"><p class="empty">Run step 2 to start the conversation.</p></div>
+      <div id="approval"></div>
+      <div class="ask-row">
+        <label class="sr" for="ask-input">Ask a question</label>
+        <input type="text" id="ask-input" placeholder="Ask your own question about the team" value="">
+        <button id="btn-ask-free">Ask</button>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-asof">
+      <h2>as_of</h2>
+      <p class="hint">Each button re-runs recall_2hop for ingest-service and for Ada as the database saw the world at that instant. The row that names the maintainer is highlighted.</p>
+      <div class="timeline">
+        <button id="tl-day1">Day one</button>
+        <button id="tl-handover" disabled>After handover</button>
+        <button id="tl-now">Now</button>
+        <span class="t" id="asof-t"></span>
+      </div>
+      <div id="asof"><p class="empty">Run step 5 to fill this panel.</p></div>
+    </section>
+
+    <section class="panel" id="panel-prov">
+      <h2>Provenance</h2>
+      <p class="hint">Versions are listed newest first. Under each version is the episode it came from, which is the raw text the writer had at the time.</p>
+      <div class="prov-row">
+        <label for="prov-select">Memory</label>
+        <select id="prov-select"></select>
+        <button id="btn-prov-run">Trace</button>
+      </div>
+      <div id="prov"><p class="empty">Run step 6 to fill this panel.</p></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var QUESTION_1 = "Ada's project is paging. Who should I wake up, and why?";
+  var QUESTION_2 = "Same question again. Who do I page for Ada's project?";
+  var QUESTION_3 = "Remember this: the ingest-service must not be deployed during the postgres-primary vacuum window.";
+
+  var state = null;          // last /api/state snapshot
+  var pending = null;        // pending write {id, content, entities}
+  var busy = false;
+
+  // ---------------------------------------------------------------- helpers
+
+  function $(id) { return document.getElementById(id); }
+
+  // Model answers arrive as markdown; the studio shows them as plain text, so the emphasis markers go.
+function plainText(t) { return String(t || '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/__(.+?)__/g, '$1').replace(/(^|\s)\*(\S[^*]*?)\*(?=\s|$|[.,;:])/g, '$1$2'); }
+function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function fmtTs(s) {
+    if (!s) return 'open';
+    return s.replace('T', ' ').slice(0, 23) + ' UTC';
+  }
+
+  function shortId(id) { return id ? String(id).slice(-6) : ''; }
+
+  async function api(path, body) {
+    var opts = body === undefined ? {} : {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    };
+    if (body === null) opts = { method: 'POST' };
+    var r = await fetch(path, opts);
+    var data = null;
+    try { data = await r.json(); } catch (e) { data = null; }
+    if (!r.ok) {
+      var err = new Error((data && data.detail) || ('Request failed with HTTP ' + r.status));
+      err.status = r.status;
+      throw err;
+    }
+    return data;
+  }
+
+  function setResult(id, text, bad) {
+    var el = $(id);
+    el.textContent = text || '';
+    el.className = 'result' + (bad ? ' bad' : '');
+  }
+
+  function markDone(stepId) { $(stepId).classList.add('done'); }
+
+  function setBusy(on) {
+    busy = on;
+    var buttons = document.querySelectorAll('button');
+    for (var i = 0; i < buttons.length; i++) {
+      var b = buttons[i];
+      if (on) { b.dataset.wasDisabled = b.disabled ? '1' : ''; b.disabled = true; }
+      else if (b.dataset.wasDisabled !== undefined) { b.disabled = b.dataset.wasDisabled === '1'; delete b.dataset.wasDisabled; }
+    }
+    if (!on) syncButtons();
+  }
+
+  // Buttons whose availability follows the database state, not the busy flag.
+  function syncButtons() {
+    var handover = !!(state && state.handover_ts);
+    $('btn-asof-handover').disabled = !handover;
+    $('tl-handover').disabled = !handover;
+    $('btn-ask2').disabled = !handover;
+  }
+
+  function reveal(panelId) {
+    var el = $(panelId);
+    if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ---------------------------------------------------------------- status strip
+
+  function renderStatus(s) {
+    var st = s.stats;
+    var key = s.has_model_key
+      ? '<span class="on">model key: configured (' + esc(s.model) + ')</span>'
+      : '<span class="off">model key: not configured</span>';
+    var arms = st.arms.map(function (a) {
+      return '<span class="' + (a.active ? 'on' : 'off') + '">' + esc(a.name) + ': ' +
+        (a.active ? 'active' : 'inactive') + ' (' + esc(a.reason) + ')</span>';
+    }).join('');
+    var pendingNote = s.pending_write ? '<span class="off">a write is waiting for a decision</span>' : '';
+    $('status').innerHTML =
+      '<span><b>anatid ' + esc(st.anatid_version) + '</b></span>' +
+      '<span>schema ' + esc(st.schema_version) + '</span>' +
+      '<span>tenant ' + esc(st.tenant) + ', embedding_dim ' + esc(st.embedding_dim) + ', no embeddings stored</span>' +
+      '<span><b>' + st.memories + '</b> memories, <b>' + st.current_memories + '</b> current, <b>' + st.entities + '</b> entities, ' +
+      st.edges_relates + ' RELATES_TO edges</span>' +
+      key + arms + pendingNote;
+  }
+
+  // ---------------------------------------------------------------- graph
+
+  var graph = { nodes: [], links: [], byId: new Map(), sim: null, els: {} };
+  var svg = $('graph');
+  var NS = 'http://www.w3.org/2000/svg';
+  var W = 800, H = 460;
+
+  // d3's forceLink replaces link.source/target strings with node objects; read the id either way.
+  function linkEnd(end) { return end && typeof end === 'object' ? end.id : end; }
+
+  function el(tag, attrs) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function buildGraph(s) {
+    var prev = graph.byId;
+    var nodes = [], links = [], byId = new Map();
+    s.entities.forEach(function (e) {
+      var id = 'e:' + e.id;
+      var n = prev.get(id) || { x: W / 2 + (Math.random() - 0.5) * 200, y: H / 2 + (Math.random() - 0.5) * 200 };
+      n.id = id; n.kind = 'entity'; n.name = e.name; n.raw = e;
+      nodes.push(n); byId.set(id, n);
+    });
+    s.memories.forEach(function (m) {
+      var id = 'm:' + m.id;
+      var n = prev.get(id) || { x: W / 2 + (Math.random() - 0.5) * 200, y: H / 2 + (Math.random() - 0.5) * 200 };
+      n.id = id; n.kind = 'memory'; n.name = m.content; n.raw = m; n.current = m.is_current;
+      nodes.push(n); byId.set(id, n);
+    });
+    var entityByName = new Map(s.entities.map(function (e) { return [e.name, 'e:' + e.id]; }));
+    s.relates.forEach(function (r) {
+      links.push({ id: 'r:' + r.id, source: 'e:' + r.src, target: 'e:' + r.dst, kind: r.kind, type: 'relates', closed: !!r.valid_to });
+    });
+    s.memories.forEach(function (m) {
+      m.about.forEach(function (name) {
+        var t = entityByName.get(name);
+        if (t) links.push({ id: 'a:' + m.id + ':' + t, source: 'm:' + m.id, target: t, type: 'about' });
+      });
+    });
+    (s.supersedes || []).forEach(function (x) {
+      links.push({ id: 's:' + x.new_id, source: 'm:' + x.new_id, target: 'm:' + x.old_id, type: 'supersedes' });
+    });
+    graph.nodes = nodes; graph.links = links; graph.byId = byId;
+  }
+
+  function drawGraph() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var gLinks = el('g', { 'class': 'links' });
+    var gLabels = el('g', { 'class': 'labels' });
+    var gNodes = el('g', { 'class': 'nodes' });
+    svg.appendChild(gLinks); svg.appendChild(gLabels); svg.appendChild(gNodes);
+    var linkEls = new Map(), labelEls = new Map(), nodeEls = new Map();
+
+    graph.links.forEach(function (l) {
+      var line = el('line', { 'class': 'link ' + l.type + (l.closed ? ' closed' : ''), 'data-id': l.id });
+      gLinks.appendChild(line); linkEls.set(l.id, line);
+      if (l.type === 'relates') {
+        var t = el('text', { 'class': 'link-label', 'text-anchor': 'middle' });
+        t.textContent = l.kind || 'relates';
+        gLabels.appendChild(t); labelEls.set(l.id, t);
+      }
+    });
+
+    graph.nodes.forEach(function (n) {
+      var g = el('g', { 'class': 'node' + (n.kind === 'memory' && !n.current ? ' hollow' : ''), 'data-id': n.id, 'tabindex': '-1' });
+      if (n.kind === 'entity') {
+        g.appendChild(el('circle', { r: 16 }));
+        var t = el('text', { 'text-anchor': 'middle', dy: 30 });
+        t.textContent = n.name;
+        g.appendChild(t);
+        var title = el('title', {}); title.textContent = 'entity ' + n.name; g.appendChild(title);
+      } else {
+        g.appendChild(el('rect', { x: -6, y: -6, width: 12, height: 12 }));
+        var tt = el('title', {});
+        tt.textContent = (n.current ? 'fact: ' : 'superseded fact: ') + n.name + ' (writer ' + (n.raw.writer || '?') + ')';
+        g.appendChild(tt);
+      }
+      gNodes.appendChild(g); nodeEls.set(n.id, g);
+    });
+    graph.els = { linkEls: linkEls, labelEls: labelEls, nodeEls: nodeEls };
+  }
+
+  function positionAll() {
+    graph.links.forEach(function (l) {
+      var s = typeof l.source === 'object' ? l.source : graph.byId.get(l.source);
+      var t = typeof l.target === 'object' ? l.target : graph.byId.get(l.target);
+      if (!s || !t) return;
+      var line = graph.els.linkEls.get(l.id);
+      line.setAttribute('x1', s.x); line.setAttribute('y1', s.y);
+      line.setAttribute('x2', t.x); line.setAttribute('y2', t.y);
+      var lab = graph.els.labelEls.get(l.id);
+      if (lab) { lab.setAttribute('x', (s.x + t.x) / 2); lab.setAttribute('y', (s.y + t.y) / 2 - 4); }
+    });
+    graph.nodes.forEach(function (n) {
+      graph.els.nodeEls.get(n.id).setAttribute('transform', 'translate(' + n.x + ',' + n.y + ')');
+    });
+  }
+
+  function layoutStatic() {
+    // Used when d3 did not load (offline). Entities on an ellipse, facts beside their entities.
+    var ents = graph.nodes.filter(function (n) { return n.kind === 'entity'; });
+    var cx = W / 2, cy = H / 2 - 20, rx = W / 2 - 110, ry = H / 2 - 80;
+    ents.forEach(function (n, i) {
+      var a = (i / ents.length) * Math.PI * 2 - Math.PI / 2;
+      n.x = cx + rx * Math.cos(a); n.y = cy + ry * Math.sin(a);
+    });
+    var perEntity = new Map();
+    graph.nodes.filter(function (n) { return n.kind === 'memory'; }).forEach(function (n) {
+      var about = graph.links.filter(function (l) { return l.type === 'about' && linkEnd(l.source) === n.id; })
+        .map(function (l) { return graph.byId.get(linkEnd(l.target)); }).filter(Boolean);
+      if (!about.length) { n.x = cx; n.y = cy; return; }
+      var ax = 0, ay = 0; about.forEach(function (e) { ax += e.x; ay += e.y; });
+      ax /= about.length; ay /= about.length;
+      var k = perEntity.get(about[0].id) || 0; perEntity.set(about[0].id, k + 1);
+      var ang = k * 1.1;
+      n.x = ax + (ax - cx) * 0.25 + Math.cos(ang) * 22;
+      n.y = ay + (ay - cy) * 0.25 + Math.sin(ang) * 22;
+    });
+    positionAll();
+  }
+
+  function layoutForce() {
+    if (graph.sim) graph.sim.stop();
+    var sim = d3.forceSimulation(graph.nodes)
+      .force('link', d3.forceLink(graph.links).id(function (d) { return d.id; })
+        .distance(function (l) { return l.type === 'relates' ? 180 : (l.type === 'about' ? 60 : 80); })
+        .strength(function (l) { return l.type === 'about' ? 0.6 : 0.9; }))
+      .force('charge', d3.forceManyBody().strength(function (d) { return d.kind === 'entity' ? -700 : -160; }))
+      .force('center', d3.forceCenter(W / 2, H / 2))
+      .force('collide', d3.forceCollide(function (d) { return d.kind === 'entity' ? 36 : 14; }))
+      .force('x', d3.forceX(W / 2).strength(0.03))
+      .force('y', d3.forceY(H / 2).strength(0.05))
+      .on('tick', positionAll);
+    graph.sim = sim;
+    // Settle the layout synchronously so the graph is drawn at once, even in a tab that is
+    // not visible (requestAnimationFrame does not run there). The simulation then idles
+    // and only restarts while a node is being dragged.
+    sim.stop();
+    for (var i = 0; i < 300; i++) sim.tick();
+    sim.alpha(0);
+    positionAll();
+
+    var drag = d3.drag()
+      .on('start', function (event, d) { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', function (event, d) { d.fx = event.x; d.fy = event.y; })
+      .on('end', function (event, d) { if (!event.active) sim.alphaTarget(0); d.fx = null; d.fy = null; });
+    graph.nodes.forEach(function (n) {
+      d3.select(graph.els.nodeEls.get(n.id)).datum(n).call(drag);
+    });
+  }
+
+  function renderGraph(s) {
+    clearWalk();
+    buildGraph(s);
+    drawGraph();
+    if (typeof d3 !== 'undefined') layoutForce();
+    else {
+      layoutStatic();
+      $('walk-trace').textContent = 'd3 did not load, so the graph uses a fixed layout. Everything else works offline.';
+    }
+  }
+
+  var walkTimers = [];
+
+  function clearWalk() {
+    walkTimers.forEach(clearTimeout); walkTimers = [];
+    svg.classList.remove('walking');
+    svg.querySelectorAll('.lit, .seed, .hit').forEach(function (e) { e.classList.remove('lit', 'seed', 'hit'); });
+  }
+
+  // Animate the 2-hop walk: seed, then hop 1 edges and entities, then hop 2, then the facts reached.
+  function animateWalk(frontier, hitIds) {
+    clearWalk();
+    if (!frontier) return;
+    svg.classList.add('walking');
+    var seedEl = graph.els.nodeEls.get('e:' + frontier.seed.id);
+    if (seedEl) seedEl.classList.add('seed', 'lit');
+    var step = 700;
+    frontier.hops.forEach(function (level, hop) {
+      if (hop === 0) return;
+      walkTimers.push(setTimeout(function () {
+        frontier.edges.filter(function (e) { return e.hop === hop; }).forEach(function (e) {
+          var le = graph.els.linkEls.get('r:' + e.id); if (le) le.classList.add('lit');
+        });
+        level.forEach(function (ent) {
+          var ne = graph.els.nodeEls.get('e:' + ent.id); if (ne) ne.classList.add('lit');
+        });
+      }, step * hop));
+    });
+    walkTimers.push(setTimeout(function () {
+      (hitIds || []).forEach(function (id) {
+        var ne = graph.els.nodeEls.get('m:' + id); if (ne) ne.classList.add('hit');
+        graph.links.forEach(function (l) {
+          if (l.type === 'about' && linkEnd(l.source) === 'm:' + id) {
+            var le = graph.els.linkEls.get(l.id); if (le) le.classList.add('lit');
+          }
+        });
+      });
+    }, step * frontier.hops.length));
+
+    var parts = [];
+    frontier.hops.forEach(function (level, hop) {
+      if (hop === 0) return;
+      parts.push('hop ' + hop + ': ' + (level.length ? level.map(function (e) { return e.name; }).join(', ') : 'nothing new'));
+    });
+    $('walk-trace').textContent = 'Walk from ' + frontier.seed.name + '. ' + parts.join('. ') + '. Facts attached to any entity reached are returned by the graph arm.';
+  }
+
+  // ---------------------------------------------------------------- recall arms table
+
+  function renderArms(r) {
+    var head = '<p class="hint">query: ' + (r.query ? '<code>' + esc(r.query) + '</code>' : 'none') +
+      ', seed_entity: ' + (r.seed ? '<code>' + esc(r.seed) + '</code>' : 'none') +
+      ', arms that ran: ' + (r.arms.length ? r.arms.map(esc).join(', ') : 'none') + '.</p>';
+    if (!r.hits.length) { $('arms').innerHTML = head + '<p class="empty">No memories matched.</p>'; return; }
+    var rows = r.hits.map(function (h) {
+      var isMaint = /maintains/.test(h.content);
+      return '<tr' + (isMaint ? ' class="answer-row"' : '') + '>' +
+        '<td class="num">' + h.rank + '</td>' +
+        '<td>' + esc(h.content) + (h.is_current ? '' : ' <span class="tag closed">superseded</span>') + '</td>' +
+        '<td class="num">' + (h.text_rank == null ? '' : h.text_rank) + '</td>' +
+        '<td class="num">' + (h.graph_rank == null ? '' : h.graph_rank) + '</td>' +
+        '<td class="num">' + (h.vector_rank == null ? '' : h.vector_rank) + '</td>' +
+        '<td class="num">' + h.score.toFixed(4) + '</td>' +
+        '<td>' + h.about.map(function (a) { return '<span class="tag">' + esc(a) + '</span>'; }).join(' ') + '</td>' +
+        '</tr>';
+    }).join('');
+    $('arms').innerHTML = head + '<div class="table-wrap"><table>' +
+      '<thead><tr><th>rank</th><th>memory</th><th>text</th><th>graph</th><th>vector</th><th>fused score</th><th>about</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody></table></div>' +
+      '<p class="hint">The highlighted row is the fact that names the maintainer. Its about column shows why the walk reached it.</p>';
+  }
+
+  // ---------------------------------------------------------------- model transcript
+
+  function transcriptClearIfEmpty() {
+    var t = $('transcript');
+    if (t.querySelector('.empty')) t.innerHTML = '';
+  }
+
+  function addMsg(html) {
+    transcriptClearIfEmpty();
+    var wrap = document.createElement('div');
+    wrap.innerHTML = html;
+    var node = wrap.firstElementChild;
+    $('transcript').appendChild(node);
+    return node;
+  }
+
+  function renderSteps(steps) {
+    steps.forEach(function (st) {
+      if (st.type === 'user') {
+        addMsg('<div class="msg user"><span class="who">user</span><p>' + esc(st.text) + '</p></div>');
+      } else if (st.type === 'reasoning') {
+        addMsg('<details class="msg reasoning"><summary>reasoning (' + st.text.length + ' characters)</summary><pre>' + esc(st.text) + '</pre></details>');
+      } else if (st.type === 'tool_call') {
+        addMsg('<div class="msg call"><span class="who">tool call</span><code>' + esc(st.name) + '(' + esc(JSON.stringify(st.arguments)) + ')</code></div>');
+      } else if (st.type === 'tool_result') {
+        var body = st.content, label = st.name + ' result';
+        try {
+          var parsed = JSON.parse(st.content);
+          body = JSON.stringify(parsed, null, 2);
+          if (Array.isArray(parsed)) label += ': ' + parsed.length + ' hits';
+        } catch (e) { label += ': ' + st.content.slice(0, 80); }
+        if (st.approved === true) label = 'remember result: approved, ' + st.content;
+        if (st.approved === false) label = 'remember result: declined';
+        addMsg('<details class="msg result"><summary>' + esc(label) + '</summary><pre>' + esc(body) + '</pre></details>');
+      } else if (st.type === 'answer') {
+        addMsg('<div class="msg answer"><span class="who">assistant</span><p>' + esc(plainText(st.text)) + '</p></div>');
+      }
+    });
+  }
+
+  function renderApproval(p) {
+    pending = p;
+    var box = $('approval');
+    if (!p) { box.innerHTML = ''; return; }
+    box.innerHTML = '<div class="approval" role="group" aria-label="Approval needed">' +
+      '<h3>The model wants to write to memory</h3>' +
+      '<div class="content">' + esc(p.content) + '</div>' +
+      '<p>about: ' + p.entities.map(function (e) { return '<span class="tag">' + esc(e) + '</span>'; }).join(' ') +
+      '. If approved it is stored with writer glm-5.3-flash and the fts index is rebuilt. If declined the model is told the write was refused.</p>' +
+      '<div class="actions"><button class="primary" id="btn-approve">Approve</button><button id="btn-decline">Decline</button></div></div>';
+    $('btn-approve').addEventListener('click', function () { decide(true); });
+    $('btn-decline').addEventListener('click', function () { decide(false); });
+    reveal('panel-model');
+  }
+
+  function firstRecallCall(steps) {
+    for (var i = 0; i < steps.length; i++) {
+      if (steps[i].type === 'tool_call' && steps[i].name === 'recall') return steps[i].arguments;
+    }
+    return null;
+  }
+
+  async function showArmsFor(args) {
+    if (!args) return;
+    var qs = new URLSearchParams();
+    if (args.query) qs.set('q', args.query);
+    if (args.seed_entity) qs.set('seed', args.seed_entity);
+    try {
+      var r = await api('/api/recall?' + qs.toString());
+      renderArms(r);
+      animateWalk(r.frontier, r.hits.map(function (h) { return h.id; }));
+    } catch (e) {
+      $('arms').innerHTML = '<p class="empty">' + esc(e.message) + '</p>';
+    }
+  }
+
+  async function askModel(question, resultId) {
+    if (busy) return;
+    setBusy(true);
+    var spinner = addMsg('<p class="busy">calling the model</p>');
+    try {
+      var r = await api('/api/ask', { question: question });
+      spinner.remove();
+      renderSteps(r.steps);
+      await refreshState();
+      var args = firstRecallCall(r.steps);
+      if (args) await showArmsFor(args);
+      if (r.pending_write) {
+        renderApproval(r.pending_write);
+        if (resultId) setResult(resultId, 'The model proposed a write. Decide in the model panel.');
+      } else {
+        renderApproval(null);
+        if (resultId) setResult(resultId, 'Answer: ' + (r.answer || '(empty)'));
+      }
+      reveal('panel-model');
+      return r;
+    } catch (e) {
+      spinner.remove();
+      var cls = e.status === 409 ? 'note' : 'error';
+      addMsg('<div class="msg ' + cls + '"><span class="who">' + (e.status === 409 ? 'not available' : 'error') + '</span><p>' + esc(e.message) + '</p></div>');
+      if (resultId) setResult(resultId, e.message, true);
+      reveal('panel-model');
+      return null;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function decide(approved) {
+    if (!pending || busy) return;
+    var id = pending.id;
+    setBusy(true);
+    $('approval').innerHTML = '<p class="busy">' + (approved ? 'storing the fact and resuming the model' : 'declining and resuming the model') + '</p>';
+    try {
+      var r = await api('/api/approve', { id: id, approved: approved });
+      renderSteps(r.steps);
+      if (r.pending_write) renderApproval(r.pending_write);
+      else {
+        renderApproval(null);
+        var note = approved
+          ? 'Approved. Stored as memory ' + (r.stored_memory_id || '?') + ' with writer glm-5.3-flash. The graph now has one more square.'
+          : 'Declined. Nothing was written; the model was told and finished its answer.';
+        setResult('res4', note);
+        markDone('step4');
+      }
+      if (r.state) applyState(r.state);
+    } catch (e) {
+      renderApproval(null);
+      addMsg('<div class="msg error"><span class="who">error</span><p>' + esc(e.message) + '</p></div>');
+      setResult('res4', e.message, true);
+    } finally {
+      setBusy(false);
+      await refreshState();
+    }
+  }
+
+  // ---------------------------------------------------------------- as_of
+
+  async function runAsOf(label, t) {
+    if (!t) return;
+    setBusy(true);
+    try {
+      var r = await api('/api/asof?t=' + encodeURIComponent(t));
+      $('asof-t').textContent = label + ', t = ' + fmtTs(r.t);
+      function list(block) {
+        if (!block.memories.length) return '<p class="empty">No memories are visible at this instant.</p>';
+        return '<ul>' + block.memories.map(function (m) {
+          var isMaint = /maintains/.test(m.content);
+          return '<li' + (isMaint ? ' class="maint"' : '') + '>' + esc(m.content) +
+            ' <span class="meta">writer ' + esc(m.writer) + ', valid ' + fmtTs(m.valid_from) + ' to ' + fmtTs(m.valid_to) +
+            (m.is_current ? '' : ', closed now') + '</span></li>';
+        }).join('') + '</ul>';
+      }
+      $('asof').innerHTML = '<div class="asof-grid">' +
+        '<div><h3>recall_2hop("ingest-service")</h3>' + list(r.ingest_service) + '</div>' +
+        '<div><h3>recall_2hop("Ada")</h3>' + list(r.ada) + '</div></div>' +
+        '<p class="hint">Maintainer at this instant: ' + esc(r.ingest_service.maintainer) + '</p>';
+      setResult('res5', label + ': ' + r.ingest_service.maintainer);
+      markDone('step5');
+      reveal('panel-asof');
+    } catch (e) {
+      $('asof').innerHTML = '<p class="empty">' + esc(e.message) + '</p>';
+      setResult('res5', e.message, true);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // ---------------------------------------------------------------- provenance
+
+  function currentMaintainerId() {
+    if (!state) return null;
+    var cands = state.memories.filter(function (m) { return m.is_current && /maintains/.test(m.content); });
+    if (!cands.length) cands = state.memories.filter(function (m) { return /maintains/.test(m.content); });
+    return cands.length ? cands[cands.length - 1].id : null;
+  }
+
+  function fillProvSelect() {
+    var sel = $('prov-select');
+    var want = sel.value || currentMaintainerId();
+    sel.innerHTML = '';
+    state.memories.forEach(function (m) {
+      var o = document.createElement('option');
+      o.value = m.id;
+      o.textContent = (m.is_current ? '' : '(superseded) ') + m.content.slice(0, 70);
+      sel.appendChild(o);
+    });
+    if (want && state.memories.some(function (m) { return m.id === want; })) sel.value = want;
+  }
+
+  async function runProvenance(id) {
+    if (!id) { setResult('res6', 'No memory to trace. Run step 1 first.', true); return; }
+    setBusy(true);
+    try {
+      var p = await api('/api/provenance/' + encodeURIComponent(id));
+      var items = p.chain.map(function (m, i) {
+        return '<li class="' + (m.is_current ? 'current' : '') + '">' +
+          '<div class="content">' + esc(m.content) + ' ' +
+          (m.is_current ? '<span class="tag current">current</span>' : '<span class="tag closed">closed</span>') + '</div>' +
+          '<div class="meta">version ' + (p.chain.length - i) + ' of ' + p.chain.length + ', id ' + esc(m.id) +
+          ', writer ' + esc(m.writer) + ', valid ' + fmtTs(m.valid_from) + ' to ' + fmtTs(m.valid_to) +
+          ', about ' + m.about.map(esc).join(', ') + '</div>' +
+          (m.episode ? '<div class="episode"><span class="lbl">episode ' + esc(m.episode.id) + ', writer ' + esc(m.episode.writer) + ': </span>' + esc(m.episode.content) + '</div>'
+                     : '<div class="episode"><span class="lbl">no episode recorded for this version</span></div>') +
+          '</li>';
+      }).join('');
+      $('prov').innerHTML = '<ol class="chain">' + items + '</ol>' +
+        '<p class="hint">' + p.chain.length + ' version' + (p.chain.length === 1 ? '' : 's') + ', ' +
+        p.episodes.length + ' episode' + (p.episodes.length === 1 ? '' : 's') + ', writers: ' + p.writers.map(esc).join(', ') +
+        (p.edges.length ? '. SUPERSEDES edges: ' + p.edges.map(function (e) { return esc(shortId(e.new_id)) + ' replaces ' + esc(shortId(e.old_id)); }).join('; ') : '') + '.</p>';
+      setResult('res6', p.chain.length + ' versions, ' + p.episodes.length + ' episodes, writers ' + p.writers.join(', '));
+      markDone('step6');
+      reveal('panel-prov');
+    } catch (e) {
+      $('prov').innerHTML = '<p class="empty">' + esc(e.message) + '</p>';
+      setResult('res6', e.message, true);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // ---------------------------------------------------------------- state
+
+  function applyState(s) {
+    state = s;
+    renderStatus(s);
+    renderGraph(s);
+    fillProvSelect();
+    syncButtons();
+    if (s.pending_write && !pending) renderApproval(s.pending_write);
+    if (!s.pending_write && pending) renderApproval(null);
+  }
+
+  async function refreshState() {
+    try { applyState(await api('/api/state')); }
+    catch (e) { $('status').innerHTML = '<span class="off">' + esc(e.message) + '</span>'; }
+  }
+
+  // ---------------------------------------------------------------- wiring
+
+  $('btn-reset').addEventListener('click', async function () {
+    if (busy) return;
+    setBusy(true);
+    try {
+      var s = await api('/api/reset', null);
+      clearWalk();
+      $('walk-trace').textContent = '';
+      $('transcript').innerHTML = '<p class="empty">Run step 2 to start the conversation.</p>';
+      $('approval').innerHTML = ''; pending = null;
+      $('arms').innerHTML = '<p class="empty">Run step 2 to fill this panel.</p>';
+      $('asof').innerHTML = '<p class="empty">Run step 5 to fill this panel.</p>'; $('asof-t').textContent = '';
+      $('prov').innerHTML = '<p class="empty">Run step 6 to fill this panel.</p>';
+      ['step2', 'step3', 'step4', 'step5', 'step6'].forEach(function (id) { $(id).classList.remove('done'); });
+      ['res2', 'res3', 'res4', 'res5', 'res6'].forEach(function (id) { setResult(id, ''); });
+      $('prov-select').value = '';
+      applyState(s);
+      setResult('res1', 'Stored ' + s.stats.memories + ' facts about ' + s.stats.entities + ' entities with ' + s.stats.edges_relates + ' RELATES_TO edges. Day one is ' + fmtTs(s.day_one_ts) + '.');
+      markDone('step1');
+      reveal('panel-graph');
+    } catch (e) {
+      setResult('res1', e.message, true);
+    } finally { setBusy(false); }
+  });
+
+  $('btn-ask1').addEventListener('click', async function () {
+    var r = await askModel(QUESTION_1, 'res2');
+    if (r && r.answer) markDone('step2');
+  });
+
+  $('btn-ask2').addEventListener('click', async function () {
+    var r = await askModel(QUESTION_2, 'res3');
+    if (r && r.answer) setResult('res3', 'Answer after the handover: ' + r.answer);
+  });
+
+  $('btn-supersede').addEventListener('click', async function () {
+    if (busy) return;
+    setBusy(true);
+    try {
+      var r = await api('/api/supersede', null);
+      applyState(r.state);
+      clearWalk();
+      setResult('res3', 'Memory ' + shortId(r.old_id) + ' closed at ' + fmtTs(r.old_valid_to) + ' (is_current = ' + r.old_is_current + '). Replaced by ' + shortId(r.new_id) + '. Ask again to see the new answer.');
+      markDone('step3');
+      $('prov-select').value = currentMaintainerId() || '';
+      reveal('panel-graph');
+    } catch (e) {
+      setResult('res3', e.message, true);
+    } finally { setBusy(false); }
+  });
+
+  $('btn-ask3').addEventListener('click', async function () {
+    var r = await askModel(QUESTION_3, 'res4');
+    if (r && r.answer && !r.pending_write) setResult('res4', 'The model answered without proposing a write: ' + r.answer);
+  });
+
+  $('btn-ask-free').addEventListener('click', function () {
+    var q = $('ask-input').value.trim();
+    if (q) askModel(q, null);
+  });
+  $('ask-input').addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter') { ev.preventDefault(); $('btn-ask-free').click(); }
+  });
+
+  function asofDay1() { runAsOf('Day one', state && state.day_one_ts); }
+  function asofHandover() { runAsOf('After handover', state && state.handover_ts); }
+  function asofNow() { runAsOf('Now', new Date().toISOString()); }
+  $('btn-asof-day1').addEventListener('click', asofDay1);
+  $('btn-asof-handover').addEventListener('click', asofHandover);
+  $('btn-asof-now').addEventListener('click', asofNow);
+  $('tl-day1').addEventListener('click', asofDay1);
+  $('tl-handover').addEventListener('click', asofHandover);
+  $('tl-now').addEventListener('click', asofNow);
+
+  $('btn-prov').addEventListener('click', function () {
+    var id = currentMaintainerId();
+    if (id) $('prov-select').value = id;
+    runProvenance(id);
+  });
+  $('btn-prov-run').addEventListener('click', function () { runProvenance($('prov-select').value); });
+
+  // Exposed for inspection from the browser console.
+  window.studio = {
+    graph: graph,
+    state: function () { return state; },
+    walk: function (seed, query) { return showArmsFor({ seed_entity: seed, query: query }); }
+  };
+
+  refreshState();
+})();
+</script>
+</body>
+</html>
