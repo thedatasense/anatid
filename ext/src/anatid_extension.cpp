@@ -7,6 +7,23 @@
 //   SELECT * FROM graph_expand(tenant_id, seed, 2);   -- (entity_id BIGINT, depth INTEGER)
 //   SELECT * FROM anatid_csr_stats();                 -- what is in memory right now
 //   SELECT * FROM anatid_csr_tenants();               -- per-tenant detail
+//   SELECT * FROM anatid_drop_csr('name');            -- free one named snapshot
+//
+// Three things 0.2.0 added, all for anatid's derived-index framework
+// (docs/design/derived-index-framework.md):
+//
+//   key := 'name'      Snapshots are NAMED, so several generations of one index live side by
+//                      side in memory and publishing a new one cannot change what a read that
+//                      already pinned the old one traverses.  The default name is "", the
+//                      single unnamed snapshot 0.1 had.
+//   labels := 'table'  A generation owns an explicit tenant-local mapping between the external
+//                      entity id and the dense vertex id the CSR indexes by.  Given it, seeds
+//                      and results are EXTERNAL ids and the dense numbering never leaves this
+//                      file, which is what makes the CSR usable with anatid's sparse 63-bit
+//                      time-ordered ids at all.
+//   add_src/add_dst,   The change journal since the snapshot, as edges to add and base pairs to
+//   drop_src/drop_dst  skip, so one BFS answers base + delta - tombstones instead of the
+//                      caller stitching levels together outside.
 //
 // Measured in the Phase 0 spike at 1,000,000 memories / 2.3M edges / 10 tenants (see
 // docs/extension.md): 2-hop recall p50 2.04 ms through this extension, 2.88 ms through the
@@ -38,6 +55,8 @@
 #include <cstring>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
+#include <utility>
 
 namespace duckdb {
 
@@ -73,7 +92,7 @@ static constexpr int64_t ANATID_MAX_MAX_SPAN_FACTOR = 1000000;
 //! ... but always allow a small span, so a 1-edge tenant with ids 0..999 is not refused.
 static constexpr uint64_t ANATID_MIN_SPAN_ALLOWANCE = 4096;
 
-static const char *const ANATID_EXT_VERSION = "0.1.0";
+static const char *const ANATID_EXT_VERSION = "0.2.0";
 
 //===--------------------------------------------------------------------===//
 // anatid_version
@@ -99,15 +118,21 @@ static void AnatidVersionEchoFun(DataChunk &args, ExpressionState &state, Vector
 //===--------------------------------------------------------------------===//
 // CSR
 //===--------------------------------------------------------------------===//
-// One tenant's undirected adjacency, keyed by entity id.  Vertex ids are mapped to a dense range
-// [min_id, max_id]: offsets has (max_id - min_id + 2) entries, so the ids of a tenant must not be
-// sparse.  anatid's default 63-bit time-ordered ids ARE sparse -- the extension is usable only
-// with caller-supplied dense entity ids.  BuildCsr says so, by name, when the span is too wide.
+//! One tenant's undirected adjacency over a DENSE vertex range [min_id, max_id]: offsets has
+//! (max_id - min_id + 2) entries, so the ids in the edge table must not be sparse.
+//!
+//! anatid's own 63-bit time-ordered entity ids ARE sparse, which is why a generation of the CSR
+//! index owns a mapping table and feeds this structure dense vertex ids.  `labels` is that
+//! mapping read back in: dense -> external, with `lookup` the reverse.  When it is empty the two
+//! spaces are the same (the 0.1 behaviour, and what a caller-supplied dense edge list means).
+//! Everything crossing the function boundary -- seeds, delta edges, results -- is EXTERNAL.
 struct TenantCsr {
 	int64_t min_id = 0;
 	int64_t max_id = -1;
 	vector<uint64_t> offsets;   // offsets[v - min_id] .. offsets[v - min_id + 1] index into neighbours
-	vector<int64_t> neighbours; // both directions of every current edge
+	vector<int64_t> neighbours; // both directions of every current edge, as dense ids
+	vector<int64_t> labels;     // dense -> external, indexed by (dense - min_id); empty = identity
+	unordered_map<int64_t, int64_t> lookup; // external -> dense; empty when labels is empty
 	idx_t vertex_count = 0;     // ids with degree > 0
 	idx_t edge_count = 0;       // edge rows read for this tenant
 
@@ -118,8 +143,66 @@ struct TenantCsr {
 	uint64_t Span() const {
 		return max_id < min_id ? 0 : static_cast<uint64_t>(max_id - min_id) + 1;
 	}
+	//! The external id of a dense vertex known to be in range.
+	int64_t External(int64_t dense) const {
+		return labels.empty() ? dense : labels[static_cast<uint64_t>(dense - min_id)];
+	}
+	//! The dense vertex of an external id, or false when this tenant's base has no such vertex.
+	//! An id the mapping knows but that lies outside the edge table's range (an entity with no
+	//! current edge at build time) is a miss too: it has no offsets entry to read.
+	bool DenseOf(int64_t external, int64_t &out) const {
+		if (labels.empty()) {
+			if (!Contains(external)) {
+				return false;
+			}
+			out = external;
+			return true;
+		}
+		auto entry = lookup.find(external);
+		if (entry == lookup.end() || !Contains(entry->second)) {
+			return false;
+		}
+		out = entry->second;
+		return true;
+	}
+	//! The external id range this tenant covers, for anatid_csr_tenants().
+	int64_t MinExternal() const {
+		return labels.empty() || Span() == 0 ? min_id : External(min_id);
+	}
+	int64_t MaxExternal() const {
+		return labels.empty() || Span() == 0 ? max_id : External(max_id);
+	}
 	idx_t Bytes() const {
-		return offsets.capacity() * sizeof(uint64_t) + neighbours.capacity() * sizeof(int64_t);
+		return offsets.capacity() * sizeof(uint64_t) + neighbours.capacity() * sizeof(int64_t) +
+		       labels.capacity() * sizeof(int64_t) + lookup.size() * (sizeof(int64_t) * 2 + sizeof(void *));
+	}
+};
+
+//! An undirected pair of external ids, for the tombstone skip set.
+using PairKey = std::pair<int64_t, int64_t>;
+struct PairHash {
+	size_t operator()(const PairKey &k) const {
+		auto a = static_cast<uint64_t>(k.first);
+		auto b = static_cast<uint64_t>(k.second);
+		// 64-bit mix, then combine: the set decides whether a base edge is traversed, so a
+		// collision must not be able to answer "yes" for a pair nobody tombstoned.  It cannot:
+		// unordered_set compares keys for equality after hashing.
+		return static_cast<size_t>(a * 0x9E3779B97F4A7C15ULL ^ (b + 0x165667B19E3779F9ULL + (a << 6) + (a >> 2)));
+	}
+};
+
+//! The change journal since the base snapshot, in EXTERNAL ids: edges to add to the traversal,
+//! and base pairs to skip.  Both are computed by anatid's derived-index framework from the
+//! ordered journal and passed in per query; the extension does not read any table at query time.
+struct DeltaGraph {
+	unordered_map<int64_t, vector<int64_t>> adj; // both directions of every added edge
+	unordered_set<PairKey, PairHash> drop;       // both directions of every removed base pair
+
+	bool Empty() const {
+		return adj.empty() && drop.empty();
+	}
+	bool HasVertex(int64_t id) const {
+		return adj.find(id) != adj.end();
 	}
 };
 
@@ -136,8 +219,10 @@ public:
 		return optional_idx();
 	}
 
+	string key;          // the snapshot's name ("" is the unnamed default)
 	string source_table;
-	string filter_note; // which current-state conjuncts were applied
+	string labels_table; // the mapping table, "" when the edge table's ids are already external
+	string filter_note;  // which current-state conjuncts were applied
 	unordered_map<int64_t, TenantCsr> tenants;
 	idx_t n_vertices = 0;
 	idx_t n_edges = 0; // current edge rows read (each contributes two neighbour entries)
@@ -173,26 +258,39 @@ public:
 	}
 
 	string Describe() const {
-		return "CSR built from '" + source_table + "', " + std::to_string(tenants.size()) +
-		       " tenant(s) [" + TenantList() + "], " + std::to_string(n_edges) + " edge(s)";
+		return "CSR " + (key.empty() ? string("(unnamed)") : "'" + key + "'") + " built from '" + source_table +
+		       "', " + std::to_string(tenants.size()) + " tenant(s) [" + TenantList() + "], " +
+		       std::to_string(n_edges) + " edge(s)";
 	}
 };
 
 static const char *const ANATID_CSR_KEY = "anatid_csr";
 
-static shared_ptr<AnatidCsr> GetCsr(ClientContext &context) {
+//! Snapshots are named so that several can be resident at once.  anatid's derived-index
+//! framework names one per generation, which is what lets a read that pinned generation N go on
+//! traversing N's adjacency while N+1 is built and published beside it.  The empty name is the
+//! single unnamed snapshot the 0.1 extension had, so every existing call site keeps working.
+static string CsrCacheKey(const string &name) {
+	return name.empty() ? string(ANATID_CSR_KEY) : string(ANATID_CSR_KEY) + "/" + name;
+}
+
+static string CsrName(const string &name) {
+	return name.empty() ? string("(unnamed)") : "'" + name + "'";
+}
+
+static shared_ptr<AnatidCsr> GetCsr(ClientContext &context, const string &name) {
 	auto &cache = ObjectCache::GetObjectCache(context);
-	return cache.GetWithTypePrefix<AnatidCsr>(ANATID_CSR_KEY);
+	return cache.GetWithTypePrefix<AnatidCsr>(CsrCacheKey(name));
 }
 
 //! The CSR or a clear error naming the function the caller must run first.
-static shared_ptr<AnatidCsr> RequireCsr(ClientContext &context, const char *fn) {
-	auto csr = GetCsr(context);
+static shared_ptr<AnatidCsr> RequireCsr(ClientContext &context, const char *fn, const string &name) {
+	auto csr = GetCsr(context, name);
 	if (!csr) {
-		throw BinderException("%s: no CSR has been built for this database yet. Run "
+		throw BinderException("%s: no CSR has been built for this database yet under the key %s. Run "
 		                      "SELECT * FROM anatid_build_csr('edges_relates') first "
 		                      "(SELECT * FROM anatid_csr_stats() reports what is currently loaded).",
-		                      fn);
+		                      fn, CsrName(name));
 	}
 	return csr;
 }
@@ -235,10 +333,94 @@ static bool HasColumn(const vector<string> &names, const char *want) {
 // only `valid_to IS NULL`; adding `tx_to IS NULL` is the bitemporal model anatid documents, and it
 // provably cannot change the benchmark answers because tx_to is NULL on 100% of the spike dataset.
 // A table with neither column is treated as all-current, which is what a plain edge list means.
-static shared_ptr<AnatidCsr> BuildCsr(ClientContext &context, const string &table_name, int64_t max_bytes,
-                                      int64_t max_span_factor) {
+//! Read a generation's vertex mapping into the tenants of a freshly built CSR.
+//!
+//! The mapping is the generation's, not the extension's: anatid materialises it when it builds
+//! the generation and hands the table name in here.  It must cover every endpoint of the edge
+//! table, because a vertex the BFS can reach without a label would come back as a dense id and
+//! silently mean a different entity.
+static void LoadLabels(ClientContext &context, AnatidCsr &csr, const string &labels_table) {
+	auto &db = DatabaseInstance::GetDatabase(context);
+	Connection con(db);
+	auto qualified = QuoteQualifiedName(labels_table);
+	auto probe = con.Query("SELECT * FROM " + qualified + " LIMIT 0");
+	if (probe->HasError()) {
+		throw InvalidInputException("anatid_build_csr: cannot read vertex mapping table '%s': %s", labels_table,
+		                            probe->GetError());
+	}
+	for (auto required : {"tenant_id", "vertex_id", "entity_id"}) {
+		if (!HasColumn(probe->names, required)) {
+			throw InvalidInputException("anatid_build_csr: vertex mapping table '%s' has no column '%s' "
+			                            "(needs tenant_id, vertex_id, entity_id; found: %s)",
+			                            labels_table, required, StringUtil::Join(probe->names, ", "));
+		}
+	}
+	auto result = con.Query("SELECT CAST(tenant_id AS BIGINT), CAST(vertex_id AS BIGINT), "
+	                        "CAST(entity_id AS BIGINT) FROM " +
+	                        qualified);
+	if (result->HasError()) {
+		throw InvalidInputException("anatid_build_csr: cannot read vertex mapping table '%s' (needs columns "
+		                            "tenant_id, vertex_id, entity_id castable to BIGINT): %s",
+		                            labels_table, result->GetError());
+	}
+	unordered_map<int64_t, vector<uint8_t>> labelled; // per tenant: which dense slots got a label
+	for (auto &chunk : result->Collection().Chunks()) {
+		chunk.Flatten();
+		auto t_data = FlatVector::GetData<int64_t>(chunk.data[0]);
+		auto v_data = FlatVector::GetData<int64_t>(chunk.data[1]);
+		auto e_data = FlatVector::GetData<int64_t>(chunk.data[2]);
+		auto &t_valid = FlatVector::Validity(chunk.data[0]);
+		auto &v_valid = FlatVector::Validity(chunk.data[1]);
+		auto &e_valid = FlatVector::Validity(chunk.data[2]);
+		for (idx_t i = 0; i < chunk.size(); i++) {
+			if (!t_valid.RowIsValid(i) || !v_valid.RowIsValid(i) || !e_valid.RowIsValid(i)) {
+				continue;
+			}
+			auto entry = csr.tenants.find(t_data[i]);
+			if (entry == csr.tenants.end()) {
+				continue; // a tenant with no current edge has no adjacency to label
+			}
+			auto &tc = entry->second;
+			tc.lookup[e_data[i]] = v_data[i];
+			if (!tc.Contains(v_data[i])) {
+				continue; // an entity with no current edge: reachable as a seed, never as a neighbour
+			}
+			if (tc.labels.empty()) {
+				tc.labels.assign(tc.Span(), 0);
+				labelled[t_data[i]].assign(tc.Span(), 0);
+			}
+			auto slot = static_cast<uint64_t>(v_data[i] - tc.min_id);
+			tc.labels[slot] = e_data[i];
+			labelled[t_data[i]][slot] = 1;
+		}
+	}
+	for (auto &kv : csr.tenants) {
+		auto &tc = kv.second;
+		if (tc.labels.empty()) {
+			throw InvalidInputException("anatid_build_csr: vertex mapping table '%s' maps no vertex of tenant %s, "
+			                            "whose edges use vertex ids %s..%s",
+			                            labels_table, std::to_string(kv.first), std::to_string(tc.min_id),
+			                            std::to_string(tc.max_id));
+		}
+		auto &have = labelled[kv.first];
+		for (uint64_t slot = 0; slot + 1 < tc.offsets.size(); slot++) {
+			if (tc.offsets[slot + 1] > tc.offsets[slot] && !have[slot]) {
+				throw InvalidInputException(
+				    "anatid_build_csr: vertex mapping table '%s' gives no entity id for tenant %s vertex %s, which "
+				    "has %s edge(s); the mapping must cover every endpoint of the edge table",
+				    labels_table, std::to_string(kv.first), std::to_string(tc.min_id + static_cast<int64_t>(slot)),
+				    std::to_string(tc.offsets[slot + 1] - tc.offsets[slot]));
+			}
+		}
+	}
+	csr.labels_table = labels_table;
+}
+
+static shared_ptr<AnatidCsr> BuildCsr(ClientContext &context, const string &table_name, const string &labels_table,
+                                      const string &key, int64_t max_bytes, int64_t max_span_factor) {
 	auto t_start = std::chrono::steady_clock::now();
 	auto csr = make_shared_ptr<AnatidCsr>();
+	csr->key = key;
 	csr->source_table = table_name;
 
 	auto &db = DatabaseInstance::GetDatabase(context);
@@ -407,6 +589,11 @@ static shared_ptr<AnatidCsr> BuildCsr(ClientContext &context, const string &tabl
 		tc.neighbours[cur[static_cast<uint64_t>(dst[i] - tc.min_id)]++] = src[i];
 	}
 
+	// 6b. the generation's external <-> dense mapping, when it owns one
+	if (!labels_table.empty()) {
+		LoadLabels(context, *csr, labels_table);
+	}
+
 	// 7. accounting
 	csr->n_bytes = sizeof(AnatidCsr);
 	for (auto &kv : csr->tenants) {
@@ -420,77 +607,130 @@ static shared_ptr<AnatidCsr> BuildCsr(ClientContext &context, const string &tabl
 	return csr;
 }
 
-// BFS from `seed` over the tenant's CSR, at most `hops` hops, undirected, visited set = bitmap over
-// the tenant's id range.  Appends (id, depth) pairs; the seed is always emitted at depth 0.
+//! The visited set of one BFS.  A bitmap over the tenant's dense range for vertices the base
+//! knows, and a hash set for the rest -- an entity that only the delta has an edge for has no
+//! dense id at all, so it cannot be a bitmap slot.
+struct VisitedSet {
+	explicit VisitedSet(const TenantCsr *tc_p) : tc(tc_p), dense(tc_p ? tc_p->Span() : 0, 0) {
+	}
+	//! True when this is the first time `external` is seen.
+	bool Mark(int64_t external) {
+		int64_t d;
+		if (tc && tc->DenseOf(external, d)) {
+			auto slot = static_cast<uint64_t>(d - tc->min_id);
+			if (dense[slot]) {
+				return false;
+			}
+			dense[slot] = 1;
+			return true;
+		}
+		return other.insert(external).second;
+	}
+
+	const TenantCsr *tc;
+	vector<uint8_t> dense;
+	unordered_set<int64_t> other;
+};
+
+// BFS by levels from `seed`, at most `hops` hops, undirected, over base + delta - tombstones.
+// Appends (external id, depth) pairs; the seed is always emitted at depth 0.
 //
-// Semantics on a miss (tenant not in the CSR, or seed with no current edge): the seed alone, which
-// is exactly what anatid's pure-SQL fallback returns, so the two paths stay interchangeable.  Pass
-// strict=true to turn a miss into an error instead.
+// Level k + 1 is the base neighbours of level k, minus the pairs `delta.drop` retired, plus the
+// neighbours `delta.adj` added.  That is the whole merge: doing it level by level rather than
+// expanding the base and patching afterwards is what makes it exact, because a retired edge
+// changes REACHABILITY and not just membership.
+//
+// Semantics on a miss (tenant not in the CSR, or a seed with neither a base nor a delta edge):
+// the seed alone, which is exactly what anatid's pure-SQL fallback returns, so the two paths stay
+// interchangeable.  Pass strict=true to turn a miss into an error instead.
 static void ExpandBfs(const AnatidCsr &csr, int64_t tenant_id, int64_t seed, int32_t hops, bool strict,
-                      vector<int64_t> &ids, vector<int32_t> &depths) {
+                      const DeltaGraph &delta, vector<int64_t> &ids, vector<int32_t> &depths) {
 	ids.push_back(seed);
 	depths.push_back(0);
+	const TenantCsr *tc = nullptr;
 	auto it = csr.tenants.find(tenant_id);
-	if (it == csr.tenants.end()) {
-		if (strict) {
+	if (it != csr.tenants.end()) {
+		tc = &it->second;
+	}
+	auto seed_in_delta = delta.HasVertex(seed);
+	if (tc == nullptr) {
+		if (strict && !seed_in_delta) {
 			throw InvalidInputException("graph_expand: tenant %s has no edges in the CSR (%s). "
 			                            "strict := false (the default) returns just the seed. If "
 			                            "RELATES_TO rows were written since the build, rebuild with "
 			                            "SELECT * FROM anatid_build_csr('%s').",
 			                            std::to_string(tenant_id), csr.Describe(), csr.source_table);
 		}
-		return;
-	}
-	auto &tc = it->second;
-	if (!tc.Contains(seed)) {
-		if (strict) {
-			throw InvalidInputException("graph_expand: seed %s has no current edge in tenant %s "
-			                            "(whose CSR covers entity ids %s..%s). strict := false (the "
-			                            "default) returns just the seed.",
-			                            std::to_string(seed), std::to_string(tenant_id),
-			                            std::to_string(tc.min_id), std::to_string(tc.max_id));
+		if (!seed_in_delta) {
+			return;
 		}
-		return; // seed has no current edges in this tenant
+	} else {
+		int64_t seed_dense;
+		if (!tc->DenseOf(seed, seed_dense) && !seed_in_delta) {
+			if (strict) {
+				throw InvalidInputException("graph_expand: seed %s has no current edge in tenant %s "
+				                            "(whose CSR covers entity ids %s..%s). strict := false (the "
+				                            "default) returns just the seed.",
+				                            std::to_string(seed), std::to_string(tenant_id),
+				                            std::to_string(tc->MinExternal()), std::to_string(tc->MaxExternal()));
+			}
+			return; // no base edge and no delta edge for this seed
+		}
+		// Structural invariant of a built CSR.  Checked (not asserted) because a corrupt snapshot
+		// must raise, never index out of bounds: the loop below reads offsets[v] and offsets[v + 1].
+		if (tc->offsets.size() != tc->Span() + 1) {
+			throw InternalException("graph_expand: tenant %s has a malformed CSR (offsets %s, span %s)",
+			                        std::to_string(tenant_id), std::to_string(tc->offsets.size()),
+			                        std::to_string(tc->Span()));
+		}
 	}
 	if (hops <= 0) {
 		return;
 	}
-	auto span = tc.Span();
-	// Structural invariant of a built CSR.  Checked (not asserted) because a corrupt snapshot must
-	// raise, never index out of bounds: this loop reads offsets[v] and offsets[v + 1].
-	if (tc.offsets.size() != span + 1) {
-		throw InternalException("graph_expand: tenant %s has a malformed CSR (offsets %s, span %s)",
-		                        std::to_string(tenant_id), std::to_string(tc.offsets.size()),
-		                        std::to_string(span));
-	}
-	vector<uint8_t> visited(span, 0);
-	visited[static_cast<uint64_t>(seed - tc.min_id)] = 1;
+	VisitedSet visited(tc);
+	visited.Mark(seed);
 	idx_t frontier_begin = 0;
 	idx_t frontier_end = 1;
 	for (int32_t depth = 1; depth <= hops; depth++) {
 		for (idx_t f = frontier_begin; f < frontier_end; f++) {
-			auto v = static_cast<uint64_t>(ids[f] - tc.min_id);
-			auto begin = tc.offsets[v];
-			auto end = tc.offsets[v + 1];
-			if (end > tc.neighbours.size() || begin > end) {
-				throw InternalException("graph_expand: tenant %s has a malformed CSR (offsets "
-				                        "%s..%s into %s neighbours)",
-				                        std::to_string(tenant_id), std::to_string(begin), std::to_string(end),
-				                        std::to_string(tc.neighbours.size()));
-			}
-			for (auto e = begin; e < end; e++) {
-				auto nb = tc.neighbours[e];
-				auto slot = static_cast<uint64_t>(nb - tc.min_id);
-				if (slot >= span) {
-					throw InternalException("graph_expand: tenant %s has a neighbour %s outside "
-					                        "its id range %s..%s",
-					                        std::to_string(tenant_id), std::to_string(nb),
-					                        std::to_string(tc.min_id), std::to_string(tc.max_id));
+			auto u = ids[f];
+			int64_t d;
+			if (tc && tc->DenseOf(u, d)) {
+				auto v = static_cast<uint64_t>(d - tc->min_id);
+				auto begin = tc->offsets[v];
+				auto end = tc->offsets[v + 1];
+				if (end > tc->neighbours.size() || begin > end) {
+					throw InternalException("graph_expand: tenant %s has a malformed CSR (offsets "
+					                        "%s..%s into %s neighbours)",
+					                        std::to_string(tenant_id), std::to_string(begin), std::to_string(end),
+					                        std::to_string(tc->neighbours.size()));
 				}
-				if (!visited[slot]) {
-					visited[slot] = 1;
-					ids.push_back(nb);
-					depths.push_back(depth);
+				for (auto e = begin; e < end; e++) {
+					auto nb_dense = tc->neighbours[e];
+					auto slot = static_cast<uint64_t>(nb_dense - tc->min_id);
+					if (slot >= tc->Span()) {
+						throw InternalException("graph_expand: tenant %s has a neighbour %s outside "
+						                        "its id range %s..%s",
+						                        std::to_string(tenant_id), std::to_string(nb_dense),
+						                        std::to_string(tc->min_id), std::to_string(tc->max_id));
+					}
+					auto nb = tc->External(nb_dense);
+					if (!delta.drop.empty() && delta.drop.count(PairKey(u, nb)) > 0) {
+						continue; // every base edge between these two was retired since the build
+					}
+					if (visited.Mark(nb)) {
+						ids.push_back(nb);
+						depths.push_back(depth);
+					}
+				}
+			}
+			auto added = delta.adj.find(u);
+			if (added != delta.adj.end()) {
+				for (auto nb : added->second) {
+					if (visited.Mark(nb)) {
+						ids.push_back(nb);
+						depths.push_back(depth);
+					}
 				}
 			}
 		}
@@ -525,6 +765,50 @@ static int64_t NamedInt(TableFunctionBindInput &input, const char *fn, const cha
 		throw BinderException("%s: %s must not be NULL", fn, name);
 	}
 	return entry->second.GetValue<int64_t>();
+}
+
+static string NamedString(TableFunctionBindInput &input, const char *fn, const char *name) {
+	auto entry = input.named_parameters.find(name);
+	if (entry == input.named_parameters.end()) {
+		return string();
+	}
+	if (entry->second.IsNull()) {
+		throw BinderException("%s: %s must not be NULL", fn, name);
+	}
+	return entry->second.GetValue<string>();
+}
+
+//! A BIGINT[] named parameter, as ids.  Empty when the parameter was not given.
+static vector<int64_t> NamedIdList(TableFunctionBindInput &input, const char *fn, const char *name) {
+	vector<int64_t> out;
+	auto entry = input.named_parameters.find(name);
+	if (entry == input.named_parameters.end()) {
+		return out;
+	}
+	if (entry->second.IsNull()) {
+		throw BinderException("%s: %s must not be NULL (pass an empty list instead)", fn, name);
+	}
+	auto &children = ListValue::GetChildren(entry->second);
+	out.reserve(children.size());
+	for (auto &child : children) {
+		if (child.IsNull()) {
+			throw BinderException("%s: %s must not contain NULL", fn, name);
+		}
+		out.push_back(child.GetValue<int64_t>());
+	}
+	return out;
+}
+
+//! Two equal-length id lists read as one edge list.
+static void NamedEdgeList(TableFunctionBindInput &input, const char *fn, const char *src_name, const char *dst_name,
+                          vector<int64_t> &src, vector<int64_t> &dst) {
+	src = NamedIdList(input, fn, src_name);
+	dst = NamedIdList(input, fn, dst_name);
+	if (src.size() != dst.size()) {
+		throw BinderException("%s: %s has %s element(s) and %s has %s; they are one edge list read "
+		                      "column by column and must be the same length",
+		                      fn, src_name, std::to_string(src.size()), dst_name, std::to_string(dst.size()));
+	}
 }
 
 //===--------------------------------------------------------------------===//
@@ -567,14 +851,16 @@ static unique_ptr<FunctionData> BuildCsrBind(ClientContext &context, TableFuncti
 		                      std::to_string(static_cast<int64_t>(ANATID_MAX_MAX_SPAN_FACTOR)),
 		                      std::to_string(max_span_factor));
 	}
-	auto csr = BuildCsr(context, table_name, max_bytes, max_span_factor);
+	auto key = NamedString(input, "anatid_build_csr", "key");
+	auto labels_table = NamedString(input, "anatid_build_csr", "labels");
+	auto csr = BuildCsr(context, table_name, labels_table, key, max_bytes, max_span_factor);
 	auto result = make_uniq<BuildCsrBindData>();
 	result->tenants = NumericCast<int64_t>(csr->tenants.size());
 	result->vertices = NumericCast<int64_t>(csr->n_vertices);
 	result->edges = NumericCast<int64_t>(csr->n_edges);
 	result->build_ms = csr->build_ms;
 	// Published only now: a throw anywhere above leaves the previous snapshot untouched.
-	ObjectCache::GetObjectCache(context).PutWithTypePrefix<AnatidCsr>(ANATID_CSR_KEY, std::move(csr));
+	ObjectCache::GetObjectCache(context).PutWithTypePrefix<AnatidCsr>(CsrCacheKey(key), std::move(csr));
 	return std::move(result);
 }
 
@@ -654,8 +940,21 @@ static unique_ptr<FunctionData> GraphExpandBind(ClientContext &context, TableFun
 		                      "count. Pass max_hops := %d to allow it for this query.",
 		                      result->hops, max_hops, ANATID_DEFAULT_MAX_HOPS, result->hops);
 	}
-	auto csr = RequireCsr(context, "graph_expand");
-	ExpandBfs(*csr, result->tenant_id, result->seed, result->hops, strict, result->ids, result->depths);
+	auto key = NamedString(input, "graph_expand", "key");
+	vector<int64_t> add_src, add_dst, drop_src, drop_dst;
+	NamedEdgeList(input, "graph_expand", "add_src", "add_dst", add_src, add_dst);
+	NamedEdgeList(input, "graph_expand", "drop_src", "drop_dst", drop_src, drop_dst);
+	DeltaGraph delta;
+	for (idx_t i = 0; i < add_src.size(); i++) {
+		delta.adj[add_src[i]].push_back(add_dst[i]);
+		delta.adj[add_dst[i]].push_back(add_src[i]);
+	}
+	for (idx_t i = 0; i < drop_src.size(); i++) {
+		delta.drop.insert(PairKey(drop_src[i], drop_dst[i]));
+		delta.drop.insert(PairKey(drop_dst[i], drop_src[i]));
+	}
+	auto csr = RequireCsr(context, "graph_expand", key);
+	ExpandBfs(*csr, result->tenant_id, result->seed, result->hops, strict, delta, result->ids, result->depths);
 	return std::move(result);
 }
 
@@ -695,6 +994,8 @@ static unique_ptr<NodeStatistics> GraphExpandCardinality(ClientContext &context,
 struct CsrStatsBindData : public TableFunctionData {
 	bool present = false;
 	string edge_table;
+	string csr_key;
+	string labels_table;
 	string filter_note;
 	int64_t tenants = 0;
 	int64_t vertices = 0;
@@ -710,14 +1011,18 @@ struct OneRowGlobalState : public GlobalTableFunctionState {
 
 static unique_ptr<FunctionData> CsrStatsBind(ClientContext &context, TableFunctionBindInput &input,
                                              vector<LogicalType> &return_types, vector<string> &names) {
-	names = {"edge_table", "current_filter", "tenants", "vertices", "edges", "bytes", "build_ms", "built_at"};
-	return_types = {LogicalType::VARCHAR, LogicalType::VARCHAR, LogicalType::BIGINT, LogicalType::BIGINT,
-	                LogicalType::BIGINT,  LogicalType::BIGINT,  LogicalType::DOUBLE, LogicalType::TIMESTAMP};
+	names = {"edge_table", "current_filter", "tenants", "vertices",     "edges",
+	         "bytes",      "build_ms",       "built_at", "csr_key",      "vertex_map"};
+	return_types = {LogicalType::VARCHAR, LogicalType::VARCHAR, LogicalType::BIGINT,   LogicalType::BIGINT,
+	                LogicalType::BIGINT,  LogicalType::BIGINT,  LogicalType::DOUBLE,   LogicalType::TIMESTAMP,
+	                LogicalType::VARCHAR, LogicalType::VARCHAR};
 	auto result = make_uniq<CsrStatsBindData>();
-	auto csr = GetCsr(context);
+	auto csr = GetCsr(context, NamedString(input, "anatid_csr_stats", "key"));
 	if (csr) {
 		result->present = true;
 		result->edge_table = csr->source_table;
+		result->csr_key = csr->key;
+		result->labels_table = csr->labels_table;
 		result->filter_note = csr->filter_note;
 		result->tenants = NumericCast<int64_t>(csr->tenants.size());
 		result->vertices = NumericCast<int64_t>(csr->n_vertices);
@@ -749,6 +1054,9 @@ static void CsrStatsFunction(ClientContext &context, TableFunctionInput &data, D
 	output.SetValue(5, 0, Value::BIGINT(bind_data.bytes));
 	output.SetValue(6, 0, Value::DOUBLE(bind_data.build_ms));
 	output.SetValue(7, 0, Value::TIMESTAMP(Timestamp::FromEpochMicroSeconds(bind_data.built_at_micros)));
+	output.SetValue(8, 0, Value(bind_data.csr_key));
+	output.SetValue(9, 0, bind_data.labels_table.empty() ? Value(LogicalType::VARCHAR)
+	                                                     : Value(bind_data.labels_table));
 	output.SetCardinality(1);
 }
 
@@ -774,12 +1082,13 @@ static unique_ptr<FunctionData> CsrTenantsBind(ClientContext &context, TableFunc
 	return_types = {LogicalType::BIGINT, LogicalType::BIGINT, LogicalType::BIGINT,
 	                LogicalType::BIGINT, LogicalType::BIGINT, LogicalType::BIGINT};
 	auto result = make_uniq<CsrTenantsBindData>();
-	auto csr = GetCsr(context);
+	auto csr = GetCsr(context, NamedString(input, "anatid_csr_tenants", "key"));
 	if (csr) {
 		for (auto tenant_id : csr->SortedTenants()) {
 			auto &tc = csr->tenants.at(tenant_id);
+			// External ids: the dense numbering is this file's business, not the caller's.
 			result->rows.push_back({tenant_id, NumericCast<int64_t>(tc.vertex_count),
-			                        NumericCast<int64_t>(tc.edge_count), tc.min_id, tc.max_id,
+			                        NumericCast<int64_t>(tc.edge_count), tc.MinExternal(), tc.MaxExternal(),
 			                        NumericCast<int64_t>(tc.Bytes())});
 		}
 	}
@@ -809,6 +1118,46 @@ static void CsrTenantsFunction(ClientContext &context, TableFunctionInput &data,
 }
 
 //===--------------------------------------------------------------------===//
+// anatid_drop_csr(key VARCHAR) -> (csr_key VARCHAR, dropped BOOLEAN)
+// Frees one named snapshot.  Retiring a generation has to be able to give the memory back, and
+// a reader that already holds the snapshot keeps its shared_ptr, so this never pulls the graph
+// out from under a query in flight.
+//===--------------------------------------------------------------------===//
+struct DropCsrBindData : public TableFunctionData {
+	string key;
+	bool dropped = false;
+};
+
+static unique_ptr<FunctionData> DropCsrBind(ClientContext &context, TableFunctionBindInput &input,
+                                            vector<LogicalType> &return_types, vector<string> &names) {
+	names = {"csr_key", "dropped"};
+	return_types = {LogicalType::VARCHAR, LogicalType::BOOLEAN};
+	if (input.inputs.empty() || input.inputs[0].IsNull()) {
+		throw BinderException("anatid_drop_csr: the snapshot key must not be NULL (pass '' for the "
+		                      "unnamed snapshot)");
+	}
+	auto result = make_uniq<DropCsrBindData>();
+	result->key = input.inputs[0].GetValue<string>();
+	auto &cache = ObjectCache::GetObjectCache(context);
+	result->dropped = cache.GetWithTypePrefix<AnatidCsr>(CsrCacheKey(result->key)) != nullptr;
+	cache.DeleteWithTypePrefix<AnatidCsr>(CsrCacheKey(result->key));
+	return std::move(result);
+}
+
+static void DropCsrFunction(ClientContext &context, TableFunctionInput &data, DataChunk &output) {
+	auto &bind_data = data.bind_data->Cast<DropCsrBindData>();
+	auto &state = data.global_state->Cast<OneRowGlobalState>();
+	if (state.offset > 0) {
+		output.SetCardinality(0);
+		return;
+	}
+	state.offset = 1;
+	output.SetValue(0, 0, Value(bind_data.key));
+	output.SetValue(1, 0, Value::BOOLEAN(bind_data.dropped));
+	output.SetCardinality(1);
+}
+
+//===--------------------------------------------------------------------===//
 // registration
 //===--------------------------------------------------------------------===//
 static void LoadInternal(ExtensionLoader &loader) {
@@ -820,20 +1169,33 @@ static void LoadInternal(ExtensionLoader &loader) {
 	TableFunction build_csr("anatid_build_csr", {LogicalType::VARCHAR}, BuildCsrFunction, BuildCsrBind, BuildCsrInit);
 	build_csr.named_parameters["max_bytes"] = LogicalType::BIGINT;
 	build_csr.named_parameters["max_span_factor"] = LogicalType::BIGINT;
+	build_csr.named_parameters["key"] = LogicalType::VARCHAR;
+	build_csr.named_parameters["labels"] = LogicalType::VARCHAR;
 	loader.RegisterFunction(build_csr);
 
+	auto id_list = LogicalType::LIST(LogicalType::BIGINT);
 	TableFunction graph_expand("graph_expand", {LogicalType::BIGINT, LogicalType::BIGINT, LogicalType::INTEGER},
 	                           GraphExpandFunction, GraphExpandBind, GraphExpandInit);
 	graph_expand.named_parameters["strict"] = LogicalType::BOOLEAN;
 	graph_expand.named_parameters["max_hops"] = LogicalType::INTEGER;
+	graph_expand.named_parameters["key"] = LogicalType::VARCHAR;
+	graph_expand.named_parameters["add_src"] = id_list;
+	graph_expand.named_parameters["add_dst"] = id_list;
+	graph_expand.named_parameters["drop_src"] = id_list;
+	graph_expand.named_parameters["drop_dst"] = id_list;
 	graph_expand.cardinality = GraphExpandCardinality;
 	loader.RegisterFunction(graph_expand);
 
 	TableFunction csr_stats("anatid_csr_stats", {}, CsrStatsFunction, CsrStatsBind, OneRowInit);
+	csr_stats.named_parameters["key"] = LogicalType::VARCHAR;
 	loader.RegisterFunction(csr_stats);
 
 	TableFunction csr_tenants("anatid_csr_tenants", {}, CsrTenantsFunction, CsrTenantsBind, OneRowInit);
+	csr_tenants.named_parameters["key"] = LogicalType::VARCHAR;
 	loader.RegisterFunction(csr_tenants);
+
+	TableFunction drop_csr("anatid_drop_csr", {LogicalType::VARCHAR}, DropCsrFunction, DropCsrBind, OneRowInit);
+	loader.RegisterFunction(drop_csr);
 }
 
 void AnatidExtension::Load(ExtensionLoader &loader) {

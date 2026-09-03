@@ -261,7 +261,7 @@ def pid(value: str | int) -> int:
     try:
         return int(value)
     except (TypeError, ValueError):
-        raise HTTPException(400, "Ids are decimal strings.")
+        raise HTTPException(400, "Ids are decimal strings.") from None
 
 
 def ts(value: _dt.datetime | None) -> str | None:
@@ -276,7 +276,9 @@ def parse_ts(value: str) -> _dt.datetime:
     try:
         parsed = _dt.datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
     except ValueError:
-        raise HTTPException(400, "t must be an ISO-8601 timestamp, for example 2026-03-01T12:00:00Z.")
+        raise HTTPException(
+            400, "t must be an ISO-8601 timestamp, for example 2026-03-01T12:00:00Z."
+        ) from None
     if parsed.tzinfo is not None:
         parsed = parsed.astimezone(_dt.timezone.utc).replace(tzinfo=None)
     return parsed
@@ -462,10 +464,14 @@ def frontier(db: Anatid, seed_name: str, hops: int = 2) -> dict | None:
         next_level: list[dict] = []
         next_ids: list[int] = []
         for edge_id, src, dst, kind, src_name, dst_name in rows:
-            other_id, other_name = (dst, dst_name) if src in seen and dst not in seen else (src, src_name)
+            other_id, other_name = (
+                (dst, dst_name) if src in seen and dst not in seen else (src, src_name)
+            )
             if src in seen and dst in seen:
                 continue
-            edges.append({"id": sid(edge_id), "src": sid(src), "dst": sid(dst), "kind": kind, "hop": hop})
+            edges.append(
+                {"id": sid(edge_id), "src": sid(src), "dst": sid(dst), "kind": kind, "hop": hop}
+            )
             if other_id not in seen:
                 seen.add(other_id)
                 next_level.append({"id": sid(other_id), "name": other_name})
@@ -487,8 +493,15 @@ def snapshot(db: Anatid) -> dict:
         ).fetchall()
     ]
     relates = [
-        {"id": sid(r[0]), "src": sid(r[1]), "dst": sid(r[2]), "kind": r[3],
-         "valid_from": ts(r[4]), "valid_to": ts(r[5]), "writer": r[6]}
+        {
+            "id": sid(r[0]),
+            "src": sid(r[1]),
+            "dst": sid(r[2]),
+            "kind": r[3],
+            "valid_from": ts(r[4]),
+            "valid_to": ts(r[5]),
+            "writer": r[6],
+        }
         for r in con.execute(
             "SELECT edge_id, src, dst, rel_kind, valid_from, valid_to, writer FROM edges_relates "
             "WHERE tenant_id = ? ORDER BY edge_id",
@@ -505,7 +518,8 @@ def snapshot(db: Anatid) -> dict:
     names = about_names(db)
     memories = []
     for r in con.execute(
-        "SELECT memory_id FROM memories WHERE tenant_id = ? ORDER BY created_at, memory_id", [TENANT]
+        "SELECT memory_id FROM memories WHERE tenant_id = ? ORDER BY created_at, memory_id",
+        [TENANT],
     ).fetchall():
         m = db.get(r[0], with_embedding=False)
         if m is not None:
@@ -513,7 +527,11 @@ def snapshot(db: Anatid) -> dict:
     stats = db.stats()
     try:
         fts = db.fts_status()
-        fts_info = {"available": fts.available, "stale": fts.stale, "indexed_rows": fts.indexed_rows}
+        fts_info = {
+            "available": fts.available,
+            "stale": fts.stale,
+            "indexed_rows": fts.indexed_rows,
+        }
     except Exception:
         fts_info = {"available": None, "stale": None, "indexed_rows": None}
     past = ts(past_instant(STATE.scenario))
@@ -581,8 +599,9 @@ def reasoning_text(message: Any) -> str:
 
 
 def run_recall_tool(db: Anatid, args: dict) -> str:
-    hits = db.recall(args["query"], seed_entity=args.get("seed_entity"), k=RECALL_K,
-                     on_stale_fts="ignore")
+    hits = db.recall(
+        args["query"], seed_entity=args.get("seed_entity"), k=RECALL_K, on_stale_fts="ignore"
+    )
     if not hits:
         return "No memories matched."
     return json.dumps(
@@ -606,7 +625,11 @@ def run_recall_tool(db: Anatid, args: dict) -> str:
 
 
 def pending_public(p: dict) -> dict:
-    return {"id": p["id"], "content": p["args"].get("content", ""), "entities": list(p["args"].get("entities", []))}
+    return {
+        "id": p["id"],
+        "content": p["args"].get("content", ""),
+        "entities": list(p["args"].get("entities", [])),
+    }
 
 
 def call_model(history: list[dict]) -> Any:
@@ -623,11 +646,13 @@ def call_model(history: list[dict]) -> Any:
         if status:
             detail += f", HTTP {status}"
         detail += "). Check the OpenRouter key and network, then try again."
-        raise HTTPException(502, detail)
+        raise HTTPException(502, detail) from None
     return response.choices[0].message
 
 
-def process_calls(db: Anatid, steps: list[dict], calls: list[dict], rounds_left: int) -> dict | None:
+def process_calls(
+    db: Anatid, steps: list[dict], calls: list[dict], rounds_left: int
+) -> dict | None:
     """Run the tool calls of one assistant message in order.
 
     Reads run now. The first write is parked as a pending approval and the function returns
@@ -662,7 +687,9 @@ def process_calls(db: Anatid, steps: list[dict], calls: list[dict], rounds_left:
         else:
             result = f"Unknown tool {name}."
         history.append({"role": "tool", "tool_call_id": call["id"], "content": result})
-        steps.append({"type": "tool_result", "tool_call_id": call["id"], "name": name, "content": result})
+        steps.append(
+            {"type": "tool_result", "tool_call_id": call["id"], "name": name, "content": result}
+        )
     return None
 
 
@@ -822,13 +849,17 @@ def approve(body: ApproveBody) -> dict:
     if body.approved:
         args = record["args"]
         with STATE.lock:
-            m = db.remember(args["content"], entities=list(args.get("entities", [])), writer=WRITER_MODEL)
+            m = db.remember(
+                args["content"], entities=list(args.get("entities", [])), writer=WRITER_MODEL
+            )
             db.rebuild_fts_index()
         stored_id = m.memory_id
         result = f"Stored as memory {m.memory_id}."
     else:
         result = "The person declined this write. The memory was not changed."
-    STATE.history.append({"role": "tool", "tool_call_id": record["tool_call_id"], "content": result})
+    STATE.history.append(
+        {"role": "tool", "tool_call_id": record["tool_call_id"], "content": result}
+    )
     steps.append(
         {
             "type": "tool_result",
@@ -858,7 +889,9 @@ def supersede() -> dict:
         try:
             old, replacement = scenarios.apply_supersede(db, scenario)
         except LookupError:
-            raise HTTPException(409, "The change has already been applied. Reset to run it again.")
+            raise HTTPException(
+                409, "The change has already been applied. Reset to run it again."
+            ) from None
         closed = db.get(old.memory_id, with_embedding=False)
         return {
             "old_id": sid(old.memory_id),
@@ -868,7 +901,8 @@ def supersede() -> dict:
             "old_is_current": closed.is_current if closed else None,
             "old_valid_to": ts(closed.valid_to) if closed else None,
             "new_edges": [
-                f"{src} {rel_kind} {dst}" for src, dst, rel_kind in scenario.supersede.extra_relations
+                f"{src} {rel_kind} {dst}"
+                for src, dst, rel_kind in scenario.supersede.extra_relations
             ],
             "state": snapshot(db),
         }
@@ -879,7 +913,9 @@ def recall(seed: str = "", q: str = "", k: int = RECALL_K) -> dict:
     seed = seed.strip()
     q = q.strip()
     if not seed and not q:
-        raise HTTPException(400, "Pass q (words for the text arm), seed (an entity for the graph arm), or both.")
+        raise HTTPException(
+            400, "Pass q (words for the text arm), seed (an entity for the graph arm), or both."
+        )
     db = get_db()
     with STATE.lock:
         try:
@@ -887,7 +923,7 @@ def recall(seed: str = "", q: str = "", k: int = RECALL_K) -> dict:
             walk = frontier(db, seed) if seed else None
             reached = [sid(m) for m, _ in db.recall_2hop_ids(seed, limit=50)] if seed else []
         except NotFoundError:
-            raise HTTPException(404, f"No entity named {seed!r}.")
+            raise HTTPException(404, f"No entity named {seed!r}.") from None
         if seed and walk is None:
             raise HTTPException(404, f"No entity named {seed!r}.")
         stats = db.stats()
@@ -908,7 +944,11 @@ def recall(seed: str = "", q: str = "", k: int = RECALL_K) -> dict:
                     "vector_rank": h.vector_rank,
                     "found_by": [
                         arm
-                        for arm, rank in (("text", h.text_rank), ("graph", h.graph_rank), ("vector", h.vector_rank))
+                        for arm, rank in (
+                            ("text", h.text_rank),
+                            ("graph", h.graph_rank),
+                            ("vector", h.vector_rank),
+                        )
                         if rank is not None
                     ],
                 }
@@ -938,8 +978,9 @@ def asof(t: str) -> dict:
                 {
                     "seed": seed,
                     "memories": [
-                        dict(memory_dict(m, names.get(m.memory_id, [])),
-                             changed=m.memory_id in chain)
+                        dict(
+                            memory_dict(m, names.get(m.memory_id, [])), changed=m.memory_id in chain
+                        )
                         for m in found
                     ],
                     "match": match_line(found, scenario.supersede.match_text, chain),
@@ -955,7 +996,7 @@ def provenance(memory_id: str) -> dict:
         try:
             p = db.provenance(pid(memory_id))
         except NotFoundError:
-            raise HTTPException(404, "No memory with that id.")
+            raise HTTPException(404, "No memory with that id.") from None
         names = about_names(db)
         episodes = {e.episode_id: episode_dict(e) for e in p.episodes}
         chain = []
@@ -969,7 +1010,13 @@ def provenance(memory_id: str) -> dict:
             "episodes": list(episodes.values()),
             "writers": list(p.writers),
             "edges": [
-                {"id": sid(e.edge_id), "new_id": sid(e.src), "old_id": sid(e.dst), "writer": e.writer, "tx_from": ts(e.tx_from)}
+                {
+                    "id": sid(e.edge_id),
+                    "new_id": sid(e.src),
+                    "old_id": sid(e.dst),
+                    "writer": e.writer,
+                    "tx_from": ts(e.tx_from),
+                }
                 for e in p.edges
             ],
         }

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import threading
+from pathlib import Path
 
 import duckdb
 import pytest
@@ -33,11 +34,36 @@ from anatid import database as database_mod
 from anatid import recall as recall_mod
 from anatid import schema as schema_mod
 from anatid import verbs as verbs_mod
-from anatid.csr import CsrBackend, frontier_sql
+from anatid.csr import (
+    CsrBackend,
+    discover_extension_path,
+    extension_unsupported,
+    frontier_sql,
+)
 
-from conftest import DIM, SPIKE_EXTENSION, SPIKE_SMALL, T0, vec
+from conftest import BUILT_EXTENSION, DIM, SPIKE_EXTENSION, SPIKE_SMALL, T0, vec
 
 MINUTE = _dt.timedelta(minutes=1)
+
+#: The C++ extension to test against: ``$ANATID_EXTENSION_PATH``, then ``ext/build``, then the
+#: Phase 0 spike build (the order :func:`anatid.csr.discover_extension_path` uses).  The spike
+#: tree alone is not enough: the productionised binary lives under ``ext/`` and the extension
+#: oracle test below has to run wherever either has been built.
+def _usable(path):
+    """``path`` if the library will accept that binary, else None.
+
+    The Phase 0 spike build (``anatid 0.0.0-spike``) filters edges on ``valid_to IS NULL``
+    alone, so on a schema-v4 file it traverses the old version row a correction closed and
+    disagrees with the SQL oracle.  ``anatid.csr`` refuses it; these tests skip on it rather
+    than reporting a failure that is the binary's age.
+    """
+    if path is None or not Path(path).is_file():
+        return None
+    return None if extension_unsupported(path) else Path(path)
+
+
+EXTENSION = (_usable(discover_extension_path()) or _usable(BUILT_EXTENSION)
+             or _usable(SPIKE_EXTENSION))
 
 
 # ============================================================================ schema
@@ -48,7 +74,7 @@ def test_schema_creates_every_table_and_the_catalog(db):
     assert missing == []
 
     info = db.info()
-    assert info.schema_version == schema_mod.SCHEMA_VERSION == 3
+    assert info.schema_version == schema_mod.SCHEMA_VERSION == 4
     assert info.embedding_dim == DIM
     assert info.duckdb_version == duckdb.__version__
     assert info.anatid_version == anatid.__version__
@@ -71,6 +97,24 @@ def test_schema_creates_every_table_and_the_catalog(db):
     indexes = {r[0] for r in con.execute("SELECT index_name FROM duckdb_indexes()").fetchall()}
     assert set(schema_mod.REQUIRED_INDEXES) <= indexes
     assert "ux_entities_tenant_key" in indexes
+
+    # Schema v4: the derived-index catalog is part of the catalog set, and the journal's
+    # ordering sequence exists (it is not a table, so missing_tables cannot see it).
+    assert set(schema_mod.INDEX_TABLES) <= set(schema_mod.CATALOG_TABLES)
+    assert set(schema_mod.INDEX_TABLES) == {
+        "anatid_index_generations", "anatid_index_registry", "anatid_index_journal"}
+    # A default handle registers the accelerators that cost nothing to have, so the registry
+    # carries their DEFINITIONS from the first open -- that is what makes every other handle on
+    # the file journal writes for them.  Nothing is built and nothing has been written yet.
+    assert {r[0] for r in con.execute(
+        f"SELECT index_name FROM {schema_mod.INDEX_REGISTRY_TABLE} WHERE enabled"
+    ).fetchall()} == {"fts", "csr"}
+    for table in (schema_mod.INDEX_GENERATIONS_TABLE, schema_mod.INDEX_JOURNAL_TABLE):
+        assert con.execute(f"SELECT count(*) FROM {table}").fetchone()[0] == 0
+    first = con.execute(f"SELECT nextval('{schema_mod.INDEX_CHANGE_SEQUENCE}')").fetchone()[0]
+    second = con.execute(f"SELECT nextval('{schema_mod.INDEX_CHANGE_SEQUENCE}')").fetchone()[0]
+    assert second > first
+    assert "derived indexes (schema v4)" in info.contract
 
 
 def test_system_columns_are_on_by_default_on_every_node_and_edge_table(db):
@@ -121,10 +165,10 @@ def test_migration_hook_is_registered_and_used(tmp_path, monkeypatch):
     ran = []
     monkeypatch.setattr(schema_mod, "MIGRATIONS",
                         {1: lambda con: ran.append(1), 2: lambda con: ran.append(2),
-                         3: lambda con: ran.append(3)})
+                         3: lambda con: ran.append(3), 4: lambda con: ran.append(4)})
     with Anatid.open(path, tenant=0, embedding_dim=DIM) as db:
-        assert db.info().schema_version == schema_mod.SCHEMA_VERSION == 3
-    assert ran == [1, 2, 3]
+        assert db.info().schema_version == schema_mod.SCHEMA_VERSION == 4
+    assert ran == [1, 2, 3, 4]
 
 
 def test_the_real_v1_to_v2_migration_adds_the_columns_and_backfills(tmp_path):
@@ -134,16 +178,20 @@ def test_the_real_v1_to_v2_migration_adds_the_columns_and_backfills(tmp_path):
     count(*) alone cannot see; a purged id surviving in another row's audit `reason` text), so
     the migration has to move the old free text into the new column, not just add it.
 
-    Since schema v3 the ladder continues 2->3 on the same open, so the file is rewound all the
-    way to v1 -- no fts sidecar tables, no entity_key, no unique entity index -- and the whole
-    ladder is asserted, not only its first rung.
+    Since schema v3 the ladder continues 2->3 on the same open, and since v4 on to 3->4, so
+    the file is rewound all the way to v1 -- no derived-index catalog, no fts sidecar tables,
+    no entity_key, no unique entity index -- and the whole ladder is asserted, not only its
+    first rung.
     """
     path = tmp_path / "v1.anatid"
     with Anatid.open(path, tenant=0, embedding_dim=DIM) as db:
         m = db.remember("v1", entities=["Ada"])
         n = db.supersede(m.memory_id, "v2")
         con = db.connection
-        # rewind the file to what schema v1 actually looked like: first the v3 objects ...
+        # rewind the file to what schema v1 actually looked like: first the v4 objects, then
+        # the v3 ones ...
+        for table in schema_mod.INDEX_TABLES:
+            db.execute(f"DROP TABLE IF EXISTS {table}")
         db.execute("DROP INDEX IF EXISTS ux_entities_tenant_key")
         for table in schema_mod.FTS_TABLES:
             db.execute(f"DROP TABLE IF EXISTS {table}")
@@ -164,12 +212,13 @@ def test_the_real_v1_to_v2_migration_adds_the_columns_and_backfills(tmp_path):
         db.execute("ALTER TABLE anatid_audit DROP COLUMN related_memory_id")
         db.execute("UPDATE anatid_meta SET schema_version = 1")
         old_id, new_id_ = m.memory_id, n.memory_id
-        assert schema_mod.missing_tables(con) == list(schema_mod.FTS_TABLES)
+        assert set(schema_mod.missing_tables(con)) == set(schema_mod.FTS_TABLES) | set(
+            schema_mod.INDEX_TABLES)
         assert "entity_key" not in {
             r[1] for r in con.execute("PRAGMA table_info(entities)").fetchall()}
 
     with Anatid.open(path, tenant=0, embedding_dim=DIM) as db:
-        assert db.info().schema_version == 3
+        assert db.info().schema_version == schema_mod.SCHEMA_VERSION == 4
         cols = {r[1] for r in db.execute("PRAGMA table_info(anatid_audit)").fetchall()}
         assert "related_memory_id" in cols
         assert {r[1] for r in db.execute("PRAGMA table_info(anatid_meta)").fetchall()} \
@@ -211,6 +260,29 @@ def test_the_version_string_agrees_everywhere(db):
     assert db.info().anatid_version == anatid.__version__
     assert db.execute("SELECT anatid_version FROM anatid_meta").fetchone()[0] == anatid.__version__
 
+    def parts(text: str) -> tuple[int, ...]:
+        return tuple(int(n) for n in re.findall(r"\d+", text)[:3])
+
+    # The version string has to be at least the release that introduced the schema this build
+    # writes.  0.1.1 is published on PyPI carrying schema v3; a build that writes v4 cannot also
+    # call itself 0.1.1, because a file's recorded version is what says which release can open
+    # it, and pip would refuse the upload anyway.
+    introduced = schema_mod.SCHEMA_VERSION_RELEASES[schema_mod.SCHEMA_VERSION]
+    assert parts(introduced) <= parts(anatid.__version__), (
+        f"schema v{schema_mod.SCHEMA_VERSION} was introduced in {introduced}, but this build "
+        f"calls itself {anatid.__version__}"
+    )
+
+    # The C++ extension is versioned with the package.  Source-checkout only (the wheel does not
+    # ship ext/), so this checks the file when it is there.
+    banner = pathlib.Path(__file__).resolve().parent.parent / "ext" / "src" / "anatid_extension.cpp"
+    if banner.is_file():
+        found = re.search(r'ANATID_EXT_VERSION\s*=\s*"([^"]+)"', banner.read_text())
+        assert found is not None, "ANATID_EXT_VERSION is not in ext/src/anatid_extension.cpp"
+        assert found.group(1) == anatid.__version__, (
+            f"the extension reports {found.group(1)} and the package {anatid.__version__}"
+        )
+
 
 def test_recall_refuses_the_vector_arm_past_the_brute_force_ceiling(db, monkeypatch):
     """``BRUTE_FORCE_CEILING`` is behaviour, not a comment.
@@ -243,7 +315,7 @@ def test_recall_refuses_the_vector_arm_past_the_brute_force_ceiling(db, monkeypa
     assert "vector" in verbs_mod.recall(db, embedding=q, allow_slow=True).arms
 
     # only the vector arm is guarded: text and graph answer at any size
-    assert db.recall("m1").arms == ()                       # no fts index yet, no raise
+    assert db.recall("m1").arms == ("text",)                # no ceiling on the text arm
     db.rebuild_fts_index()
     assert db.recall("m1").arms == ("text",)
 
@@ -429,8 +501,14 @@ def test_soft_forget_keeps_the_audit_trail_and_history(db):
         "SELECT action, reason, writer FROM anatid_audit WHERE memory_id = ?",
         [m.memory_id]).fetchall()
     assert audit == [("forget_soft", "user asked", "a1")]
-    closed = db.execute("SELECT valid_to FROM edges_about WHERE src = ?", [m.memory_id]).fetchone()
-    assert closed[0] == t1
+    # The ABOUT edge is closed the way the memory is: a new version carries the valid_to, the
+    # original version keeps its open interval and is retired on the transaction axis.
+    edge_versions = db.execute(
+        "SELECT version, valid_to, tx_to FROM edges_about WHERE src = ? ORDER BY version",
+        [m.memory_id]).fetchall()
+    assert edge_versions == [(1, None, t1), (2, t1, None)]
+    assert db.entities_of(m.memory_id) == []
+    assert [e.name for e in db.entities_of(m.memory_id, as_of=T0)] == ["Ada"]
 
 
 def test_hard_forget_purges_the_row_its_edges_its_embedding_and_its_provenance(db):
@@ -560,7 +638,14 @@ def test_recall_fuses_the_three_arms_with_rrf(db):
             if r is not None)
 
 
-def test_recall_reports_that_bm25_is_stale_rather_than_hiding_it(db, caplog):
+def test_recall_reports_that_bm25_is_stale_rather_than_hiding_it(legacy_db, caplog):
+    """0.1.1's index cannot see a row written after its rebuild, and recall says so.
+
+    ``accelerators=False``: the claim is about the non-incremental index.  The derived one makes
+    the row searchable inside the writing transaction, so there is nothing to hide and nothing
+    to report -- see the test below.
+    """
+    db = legacy_db
     db.remember("indexed content", embedding=vec(1, 0), now=T0)
     db.rebuild_fts_index()
     status = db.fts_status()
@@ -585,12 +670,29 @@ def test_recall_reports_that_bm25_is_stale_rather_than_hiding_it(db, caplog):
     assert not hits.bm25_stale and hits.pending_fts_rows == 0
 
 
-def test_recall_without_an_fts_index_says_the_text_arm_was_skipped(db):
+def test_recall_without_an_fts_index_says_the_text_arm_was_skipped(legacy_db):
+    """No index of either kind: the arm is skipped and the result says which arm and why."""
+    db = legacy_db
     db.remember("no index yet", embedding=vec(1, 0), now=T0)
     hits = db.recall("index", embedding=vec(1, 0), k=5)
     assert not hits.bm25_available
     assert "text" not in hits.arms
     assert any("no fts index" in n for n in hits.notes)
+
+
+def test_on_a_default_handle_the_text_arm_answers_before_anything_is_built(db):
+    """The default handle attaches the derived full-text index, so there is no such state.
+
+    Nothing has been built and no generation is published; the text arm answers by scanning the
+    tenant's visible documents exactly, and reports that it is available and not stale.  This is
+    what ``Anatid.open(accelerators=True)`` buys over the test above.
+    """
+    m = db.remember("no index yet", embedding=vec(1, 0), now=T0)
+    hits = db.recall("index", embedding=vec(1, 0), k=5)
+    assert hits.bm25_available
+    assert "text" in hits.arms
+    assert [h.memory.memory_id for h in hits] == [m.memory_id]
+    assert db.fts_status().stale is False
 
 
 def test_recall_with_no_usable_arm_returns_nothing(db):
@@ -633,8 +735,14 @@ def test_literal_and_parameterized_recall_paths_agree(db):
     assert [m for m, _ in fast] == list(reversed(ids))
 
 
-def test_rebuild_fts_index_also_builds_the_terms_index(db):
-    """The postings index the spike measured at BM25 8.57 ms vs 12.51 ms must survive a rebuild."""
+def test_rebuild_fts_index_also_builds_the_terms_index(legacy_db):
+    """The postings index the spike measured at BM25 8.57 ms vs 12.51 ms must survive a rebuild.
+
+    ``accelerators=False``: this is 0.1.1's single file-wide index and its fixed table names.  A
+    generation carries the same index under its own name (``anatid_idx_fts_g<n>_termid``), which
+    ``tests/test_fts_framework.py`` checks.
+    """
+    db = legacy_db
     db.remember("indexable words here", now=T0)
     db.rebuild_fts_index()
     idx = {r[0] for r in db.connection.execute(
@@ -834,13 +942,12 @@ def test_extension_is_optional_and_the_default_is_sql(db):
         db.require_csr_extension()
 
 
-@pytest.mark.skipif(not SPIKE_EXTENSION.is_file(),
-                    reason="C++ anatid extension not built")
+@pytest.mark.skipif(EXTENSION is None, reason="C++ anatid extension not built")
 def test_csr_extension_and_sql_expansion_agree(tmp_path):
     """Same results either way -- the promise the fallback rests on."""
     path = tmp_path / "csr.anatid"
     with Anatid.open(path, tenant=1, embedding_dim=DIM, use_csr_extension=True,
-                     extension_path=SPIKE_EXTENSION, require_extension=True) as db:
+                     extension_path=EXTENSION, require_extension=True) as db:
         # Dense entity ids: the extension builds a dense per-tenant CSR.
         edges = [(0, 1), (1, 2), (2, 3), (0, 4), (4, 5), (5, 6), (3, 7), (7, 8)]
         for i, (a, b) in enumerate(edges):
@@ -954,18 +1061,25 @@ def test_recall_2hop_hydrated_matches_the_id_query(spike_db, spike_queries):
 
 @pytest.mark.slow
 @pytest.mark.oracle
-@pytest.mark.skipif(not SPIKE_EXTENSION.is_file(), reason="C++ anatid extension not built")
+@pytest.mark.skipif(EXTENSION is None, reason="C++ anatid extension not built")
 def test_csr_extension_matches_the_reference_on_the_spike_dataset(tmp_path_factory,
                                                                   spike_common, spike_queries):
-    """The extension path gives the same 2-hop answers as the reference, on real data."""
+    """The extension path gives the same 2-hop answers as the reference, on real data.
+
+    Zero mismatches over the same 200 queries as the SQL-path oracle test, and the frontier
+    really comes from the extension: ``frontier_sql`` is asked which path it took.
+    """
     path = tmp_path_factory.mktemp("csr-oracle") / "ext.anatid"
     with Anatid.open(path, tenant=0, embedding_dim=64, use_csr_extension=True,
-                     extension_path=SPIKE_EXTENSION, require_extension=True) as db:
+                     extension_path=EXTENSION, require_extension=True) as db:
         db.load_parquet(SPIKE_SMALL, rebuild_fts=False, build_csr=True)
         assert db.expand_path == "extension"
         mismatches = []
         for qid in range(0, 200):
             q = spike_queries[qid]
+            _sql, _params, used = frontier_sql(int(q["tenant_id"]), int(q["seed_entity_id"]), 2,
+                                               backend=db.csr)
+            assert used == "extension"
             got = db.recall_2hop_ids(int(q["seed_entity_id"]), tenant=int(q["tenant_id"]),
                                      limit=spike_common.R1_LIMIT)
             expected = spike_common.reference_r1("small", int(q["tenant_id"]),
@@ -1050,8 +1164,14 @@ def test_hydration_never_crosses_a_tenant_in_a_shared_file(file_db):
     assert [(m.tenant_id, m.content) for m in other] == [(2, "TENANT-2 SECRET")]
 
 
-def test_bm25_staleness_survives_an_insert_cancelled_out_by_a_purge(file_db):
-    """Row count alone is not a watermark; the id watermark is what makes the claim true."""
+def test_bm25_staleness_survives_an_insert_cancelled_out_by_a_purge(legacy_file_db):
+    """Row count alone is not a watermark; the id watermark is what makes the claim true.
+
+    ``accelerators=False``: a watermark is how 0.1.1's index guesses at staleness.  The derived
+    index does not guess -- the journal has a row per change, so an insert and a purge do not
+    cancel out -- and ``tests/test_fts_framework.py`` proves that directly.
+    """
+    file_db = legacy_file_db
     a = file_db.remember("alpha alpha", now=T0)
     file_db.remember("bravo bravo", now=T0)
     file_db.rebuild_fts_index(now=T0)

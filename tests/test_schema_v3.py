@@ -190,7 +190,8 @@ V2_BM25_SQL = """
 
 
 def rebuild_fts(con):
-    for stmt in S.fts_rebuild_statements():
+    # con= so the statements match the file's own shape: a v3 file has no `version` column.
+    for stmt in S.fts_rebuild_statements(con=con):
         con.execute(stmt)
 
 
@@ -465,7 +466,7 @@ def test_migration_merges_duplicate_entities_and_repoints_edges(tmp_path):
     con.execute("INSERT INTO edges_relates (edge_id, src, dst, tenant_id, rel_kind, valid_from, "
                 "tx_from) VALUES (9, 10, 20, 1, 'mentors', ?, ?)", [T0, T0])
 
-    assert S.ensure_schema(con) == 3
+    assert S.ensure_schema(con) == S.SCHEMA_VERSION
 
     ids = [r[0] for r in con.execute(
         "SELECT entity_id FROM entities WHERE tenant_id = 1 ORDER BY entity_id").fetchall()]
@@ -527,7 +528,7 @@ def test_migration_keeps_the_edge_that_already_pointed_at_the_winner(tmp_path):
     con.execute("INSERT INTO edges_about (edge_id, src, dst, tenant_id, weight, valid_from, "
                 "tx_from) VALUES (1, 100, 11, 1, 1.0, ?, ?)", [T0, T0])     # lower id, loser
 
-    assert S.ensure_schema(con) == 3
+    assert S.ensure_schema(con) == S.SCHEMA_VERSION
 
     relates = sorted(con.execute(
         "SELECT edge_id, src, dst, rel_kind FROM edges_relates ORDER BY edge_id").fetchall())
@@ -566,11 +567,11 @@ def test_migration_is_idempotent_and_reopening_is_a_no_op(tmp_path):
     con = v2_file(path)
     add_entity(con, 1, 1, "Ada")
     add_entity(con, 2, 1, "ada")
-    assert S.ensure_schema(con) == 3
-    assert S.ensure_schema(con) == 3
+    assert S.ensure_schema(con) == S.SCHEMA_VERSION
+    assert S.ensure_schema(con) == S.SCHEMA_VERSION
     con.close()
     again = duckdb.connect(str(path))
-    assert S.ensure_schema(again) == 3
+    assert S.ensure_schema(again) == S.SCHEMA_VERSION
     assert again.execute("SELECT count(*) FROM entities").fetchone()[0] == 1
     again.close()
 
@@ -581,7 +582,7 @@ def test_migration_from_v1_runs_both_steps(tmp_path):
                 "happened_at) VALUES (1, 1, 5, 'supersede', 'superseded by 6', ?)", [T0])
     add_entity(con, 1, 1, "Ada")
     add_entity(con, 2, 1, "ADA")
-    assert S.ensure_schema(con) == 3
+    assert S.ensure_schema(con) == S.SCHEMA_VERSION
     assert con.execute("SELECT related_memory_id, reason FROM anatid_audit").fetchone() == (
         6, "superseded")
     assert con.execute("SELECT count(*) FROM entities").fetchone()[0] == 1
@@ -623,7 +624,7 @@ def test_a_v3_file_is_not_downgraded(tmp_path):
 
 def test_fresh_database_has_every_table_and_the_required_index(tmp_path):
     con = duckdb.connect(str(tmp_path / "fresh.anatid"))
-    assert S.ensure_schema(con) == S.SCHEMA_VERSION == 3
+    assert S.ensure_schema(con) == S.SCHEMA_VERSION == 4
     assert S.missing_tables(con) == []
     indexes = {r[0] for r in con.execute(
         "SELECT index_name FROM duckdb_indexes()").fetchall()}
@@ -694,3 +695,85 @@ def test_migration_refreshes_the_stored_contract(tmp_path):
     S.ensure_schema(con)
     assert "PER TENANT" in con.execute("SELECT contract FROM anatid_meta").fetchone()[0]
     con.close()
+
+
+# =========================================== reading a pre-v4 file a handle cannot migrate
+
+def v3_file(path) -> None:
+    """A schema-v3 file with data in it: the shape anatid 0.1.1 wrote.
+
+    Built from the v2 DDL and migrated one step, so the tables are exactly the ones a 0.1.1
+    build created and nothing here depends on this build's v4 DDL.
+    """
+    con = v2_file(path)
+    for i, text in enumerate(["ada writes notes", "bob likes coffee", "carol reads books"], 1):
+        add_memory(con, i, 0, text)
+    add_entity(con, 10, 0, "Ada")
+    con.execute(
+        "INSERT INTO edges_about (edge_id, src, dst, tenant_id, weight, valid_from, tx_from) "
+        "VALUES (1, 1, 10, 0, 1.0, ?, ?)", [T0, T0])
+    S._migrate_2_to_3(con)
+    # The v3 DDL's undirected view.  Its text is unchanged in v4 (schema generates it from
+    # anatid.visibility now), so writing it out here is writing what 0.1.1 wrote.
+    con.execute(
+        "CREATE OR REPLACE VIEW relates_undirected AS "
+        "SELECT tenant_id, src AS a, dst AS b FROM edges_relates "
+        "WHERE valid_to IS NULL AND tx_to IS NULL UNION ALL "
+        "SELECT tenant_id, dst AS a, src AS b FROM edges_relates "
+        "WHERE valid_to IS NULL AND tx_to IS NULL")
+    con.execute("UPDATE anatid_meta SET schema_version = 3, anatid_version = '0.1.1'")
+    rebuild_fts(con)
+    con.close()
+
+
+@pytest.mark.parametrize("mode", ["read_only", "ensure_false"])
+def test_a_v3_file_still_answers_every_read_on_a_handle_that_cannot_migrate_it(tmp_path, mode):
+    """The upgrade-path regression: schema v4 added ``memories.version``, and a handle that
+    cannot run the migration ladder is still expected to read the file.
+
+    Both open modes here are supported and neither migrates: ``read_only=True`` (the file may
+    be on a read-only mount, or another process holds DuckDB's single writer slot -- this is
+    what ``anatid-mcp --read-only`` does) and ``ensure=False`` (the caller said not to touch
+    the file).  Every hydrating read names the v4 ``version`` column, and against a v3 file
+    that fails to bind with a raw DuckDB ``BinderException``, which is what anatid 0.1.1
+    answered happily on the same file.
+    """
+    from anatid import Anatid
+
+    path = tmp_path / "v3read.anatid"
+    v3_file(path)
+    kwargs = {"read_only": True} if mode == "read_only" else {"ensure": False}
+    with Anatid.open(path, tenant=0, embedding_dim=8, **kwargs) as db:
+        assert db.info().schema_version == 3
+        assert S.VERSION_COLUMN not in {
+            r[1] for r in db.execute("PRAGMA table_info(memories)").fetchall()}
+
+        memory = db.get(1)
+        assert memory is not None
+        assert memory.content == "ada writes notes"
+        assert memory.version == 1              # every row of a pre-v4 table is version 1
+
+        assert [m.memory_id for m in db.versions(1)] == [1]
+        assert db.provenance(1).memory_id == 1
+        assert [m.memory_id for m in db.recall_2hop("Ada", limit=5)] == [1]
+        assert [i for i, _ in db.recall_2hop_ids("Ada", limit=5)] == [1]
+        assert [h.memory.memory_id for h in db.recall("notes", k=3)] == [1]
+        assert [e.name for e in db.entities_of(1)] == ["Ada"]
+        assert db.stats()["memories"] == 3
+
+        # The state is reported rather than hidden: doctor names the missing column.
+        drift = [f for f in db.doctor().findings if f.check == "schema_drift"]
+        assert drift and ("missing_column", "memories", S.VERSION_COLUMN) in drift[0].samples
+
+
+def test_opening_the_same_v3_file_writable_migrates_it_and_the_reads_are_unchanged(tmp_path):
+    """The read-only answers above are the same answers the migrated file gives."""
+    from anatid import Anatid
+
+    path = tmp_path / "v3then4.anatid"
+    v3_file(path)
+    with Anatid.open(path, tenant=0, embedding_dim=8, read_only=True) as db:
+        before = [(m.memory_id, m.content, m.version) for m in db.versions(1)]
+    with Anatid.open(path, tenant=0, embedding_dim=8) as db:
+        assert db.info().schema_version == S.SCHEMA_VERSION
+        assert [(m.memory_id, m.content, m.version) for m in db.versions(1)] == before

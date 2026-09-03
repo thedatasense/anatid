@@ -173,17 +173,41 @@ def test_remember_then_recall_returns_the_memory(server, mcp_db):
     assert mcp_db.get(memory_id) is not None
 
 
-def test_recall_reports_bm25_staleness_rather_than_hiding_it(server):
+def test_recall_reports_bm25_staleness_rather_than_hiding_it(tmp_path):
+    """0.1.1's index cannot see a row written after its rebuild, and the tool says so.
+
+    ``accelerators=False`` because that is the configuration the claim is about; the test below
+    is the same sequence on the default handle, where the row is findable at once and the tool
+    reports it is not stale.
+    """
+    with Anatid.open(
+        tmp_path / "legacy.anatid", tenant=3, embedding_dim=DIM, accelerators=False
+    ) as db:
+        server = build_server(db, ServerConfig(db=db.path, tenant=3, sql_tool=True, env={}))
+        ok(call(server, "remember", {"content": "first fact about ducks"}))
+        ok(call(server, "rebuild_fts_index"))
+        fresh = ok(call(server, "recall", {"query": "ducks"}))
+        assert fresh["bm25_stale"] is False
+        assert fresh["pending_fts_rows"] == 0
+
+        ok(call(server, "remember", {"content": "second fact about ducks"}))
+        stale = ok(call(server, "recall", {"query": "ducks"}))
+        assert stale["bm25_stale"] is True
+        assert stale["pending_fts_rows"] == 1
+        assert len(ok(call(server, "recall", {"query": "ducks"}))["hits"]) == 1
+
+
+def test_on_the_default_handle_a_new_row_is_searchable_and_nothing_is_reported_stale(server):
+    """The same sequence on a default handle: the derived index journals the write inside the
+    writing transaction, so the second fact is in the very next recall and ``bm25_stale`` is
+    False because nothing is hidden."""
     ok(call(server, "remember", {"content": "first fact about ducks"}))
     ok(call(server, "rebuild_fts_index"))
-    fresh = ok(call(server, "recall", {"query": "ducks"}))
-    assert fresh["bm25_stale"] is False
-    assert fresh["pending_fts_rows"] == 0
-
     ok(call(server, "remember", {"content": "second fact about ducks"}))
-    stale = ok(call(server, "recall", {"query": "ducks"}))
-    assert stale["bm25_stale"] is True
-    assert stale["pending_fts_rows"] == 1
+    after = ok(call(server, "recall", {"query": "ducks"}))
+    assert after["bm25_stale"] is False
+    assert after["pending_fts_rows"] == 1        # one document a search rescans, not one hidden
+    assert len(after["hits"]) == 2
 
 
 def test_recall_from_a_graph_seed_widens_one_entity_per_hop(server):
@@ -254,6 +278,14 @@ def test_forget_is_soft_by_default_and_hard_on_request(server, mcp_db):
     assert hard["receipt"]["hard"] is True
     assert hard["receipt"]["memories_deleted"] == 1
     assert hard["receipt"]["about_edges_deleted"] == 1
+    # the derived-index half of the erasure is reported too: the memory's two journal rows (the
+    # insert and the soft forget's close) go with it, and no generation had to be invalidated
+    # because nothing has been built on this database.
+    assert hard["receipt"]["derived_rows_deleted"] == 2
+    assert hard["receipt"]["invalidated_generations"] == 0
+    assert mcp_db.execute(
+        "SELECT count(*) FROM anatid_index_journal WHERE doc_id = ?", [memory_id]
+    ).fetchone()[0] == 0
     # right to erasure: nothing anywhere references the id any more
     assert ok(call(server, "get", {"memory_id": memory_id}))["memory"] is None
     assert mcp_db.execute(

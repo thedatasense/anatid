@@ -1,11 +1,28 @@
 """The memory verbs.
 
-Each **write** verb (``remember``, ``supersede``, ``forget``, ``relate``, ``reinforce``,
-``episode``, ``entity_id``) is one transaction.  ``prune`` is not -- it is a query plus one
-transaction per memory, and says so.  **Read** verbs (``recall``, ``recall_2hop``, ``context``,
-``get``, ``provenance``, ``stats``) open no transaction: ``recall`` runs its staleness probe,
-its arms, its hydration and its ABOUT lookup as separate statements, so another thread's commit
-can land between them.  Wrap the call in ``with db.transaction():`` when you need one snapshot.
+Each **write** verb (``remember``, ``supersede``, ``forget``, ``relate``, ``unrelate``,
+``reinforce``, ``episode``, ``entity_id``) is one transaction.  ``prune`` is not -- it is a query
+plus one transaction per memory, and says so.  **Read** verbs (``recall``, ``recall_2hop``,
+``context``, ``get``, ``versions``, ``provenance``, ``stats``) open no transaction: ``recall``
+runs its staleness probe, its arms, its hydration and its ABOUT lookup as separate statements,
+so another thread's commit can land between them.  Wrap the call in ``with db.transaction():``
+when you need one snapshot.
+
+Corrections are versions
+------------------------
+No verb rewrites the valid interval of a row that a read can see.  ``supersede``, soft
+``forget``, ``unrelate`` and a ``reinforce`` that changes ``confidence`` close the current
+version on the transaction axis (``tx_to = now``) and insert the next version of the same
+logical id, with ``tx_from = now`` and the corrected columns, in the same transaction
+(:meth:`MemoryVerbs._close_memory`, :meth:`MemoryVerbs._close_edges`).  The transaction-time
+half of every ``as_of`` therefore has something to select: ``as_of(valid_time=t4, tx_time=t2)``
+after a forget at ``t3`` returns the version the database held at ``t2``, open-ended.  The one
+in-place update left is the usage counters ``access_count`` / ``last_access_at``, which
+``reinforce`` bumps on the live version; they are not bitemporal and the docstring says so.
+The ``UPDATE`` that closes a version is also the compare-and-swap: a concurrent correction of
+the same version aborts with :class:`~anatid.errors.ConflictError`, and a correction that
+arrives after the version is already closed matches nothing and is reported rather than
+applied twice.
 
 Every value a verb writes or filters on travels as a bound parameter -- no statement is ever
 built by concatenating caller data.  (Two narrow exceptions, both documented where they occur:
@@ -23,6 +40,7 @@ functions of the same name are thin wrappers for callers who prefer ``verbs.reme
 
 from __future__ import annotations
 
+import contextlib
 import datetime as _dt
 import logging
 import math
@@ -31,6 +49,7 @@ from typing import Any, Callable, Sequence, TypeVar
 
 import duckdb
 
+from . import derived as _derived
 from . import erasure as _erasure
 from . import recall as _recall
 from . import schema as _schema
@@ -46,11 +65,16 @@ from .errors import (
 )
 from .ids import new_id
 from .schema import (
+    EDGE_ABOUT_COLUMNS,
+    EDGE_RELATES_COLUMNS,
     ENTITY_COLUMNS,
     EPISODE_COLUMNS,
     MEMORY_COLUMNS,
+    VERSION_COLUMN,
+    VERSIONED_TABLES,
     entity_key_sql,
-    temporal_predicate,
+    memory_select,
+    version_expr,
 )
 from .types import (
     RELATES_TO,
@@ -68,6 +92,7 @@ from .types import (
     utcnow,
     to_utc_naive,
 )
+from .visibility import Visibility, current_row_sql, live_row_sql, tenant_sql
 
 log = logging.getLogger("anatid.verbs")
 
@@ -83,14 +108,23 @@ __all__ = [
     "supersede",
     "reinforce",
     "forget",
+    "unrelate",
     "prune",
     "as_of",
     "provenance",
+    "versions",
 ]
 
-_MEM_SELECT = ", ".join(MEMORY_COLUMNS)
-_MEM_SELECT_NO_EMB = ", ".join(
-    ("NULL AS embedding" if c == "embedding" else c) for c in MEMORY_COLUMNS)
+def _mem_select(con, *, embedding: bool = True) -> str:
+    """The select list for one memory row, adapted to what this file actually has.
+
+    A handle that could not run the migration ladder (``read_only=True`` or ``ensure=False``)
+    can be looking at a schema-v3 file, whose ``memories`` has no ``version`` column.  Naming
+    it would fail to bind, so :func:`anatid.schema.memory_select` renders ``1 AS version``
+    there instead: every row of a pre-v4 table is version 1.
+    """
+    return memory_select(con, embedding=embedding)
+
 _ENT_SELECT = ", ".join(ENTITY_COLUMNS)
 _EPI_SELECT = ", ".join(EPISODE_COLUMNS)
 
@@ -110,10 +144,65 @@ _INSERT_ABOUT = (
 #: Entity lookup by the canonical key the UNIQUE index is built on.  The raw name is BOUND and
 #: DuckDB canonicalises it: comparing against a key computed in Python would be comparing two
 #: different Unicode case-folding implementations, and a miss there ends in a constraint error.
+#: No time predicate on purpose: the uniqueness constraint spans history (see ``entity_id``).
 _ENTITY_BY_KEY_SQL = (
-    "SELECT entity_id FROM entities WHERE tenant_id = ? AND entity_key = "
-    + entity_key_sql("?") + " ORDER BY entity_id LIMIT 1"
+    f"SELECT entity_id FROM entities WHERE {tenant_sql()} AND entity_key = "
+    + entity_key_sql("?")
+    + " ORDER BY entity_id LIMIT 1"
 )
+
+#: The write-side compare-and-swap guard: the version of a memory or edge that is current on
+#: both axes, which is the only version a correction may close.  From :mod:`anatid.visibility`,
+#: like every other predicate over the bitemporal columns.
+_CURRENT = current_row_sql()
+
+#: The live version of a logical id (no correction has closed it), whatever its valid interval.
+#: Id lookups and the usage counters address this one.
+_LIVE = live_row_sql()
+
+#: ``coalesce(version, 1)``: a table the 3->4 migration altered has a nullable version column
+#: (DuckDB cannot add a NOT NULL column), and a NULL written there by raw SQL means version 1.
+_VERSION = f"coalesce({VERSION_COLUMN}, 1)"
+
+
+class _Expr:
+    """A SQL expression with its own bound parameters, for :func:`_successor` overrides."""
+
+    __slots__ = ("sql", "params")
+
+    def __init__(self, sql: str, *params: Any) -> None:
+        self.sql = sql
+        self.params = list(params)
+
+
+def _successor(columns: Sequence[str], **values: Any) -> tuple[str, str, list]:
+    """The column list, SELECT list and parameters that copy one version into the next.
+
+    Used as ``INSERT INTO t (<columns>) SELECT <select> FROM t WHERE <the version closed>``.
+    Every column keeps its value except the ones named in ``values`` (a bound value, or an
+    :class:`_Expr`) and the two the rule fixes: ``version`` becomes ``coalesce(version, 1) + 1``
+    and ``tx_to`` becomes ``NULL``.  Parameters come back in column order, so the caller
+    appends its WHERE parameters after them.
+    """
+    parts: list[str] = []
+    params: list = []
+    for col in columns:
+        if col == VERSION_COLUMN:
+            parts.append(f"{_VERSION} + 1")
+        elif col == "tx_to":
+            parts.append("NULL")
+        elif col in values:
+            value = values[col]
+            if isinstance(value, _Expr):
+                parts.append(value.sql)
+                params += value.params
+            else:
+                parts.append("?")
+                params.append(value)
+        else:
+            parts.append(col)
+    return ", ".join(columns), ", ".join(parts), params
+
 
 _INSERT_ENTITY = (
     "INSERT INTO entities (entity_id, tenant_id, kind, name, valid_from, valid_to, "
@@ -121,7 +210,7 @@ _INSERT_ENTITY = (
     "VALUES (?, ?, ?, ?, ?, NULL, ?, NULL, ?, ?, ?)"
 )
 
-_MAX_CHAIN = 10_000          # cycle guard for the SUPERSEDES walk
+_MAX_CHAIN = 10_000  # cycle guard for the SUPERSEDES walk
 
 #: Inclusive bounds for every ``confidence`` and ABOUT-edge ``weight`` anatid writes.
 MIN_CONFIDENCE = 0.0
@@ -141,6 +230,17 @@ def _count(result) -> int:
     return int(row[0]) if row and row[0] is not None else 0
 
 
+def _ids(result) -> list[int]:
+    """The ids a ``... RETURNING <id>`` DML statement produced, in statement order."""
+    return [int(r[0]) for r in result.fetchall()]
+
+
+def _distinct(ids: Sequence[int]) -> list[int]:
+    """``ids`` with repeats removed, first occurrence kept.  A statement over a versioned table
+    returns one row per version, and an index event or a receipt counts logical ids."""
+    return list(dict.fromkeys(int(i) for i in ids))
+
+
 # --------------------------------------------------------------------------- argument checks
 #
 # Every one of these runs BEFORE any statement does, and raises a subclass of
@@ -148,13 +248,13 @@ def _count(result) -> int:
 # ValueError keep working.  anatid 0.1.0 accepted confidence=-1, confidence=2, NaN embeddings
 # and k=0 and wrote them; the reviewer confirmed all three.
 
+
 def _check_number(field: str, value: Any) -> float:
     """Coerce to a finite float or raise :class:`~anatid.errors.ValidationError`."""
     try:
         out = float(value)
     except (TypeError, ValueError):
-        raise ValidationError(
-            f"{field} must be a number, got {type(value).__name__}") from None
+        raise ValidationError(f"{field} must be a number, got {type(value).__name__}") from None
     if not math.isfinite(out):
         raise ValidationError(f"{field} must be a finite number, got {value!r}")
     return out
@@ -166,7 +266,11 @@ def _check_unit(field: str, value: Any) -> float:
     if not (MIN_CONFIDENCE <= out <= MAX_CONFIDENCE):
         raise RangeError(
             f"{field} must be in [{MIN_CONFIDENCE}, {MAX_CONFIDENCE}], got {out!r}",
-            field=field, value=out, low=MIN_CONFIDENCE, high=MAX_CONFIDENCE)
+            field=field,
+            value=out,
+            low=MIN_CONFIDENCE,
+            high=MAX_CONFIDENCE,
+        )
     return out
 
 
@@ -202,13 +306,15 @@ def _check_row_id(field: str, value: Any) -> int:
     """An explicit id: a positive integer (the allocator's ids are 63-bit and positive)."""
     out = _check_int(field, value)
     if out <= 0:
-        raise RangeError(f"{field} must be a positive integer, got {out}",
-                         field=field, value=out, low=1)
+        raise RangeError(
+            f"{field} must be a positive integer, got {out}", field=field, value=out, low=1
+        )
     return out
 
 
-def _check_closes_after_open(verb: str, memory_id: int, valid_from: _dt.datetime | None,
-                             at: _dt.datetime) -> None:
+def _check_closes_after_open(
+    verb: str, memory_id: int, valid_from: _dt.datetime | None, at: _dt.datetime
+) -> None:
     """Refuse to close a memory's valid interval before it opened.
 
     ``supersede`` and soft ``forget`` both write ``valid_to = now``.  With ``now`` earlier than
@@ -222,10 +328,34 @@ def _check_closes_after_open(verb: str, memory_id: int, valid_from: _dt.datetime
             f"{verb}: now={at.isoformat()} is before memory {memory_id}'s "
             f"valid_from={valid_from.isoformat()}, which would close its interval before it "
             f"opened. Pass now >= valid_from, or forget(hard=True) to erase the row instead.",
-            field="now", value=at)
+            field="now",
+            value=at,
+        )
+
+
+def _check_records_after(
+    verb: str, what: str, tx_from: _dt.datetime | None, at: _dt.datetime
+) -> None:
+    """Refuse to record a correction before the version it corrects was recorded.
+
+    A correction closes the current version's transaction interval at ``now`` and opens the
+    next one there.  With ``now`` earlier than that version's ``tx_from`` the closed interval
+    is ``[tx_from, now)`` with ``now < tx_from``: never live, invisible to every ``as_of``, and
+    the successor would claim to have been recorded before the row it corrects.  Transaction
+    time is when the database recorded something, so it does not run backwards.
+    """
+    if tx_from is not None and at < tx_from:
+        raise RangeError(
+            f"{verb}: now={at.isoformat()} is before {what}'s tx_from={tx_from.isoformat()}, "
+            f"which would record the correction before the version it corrects. Pass "
+            f"now >= tx_from; transaction time does not run backwards.",
+            field="now",
+            value=at,
+        )
 
 
 # --------------------------------------------------------------------------- entity races
+
 
 def _is_entity_race(exc: BaseException) -> bool:
     """True when ``exc`` is a lost race to create an entity, and re-running will resolve it.
@@ -271,8 +401,8 @@ class AsOfView:
     ::
 
         before = db.as_of(t0)
-        before.recall_2hop(seed)      # the answer as of t0
-        before.get(mid).content       # the content believed at t0
+        before.recall_2hop(seed)  # the answer as of t0
+        before.get(mid).content  # the content believed at t0
     """
 
     __slots__ = ("_db", "scope")
@@ -311,6 +441,10 @@ class AsOfView:
     def provenance(self, memory_id, **kw) -> Provenance:
         return self._db.provenance(memory_id, **kw)
 
+    def visibility(self, tenant: int | Namespace | None = None) -> Visibility:
+        """The :class:`~anatid.visibility.Visibility` every read on this view applies."""
+        return self._db.visibility(tenant=tenant, as_of=self.scope)
+
 
 class MemoryVerbs(VerbHostMixin):
     """The verb surface of :class:`anatid.Anatid`.
@@ -324,6 +458,178 @@ class MemoryVerbs(VerbHostMixin):
     """
 
     # ------------------------------------------------------------------ internals
+
+    def visibility(
+        self, tenant: int | Namespace | None = None, as_of: AsOf | _dt.datetime | None = None
+    ) -> Visibility:
+        """The :class:`~anatid.visibility.Visibility` a read with these arguments applies.
+
+        The tenant goes through :meth:`resolve_tenant`, so the file-per-tenant boundary is
+        enforced here exactly as in every verb.  Accelerators use it to filter the candidates
+        they generate.
+        """
+        ns = self.resolve_tenant(tenant)
+        return Visibility.at(ns.tenant_id, as_of)
+
+    def _index_event(
+        self,
+        kind: str,
+        table: str,
+        tenant_id: int,
+        doc_ids: Sequence[int],
+        *,
+        at: _dt.datetime,
+        reason: str | None = None,
+    ) -> None:
+        """Report a write to the derived indexes, inside the transaction that made it.
+
+        ``getattr`` with a default on purpose, like ``in_transaction``: a test double without
+        an :attr:`~anatid.Anatid.indexes` registry simply has no indexes to keep current.
+        """
+        registry = getattr(self, "indexes", None)
+        if registry is None:
+            return
+        registry.emit(kind, table, tenant_id, doc_ids, at=at, reason=reason)
+
+    @contextlib.contextmanager
+    def _index_lifecycle(self):
+        """Hold the derived indexes' per-file lifecycle lock across a purge, and announce it.
+
+        ``forget(hard=True)`` enters this BEFORE opening its transaction, and holds it to the
+        commit, so a generation cannot be announced from a snapshot that still contains the
+        document this purge is erasing (:meth:`anatid.derived.IndexRegistry.lifecycle`).
+
+        Announcing is the other half, and it has to happen before the purge's snapshot is
+        taken.  A build already running when the purge starts commits its own catalog row while
+        the purge's snapshot still says ``building``, so the purge skips that generation; the
+        erasure counter is what tells the build its base may hold the erased document, and a
+        counter bumped inside the purge's transaction could arrive after the build had already
+        checked it and gone live.  Bumped here, the two orders are exhaustive: either the build
+        sees the bump and marks itself invalid, or the purge started after the build committed
+        and its snapshot sees a finished generation whose storage it can clean.
+
+        A no-op without a registry, and a spurious announcement (a purge that then raises) costs
+        one rebuild, which is the safe direction.
+        """
+        registry = getattr(self, "indexes", None)
+        if registry is None:
+            yield
+            return
+        with registry.lifecycle():
+            registry.announce_erasure()
+            yield
+
+    def _index_erase(
+        self,
+        table: str,
+        tenant_id: int,
+        doc_ids: Sequence[int],
+        *,
+        at: _dt.datetime,
+        reason: str | None = None,
+    ):
+        """Erase purged documents from every derived index, inside the purge transaction.
+
+        The destructive counterpart of :meth:`_index_event`: a tombstone would leave the erased
+        id in the file, so the journal rows go and each generation either deletes the document
+        from its storage or is invalidated.  Returns an
+        :class:`~anatid.derived.ErasureResult` (an empty one for a test double with no
+        registry).
+        """
+        registry = getattr(self, "indexes", None)
+        if registry is None:
+            return _derived.ErasureResult()
+        return registry.erase(table, tenant_id, doc_ids, at=at, reason=reason)
+
+    # ------------------------------------------------------------------ versions
+
+    def _close_memory(
+        self, tenant_id: int, memory_id: int, version: int, at: _dt.datetime, *, reason: str
+    ) -> bool:
+        """Close the current version of a memory at ``at`` by writing its successor.
+
+        Two statements, in the caller's transaction.  The current version's ``tx_to`` is set
+        to ``at``: this is the compare-and-swap, guarded by ``version`` and
+        :data:`~anatid.visibility.CURRENT_ROW_SQL`, so a concurrent correction of the same
+        version aborts with :class:`~anatid.errors.ConflictError` and a version that is no
+        longer current matches nothing.  Then a copy of that version is inserted as version
+        ``n + 1`` with ``valid_to = at``, ``tx_from = at`` and ``tx_to`` open, so history
+        keeps both what was believed and when the belief changed.  Returns ``False`` when
+        nothing was current to close.  Reports the close to the derived indexes.
+        """
+        closed = _count(
+            self.execute(
+                f"UPDATE memories SET tx_to = ? WHERE memory_id = ? AND tenant_id = ? "
+                f"AND {_VERSION} = ? AND {_CURRENT}",
+                [at, int(memory_id), int(tenant_id), int(version)],
+            )
+        )
+        if not closed:
+            return False
+        cols, select, params = _successor(MEMORY_COLUMNS, valid_to=at, tx_from=at)
+        self.execute(
+            f"INSERT INTO memories ({cols}) SELECT {select} FROM memories "
+            f"WHERE memory_id = ? AND tenant_id = ? AND {_VERSION} = ?",
+            params + [int(memory_id), int(tenant_id), int(version)],
+        )
+        self._index_event(
+            _derived.CLOSE, "memories", int(tenant_id), [int(memory_id)], at=at, reason=reason
+        )
+        return True
+
+    def _close_edges(
+        self,
+        table: str,
+        columns: Sequence[str],
+        where: str,
+        params: Sequence[Any],
+        at: _dt.datetime,
+        *,
+        tenant_id: int,
+        reason: str,
+    ) -> list[int]:
+        """Close every current edge of ``table`` matching ``where`` at ``at``; the edge ids.
+
+        The successors go in first (``valid_to = at``, ``tx_from = at``, version ``n + 1``),
+        selected by :data:`~anatid.visibility.CURRENT_ROW_SQL` and returned by id; then the
+        originals' ``tx_to`` is set with the same predicate, which the successors no longer
+        satisfy because their ``valid_to`` is set.  Both statements are set-based, so the
+        ABOUT edges of a memory close in two statements however many there are.  ``where``
+        must carry the tenant predicate.  Refuses, with :class:`~anatid.errors.RangeError`,
+        an ``at`` before any matched edge's ``valid_from`` or ``tx_from``.
+        """
+        if table not in VERSIONED_TABLES:
+            raise ValueError(f"{table} is not a versioned table")
+        bounds = self.execute(
+            f"SELECT max(valid_from), max(tx_from) FROM {table} WHERE {where} AND {_CURRENT}",
+            list(params),
+        ).fetchone()
+        if bounds is not None:
+            if bounds[0] is not None and at < bounds[0]:
+                raise RangeError(
+                    f"{reason}: now={at.isoformat()} is before an edge's "
+                    f"valid_from={bounds[0].isoformat()} in {table}, which would close its "
+                    f"interval before it opened. Pass now >= valid_from.",
+                    field="now",
+                    value=at,
+                )
+            _check_records_after(reason, f"an edge in {table}", bounds[1], at)
+        cols, select, sparams = _successor(columns, valid_to=at, tx_from=at)
+        closed = _distinct(
+            _ids(
+                self.execute(
+                    f"INSERT INTO {table} ({cols}) SELECT {select} FROM {table} "
+                    f"WHERE {where} AND {_CURRENT} RETURNING edge_id",
+                    sparams + list(params),
+                )
+            )
+        )
+        if closed:
+            self.execute(
+                f"UPDATE {table} SET tx_to = ? WHERE {where} AND {_CURRENT}", [at] + list(params)
+            )
+            self._index_event(_derived.CLOSE, table, int(tenant_id), closed, at=at, reason=reason)
+        return closed
 
     def _check_embedding(self, embedding: Sequence[float] | None) -> str | None:
         """Validate an embedding and render it as a SQL literal, or return None.
@@ -343,19 +649,23 @@ class MemoryVerbs(VerbHostMixin):
         if len(embedding) != dim:
             raise EmbeddingDimensionError(
                 f"embedding has {len(embedding)} dimensions, database is FLOAT[{dim}]",
-                expected=dim, got=len(embedding))
+                expected=dim,
+                got=len(embedding),
+            )
         for i, x in enumerate(embedding):
             try:
                 value = float(x)
             except (TypeError, ValueError):
                 raise EmbeddingValueError(
-                    f"embedding[{i}] is {type(x).__name__}, not a number",
-                    index=i, value=x) from None
+                    f"embedding[{i}] is {type(x).__name__}, not a number", index=i, value=x
+                ) from None
             if not math.isfinite(value):
                 raise EmbeddingValueError(
                     f"embedding[{i}] is {value!r}; every value must be finite (NaN and inf "
                     f"poison array_cosine_similarity for this row against every query)",
-                    index=i, value=value)
+                    index=i,
+                    value=value,
+                )
         return _recall.embedding_literal(embedding)
 
     def _atomic(self, work: Callable[[], _T], *, retries: int = ENTITY_RACE_RETRIES) -> _T:
@@ -387,8 +697,12 @@ class MemoryVerbs(VerbHostMixin):
                 if not _is_entity_race(exc):
                     raise
                 last = exc
-                log.debug("lost an entity-creation race (attempt %d/%d), re-running: %s",
-                          attempt + 1, retries, exc)
+                log.debug(
+                    "lost an entity-creation race (attempt %d/%d), re-running: %s",
+                    attempt + 1,
+                    retries,
+                    exc,
+                )
         assert last is not None
         raise last
 
@@ -408,13 +722,18 @@ class MemoryVerbs(VerbHostMixin):
         """
         row = self.execute(
             f"SELECT 1 FROM {_schema.quote_ident(table)} WHERE {_schema.quote_ident(column)} = ? "
-            f"AND tenant_id = ? LIMIT 1", [int(value), int(tenant_id)]).fetchone()
+            f"AND {tenant_sql()} LIMIT 1",
+            [int(value), int(tenant_id)],
+        ).fetchone()
         if row is not None:
             raise DuplicateIdError(
                 f"{column} {int(value)} already exists in tenant {int(tenant_id)}; "
                 f"ids are unique per tenant. Let anatid mint one, or supersede/forget the "
                 f"existing row first.",
-                table=table, id=int(value), tenant_id=int(tenant_id))
+                table=table,
+                id=int(value),
+                tenant_id=int(tenant_id),
+            )
 
     def entity_id(
         self,
@@ -463,7 +782,9 @@ class MemoryVerbs(VerbHostMixin):
         if isinstance(value, int):
             return int(value)
         if not isinstance(value, str):
-            raise TypeError(f"entity reference must be int | str | Entity, got {type(value).__name__}")
+            raise TypeError(
+                f"entity reference must be int | str | Entity, got {type(value).__name__}"
+            )
         row = self.execute(_ENTITY_BY_KEY_SQL, [ns.tenant_id, value]).fetchone()
         if row is not None:
             return int(row[0])
@@ -472,8 +793,10 @@ class MemoryVerbs(VerbHostMixin):
         at = to_utc_naive(now) or utcnow()
         eid = new_id()
         try:
-            self.execute(_INSERT_ENTITY,
-                         [eid, ns.tenant_id, kind, value, at, at, writer, episode_id, 1.0])
+            self.execute(
+                _INSERT_ENTITY, [eid, ns.tenant_id, kind, value, at, at, writer, episode_id, 1.0]
+            )
+            self._index_event(_derived.INSERT, "entities", ns.tenant_id, [eid], at=at)
         except Exception as exc:
             if not _is_entity_race(exc):
                 raise
@@ -487,11 +810,12 @@ class MemoryVerbs(VerbHostMixin):
                     f"lost the race to create entity {value!r} in tenant {ns.tenant_id}: another "
                     f"transaction committed it first and the enclosing transaction is aborted; "
                     f"roll back and re-run the unit of work (its lookup will find the winner)",
-                    cause=exc) from exc
+                    cause=exc,
+                ) from exc
             # Autocommit: this statement was its own transaction, so the connection is healthy
             # and the winner is committed and visible.  Read it and return it.
             row = self.execute(_ENTITY_BY_KEY_SQL, [ns.tenant_id, value]).fetchone()
-            if row is None:                  # pragma: no cover - winner purged in between
+            if row is None:  # pragma: no cover - winner purged in between
                 raise
             return int(row[0])
         return eid
@@ -526,16 +850,29 @@ class MemoryVerbs(VerbHostMixin):
                 "INSERT INTO episodes (episode_id, tenant_id, source, content, kind, created_at, "
                 "valid_from, valid_to, tx_from, tx_to, writer) "
                 "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, NULL, ?)",
-                [eid, ns.tenant_id, source, content, kind, at, at, at, writer])
-        return Episode(episode_id=eid, tenant_id=ns.tenant_id, content=content, source=source,
-                       kind=kind, created_at=at, valid_from=at, tx_from=at, writer=writer)
+                [eid, ns.tenant_id, source, content, kind, at, at, at, writer],
+            )
+        return Episode(
+            episode_id=eid,
+            tenant_id=ns.tenant_id,
+            content=content,
+            source=source,
+            kind=kind,
+            created_at=at,
+            valid_from=at,
+            tx_from=at,
+            writer=writer,
+        )
 
-    def get_episode(self, episode_id: int, *, tenant: int | Namespace | None = None) -> Episode | None:
+    def get_episode(
+        self, episode_id: int, *, tenant: int | Namespace | None = None
+    ) -> Episode | None:
         """Fetch one episode, or None."""
         ns = self.resolve_tenant(tenant)
         row = self.execute(
-            f"SELECT {_EPI_SELECT} FROM episodes WHERE episode_id = ? AND tenant_id = ?",
-            [int(episode_id), ns.tenant_id]).fetchone()
+            f"SELECT {_EPI_SELECT} FROM episodes WHERE episode_id = ? AND {tenant_sql()}",
+            [int(episode_id), ns.tenant_id],
+        ).fetchone()
         return None if row is None else Episode.from_row(row)
 
     # ------------------------------------------------------------------ entities & edges
@@ -559,12 +896,19 @@ class MemoryVerbs(VerbHostMixin):
 
         def _work() -> int:
             with self.transaction():
-                return self.entity_id(name, tenant=ns, create=True, kind=kind, now=now,
-                                      writer=writer, episode_id=episode_id)
+                return self.entity_id(
+                    name,
+                    tenant=ns,
+                    create=True,
+                    kind=kind,
+                    now=now,
+                    writer=writer,
+                    episode_id=episode_id,
+                )
 
         eid = self._atomic(_work)
         got = self.get_entity(eid, tenant=ns)
-        if got is None:      # pragma: no cover - only if another writer purged it in between
+        if got is None:  # pragma: no cover - only if another writer purged it in between
             raise NotFoundError(f"entity {eid} vanished during upsert")
         return got
 
@@ -580,14 +924,17 @@ class MemoryVerbs(VerbHostMixin):
             # By canonical key, exactly as entity_id() resolves it, so get_entity(name) and
             # entity_id(name) can never disagree about which row a name means.
             row = self.execute(
-                f"SELECT {_ENT_SELECT} FROM entities WHERE tenant_id = ? AND entity_key = "
-                + entity_key_sql("?") + " ORDER BY entity_id LIMIT 1",
-                [ns.tenant_id, entity]).fetchone()
+                f"SELECT {_ENT_SELECT} FROM entities WHERE {tenant_sql()} AND entity_key = "
+                + entity_key_sql("?")
+                + " ORDER BY entity_id LIMIT 1",
+                [ns.tenant_id, entity],
+            ).fetchone()
         else:
             eid = entity.entity_id if isinstance(entity, Entity) else int(entity)
             row = self.execute(
-                f"SELECT {_ENT_SELECT} FROM entities WHERE entity_id = ? AND tenant_id = ?",
-                [int(eid), ns.tenant_id]).fetchone()
+                f"SELECT {_ENT_SELECT} FROM entities WHERE entity_id = ? AND {tenant_sql()}",
+                [int(eid), ns.tenant_id],
+            ).fetchone()
         return None if row is None else Entity.from_row(row)
 
     def relate(
@@ -627,15 +974,37 @@ class MemoryVerbs(VerbHostMixin):
                     "INSERT INTO edges_relates (edge_id, src, dst, tenant_id, rel_kind, "
                     "valid_from, valid_to, tx_from, tx_to, writer, episode_id, confidence) "
                     "VALUES (?, ?, ?, ?, ?, ?, NULL, ?, NULL, ?, ?, ?)",
-                    [eid, s_id, d_id, ns.tenant_id, rel_kind, vf, at, writer, episode_id,
-                     confidence])
+                    [
+                        eid,
+                        s_id,
+                        d_id,
+                        ns.tenant_id,
+                        rel_kind,
+                        vf,
+                        at,
+                        writer,
+                        episode_id,
+                        confidence,
+                    ],
+                )
+                self._index_event(_derived.INSERT, "edges_relates", ns.tenant_id, [eid], at=at)
             return s_id, d_id
 
         s, d = self._atomic(_work)
         self.csr.note_edge_write()
-        return Edge(edge_id=eid, edge_type=RELATES_TO, src=s, dst=d, tenant_id=ns.tenant_id,
-                    rel_kind=rel_kind, valid_from=vf, tx_from=at, writer=writer,
-                    episode_id=episode_id, confidence=confidence)
+        return Edge(
+            edge_id=eid,
+            edge_type=RELATES_TO,
+            src=s,
+            dst=d,
+            tenant_id=ns.tenant_id,
+            rel_kind=rel_kind,
+            valid_from=vf,
+            tx_from=at,
+            writer=writer,
+            episode_id=episode_id,
+            confidence=confidence,
+        )
 
     def entities_of(
         self,
@@ -645,14 +1014,13 @@ class MemoryVerbs(VerbHostMixin):
         as_of: AsOf | _dt.datetime | None = None,
     ) -> list[Entity]:
         """Entities a memory is ABOUT, ordered by entity_id."""
-        ns = self.resolve_tenant(tenant)
-        scope = AsOf.coerce(as_of)
-        aw, ap = temporal_predicate("a", scope)
+        aw, ap = self.visibility(tenant, as_of).predicate("a")
         rows = self.execute(
             f"SELECT {', '.join('e.' + c for c in ENTITY_COLUMNS)} FROM edges_about a "
             f"JOIN entities e ON e.entity_id = a.dst AND e.tenant_id = a.tenant_id "
-            f"WHERE a.src = ? AND a.tenant_id = ? AND {aw} ORDER BY e.entity_id",
-            [int(memory_id), ns.tenant_id] + ap).fetchall()
+            f"WHERE a.src = ? AND {aw} ORDER BY e.entity_id",
+            [int(memory_id)] + ap,
+        ).fetchall()
         return [Entity.from_row(r) for r in rows]
 
     # ------------------------------------------------------------------ remember
@@ -712,7 +1080,8 @@ class MemoryVerbs(VerbHostMixin):
         mid = _check_row_id("memory_id", memory_id) if explicit_id else new_id()
         if episode is not None and episode_id is not None:
             raise ValidationError(
-                "pass either episode (raw text to record) or episode_id, not both")
+                "pass either episode (raw text to record) or episode_id, not both"
+            )
 
         def _work() -> Memory:
             ep = None if episode_id is None else int(episode_id)
@@ -729,27 +1098,52 @@ class MemoryVerbs(VerbHostMixin):
                         "INSERT INTO episodes (episode_id, tenant_id, source, content, kind, "
                         "created_at, valid_from, valid_to, tx_from, tx_to, writer) "
                         "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, NULL, ?)",
-                        [ep, ns.tenant_id, episode_source, episode, "source", ca, vf, at, writer])
+                        [ep, ns.tenant_id, episode_source, episode, "source", ca, vf, at, writer],
+                    )
 
                 self.execute(
                     _INSERT_MEMORY_TPL.format(dim=self.config.embedding_dim),
-                    [mid, ns.tenant_id, content, kind, emb, ca, vf, at, writer, ep, confidence])
+                    [mid, ns.tenant_id, content, kind, emb, ca, vf, at, writer, ep, confidence],
+                )
+                self._index_event(_derived.INSERT, "memories", ns.tenant_id, [mid], at=at)
 
-                dsts = [self.entity_id(e, tenant=ns, create=create_entities, kind=entity_kind,
-                                       now=at, writer=writer, episode_id=ep)
-                        for e in entities]
+                dsts = [
+                    self.entity_id(
+                        e,
+                        tenant=ns,
+                        create=create_entities,
+                        kind=entity_kind,
+                        now=at,
+                        writer=writer,
+                        episode_id=ep,
+                    )
+                    for e in entities
+                ]
                 if dsts:
+                    edge_ids = [new_id() for _ in dsts]
                     self.execute(
                         _INSERT_ABOUT,
-                        [mid, ns.tenant_id, weight, vf, at, writer, ep, confidence,
-                         [new_id() for _ in dsts], dsts])
+                        [mid, ns.tenant_id, weight, vf, at, writer, ep, confidence, edge_ids, dsts],
+                    )
+                    self._index_event(_derived.INSERT, "edges_about", ns.tenant_id, edge_ids, at=at)
 
             return Memory(
-                memory_id=mid, tenant_id=ns.tenant_id, content=content, kind=kind,
+                memory_id=mid,
+                tenant_id=ns.tenant_id,
+                content=content,
+                kind=kind,
                 embedding=None if embedding is None else tuple(float(x) for x in embedding),
-                created_at=ca, valid_from=vf, valid_to=None, tx_from=at, tx_to=None,
-                writer=writer, episode_id=ep,
-                confidence=confidence, access_count=0, last_access_at=None)
+                created_at=ca,
+                valid_from=vf,
+                valid_to=None,
+                tx_from=at,
+                tx_to=None,
+                writer=writer,
+                episode_id=ep,
+                confidence=confidence,
+                access_count=0,
+                last_access_at=None,
+            )
 
         return self._atomic(_work)
 
@@ -763,22 +1157,56 @@ class MemoryVerbs(VerbHostMixin):
         as_of: AsOf | _dt.datetime | None = None,
         with_embedding: bool = True,
     ) -> Memory | None:
-        """Fetch one memory by id under the given time scope, or None."""
-        ns = self.resolve_tenant(tenant)
-        scope = AsOf.coerce(as_of)
-        cols = _MEM_SELECT if with_embedding else _MEM_SELECT_NO_EMB
-        if scope.is_current:
-            # No validity filter: get() by id should return a superseded row too, and say so via
-            # Memory.is_current. The as-of forms below are the ones that hide history.
+        """Fetch one memory by id under the given time scope, or None.
+
+        Without ``as_of`` this returns the memory's **live** version: the physical row no
+        correction has closed, which is a superseded or forgotten memory's last version with
+        its ``valid_to`` set, so the row is returned and ``Memory.is_current`` says so.  With
+        ``as_of`` it returns the version visible at that instant on both axes, or ``None``.
+        """
+        vis = self.visibility(tenant, as_of)
+        cols = _mem_select(self.connection, embedding=with_embedding)
+        if vis.is_current:
+            # No validity filter on purpose: the as-of form below is the one that hides history.
+            # The transaction-time half is what selects one version of the id.
+            l_sql, l_p = vis.live()
             row = self.execute(
-                f"SELECT {cols} FROM memories WHERE memory_id = ? AND tenant_id = ?",
-                [int(memory_id), ns.tenant_id]).fetchone()
+                f"SELECT {cols} FROM memories WHERE memory_id = ? AND {l_sql}",
+                [int(memory_id)] + l_p,
+            ).fetchone()
         else:
-            w, wp = temporal_predicate("m", scope)
+            w, wp = vis.predicate("m")
             row = self.execute(
-                f"SELECT {cols} FROM memories m WHERE m.memory_id = ? AND m.tenant_id = ? AND {w}",
-                [int(memory_id), ns.tenant_id] + wp).fetchone()
+                f"SELECT {cols} FROM memories m WHERE m.memory_id = ? AND {w}",
+                [int(memory_id)] + wp,
+            ).fetchone()
         return None if row is None else Memory.from_row(row)
+
+    def versions(
+        self,
+        memory_id: int,
+        *,
+        tenant: int | Namespace | None = None,
+        with_embedding: bool = False,
+    ) -> list[Memory]:
+        """Every physical version of one memory, oldest first (``[]`` for an unknown id).
+
+        ``versions[0]`` is version 1, the row ``remember`` wrote; each later entry is the
+        successor a correction inserted, with ``tx_from`` at the correction and the valid
+        interval it decided.  Every entry but the last has ``tx_to`` set.  The list is the
+        transaction-time history of one logical id; :meth:`provenance` carries it as
+        ``Provenance.versions`` next to the SUPERSEDES chain between logical ids.
+        """
+        ns = self.resolve_tenant(tenant)
+        con = self.connection
+        cols = _mem_select(con, embedding=with_embedding)
+        t_sql, t_p = Visibility(ns.tenant_id).tenant()
+        rows = self.execute(
+            f"SELECT {cols} FROM memories WHERE memory_id = ? AND {t_sql} "
+            f"ORDER BY {version_expr(con)}, tx_from",
+            [int(memory_id)] + t_p,
+        ).fetchall()
+        return [Memory.from_row(r) for r in rows]
 
     def recall_2hop_ids(
         self,
@@ -799,11 +1227,21 @@ class MemoryVerbs(VerbHostMixin):
         scope = AsOf.coerce(as_of)
         limit = _check_positive("limit", limit)
         hops = _check_non_negative("hops", hops)
-        seed = self.entity_id(seed_entity, tenant=ns, create=False) \
-            if not isinstance(seed_entity, int) else int(seed_entity)
+        seed = (
+            self.entity_id(seed_entity, tenant=ns, create=False)
+            if not isinstance(seed_entity, int)
+            else int(seed_entity)
+        )
         return _recall.recall_2hop_ids(
-            self.connection, tenant_id=ns.tenant_id, seed_entity_id=seed, limit=limit,
-            hops=hops, as_of=scope, backend=self.csr, kinds=kinds)
+            self.connection,
+            tenant_id=ns.tenant_id,
+            seed_entity_id=seed,
+            limit=limit,
+            hops=hops,
+            as_of=scope,
+            backend=self.csr,
+            kinds=kinds,
+        )
 
     def recall_2hop(
         self,
@@ -825,11 +1263,17 @@ class MemoryVerbs(VerbHostMixin):
         Traversal is undirected over currently-valid same-tenant ``RELATES_TO`` edges; results are
         ordered ``created_at DESC, memory_id DESC``.
         """
-        pairs = self.recall_2hop_ids(seed_entity, tenant=tenant, limit=limit, as_of=as_of,
-                                     hops=hops, kinds=kinds)
+        pairs = self.recall_2hop_ids(
+            seed_entity, tenant=tenant, limit=limit, as_of=as_of, hops=hops, kinds=kinds
+        )
         ns = self.resolve_tenant(tenant)
-        rows = _recall.hydrate(self.connection, [m for m, _ in pairs],
-                               tenant_id=ns.tenant_id, with_embedding=with_embedding)
+        rows = _recall.hydrate(
+            self.connection,
+            [m for m, _ in pairs],
+            tenant_id=ns.tenant_id,
+            with_embedding=with_embedding,
+            as_of=AsOf.coerce(as_of),
+        )
         return [rows[m] for m, _ in pairs if m in rows]
 
     def context(
@@ -848,8 +1292,15 @@ class MemoryVerbs(VerbHostMixin):
         ``hops=0`` (the default) is the entity's own memories.  ``hops=1`` widens to its
         neighbours, ``hops=2`` is :meth:`recall_2hop`.
         """
-        return self.recall_2hop(entity, tenant=tenant, limit=limit, as_of=as_of, hops=hops,
-                                kinds=kinds, with_embedding=with_embedding)
+        return self.recall_2hop(
+            entity,
+            tenant=tenant,
+            limit=limit,
+            as_of=as_of,
+            hops=hops,
+            kinds=kinds,
+            with_embedding=with_embedding,
+        )
 
     def recall(
         self,
@@ -897,18 +1348,36 @@ class MemoryVerbs(VerbHostMixin):
         hops = _check_non_negative("hops", hops)
         seed = None
         if seed_entity is not None:
-            seed = int(seed_entity) if isinstance(seed_entity, int) and not isinstance(seed_entity, bool) \
+            seed = (
+                int(seed_entity)
+                if isinstance(seed_entity, int) and not isinstance(seed_entity, bool)
                 else self.entity_id(seed_entity, tenant=ns, create=False)
+            )
         if embedding is not None:
             self._check_embedding(embedding)
         return _recall.hybrid_recall(
-            self.connection, tenant_id=ns.tenant_id, query=query, embedding=embedding,
-            dim=self.config.embedding_dim, k=k, seed_entity=seed, hops=hops, as_of=scope,
-            kinds=kinds, candidates=candidates, rrf_k=rrf_k, backend=self.csr,
-            with_embedding=with_embedding, include_about=include_about,
-            on_stale_fts=on_stale_fts, allow_slow=allow_slow)
+            self.connection,
+            tenant_id=ns.tenant_id,
+            query=query,
+            embedding=embedding,
+            dim=self.config.embedding_dim,
+            k=k,
+            seed_entity=seed,
+            hops=hops,
+            as_of=scope,
+            kinds=kinds,
+            candidates=candidates,
+            rrf_k=rrf_k,
+            backend=self.csr,
+            with_embedding=with_embedding,
+            include_about=include_about,
+            on_stale_fts=on_stale_fts,
+            allow_slow=allow_slow,
+        )
 
-    def as_of(self, timestamp: _dt.datetime | AsOf, *, tx_time: _dt.datetime | None = None) -> AsOfView:
+    def as_of(
+        self, timestamp: _dt.datetime | AsOf, *, tx_time: _dt.datetime | None = None
+    ) -> AsOfView:
         """Scope reads to a point in time.
 
         ``db.as_of(t).recall_2hop(seed)`` answers as the database believed at ``t``.
@@ -948,33 +1417,38 @@ class MemoryVerbs(VerbHostMixin):
     ) -> Memory:
         """Replace a memory with a newer one, in one transaction.
 
-        Inserts the new memory, closes the old one's ``valid_to`` at ``now``, and records a
-        ``SUPERSEDES`` edge (new -> old) so :meth:`provenance` can walk the chain.  Reads at the
-        current time see only the new memory; ``db.as_of(t)`` for ``t`` before ``now`` still sees
-        the old one.
+        Inserts the new memory, closes the old one at ``now``, and records a ``SUPERSEDES``
+        edge (new -> old) so :meth:`provenance` can walk the chain.  Closing is a correction:
+        the old memory's current version gets ``tx_to = now`` and a successor version with
+        ``valid_to = now`` is inserted (:meth:`_close_memory`); nothing is rewritten.  Reads at
+        the current time see only the new memory; ``db.as_of(t)`` for ``t`` before ``now``
+        still sees the old one, and ``as_of(valid_time=later, tx_time=t)`` sees it open-ended,
+        because at ``t`` the database had not yet recorded the replacement.
 
         ``entities=None`` (default) inherits the old memory's ABOUT entities; pass a sequence to
         replace them, or ``()`` for none.  ``kind=None`` inherits the old kind.
 
-        The ``UPDATE`` on the old row is what can lose a write-write race: if another transaction
-        is *concurrently* superseding the same memory, this one raises
+        The ``UPDATE`` on the old version is what can lose a write-write race: if another
+        transaction is *concurrently* superseding the same memory, this one raises
         :class:`~anatid.errors.ConflictError` and is safe to retry.
 
         The *serialized* version of that race -- a retry after a client timeout, or two agents
         acting on the same stale read -- does not conflict in the engine at all: the ``UPDATE``
-        simply matches nothing, because ``valid_to`` is already set.  anatid checks the row count
-        and raises :class:`~anatid.errors.ConflictError` naming the memory that already superseded
-        it, rather than committing a second current memory and leaving two heads on one chain.
-        Pass ``allow_fork=True`` if branching really is what you want.
+        simply matches nothing, because the memory has no current version any more.  anatid
+        checks the row count and raises :class:`~anatid.errors.ConflictError` naming the memory
+        that already superseded it, rather than committing a second current memory and leaving
+        two heads on one chain.  Pass ``allow_fork=True`` if branching really is what you want.
 
         A lost entity-creation race (two writers naming the same *new* entity in ``entities=``)
         is re-run transparently, exactly as in :meth:`remember` -- the first attempt rolled back,
-        so the retry's ``UPDATE`` still finds ``valid_to IS NULL`` and the fork check is not
+        so the retry's ``UPDATE`` still finds the current version and the fork check is not
         confused by its own replay.  Only that specific constraint failure is retried; the
         write-write ``ConflictError`` above is the caller's to handle.
 
-        ``now`` may not precede the old memory's ``valid_from``: that would close its interval
-        before it opened, a row no ``as_of`` can ever return.  :class:`~anatid.errors.RangeError`.
+        ``now`` may not precede the old memory's ``valid_from`` (that would close its interval
+        before it opened, a row no ``as_of`` can ever return) nor its ``tx_from`` (that would
+        record the correction before the version it corrects).
+        :class:`~anatid.errors.RangeError` either way.
         """
         ns = self.resolve_tenant(tenant)
         at = to_utc_naive(now) or utcnow()
@@ -982,6 +1456,7 @@ class MemoryVerbs(VerbHostMixin):
         if old is None:
             raise NotFoundError(f"memory {old_id} not found in tenant {ns.tenant_id}")
         _check_closes_after_open("supersede", int(old_id), old.valid_from, at)
+        _check_records_after("supersede", f"memory {int(old_id)}", old.tx_from, at)
         if entities is None:
             entities = [e.entity_id for e in self.entities_of(int(old_id), tenant=ns)]
         confidence = _check_unit("confidence", confidence)
@@ -990,7 +1465,8 @@ class MemoryVerbs(VerbHostMixin):
         new_mid = _check_row_id("memory_id", memory_id) if explicit_id else new_id()
         if episode is not None and episode_id is not None:
             raise ValidationError(
-                "pass either episode (raw text to record) or episode_id, not both")
+                "pass either episode (raw text to record) or episode_id, not both"
+            )
 
         def _work() -> Memory:
             ep = None if episode_id is None else int(episode_id)
@@ -1003,43 +1479,80 @@ class MemoryVerbs(VerbHostMixin):
                         "INSERT INTO episodes (episode_id, tenant_id, source, content, kind, "
                         "created_at, valid_from, valid_to, tx_from, tx_to, writer) "
                         "VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, NULL, ?)",
-                        [ep, ns.tenant_id, episode_source, episode, "source", at, at, at, writer])
+                        [ep, ns.tenant_id, episode_source, episode, "source", at, at, at, writer],
+                    )
 
                 self.execute(
                     _INSERT_MEMORY_TPL.format(dim=self.config.embedding_dim),
-                    [new_mid, ns.tenant_id, content, kind if kind is not None else old.kind, emb,
-                     at, at, at, writer, ep, confidence])
+                    [
+                        new_mid,
+                        ns.tenant_id,
+                        content,
+                        kind if kind is not None else old.kind,
+                        emb,
+                        at,
+                        at,
+                        at,
+                        writer,
+                        ep,
+                        confidence,
+                    ],
+                )
+                self._index_event(_derived.INSERT, "memories", ns.tenant_id, [new_mid], at=at)
 
-                dsts = [self.entity_id(e, tenant=ns, create=True, now=at, writer=writer,
-                                       episode_id=ep) for e in entities]
+                dsts = [
+                    self.entity_id(e, tenant=ns, create=True, now=at, writer=writer, episode_id=ep)
+                    for e in entities
+                ]
                 if dsts:
+                    edge_ids = [new_id() for _ in dsts]
                     self.execute(
                         _INSERT_ABOUT,
-                        [new_mid, ns.tenant_id, 1.0, at, at, writer, ep, confidence,
-                         [new_id() for _ in dsts], dsts])
+                        [
+                            new_mid,
+                            ns.tenant_id,
+                            1.0,
+                            at,
+                            at,
+                            writer,
+                            ep,
+                            confidence,
+                            edge_ids,
+                            dsts,
+                        ],
+                    )
+                    self._index_event(_derived.INSERT, "edges_about", ns.tenant_id, edge_ids, at=at)
 
-                closed = _count(self.execute(
-                    "UPDATE memories SET valid_to = ? WHERE memory_id = ? AND tenant_id = ? "
-                    "AND valid_to IS NULL",
-                    [at, int(old_id), ns.tenant_id]))
-                if closed == 0 and not allow_fork:
+                closed = self._close_memory(
+                    ns.tenant_id, int(old_id), old.version, at, reason="supersede"
+                )
+                if not closed and not allow_fork:
                     head = self.execute(
-                        "SELECT src FROM edges_supersedes WHERE dst = ? AND tenant_id = ? "
-                        "ORDER BY tx_from, edge_id LIMIT 1",
-                        [int(old_id), ns.tenant_id]).fetchone()
+                        f"SELECT src FROM edges_supersedes WHERE dst = ? AND {tenant_sql()} "
+                        f"ORDER BY tx_from, edge_id LIMIT 1",
+                        [int(old_id), ns.tenant_id],
+                    ).fetchone()
                     by = f" (memory {int(head[0])} already superseded it)" if head else ""
                     raise ConflictError(
                         f"memory {int(old_id)} is not current in tenant {ns.tenant_id}, so this "
                         f"supersede would fork the chain into two heads{by}. Re-read the current "
-                        f"memory and supersede that one, or pass allow_fork=True.")
+                        f"memory and supersede that one, or pass allow_fork=True."
+                    )
                 if close_about_edges:
-                    self.execute(
-                        "UPDATE edges_about SET valid_to = ? WHERE src = ? AND tenant_id = ? "
-                        "AND valid_to IS NULL", [at, int(old_id), ns.tenant_id])
+                    self._close_edges(
+                        "edges_about",
+                        EDGE_ABOUT_COLUMNS,
+                        "src = ? AND tenant_id = ?",
+                        [int(old_id), ns.tenant_id],
+                        at,
+                        tenant_id=ns.tenant_id,
+                        reason="supersede",
+                    )
                 self.execute(
                     "INSERT INTO edges_supersedes (edge_id, src, dst, tenant_id, tx_from, writer) "
                     "VALUES (?, ?, ?, ?, ?, ?)",
-                    [new_id(), new_mid, int(old_id), ns.tenant_id, at, writer])
+                    [new_id(), new_mid, int(old_id), ns.tenant_id, at, writer],
+                )
                 # The counterpart id goes in a COLUMN, never into `reason`: forget(hard=True) has to
                 # be able to find and delete every audit row that names an erased memory, and it
                 # cannot search free text for it.
@@ -1047,15 +1560,24 @@ class MemoryVerbs(VerbHostMixin):
                     "INSERT INTO anatid_audit (audit_id, tenant_id, memory_id, related_memory_id, "
                     "action, reason, writer, happened_at) "
                     "VALUES (?, ?, ?, ?, 'supersede', ?, ?, ?)",
-                    [new_id(), ns.tenant_id, int(old_id), new_mid,
-                     'superseded', writer, at])
+                    [new_id(), ns.tenant_id, int(old_id), new_mid, "superseded", writer, at],
+                )
 
             return Memory(
-                memory_id=new_mid, tenant_id=ns.tenant_id, content=content,
+                memory_id=new_mid,
+                tenant_id=ns.tenant_id,
+                content=content,
                 kind=kind if kind is not None else old.kind,
                 embedding=None if embedding is None else tuple(float(x) for x in embedding),
-                created_at=at, valid_from=at, valid_to=None, tx_from=at, tx_to=None, writer=writer,
-                episode_id=ep, confidence=confidence)
+                created_at=at,
+                valid_from=at,
+                valid_to=None,
+                tx_from=at,
+                tx_to=None,
+                writer=writer,
+                episode_id=ep,
+                confidence=confidence,
+            )
 
         return self._atomic(_work)
 
@@ -1070,29 +1592,67 @@ class MemoryVerbs(VerbHostMixin):
     ) -> Memory:
         """Record that a memory was used: bump ``access_count`` and ``last_access_at``.
 
-        Optionally raise (or lower) ``confidence``.  This is a same-row ``UPDATE``, so two
-        concurrent reinforcements of the same memory race and the loser gets
+        The counters are **not bitemporal**.  They are updated in place on the memory's live
+        version, so an ``as_of`` read on the transaction axis returns whatever count that
+        version carried when it was closed, and a memory's history of use is not something
+        this database records.  That is the one in-place update the verbs make, and it is
+        made here because a version per access would double the table for no belief change.
+
+        ``confidence`` is a belief, so changing it is a correction like any other: the live
+        version is closed at ``now`` and a successor with the new confidence (and the bumped
+        counters) is inserted, exactly as ``supersede`` does.  Either way this touches one
+        row, so two concurrent reinforcements of the same memory race and the loser gets
         :class:`~anatid.errors.ConflictError` -- retry it.
         """
         ns = self.resolve_tenant(tenant)
         at = to_utc_naive(now) or utcnow()
+        mid = int(memory_id)
         amount = _check_int("amount", amount)
         if confidence is not None:
             confidence = _check_unit("confidence", confidence)
+        l_sql, l_p = Visibility(ns.tenant_id).live()
         with self.transaction():
-            if confidence is None:
-                n = _count(self.execute(
-                    "UPDATE memories SET access_count = coalesce(access_count, 0) + ?, "
-                    "last_access_at = ? WHERE memory_id = ? AND tenant_id = ?",
-                    [int(amount), at, int(memory_id), ns.tenant_id]))
-            else:
-                n = _count(self.execute(
-                    "UPDATE memories SET access_count = coalesce(access_count, 0) + ?, "
-                    "last_access_at = ?, confidence = ? WHERE memory_id = ? AND tenant_id = ?",
-                    [int(amount), at, float(confidence), int(memory_id), ns.tenant_id]))
-            if n == 0:
+            row = self.execute(
+                f"SELECT {_VERSION}, tx_from FROM memories WHERE memory_id = ? AND {l_sql}",
+                [mid] + l_p,
+            ).fetchone()
+            if row is None:
                 raise NotFoundError(f"memory {memory_id} not found in tenant {ns.tenant_id}")
-        got = self.get(int(memory_id), tenant=ns, with_embedding=False)
+            version, tx_from = int(row[0]), row[1]
+            if confidence is None:
+                n = _count(
+                    self.execute(
+                        f"UPDATE memories SET access_count = coalesce(access_count, 0) + ?, "
+                        f"last_access_at = ? WHERE memory_id = ? AND tenant_id = ? "
+                        f"AND {_VERSION} = ? AND {_LIVE}",
+                        [int(amount), at, mid, ns.tenant_id, version],
+                    )
+                )
+            else:
+                _check_records_after("reinforce", f"memory {mid}", tx_from, at)
+                n = _count(
+                    self.execute(
+                        f"UPDATE memories SET tx_to = ? WHERE memory_id = ? AND tenant_id = ? "
+                        f"AND {_VERSION} = ? AND {_LIVE}",
+                        [at, mid, ns.tenant_id, version],
+                    )
+                )
+                if n:
+                    cols, select, params = _successor(
+                        MEMORY_COLUMNS,
+                        tx_from=at,
+                        confidence=float(confidence),
+                        access_count=_Expr("coalesce(access_count, 0) + ?", int(amount)),
+                        last_access_at=at,
+                    )
+                    self.execute(
+                        f"INSERT INTO memories ({cols}) SELECT {select} FROM memories "
+                        f"WHERE memory_id = ? AND tenant_id = ? AND {_VERSION} = ?",
+                        params + [mid, ns.tenant_id, version],
+                    )
+            if n == 0:  # pragma: no cover - a purge committed between the SELECT and the UPDATE
+                raise NotFoundError(f"memory {memory_id} vanished during reinforce")
+        got = self.get(mid, tenant=ns, with_embedding=False)
         if got is None:  # pragma: no cover - concurrent purge
             raise NotFoundError(f"memory {memory_id} vanished during reinforce")
         return got
@@ -1109,16 +1669,23 @@ class MemoryVerbs(VerbHostMixin):
     ) -> ForgetReceipt:
         """Stop believing a memory (soft), or erase it (hard).
 
-        **Soft** (default): closes the memory's ``valid_to`` and its ABOUT edges' ``valid_to`` at
-        ``now`` and writes an ``anatid_audit`` row.  History is intact -- ``db.as_of(t)`` before
-        ``now`` still returns it, and :meth:`provenance` still walks through it.  ``now`` may
-        not precede the memory's ``valid_from`` (:class:`~anatid.errors.RangeError`): a fact
-        cannot stop being true before it started, and the inverted interval that would write is
-        invisible to every ``as_of``.  Erase such a row with ``hard=True`` instead.
+        **Soft** (default): closes the memory and its ABOUT edges at ``now`` and writes an
+        ``anatid_audit`` row.  Closing is a correction, not a rewrite: the current version of
+        the memory (and of each current ABOUT edge) gets ``tx_to = now`` and a successor with
+        ``valid_to = now`` is inserted, so ``db.as_of(t)`` before ``now`` still returns it,
+        ``as_of(valid_time=after, tx_time=before)`` still returns the open-ended belief the
+        database held before the forget, and :meth:`provenance` still walks through it.  A
+        memory that is already closed gets no new version; the audit row is still written.
+        ``now`` may not precede the memory's ``valid_from`` or ``tx_from``
+        (:class:`~anatid.errors.RangeError`): a fact cannot stop being true before it started,
+        a correction cannot be recorded before what it corrects, and the inverted intervals
+        that would write are invisible to every ``as_of``.  Erase such a row with ``hard=True``
+        instead.
 
-        **Hard** (``hard=True``): a right-to-erasure purge.  Deletes the ``memories`` row (the
-        embedding is a column of it), every ABOUT edge, every SUPERSEDES edge in either
-        direction, the episode if no other *memory* cites it (entity and edge rows stamped with
+        **Hard** (``hard=True``): a right-to-erasure purge.  Deletes every version of the
+        ``memories`` row (the embedding is a column of it), every version of every ABOUT edge,
+        every SUPERSEDES edge in either direction, the episode if no other *memory* cites it
+        (entity and edge rows stamped with
         that episode's id keep existing, with the stamp cleared -- the raw source text usually
         quotes the erased content, and an entity that outlives the memory may not keep it in
         the file), and every ``anatid_audit`` row that names the memory -- as its own
@@ -1127,7 +1694,11 @@ class MemoryVerbs(VerbHostMixin):
         index tables, because schema v3's ``anatid_fts_documents`` stores ``content`` verbatim
         -- an erasure that left the text in a search index would not be an erasure -- and clamps
         the ``anatid_meta.fts_indexed_max_id`` watermark when the erased row was the newest
-        indexed one.  When it returns, **no row in the memory graph references that memory_id**
+        indexed one.  The same argument covers every derived index (schema v4): the document is
+        deleted from each generation's storage and from the change journal, and any generation
+        whose storage cannot delete one document is invalidated so no read uses it again until
+        it is rebuilt (``derived_rows_deleted`` / ``invalidated_generations`` on the receipt).
+        When it returns, **no row in the memory graph references that memory_id**
         -- including in every as-of view, because there is nothing left to find.  That is the
         point: an audit trail that retained the id would defeat the erasure.
 
@@ -1147,30 +1718,49 @@ class MemoryVerbs(VerbHostMixin):
         mid = int(memory_id)
 
         if not hard:
+            l_sql, l_p = Visibility(ns.tenant_id).live()
             with self.transaction():
                 row = self.execute(
-                    "SELECT valid_from FROM memories WHERE memory_id = ? AND tenant_id = ? "
-                    "ORDER BY valid_to IS NULL DESC LIMIT 1", [mid, ns.tenant_id]).fetchone()
+                    f"SELECT {_VERSION}, valid_from, valid_to, tx_from FROM memories "
+                    f"WHERE memory_id = ? AND {l_sql}",
+                    [mid] + l_p,
+                ).fetchone()
                 if row is None:
                     raise NotFoundError(f"memory {mid} not found in tenant {ns.tenant_id}")
-                _check_closes_after_open("forget", mid, row[0], at)
-                self.execute(
-                    "UPDATE memories SET valid_to = ? WHERE memory_id = ? AND tenant_id = ? "
-                    "AND valid_to IS NULL", [at, mid, ns.tenant_id])
-                self.execute(
-                    "UPDATE edges_about SET valid_to = ? WHERE src = ? AND tenant_id = ? "
-                    "AND valid_to IS NULL", [at, mid, ns.tenant_id])
+                version, valid_from, valid_to, tx_from = int(row[0]), row[1], row[2], row[3]
+                if valid_to is None:
+                    _check_closes_after_open("forget", mid, valid_from, at)
+                    _check_records_after("forget", f"memory {mid}", tx_from, at)
+                    self._close_memory(ns.tenant_id, mid, version, at, reason="forget")
+                self._close_edges(
+                    "edges_about",
+                    EDGE_ABOUT_COLUMNS,
+                    "src = ? AND tenant_id = ?",
+                    [mid, ns.tenant_id],
+                    at,
+                    tenant_id=ns.tenant_id,
+                    reason="forget",
+                )
                 self.execute(
                     "INSERT INTO anatid_audit (audit_id, tenant_id, memory_id, action, reason, "
                     "writer, happened_at) VALUES (?, ?, ?, 'forget_soft', ?, ?, ?)",
-                    [new_id(), ns.tenant_id, mid, reason, writer, at])
-            return ForgetReceipt(memory_id=mid, tenant_id=ns.tenant_id, hard=False, at=at,
-                                 memories_deleted=0, audit_rows_written=1, reason=reason)
+                    [new_id(), ns.tenant_id, mid, reason, writer, at],
+                )
+            return ForgetReceipt(
+                memory_id=mid,
+                tenant_id=ns.tenant_id,
+                hard=False,
+                at=at,
+                memories_deleted=0,
+                audit_rows_written=1,
+                reason=reason,
+            )
 
-        with self.transaction():
+        with self._index_lifecycle(), self.transaction():
             row = self.execute(
-                "SELECT episode_id, content FROM memories WHERE memory_id = ? AND tenant_id = ?",
-                [mid, ns.tenant_id]).fetchone()
+                f"SELECT episode_id, content FROM memories WHERE memory_id = ? AND {tenant_sql()}",
+                [mid, ns.tenant_id],
+            ).fetchone()
             if row is None:
                 raise NotFoundError(f"memory {mid} not found in tenant {ns.tenant_id}")
             ep = None if row[0] is None else int(row[0])
@@ -1178,16 +1768,48 @@ class MemoryVerbs(VerbHostMixin):
             # of the text (a tool-result row quotes the content, not just the id).
             purged_content = row[1]
 
-            about = _count(self.execute(
-                "DELETE FROM edges_about WHERE src = ? AND tenant_id = ?", [mid, ns.tenant_id]))
-            sup = _count(self.execute(
-                "DELETE FROM edges_supersedes WHERE (src = ? OR dst = ?) AND tenant_id = ?",
-                [mid, mid, ns.tenant_id]))
-            audit = _count(self.execute(
-                "DELETE FROM anatid_audit WHERE (memory_id = ? OR related_memory_id = ?) "
-                "AND tenant_id = ?", [mid, mid, ns.tenant_id]))
-            mems = _count(self.execute(
-                "DELETE FROM memories WHERE memory_id = ? AND tenant_id = ?", [mid, ns.tenant_id]))
+            # One row per VERSION comes back from each versioned table; the receipt and the
+            # index events count logical ids, the receipt also keeps the physical counts.
+            about_rows = _ids(
+                self.execute(
+                    "DELETE FROM edges_about WHERE src = ? AND tenant_id = ? RETURNING edge_id",
+                    [mid, ns.tenant_id],
+                )
+            )
+            about_ids = _distinct(about_rows)
+            about = len(about_ids)
+            derived = self._index_erase(
+                "edges_about", ns.tenant_id, about_ids, at=at, reason="forget_hard"
+            )
+            sup_ids = _ids(
+                self.execute(
+                    "DELETE FROM edges_supersedes WHERE (src = ? OR dst = ?) AND tenant_id = ? "
+                    "RETURNING edge_id",
+                    [mid, mid, ns.tenant_id],
+                )
+            )
+            sup = len(sup_ids)
+            derived = derived + self._index_erase(
+                "edges_supersedes", ns.tenant_id, sup_ids, at=at, reason="forget_hard"
+            )
+            audit = _count(
+                self.execute(
+                    "DELETE FROM anatid_audit WHERE (memory_id = ? OR related_memory_id = ?) "
+                    "AND tenant_id = ?",
+                    [mid, mid, ns.tenant_id],
+                )
+            )
+            mem_rows = _count(
+                self.execute(
+                    "DELETE FROM memories WHERE memory_id = ? AND tenant_id = ?",
+                    [mid, ns.tenant_id],
+                )
+            )
+            mems = 1 if mem_rows else 0
+            if mems:
+                derived = derived + self._index_erase(
+                    "memories", ns.tenant_id, [mid], at=at, reason="forget_hard"
+                )
 
             episodes = 0
             if ep is not None:
@@ -1198,17 +1820,25 @@ class MemoryVerbs(VerbHostMixin):
                 # the erased content verbatim) in the file: with "Ada" outliving the memory, the
                 # old rule kept "user said: <secret>" in `episodes` for as long as Ada existed.
                 # The stamps are cleared so nothing dangles (doctor() would report it).
-                still = _count(self.execute(
-                    "SELECT count(*) FROM memories WHERE episode_id = ? AND tenant_id = ?",
-                    [ep, ns.tenant_id]))
+                still = _count(
+                    self.execute(
+                        f"SELECT count(*) FROM memories WHERE episode_id = ? AND {tenant_sql()}",
+                        [ep, ns.tenant_id],
+                    )
+                )
                 if still == 0:
                     for table in ("entities", "edges_about", "edges_relates"):
                         self.execute(
                             f"UPDATE {table} SET episode_id = NULL "
-                            f"WHERE episode_id = ? AND tenant_id = ?", [ep, ns.tenant_id])
-                    episodes = _count(self.execute(
-                        "DELETE FROM episodes WHERE episode_id = ? AND tenant_id = ?",
-                        [ep, ns.tenant_id]))
+                            f"WHERE episode_id = ? AND tenant_id = ?",
+                            [ep, ns.tenant_id],
+                        )
+                    episodes = _count(
+                        self.execute(
+                            "DELETE FROM episodes WHERE episode_id = ? AND tenant_id = ?",
+                            [ep, ns.tenant_id],
+                        )
+                    )
 
             # The BM25 index tables hold the memory's content VERBATIM (anatid_fts_documents)
             # and its tokens (fts_main_*.terms).  A purge that skipped them would leave the
@@ -1221,7 +1851,9 @@ class MemoryVerbs(VerbHostMixin):
             self.execute(
                 f"UPDATE anatid_meta SET fts_indexed_max_id = "
                 f"(SELECT max(memory_id) FROM {_schema.FTS_DOCS_TABLE}) "
-                f"WHERE fts_indexed_max_id = ?", [mid])
+                f"WHERE fts_indexed_max_id = ?",
+                [mid],
+            )
 
             # Tables anatid does not own (conversation transcripts, caller-defined labels).
             # Inside the transaction on purpose: a hook that raises aborts the whole purge
@@ -1235,14 +1867,74 @@ class MemoryVerbs(VerbHostMixin):
             # per handle; the file is not, and a purge from a second process, a maintenance
             # script or the MCP server's `forget` tool must reach the same rows.
             extra += _erasure.purge_bundled_tables(
-                self, mid, ns.tenant_id, purged_content,
-                skip=[t for t in (getattr(h, "table", None) for h in hooks) if t])
+                self,
+                mid,
+                ns.tenant_id,
+                purged_content,
+                skip=[t for t in (getattr(h, "table", None) for h in hooks) if t],
+            )
 
-        return ForgetReceipt(memory_id=mid, tenant_id=ns.tenant_id, hard=True, at=at,
-                             memories_deleted=mems, about_edges_deleted=about,
-                             supersedes_edges_deleted=sup, episodes_deleted=episodes,
-                             audit_rows_deleted=audit, fts_rows_deleted=fts,
-                             extra_rows_deleted=extra, reason=reason)
+        return ForgetReceipt(
+            memory_id=mid,
+            tenant_id=ns.tenant_id,
+            hard=True,
+            at=at,
+            memories_deleted=mems,
+            about_edges_deleted=about,
+            supersedes_edges_deleted=sup,
+            episodes_deleted=episodes,
+            audit_rows_deleted=audit,
+            fts_rows_deleted=fts,
+            extra_rows_deleted=extra,
+            memory_versions_deleted=mem_rows,
+            about_edge_versions_deleted=len(about_rows),
+            derived_rows_deleted=derived.rows_deleted,
+            invalidated_generations=derived.generations_invalidated,
+            reason=reason,
+        )
+
+    def unrelate(
+        self,
+        src: "int | str | Entity",
+        dst: "int | str | Entity",
+        *,
+        rel_kind: str | None = None,
+        tenant: int | Namespace | None = None,
+        now: _dt.datetime | None = None,
+    ) -> int:
+        """Stop believing the ``RELATES_TO`` edges between two entities; returns how many closed.
+
+        The inverse of :meth:`relate`, and undirected like the traversal: edges in either
+        direction between ``src`` and ``dst`` are closed, all of them unless ``rel_kind``
+        narrows it.  Closing follows the same rule as a memory: each current edge version gets
+        ``tx_to = now`` and a successor with ``valid_to = now`` is inserted, so
+        ``db.as_of(t)`` before ``now`` still traverses the edge and a transaction-time read
+        before ``now`` still sees it open-ended.  Nothing is deleted; ``forget(hard=True)`` on
+        a memory is the only verb that erases.  Marks the optional CSR snapshot stale.
+        Unknown entity names raise :class:`~anatid.errors.NotFoundError`.
+        """
+        ns = self.resolve_tenant(tenant)
+        at = to_utc_naive(now) or utcnow()
+        s_id = self.entity_id(src, tenant=ns, create=False)
+        d_id = self.entity_id(dst, tenant=ns, create=False)
+        where = "((src = ? AND dst = ?) OR (src = ? AND dst = ?)) AND tenant_id = ?"
+        params: list[Any] = [s_id, d_id, d_id, s_id, ns.tenant_id]
+        if rel_kind is not None:
+            where += " AND rel_kind = ?"
+            params.append(str(rel_kind))
+        with self.transaction():
+            closed = self._close_edges(
+                "edges_relates",
+                EDGE_RELATES_COLUMNS,
+                where,
+                params,
+                at,
+                tenant_id=ns.tenant_id,
+                reason="unrelate",
+            )
+        if closed:
+            self.csr.note_edge_write()
+        return len(closed)
 
     def prune(
         self,
@@ -1281,8 +1973,8 @@ class MemoryVerbs(VerbHostMixin):
         if max_access_count is not None:
             max_access_count = _check_non_negative("max_access_count", max_access_count)
 
-        where = ["tenant_id = ?", "valid_to IS NULL", "tx_to IS NULL"]
-        params: list[Any] = [ns.tenant_id]
+        visible, params = Visibility(ns.tenant_id).predicate()
+        where = [visible]
         if older_than is not None:
             where.append("created_at < ?")
             params.append(to_utc_naive(older_than))
@@ -1292,22 +1984,36 @@ class MemoryVerbs(VerbHostMixin):
         if kinds:
             where.append(f"kind IN ({', '.join('?' for _ in kinds)})")
             params += [str(k) for k in kinds]
-        sql = (f"SELECT memory_id FROM memories WHERE {' AND '.join(where)} "
-               f"ORDER BY created_at ASC, memory_id ASC")
+        sql = (
+            f"SELECT memory_id FROM memories WHERE {' AND '.join(where)} "
+            f"ORDER BY created_at ASC, memory_id ASC"
+        )
         if limit is not None:
             sql += " LIMIT ?"
             params.append(int(limit))
         ids = [int(r[0]) for r in self.execute(sql, params).fetchall()]
 
         if dry_run:
-            return PruneReport(dry_run=True, hard=hard, at=at, memory_ids=tuple(ids),
-                               older_than=to_utc_naive(older_than),
-                               max_access_count=max_access_count)
-        receipts = [self.forget(m, hard=hard, reason=reason, writer=writer, now=at, tenant=ns)
-                    for m in ids]
-        return PruneReport(dry_run=False, hard=hard, at=at, memory_ids=tuple(ids),
-                           receipts=tuple(receipts), older_than=to_utc_naive(older_than),
-                           max_access_count=max_access_count)
+            return PruneReport(
+                dry_run=True,
+                hard=hard,
+                at=at,
+                memory_ids=tuple(ids),
+                older_than=to_utc_naive(older_than),
+                max_access_count=max_access_count,
+            )
+        receipts = [
+            self.forget(m, hard=hard, reason=reason, writer=writer, now=at, tenant=ns) for m in ids
+        ]
+        return PruneReport(
+            dry_run=False,
+            hard=hard,
+            at=at,
+            memory_ids=tuple(ids),
+            receipts=tuple(receipts),
+            older_than=to_utc_naive(older_than),
+            max_access_count=max_access_count,
+        )
 
     # ------------------------------------------------------------------ provenance
 
@@ -1322,7 +2028,9 @@ class MemoryVerbs(VerbHostMixin):
 
         Returns the chain newest-first, the episodes behind it, the SUPERSEDES edges traversed
         and every distinct writer involved -- the answer to "where did this belief come from and
-        who put it there".
+        who put it there".  ``Provenance.versions`` adds the other axis for the memory asked
+        about: every physical version of it, oldest first, which is the record of when the
+        database changed its mind about that one memory (:meth:`versions`).
 
         A hard purge anywhere in the chain truncates it: the erased link is genuinely gone.
         """
@@ -1338,14 +2046,23 @@ class MemoryVerbs(VerbHostMixin):
                 break
             chain.append(mem)
             row = self.execute(
-                "SELECT edge_id, dst, tx_from, writer FROM edges_supersedes "
-                "WHERE src = ? AND tenant_id = ? ORDER BY tx_from, edge_id LIMIT 1",
-                [cur, ns.tenant_id]).fetchone()
+                f"SELECT edge_id, dst, tx_from, writer FROM edges_supersedes "
+                f"WHERE src = ? AND {tenant_sql()} ORDER BY tx_from, edge_id LIMIT 1",
+                [cur, ns.tenant_id],
+            ).fetchone()
             if row is None:
                 break
-            edges.append(Edge(edge_id=int(row[0]), edge_type=SUPERSEDES, src=cur,
-                              dst=int(row[1]), tenant_id=ns.tenant_id, tx_from=row[2],
-                              writer=row[3]))
+            edges.append(
+                Edge(
+                    edge_id=int(row[0]),
+                    edge_type=SUPERSEDES,
+                    src=cur,
+                    dst=int(row[1]),
+                    tenant_id=ns.tenant_id,
+                    tx_from=row[2],
+                    writer=row[3],
+                )
+            )
             cur = int(row[1])
         if not chain:
             raise NotFoundError(f"memory {memory_id} not found in tenant {ns.tenant_id}")
@@ -1354,41 +2071,75 @@ class MemoryVerbs(VerbHostMixin):
         episodes: list[Episode] = []
         if ep_ids:
             marks = ", ".join("?" for _ in ep_ids)
-            rows = {int(r[0]): Episode.from_row(r) for r in self.execute(
-                f"SELECT {_EPI_SELECT} FROM episodes WHERE episode_id IN ({marks}) "
-                f"AND tenant_id = ?", [*ep_ids, ns.tenant_id]).fetchall()}
+            rows = {
+                int(r[0]): Episode.from_row(r)
+                for r in self.execute(
+                    f"SELECT {_EPI_SELECT} FROM episodes WHERE episode_id IN ({marks}) "
+                    f"AND {tenant_sql()}",
+                    [*ep_ids, ns.tenant_id],
+                ).fetchall()
+            }
             episodes = [rows[e] for e in ep_ids if e in rows]
 
         writers: list[str] = []
         for m in chain:
             if m.writer and m.writer not in writers:
                 writers.append(m.writer)
-        return Provenance(memory_id=int(memory_id), chain=tuple(chain),
-                          episodes=tuple(episodes), edges=tuple(edges), writers=tuple(writers))
+        return Provenance(
+            memory_id=int(memory_id),
+            chain=tuple(chain),
+            episodes=tuple(episodes),
+            edges=tuple(edges),
+            writers=tuple(writers),
+            versions=tuple(self.versions(int(memory_id), tenant=ns)),
+        )
 
     # ------------------------------------------------------------------ misc
 
     def stats(self, *, tenant: int | Namespace | None = None, all_tenants: bool = False) -> dict:
-        """Row counts for this tenant (or the whole file), plus the active expansion path."""
+        """Row counts for this tenant (or the whole file), plus the active expansion path.
+
+        A versioned table (``memories``, ``edges_about``, ``edges_relates``) is counted by
+        logical row, i.e. live versions, so a correction does not change ``memories``;
+        ``memory_versions`` is the physical row count of ``memories``.
+        """
         ns = self.resolve_tenant(tenant)
         out: dict[str, Any] = {}
-        tables = ["memories", "entities", "episodes", "edges_about", "edges_relates",
-                  "edges_supersedes", "anatid_audit"]
+        tables = [
+            "memories",
+            "entities",
+            "episodes",
+            "edges_about",
+            "edges_relates",
+            "edges_supersedes",
+            "anatid_audit",
+        ]
+        vis = Visibility(ns.tenant_id)
+        t_sql, t_p = vis.tenant()
+        l_sql, l_p = vis.live()
         for t in tables:
-            if all_tenants:
-                out[t] = _count(self.execute(f"SELECT count(*) FROM {t}"))
+            if t in VERSIONED_TABLES:
+                where, params = (_LIVE, []) if all_tenants else (l_sql, l_p)
             else:
-                out[t] = _count(self.execute(
-                    f"SELECT count(*) FROM {t} WHERE tenant_id = ?", [ns.tenant_id]))
-        out["current_memories"] = _count(self.execute(
-            "SELECT count(*) FROM memories WHERE tenant_id = ? AND valid_to IS NULL "
-            "AND tx_to IS NULL", [ns.tenant_id]))
+                where, params = ("TRUE", []) if all_tenants else (t_sql, t_p)
+            out[t] = _count(self.execute(f"SELECT count(*) FROM {t} WHERE {where}", params))
+        out["memory_versions"] = _count(
+            self.execute(
+                "SELECT count(*) FROM memories" + ("" if all_tenants else f" WHERE {t_sql}"),
+                [] if all_tenants else t_p,
+            )
+        )
+        visible, vp = vis.predicate()
+        out["current_memories"] = _count(
+            self.execute(f"SELECT count(*) FROM memories WHERE {visible}", vp)
+        )
         out["tenant_id"] = ns.tenant_id
         out["expand_path"] = self.csr.active
         return out
 
 
 # --------------------------------------------------------------------------- function forms
+
 
 def remember(db: MemoryVerbs, content: str, **kw) -> Memory:
     """Function form of :meth:`MemoryVerbs.remember`."""
@@ -1423,6 +2174,16 @@ def reinforce(db: MemoryVerbs, memory_id: int, **kw) -> Memory:
 def forget(db: MemoryVerbs, memory_id: int, **kw) -> ForgetReceipt:
     """Function form of :meth:`MemoryVerbs.forget`."""
     return db.forget(memory_id, **kw)
+
+
+def unrelate(db: MemoryVerbs, src, dst, **kw) -> int:
+    """Function form of :meth:`MemoryVerbs.unrelate`."""
+    return db.unrelate(src, dst, **kw)
+
+
+def versions(db: MemoryVerbs, memory_id: int, **kw) -> list[Memory]:
+    """Function form of :meth:`MemoryVerbs.versions`."""
+    return db.versions(memory_id, **kw)
 
 
 def prune(db: MemoryVerbs, **kw) -> PruneReport:

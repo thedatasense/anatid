@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "anatid"
-version = "0.1.1"
+version = "0.2.0"
 # Keep in lockstep with src/anatid/__init__.py::__version__ (owned by another module).  The
 # `lint` job in .github/workflows/ci.yml fails the build when the two drift.
 description = "Embedded bitemporal graph memory for AI agents, built on DuckDB. Pure-Python wheel."
@@ -292,7 +292,7 @@ ignore = [
                #     redundant (verbs 11, types 8, database 4, agents/session 1)
     "I001",    #  9x unsorted import blocks (csr, verbs, mcp/server, mcp/sqlgate, agents/session,
                #     tests/test_core, tests/test_mcp, tests/test_integrity, tests/test_recall_tenancy)
-    "ISC004",  # 10x unparenthesised implicit concatenation inside the DDL lists in schema.py --
+    "ISC003",  # explicit concatenation is clearer than implicit in the DDL lists in schema.py --
                #     the one rule here worth fixing soon, because a missing comma in a list of
                #     SQL fragments silently fuses two statements
     "Q000",    #  2x single-quoted strings (verbs.py, tests/test_openai_agents.py)

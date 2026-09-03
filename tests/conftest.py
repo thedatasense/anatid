@@ -27,6 +27,13 @@ SPIKE_COMMON = SPIKE_DIR / "bench" / "common.py"
 SPIKE_SMALL = SPIKE_DIR / "data" / "small"
 SPIKE_EXTENSION = (SPIKE_DIR / "extension" / "build" / "release" / "extension" / "anatid"
                    / "anatid.duckdb_extension")
+#: What ``cd ext && GEN=ninja make release`` produces.  Named here as well as being found by
+#: :func:`anatid.csr.discover_extension_path`, because that function walks up from
+#: ``anatid.__file__`` and finds nothing from site-packages: a suite run against an INSTALLED
+#: wheel would otherwise skip every extension test, which is exactly the configuration a release
+#: is validated in.
+BUILT_EXTENSION = (REPO_ROOT / "ext" / "build" / "release" / "extension" / "anatid"
+                   / "anatid.duckdb_extension")
 
 #: Fixed clock so tests never depend on wall time.
 T0 = _dt.datetime(2026, 1, 1, 0, 0, 0)
@@ -68,6 +75,33 @@ def file_db(tmp_path):
     from anatid import Anatid
 
     with Anatid.open(tmp_path / "core.anatid", tenant=1, embedding_dim=DIM) as handle:
+        yield handle
+
+
+@pytest.fixture
+def legacy_db():
+    """A database with 0.1.1's accelerators and none of the derived ones.
+
+    ``Anatid.open(accelerators=False)``.  Two kinds of test open this rather than :func:`db`:
+    tests of the 0.1.1 half itself (the non-incremental file-wide BM25 index, whose whole
+    subject is that a write is invisible until a rebuild), and tests of the derived-index
+    framework, which build their own indexes over the placeholder registry and would otherwise
+    be counting the shipped accelerators' journal rows as well as their own.
+    """
+    from anatid import Anatid
+
+    with Anatid.open(":memory:", tenant=1, embedding_dim=DIM, accelerators=False) as handle:
+        yield handle
+
+
+@pytest.fixture
+def legacy_file_db(tmp_path):
+    """:func:`legacy_db` on disk, for multi-connection tests."""
+    from anatid import Anatid
+
+    with Anatid.open(
+        tmp_path / "core.anatid", tenant=1, embedding_dim=DIM, accelerators=False
+    ) as handle:
         yield handle
 
 

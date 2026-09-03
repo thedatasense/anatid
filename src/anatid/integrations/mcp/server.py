@@ -159,6 +159,7 @@ def _memory(m: Memory, *, with_embedding: bool = False) -> dict[str, Any]:
         "access_count": m.access_count,
         "last_access_at": _iso(m.last_access_at),
         "tenant_id": m.tenant_id,
+        "version": m.version,
     }
     if with_embedding and m.embedding is not None:
         out["embedding"] = [float(x) for x in m.embedding]
@@ -204,6 +205,7 @@ def _edge(e: Edge) -> dict[str, Any]:
         "valid_to": _iso(e.valid_to),
         "is_current": e.is_current,
         "tenant_id": e.tenant_id,
+        "version": e.version,
     }
 
 
@@ -259,6 +261,10 @@ def _receipt(r: ForgetReceipt) -> dict[str, Any]:
         "episodes_deleted": r.episodes_deleted,
         "audit_rows_deleted": r.audit_rows_deleted,
         "audit_rows_written": r.audit_rows_written,
+        "memory_versions_deleted": r.memory_versions_deleted,
+        "about_edge_versions_deleted": r.about_edge_versions_deleted,
+        "derived_rows_deleted": r.derived_rows_deleted,
+        "invalidated_generations": r.invalidated_generations,
         "rows_removed": r.rows_removed,
         "reason": r.reason,
     }
@@ -274,6 +280,7 @@ def _provenance(p: Provenance) -> dict[str, Any]:
         "episodes": [_episode(e) for e in p.episodes],
         "edges": [_edge(e) for e in p.edges],
         "writers": list(p.writers),
+        "versions": [_memory(m) for m in p.versions],
     }
 
 
@@ -649,10 +656,11 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             title="Supersede a memory",
             annotations=write_tool,
             description=(
-                "Replace a memory with a corrected version. The old row is not deleted: its "
-                "validity is closed, a SUPERSEDES edge records the replacement, and `provenance` "
-                "and `as_of` still see it. Leave `entities` unset to inherit the old memory's "
-                "ABOUT set, and `kind` unset to inherit its kind."
+                "Replace a memory with a corrected version. The old row is not deleted or "
+                "rewritten: its current version is closed on the transaction axis and a new "
+                "version with validity ending now is added, a SUPERSEDES edge records the "
+                "replacement, and `provenance` and `as_of` still see it. Leave `entities` unset "
+                "to inherit the old memory's ABOUT set, and `kind` unset to inherit its kind."
             ),
         )
         @_guard
@@ -693,9 +701,11 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             annotations=destructive_tool,
             description=(
                 "DESTRUCTIVE. With hard=false (the default) this is a soft forget: the memory's "
-                "validity is closed at now, its ABOUT edges are closed, an audit row is written, "
-                "and `as_of` before now still returns it -- reversible in the sense that the "
-                "history survives. With hard=true this is a right-to-erasure purge: the memory "
+                "validity is closed at now by adding a new version (the previous version stays "
+                "readable through `as_of` on the transaction axis), its ABOUT edges are closed "
+                "the same way, an audit row is written, and `as_of` before now still returns it "
+                "-- reversible in the sense that the history survives. With hard=true this is a "
+                "right-to-erasure purge: every version of the memory "
                 "row (the embedding is a column of it), every ABOUT and SUPERSEDES edge, the "
                 "episode if nothing else cites it, and the memory's own audit rows are deleted. "
                 "Afterwards no row anywhere references that memory_id, in any as-of view. The "

@@ -1,0 +1,215 @@
+# name: test/sql/anatid_csr_generations.test
+# description: what anatid's derived-index framework needs from the extension -- named snapshots
+#              (one per generation), a generation-owned dense vertex mapping, and one BFS over
+#              base + delta - tombstones.
+# group: [anatid]
+
+require anatid
+
+# A generation's storage: dense vertex ids in the edge table, the mapping beside it.
+# tenant 0: path 1000-2000-3000-4000-5000 written as dense 0-1-2-3-4
+statement ok
+CREATE TABLE g1_edges(edge_id BIGINT, tenant_id INTEGER, src BIGINT, dst BIGINT);
+
+statement ok
+INSERT INTO g1_edges VALUES (10, 0, 0, 1), (11, 0, 1, 2), (12, 0, 2, 3), (13, 0, 3, 4);
+
+statement ok
+CREATE TABLE g1_vertices(tenant_id INTEGER, vertex_id BIGINT, entity_id BIGINT);
+
+statement ok
+INSERT INTO g1_vertices VALUES (0, 0, 1000), (0, 1, 2000), (0, 2, 3000), (0, 3, 4000), (0, 4, 5000);
+
+query III
+SELECT tenants, vertices, edges FROM anatid_build_csr('g1_edges', labels := 'g1_vertices', key := 'gen1');
+----
+1	5	4
+
+# The snapshot is named: the unnamed one is still absent.
+statement error
+SELECT * FROM graph_expand(0, 1000, 2);
+----
+no CSR has been built for this database yet under the key (unnamed)
+
+# Seeds and results are EXTERNAL entity ids; the dense numbering never leaves the extension.
+query II
+SELECT entity_id, depth FROM graph_expand(0, 1000, 2, key := 'gen1') ORDER BY depth, entity_id;
+----
+1000	0
+2000	1
+3000	2
+
+# anatid_csr_tenants reports the external range, not the dense one.
+query IIIII
+SELECT tenant_id, vertices, edges, min_entity_id, max_entity_id FROM anatid_csr_tenants(key := 'gen1');
+----
+0	5	4	1000	5000
+
+query TT
+SELECT csr_key, vertex_map FROM anatid_csr_stats(key := 'gen1');
+----
+gen1	g1_vertices
+
+# ---------------------------------------------------------------- the delta
+# A new edge 5000-6000 (6000 is an entity the base generation never saw) reaches one hop further.
+query II
+SELECT entity_id, depth FROM graph_expand(0, 4000, 2, key := 'gen1', add_src := [5000], add_dst := [6000])
+ORDER BY depth, entity_id;
+----
+4000	0
+3000	1
+5000	1
+2000	2
+6000	2
+
+# A tombstoned edge removes REACHABILITY, not just membership: dropping 2000-3000 cuts the path.
+query II
+SELECT entity_id, depth FROM graph_expand(0, 1000, 4, key := 'gen1', drop_src := [2000], drop_dst := [3000])
+ORDER BY depth, entity_id;
+----
+1000	0
+2000	1
+
+# ... and it is undirected: naming the pair the other way round does the same.
+query II
+SELECT entity_id, depth FROM graph_expand(0, 1000, 4, key := 'gen1', drop_src := [3000], drop_dst := [2000])
+ORDER BY depth, entity_id;
+----
+1000	0
+2000	1
+
+# A delta edge can route around a tombstone in the same query.
+query II
+SELECT entity_id, depth FROM graph_expand(0, 1000, 2, key := 'gen1',
+                                          add_src := [1000], add_dst := [3000],
+                                          drop_src := [2000], drop_dst := [3000])
+ORDER BY depth, entity_id;
+----
+1000	0
+2000	1
+3000	1
+4000	2
+
+# A seed with no base vertex at all is still expanded through the delta.
+query II
+SELECT entity_id, depth FROM graph_expand(0, 77, 2, key := 'gen1', add_src := [77], add_dst := [1000])
+ORDER BY depth, entity_id;
+----
+77	0
+1000	1
+2000	2
+
+# The two lists are one edge list read column by column.
+statement error
+SELECT * FROM graph_expand(0, 1000, 2, key := 'gen1', add_src := [1, 2], add_dst := [3]);
+----
+they are one edge list read column by column
+
+statement error
+SELECT * FROM graph_expand(0, 1000, 2, key := 'gen1', add_src := [1], add_dst := [NULL]);
+----
+add_dst must not contain NULL
+
+statement error
+SELECT * FROM graph_expand(0, 1000, 2, key := 'gen1', drop_src := NULL, drop_dst := [1]);
+----
+drop_src must not be NULL
+
+# ---------------------------------------------------------------- two generations at once
+# gen2 is the same graph with 2000-3000 retired and 5000-6000 added, renumbered from scratch.
+statement ok
+CREATE TABLE g2_edges(edge_id BIGINT, tenant_id INTEGER, src BIGINT, dst BIGINT);
+
+statement ok
+INSERT INTO g2_edges VALUES (10, 0, 0, 1), (12, 0, 2, 3), (13, 0, 3, 4), (14, 0, 4, 5);
+
+statement ok
+CREATE TABLE g2_vertices(tenant_id INTEGER, vertex_id BIGINT, entity_id BIGINT);
+
+statement ok
+INSERT INTO g2_vertices VALUES (0, 0, 1000), (0, 1, 2000), (0, 2, 3000), (0, 3, 4000), (0, 4, 5000), (0, 5, 6000);
+
+query III
+SELECT tenants, vertices, edges FROM anatid_build_csr('g2_edges', labels := 'g2_vertices', key := 'gen2');
+----
+1	6	4
+
+# Publishing gen2 leaves gen1 exactly as it was: a read pinned to gen1 is not moved.
+query II
+SELECT entity_id, depth FROM graph_expand(0, 1000, 2, key := 'gen1') ORDER BY depth, entity_id;
+----
+1000	0
+2000	1
+3000	2
+
+query II
+SELECT entity_id, depth FROM graph_expand(0, 1000, 2, key := 'gen2') ORDER BY depth, entity_id;
+----
+1000	0
+2000	1
+
+# The dense numbering differs between the two, and neither leaks it.
+query II
+SELECT entity_id, depth FROM graph_expand(0, 6000, 2, key := 'gen2') ORDER BY depth, entity_id;
+----
+6000	0
+5000	1
+4000	2
+
+# ---------------------------------------------------------------- retiring one
+query TT
+SELECT csr_key, dropped FROM anatid_drop_csr('gen1');
+----
+gen1	true
+
+query TT
+SELECT csr_key, dropped FROM anatid_drop_csr('gen1');
+----
+gen1	false
+
+statement error
+SELECT * FROM graph_expand(0, 1000, 2, key := 'gen1');
+----
+no CSR has been built for this database yet under the key 'gen1'
+
+query II
+SELECT entity_id, depth FROM graph_expand(0, 1000, 1, key := 'gen2') ORDER BY entity_id;
+----
+1000	0
+2000	1
+
+statement error
+SELECT * FROM anatid_drop_csr(NULL);
+----
+must not be NULL
+
+# ---------------------------------------------------------------- a mapping that does not cover
+statement ok
+CREATE TABLE short_vertices(tenant_id INTEGER, vertex_id BIGINT, entity_id BIGINT);
+
+statement ok
+INSERT INTO short_vertices VALUES (0, 0, 1000), (0, 1, 2000);
+
+statement error
+SELECT * FROM anatid_build_csr('g1_edges', labels := 'short_vertices', key := 'bad');
+----
+gives no entity id for tenant 0 vertex 2
+
+statement ok
+CREATE TABLE wrong_shape(tenant_id INTEGER, v BIGINT, e BIGINT);
+
+statement error
+SELECT * FROM anatid_build_csr('g1_edges', labels := 'wrong_shape', key := 'bad');
+----
+has no column 'vertex_id'
+
+statement error
+SELECT * FROM anatid_build_csr('g1_edges', labels := 'nope', key := 'bad');
+----
+cannot read vertex mapping table 'nope'
+
+# a refused build published nothing
+statement error
+SELECT * FROM graph_expand(0, 1000, 2, key := 'bad');
+----
+no CSR has been built for this database yet under the key 'bad'

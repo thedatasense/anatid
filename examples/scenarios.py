@@ -258,8 +258,7 @@ DINNER = Scenario(
             entities=("Maya", "prawns"),
             writer="Maya",
             episode=(
-                "Maya, 2 February. No shellfish for me, it is the one that puts me in "
-                "hospital."
+                "Maya, 2 February. No shellfish for me, it is the one that puts me in hospital."
             ),
             when="2026-02-02T18:30:00",
         ),
@@ -518,14 +517,10 @@ ONCALL = Scenario(
     followup_question="Same question again. Who do I page for Ada's project?",
     supersede=Supersede(
         match_text="Bo maintains",
-        new_content=(
-            "Cy maintains the ingest-service. Bo moved to Project Harrier on 2026-04-15."
-        ),
+        new_content=("Cy maintains the ingest-service. Bo moved to Project Harrier on 2026-04-15."),
         entities=("Cy", "ingest-service", "Bo"),
         writer="handover-notes",
-        episode=(
-            "Handover notes, 2026-04-15. Bo moves to Harrier, Cy takes the ingest-service."
-        ),
+        episode=("Handover notes, 2026-04-15. Bo moves to Harrier, Cy takes the ingest-service."),
         when="2026-04-15T09:00:00",
         extra_relations=(("Cy", "ingest-service", "maintains"),),
         extra_entities=(("Cy", "person"),),
@@ -637,8 +632,7 @@ def find_fact(db: Any, scenario: Scenario) -> Any:
         if needle in memory.content.lower():
             return memory
     raise LookupError(
-        f"no memory matching {scenario.supersede.match_text!r} near "
-        f"{scenario.seed_entity!r}"
+        f"no memory matching {scenario.supersede.match_text!r} near {scenario.seed_entity!r}"
     )
 
 
@@ -671,8 +665,8 @@ def apply_supersede(db: Any, scenario: Scenario) -> tuple[Any, Any]:
 
 
 def entity_kinds(scenario: Scenario) -> dict[str, str]:
-    kinds = {name: kind for name, kind in scenario.entities}
-    kinds.update({name: kind for name, kind in scenario.supersede.extra_entities})
+    kinds = dict(scenario.entities)
+    kinds.update(dict(scenario.supersede.extra_entities))
     return kinds
 
 

@@ -24,16 +24,26 @@ anatid_audit         append-only trail of forget/supersede/prune actions (happen
                      reserved word). related_memory_id is a COLUMN, not text inside `reason`, so
                      forget(hard=True) can find and delete every row that names an erased id.
 
-entities             entity_id, tenant_id, kind, name                       + system columns
+entities             entity_id, tenant_id, kind, name, entity_key (generated)  + system columns
 memories             memory_id, tenant_id, content, kind, embedding FLOAT[N],
-                     created_at, access_count, last_access_at               + system columns
+                     created_at, access_count, last_access_at, version       + system columns
 episodes             episode_id, tenant_id, source, content, kind, created_at + system columns
 
-edges_about          memory -> entity   (edge_id, src, dst, tenant_id, weight)     + system columns
-edges_relates        entity -> entity   (edge_id, src, dst, tenant_id, rel_kind)   + system columns
+edges_about          memory -> entity   (edge_id, src, dst, tenant_id, weight, version) + system cols
+edges_relates        entity -> entity   (edge_id, src, dst, tenant_id, rel_kind, version) + system
 edges_supersedes     newer memory -> older memory (edge_id, src, dst, tenant_id, tx_from, writer)
 
 relates_undirected   VIEW: current edges_relates unioned with itself, src/dst swapped
+
+anatid_fts_documents / _docmap / _dict / _stats    the BM25 sidecar tables (§6)
+
+anatid_index_registry     one row per derived index DEFINITION: name, kind, source table and id
+                          column, delta mode, params, enabled. In the FILE, not on the handle.
+anatid_index_generations  one row per built generation: index, tenant (NULL = file-wide), number,
+                          watermark, built_at, validated, published, stats
+anatid_index_journal      one row per change a generation has not absorbed: index, tenant, doc id,
+                          change_seq (from a sequence), op, absorbed_by
+anatid_idx_*              a generation's own storage, named for the generation it belongs to
 ```
 
 `db.create_node_label(...)` and `db.create_edge_type(...)` add your own labels and edge types with
@@ -62,6 +72,25 @@ legitimate thing to want.
 `edges_supersedes` is the exception. It records when a write happened rather than a fact about the
 world, so it carries transaction time only (`tx_from`, `writer`) and is never re-dated.
 
+### Version rows
+
+`memories`, `edges_about` and `edges_relates` carry a `version` column, and their rows are
+immutable. `memory_id` is the logical id; `version` numbers the physical rows of that id from 1. A
+correction (`supersede`, soft `forget`, `unrelate`, a `reinforce` that changes confidence) closes
+the current version's `tx_to` and inserts version n+1 with the corrected valid interval, in one
+transaction. Nothing rewrites `valid_to` in place.
+
+That is what makes the transaction axis real. "What did the database believe on January 2 would be
+true on January 4" has to return the open-ended belief version 1 carried on January 2, even though
+a January 3 forget later closed it, and it does: every read predicate over `(valid_at, tx_at)`
+selects at most one version of a logical id. `db.versions(id)` lists them oldest first and
+`Provenance.versions` carries the same list beside the SUPERSEDES chain between logical ids.
+`access_count` and `last_access_at` are usage counters, updated in place on the live version, and
+are deliberately not bitemporal.
+
+Rows written before the 3 -> 4 migration carry over as version 1. Corrections made to them before
+the migration were rewritten in place and are not recoverable.
+
 ### No primary keys, and where ids come from
 
 There is no `PRIMARY KEY` or `UNIQUE` constraint anywhere. In DuckDB both create an implicit ART
@@ -78,7 +107,7 @@ write-write conflict on the same row, which would destroy the concurrent-append 
 benchmark measured. The cost of that choice is that a cross-process collision needs the same worker
 id, the same millisecond, and the same sequence number. Every verb accepts an explicit id, and
 `ids.set_allocator()` replaces the scheme entirely, which is how to supply the dense ids the CSR
-extension needs (see §2).
+extension needs (see §3).
 
 ### Physical clustering
 
@@ -98,46 +127,193 @@ episodes       ORDER BY tenant_id, episode_id
 `CREATE OR REPLACE TABLE ... AS SELECT ... ORDER BY`, so it drops indexes anatid does not know
 about and is not safe to run alongside writers.
 
-## 2. Graph traversal: SQL first, CSR as an accelerator
+## 2. Visibility, and the derived-index framework
+
+None of anatid's three retrieval accelerators is the source of truth. The full-text index, the CSR
+adjacency structure and the vector index are all derived from the canonical tables, which are.
+Everything in this section follows from that one relationship.
+
+### visible_at: one predicate, generated once
+
+Every read path renders its tenant and time predicate through `anatid.visibility`:
+
+```python
+from anatid import Visibility, visible_at
+
+sql, params = Visibility.at(tenant_id, as_of).predicate("m")
+#   current:  "m.tenant_id = ? AND m.valid_to IS NULL AND m.tx_to IS NULL"
+#   as_of:    "m.tenant_id = ? AND m.valid_from <= ? AND (m.valid_to IS NULL OR m.valid_to > ?)
+#              AND m.tx_from <= ? AND (m.tx_to IS NULL OR m.tx_to > ?)"
+
+visible_at(tenant_id, valid_time=t1, transaction_time=t2)   # the same object, named for the axes
+```
+
+`Visibility.admits(row)` is the Python mirror, half-open intervals and all, for an accelerator
+that has to post-filter in Python rather than in SQL. `tests/test_visibility.py` checks two things:
+that no module under `src/anatid` writes the predicate by hand (a static scan of each module's SQL
+string literals, with the abstraction itself exempt), and that every public read verb agrees with a
+pure-Python oracle for two tenants across five time scopes, on both expansion paths.
+
+The hot path is unchanged by this. `recall_2hop_ids` renders
+`Visibility.predicate("m", inline_tenant=True)`, which produces the same SQL text with the same
+zero bound parameters that 0.1.1 emitted by hand.
+
+### Base generation, journal, tombstone
+
+A derived index is a versioned base generation plus a journal written in the same
+transaction as the canonical row.
+
+```
+write transaction
+   ├── canonical row                    the source of truth, always correct
+   └── anatid_index_journal row         (index, tenant, doc_id, change_seq, op)
+
+read
+   ├── base generation, pinned for the duration of the read
+   ├── + the journal rows the generation has not absorbed   (insert / close / purge)
+   └── then, and only then, the tenant and time predicate from anatid.visibility
+
+maintenance (maintain_indexes(), explicit, no background thread)
+   ├── build the next generation beside the live one
+   ├── validate it against the oracle
+   └── publish: one UPDATE of one metadata row
+```
+
+Five properties follow, and each one is a test:
+
+A write is in the next read. The journal row and the canonical row are one transaction, so a
+reader either sees both or neither, including a reader inside the writing transaction.
+
+Id reuse is representable. The journal is ordered by `change_seq`, drawn from a DuckDB
+sequence, and the newest operation for a `(tenant, doc)` key wins. `insert 5 -> build -> purge 5
+-> insert a new 5` therefore ends as an insert, which a delta set and a tombstone set held
+separately could not express.
+
+One tenant's change cannot touch another's document. Every journal row is keyed
+`(tenant_id, doc_id)`. `memory_id` is unique within a tenant, not within a file, so a bare id would
+let a purge in tenant 1 suppress tenant 2's document 42 out of a file-wide generation.
+
+A handle that holds no accelerator code still journals. Definitions live in
+`anatid_index_registry`, in the file. `IndexRegistry.emit` is driven by those rows, not by which
+Python objects this handle happens to hold, so a maintenance script that opened the file with
+`Anatid.open(...)` and never imported `anatid.fts` still records every write the full-text index
+will need.
+
+Publication does not interrupt a read. A build writes new tables beside the live ones;
+publishing flips `published` on one row inside a transaction; a read pins a generation under a
+process-wide per-file lifecycle lock, so a generation a reader chose cannot be retired and dropped
+underneath it.
+
+### An index may be stale, corrupt or absent
+
+The SQL path over the canonical tables is always the oracle, so an index that cannot be used costs
+latency and nothing else. What a fallback must not do is happen silently, so every read path
+reports a machine-readable reason:
+
+| `HealthReason` | what it means |
+|---|---|
+| `fresh` | a validated generation is published and its journal is within policy |
+| `stale_generation` | published but due for a rebuild, or invalidated by a bulk load or an erasure |
+| `unvalidated` | published with `force=True`; usable and flagged |
+| `historical_query` | the read carries `as_of` and this index only knows current state |
+| `rebuild_in_progress` | nothing published and a build is running |
+| `load_failure` | the storage or the extension would not load, or a statement against it raised |
+| `damaged_base` | the storage is present and queryable but no longer holds what its build recorded |
+| `absent` | no generation has ever been published |
+
+`db.index_health()` returns one report per index (`as_of=` asks what a historical read would do),
+`FtsSearch.reason`, `VectorSearch.reason` and `ExpandPath.reason` carry it per read, and
+`db.doctor()` raises `unusable_derived_index` when a published generation cannot serve reads.
+
+`damaged_base` is the one that needed looking for. Damage that raises is caught for nothing;
+damage that leaves a structure queryable and quietly incomplete is not. Each index checks one
+cheap invariant on every read: full text compares its source table's cardinality with its document
+map's, and the vector arm compares the base's row count with what the build recorded and the
+number of candidates the approximate scan returned with the number that were available. Neither is
+a full validation, which costs a scan of the corpus and is what a rebuild runs.
+
+### Erasure reaches the accelerators
+
+`forget(hard=True)` deletes the document from every generation's storage inside the purge
+transaction, deletes its journal rows rather than tombstoning them (a tombstone would keep the
+erased id in the file), and lowers any generation watermark that was the erased id. A generation
+whose storage cannot delete one document is invalidated instead, which takes it out of service
+until the next rebuild. `ForgetReceipt.derived_rows_deleted` and `.invalidated_generations` report
+both halves, and the erasure tests scan every table in the file, including generation storage
+nobody named, for the erased id and its text.
+
+### What it costs
+
+Measured on this machine, DuckDB 1.5.5, macOS arm64.
+
+```
+remember() with entities, accelerators=False        2.78 ms p50
+remember() with entities, default (fts + csr)       3.49 ms p50     one journal INSERT per index
+```
+
+The default is on because a searchable write is worth 0.7 ms; `Anatid.open(accelerators=False)`
+turns it off for a write-heavy database that never searches text.
+
+## 3. Graph traversal: SQL first, CSR as an accelerator
 
 2-hop recall is the query anatid is built around: from a seed entity, expand 1 and 2 hops over
 `RELATES_TO` in both directions, then return the current memories `ABOUT` anything in that
 frontier, newest first.
 
-There are two implementations and they must return identical rows.
+There are three implementations and they must return identical rows.
 
-The SQL path is always available. Two semi-joins over `relates_undirected` produce the frontier,
-which is pushed into a semi-join against `edges_about` and then `memories`. DuckDB's optimizer
-turns this into hash semi-joins with dynamic min/max and Bloom filters pushed into the scans.
-Measured 2.88 ms p50 at 1M memories.
+The SQL path is always available and is the oracle. Two semi-joins over `relates_undirected`
+produce the frontier, which is pushed into a semi-join against `edges_about` and then `memories`.
+DuckDB's optimizer turns this into hash semi-joins with dynamic min/max and Bloom filters pushed
+into the scans. Measured 2.88 ms p50 at 1M memories.
 
-The CSR path needs the optional C++ extension. `anatid_build_csr()` reads the current
-`edges_relates` rows once and materializes a per-tenant compressed sparse row adjacency structure
-in the `DatabaseInstance` object cache. `graph_expand(tenant, seed, hops)` is a table function that
-runs the BFS at bind time, so the optimizer sees the exact frontier cardinality before planning the
-rest of the query. Measured 2.04 ms p50.
+The derived CSR index is a generation of the framework in §2, attached by default. Each generation
+owns two tables, a dense vertex map `(tenant_id, vertex_id, entity_id)` and an edge list in that
+dense space, and the C++ extension holds an in-memory structure named for the generation, so
+generations coexist and a pinned read keeps the numbering it started with. A read resolves the
+journal into added and removed entity pairs and expands level by level: hop k+1 is the base
+neighbours of hop k, minus the pairs every one of whose base edges has been retired, plus the pairs
+a pending live edge connects. Retiring one of two parallel edges therefore does not disconnect a
+pair. The merge runs either in one SQL statement over the generation's edge list or inside
+`graph_expand` itself; the C++ merge is faster at every journal size measured, so `strategy="auto"`
+picks it when the extension is loaded.
+
+Dense ids never leave the module. Seeds and results are entity ids on every path, which is what
+makes the extension usable on an ordinary anatid database at all: its raw build over
+`edges_relates` still refuses anatid's sparse 63-bit ids, and correctly so.
+
+The 0.1 snapshot path is still there and still what `build_csr()` drives. It is a single unnamed
+CSR over the current `edges_relates` rows, used only while `CsrBackend.fresh` (no `RELATES_TO`
+write since the build). The precedence is: a published generation, then the fresh 0.1 snapshot,
+then SQL.
 
 ### How the CSR stays MVCC-correct
 
-The CSR is a cache of `edges_relates`, and three rules keep it from answering a query the SQL path
+The CSR is derived from `edges_relates`, and four rules keep it from answering a query the SQL path
 would answer differently:
 
-1. The structure is a snapshot, and anatid tracks that. Every `relate()` calls
-   `CsrBackend.note_edge_write()`, which marks the snapshot stale.
-2. A stale snapshot is not used. `frontier_sql()` emits the SQL form instead, which reads the same
-   MVCC snapshot as the rest of the statement, and `db.expand_path` reports `"sql"`. Nothing is
-   served from a stale structure.
-3. Both paths are checked to agree. The spike ran 1,000 R1 queries per engine against a
+1. A generation's changes are journalled in the writing transaction, and the expansion applies
+   them. That is what replaced 0.1's "any write makes the whole structure unusable".
+2. The 0.1 snapshot has no journal, so it keeps 0.1's rule: every `relate()` calls
+   `CsrBackend.note_edge_write()`, which marks it stale, and a stale snapshot is never used.
+3. Everything that declines says why. `frontier_sql()` returns an `ExpandPath`, which IS the
+   string `"sql"` / `"csr"` / `"extension"` and also carries `.reason` and `.explain()`. A
+   historical `as_of` read always declines: a current-state structure cannot answer it.
+   `db.expand_path` is the forecast for the next current-state read on this handle's own tenant,
+   `db.last_expansion` is what the last read actually did.
+4. The paths are checked to agree. The spike ran 1,000 R1 queries per engine against a
    pure-Python oracle (`spike/bench/common.py::reference_r1`) and 200 verify queries across
-   engines: 0 mismatches, SQL vs CSR vs LadybugDB.
+   engines: 0 mismatches, SQL vs CSR vs LadybugDB. `tests/test_csr_framework.py` adds a
+   1,000-mutation random walk comparing the merged expansion with the SQL oracle after every step.
 
-`build_csr()` buys latency and does not change the answer; a wrong answer from it is a bug, and the
-oracle tests in rule 3 above are the check for it. Two further limits apply. The CSR is rebuilt in
-full, with no incremental update, and it requires dense per-tenant vertex ids. anatid's 63-bit
-time-ordered ids are not dense, so the extension is usable only when you supply your own dense
-entity ids through `ids.set_allocator()` or explicit ids, as the spike dataset does. When the
-extension path is not live, `require_csr_extension()` raises `ExtensionUnavailable` and the SQL path
-answers the query.
+Two limits still apply. A generation is built in full rather than updated in place, so a large
+journal eventually costs more than the expansion saves (measured: 1.50 ms against 0.88 ms of pure
+SQL at about 550 journal rows on the spike graph), which is what `MaintenancePolicy`'s ratio
+trigger exists to prevent. And the in-memory structure is never evicted by DuckDB's object cache,
+so memory grows with the number of resident generations; retiring one frees it.
+
+When no structure can answer, `require_csr_extension()` raises `ExtensionUnavailable` and the SQL
+path answers the query.
 
 ### Integer literals on the fast path
 
@@ -145,12 +321,17 @@ On the current-state, no-kind-filter fast path, integer arguments are rendered a
 rather than bound parameters. duckdb-python 1.5.5 attempts `import pandas` twice per bound
 parameter, so about 14 times per `execute()` of the seven-parameter 2-hop statement, and with
 pandas absent each attempt re-walks `sys.path`, costing about 0.6 ms per call. Literal rendering
-took `recall_2hop_ids` from 1.911 ms to 1.345 ms p50 at 100k memories, single-threaded. Only values
-already coerced with `int()` take this path; strings, timestamps and embeddings are always bound.
+took `recall_2hop_ids` from 1.911 ms to 1.345 ms p50 at 100k memories, single-threaded, on the
+machine that measurement was taken on. Treat the ratio rather than the absolute: the same
+comparison re-run on a loaded 10-core laptop reproduces the improvement but lands at 1.60 ms, and
+the 0.2.0 release was gated on a paired A/B against the published 0.1.1 wheel on one machine
+(1.598 ms against 1.608 ms p50, 600 queries per round, four interleaved rounds) rather than on the
+number above. Only values already coerced with `int()` take this path; strings, timestamps and
+embeddings are always bound.
 `tests/test_core.py::test_literal_and_parameterized_recall_paths_agree` asserts both paths return
 identical rows.
 
-## 3. Isolation: the file is the boundary
+## 4. Isolation: the file is the boundary
 
 DuckDB has no row-level security, no schema-level access control, and no notion of a user. Anything
 a connection can reach, it can read. Two consequences follow.
@@ -191,7 +372,7 @@ DuckDB's MVCC is optimistic and gives snapshot isolation rather than serializabi
   single-writer-process library; multi-process write coordination is not something it provides and
   not something DuckDB provides for it.
 
-## 4. Time: two axes, filtered by generated SQL
+## 5. Time: two axes, filtered by generated SQL
 
 anatid is bitemporal. Every fact carries valid time, when it was true in the world, and transaction
 time, when the database believed it.
@@ -206,19 +387,26 @@ the spike's macro used, and it costs about 0.01 ms.
 
 `db.as_of(t)` returns an `AsOfView` whose reads are scoped to `t`. The scoping is anatid's own
 `WHERE` clause. DuckDB has no `AS OF SYSTEM TIME` and nothing rewinds.
-`schema.temporal_predicate()` generates the filter; `AsOf(valid_time=..., tx_time=...)` separates
-the two axes, so "what was true then" can be asked apart from "what did we know then". Two
-consequences follow:
+`anatid.visibility.temporal_predicate()` generates the filter (§2);
+`AsOf(valid_time=..., tx_time=...)` separates the two axes, so "what was true then" can be asked
+apart from "what did we know then". Three consequences follow:
 
 - Time travel only reaches back as far as the rows still in the table. A hard purge removes the row
   from every as-of view too, because the row is gone.
-- `forget(hard=False)` closes `tx_to` and writes an audit row: the memory stops being current,
-  history stays intact, and `as_of()` before the forget still finds it. `forget(hard=True)` deletes
-  the memory, its ABOUT and SUPERSEDES edges, its embedding, and its provenance rows, and returns a
+- `forget(hard=False)` closes the current version's `tx_to` and inserts the next version with
+  `valid_to` set, and writes an audit row: the memory stops being current, history stays intact,
+  and `as_of()` before the forget still finds the belief the database held then, open-ended, as it
+  was. `forget(hard=True)` deletes every version, its ABOUT and SUPERSEDES edges, its embedding,
+  its provenance rows and its rows in every derived index's storage and journal, and returns a
   `ForgetReceipt` counting exactly what was removed. A right-to-erasure request needs the second
   one.
+- A current-state accelerator cannot answer an `as_of` read at all, so it does not try: the graph
+  and vector arms take the SQL path and report `historical_query`. The full-text index is the
+  exception and answers from a generation, because its base holds document identity and content,
+  both of which are the same for every version of a memory, and the time predicate is applied to
+  the canonical rows it joins.
 
-## 5. The `recall()` pipeline
+## 6. The `recall()` pipeline
 
 `recall()` runs up to three independent retrieval arms and fuses them with Reciprocal Rank Fusion
 (k=60). An arm runs only when its input is present, so `recall(query="x")` is pure BM25 and
@@ -233,18 +421,19 @@ consequences follow:
         ▼                                 ▼                                 ▼
   ┌───────────────┐              ┌──────────────────┐            ┌─────────────────────┐
   │  VECTOR arm   │              │    BM25 arm      │            │     GRAPH arm       │
-  │ array_cosine_ │              │ fts_main_        │            │ frontier = seed +   │
-  │ similarity    │              │ memories.dict/   │            │ 1..2 hops over      │
-  │ brute force,  │              │ terms/docs/stats │            │ relates_undirected  │
-  │ no ANN index  │              │ Okapi k1=1.2     │            │ (CSR ext or SQL)    │
-  │               │              │ b=0.75 in SQL    │            │                     │
-  │               │              │ (NOT match_bm25) │            │                     │
-  │               │              │ NOT incremental  │            │         │           │
-  │ memories.     │              │                  │            │         ▼           │
-  │ embedding     │              │ fts index built  │            │ edges_about ⋈       │
-  │ FLOAT[N]      │              │ by rebuild_fts_  │            │ memories            │
-  │               │              │ index()          │            │ ORDER BY created_at │
-  │ ~1e5/tenant   │              │                  │            │ DESC, memory_id DESC│
+  │ exact cosine  │              │ Okapi k1=1.2     │            │ frontier = seed +   │
+  │ scan, or an   │              │ b=0.75 in SQL    │            │ 1..2 hops over      │
+  │ HNSW          │              │ (NOT match_bm25) │            │ RELATES_TO          │
+  │ generation    │              │ over a generation│            │ over a CSR          │
+  │ + the journal │              │ + the journal,   │            │ generation + the    │
+  │ (opt in)      │              │ or an exact scan │            │ journal, the 0.1    │
+  │               │              │                  │            │ snapshot, or SQL    │
+  │ memories.     │              │ anatid_idx_fts_* │            │         │           │
+  │ embedding     │              │ or anatid_fts_*  │            │         ▼           │
+  │ FLOAT[N]      │              │                  │            │ edges_about ⋈       │
+  │               │              │                  │            │ memories            │
+  │ score is      │              │ one corpus over  │            │ ORDER BY created_at │
+  │ always exact  │              │ base + journal   │            │ DESC, memory_id DESC│
   └───────┬───────┘              └────────┬─────────┘            └──────────┬──────────┘
           │ top `candidates` (50)         │ top 50                          │ top 50
           └───────────────┬───────────────┴─────────────────┬───────────────┘
@@ -260,49 +449,87 @@ consequences follow:
           └─ RecallHit(memory, score, rank, vector_rank, text_rank, graph_rank,
                        vector_score, text_score, about)
 
-   every table read above also carries:  tenant_id = ?  AND  <temporal predicate for as_of>
+   candidate generation happens first; the tenant and time predicate from anatid.visibility is
+   then applied to the CANONICAL rows, before the top-N cut.
 ```
 
 ### The three arms, and what each one costs
 
-The vector arm is a brute-force `array_cosine_similarity` scan over the tenant's current
-embeddings. anatid has no ANN index. DuckDB ships a team-maintained `vss` extension with an HNSW
-index, but persisting that index to disk is experimental and its own documentation advises against
-relying on it in production, so anatid does not build on it, and the cost is linear in one
-tenant's row count rather than the file's. Measured at 64 dims on the spike hardware with DuckDB's
-default thread count, all rows in one tenant: 2.0 ms p50 at 10k, 8.6 ms at 100k (an independent run
-of the same measurement got 11.4 ms) and 23.3 ms at 1M. `BRUTE_FORCE_CEILING = 100_000` is
-enforced: `recall(embedding=...)` raises `BruteForceCeilingError` when the scan would cover more
-rows than that, unless the caller passes `allow_slow=True`. At that ceiling a recall already costs
-9-11 ms, so past roughly 1e5 memories per tenant this arm is the wrong tool, and an owned ANN
-index is on the roadmap for v1.0.
+The vector arm has two backends and `"exact"` is the default. Exact is a brute-force
+`array_cosine_similarity` scan over the tenant's visible embeddings; it is also the oracle every
+other backend is measured against and the fallback from every state in which another one cannot be
+used. Its cost is linear in one tenant's row count rather than the file's. Measured at 64 dims on
+the spike hardware with DuckDB's default thread count, all rows in one tenant: 2.0 ms p50 at 10k,
+8.6 ms at 100k (an independent run of the same measurement got 11.4 ms) and 23.3 ms at 1M.
+`BRUTE_FORCE_CEILING = 100_000` is enforced: `recall(embedding=...)` raises
+`BruteForceCeilingError` when the scan would cover more rows than that, unless the caller passes
+`allow_slow=True`.
 
-The BM25 arm uses DuckDB's `fts` extension index, which is not incremental. Rows inserted after
-`PRAGMA create_fts_index` are invisible to BM25 until the index is rebuilt, and rebuilding drops
-and recreates the whole `fts_main_memories` schema. The API accounts for that in four places:
+`Anatid.open(vector_backend="duckdb_vss")` opts in to an HNSW generation instead. The generation
+holds a frozen copy of the tenant's visible embeddings with an HNSW index over it; a read takes
+`topn * overfetch` candidates from it, unions an exact scan of the journal's pending documents and
+anything past the watermark, subtracts the journal's tombstones, applies the visibility predicate
+to the canonical `memories` rows, and takes the exact cosine top-k. The approximate structure only
+ever changes which rows were considered; the score that ranks them is bit-identical to the oracle's.
 
-- anatid computes BM25 in SQL off the fts extension's index tables (`fts_main_memories.dict`,
-  `terms`, `docs`, `stats`; Okapi k1=1.2, b=0.75) rather than calling `match_bm25`. Identical
-  ranking, and the spike measured 19.9 ms vs 29.2 ms p50 at 1M rows, because it skips the
-  extension's per-document correlated lookup. Do not "simplify" `recall.py` back to the macro.
-- `rebuild_fts_index()` is explicit, records both the row count and the largest `memory_id`
-  present (`anatid_meta.fts_indexed_rows` / `fts_indexed_max_id`), and also builds an ART index on
-  `fts_main_memories.terms(termid)`. The spike A/B'd that index at 8.57 ms vs 12.51 ms BM25 p50 at
-  100k memories, for a 0.7 s build.
-- `fts_status()` compares both watermarks against the table. The id watermark exists because a row
-  count alone can cancel out: one insert plus one hard purge leaves `count(*)` where it was while
-  the new document stays invisible to BM25. Ids are time-ordered, so any insert raises
-  `max(memory_id)`. Neither watermark can see a raw `UPDATE memories SET content = ...`; no anatid
-  verb issues one (`supersede` inserts a new row), so that is reachable only through
-  `db.connection`, and if you do it you must rebuild yourself. `fts_status(deep=True)` adds a
-  `max(tx_from)` scan that catches back-dated rows.
-- Every `recall()` result reports `.bm25_stale` and `.pending_fts_rows`, and logs a warning on the
-  `anatid.recall` logger. `on_stale_fts="error"` raises `StaleIndexError` instead.
+It is opt in for three reasons, all measured. DuckDB documents HNSW persistence as experimental
+with write-ahead-log and crash-recovery caveats. A persisted HNSW index loses the `ef_search` it
+was created with, so recall at 95,000 rows falls from 0.999 to 0.641 after a reopen unless the
+setting is reissued per connection, which `anatid.vector` does. And it does not pay below roughly
+15,000 rows per tenant: 0.85x the exact scan at 9,500 rows, 2.2-2.8x at 95,000. Recall at k
+against the exact oracle is 1.0000 at k=10 and 0.9982-0.9984 at k=50, at both sizes.
 
-The staleness window is the interval between rebuilds. A rebuild is O(corpus), so anatid never
-triggers one inside a read; choosing the interval is the caller's job.
+The BM25 arm computes Okapi BM25 (k1=1.2, b=0.75) in SQL rather than calling `match_bm25`.
+Identical ranking, and the spike measured 19.9 ms against 29.2 ms p50 at 1M rows, because it skips
+the extension's per-document correlated lookup. Do not "simplify" `recall.py` back to the macro.
 
-The graph arm is the 2-hop frontier of §2, semi-joined into `edges_about` and `memories`.
+DuckDB's own full-text index is not incremental: `PRAGMA create_fts_index` rebuilds it wholesale
+and rows written afterwards are invisible to it. `anatid.fts` builds incremental behaviour above
+that, on the framework in §2, and `Anatid.open(accelerators=True)` (the default) attaches it. One
+generation covers the whole file, because `create_fts_index` has a fixed per-call cost and
+per-tenant scoping is a predicate rather than a structure; the document key is
+`'<tenant_id>:<memory_id>'`, unique across tenants where `memory_id` alone is not.
+
+A search is one statement: the base generation's documents the journal has NOT touched, unioned
+with the ones it HAS, re-read from `memories` and tokenised with the index's own tokenizer, then
+the visibility predicate applied to the canonical rows before the top-N cut. Tombstones are
+subtracted from the base rather than from the answer, because a journalled close means "the base's
+view of this document is out of date", not "this document is gone", and for an `as_of` read a
+closed document is a legitimate candidate.
+
+Scores are the part that had to be got right. Two independently built BM25 corpora do not produce
+comparable scores, so anatid does not build a second corpus and does not rank-fuse. It
+reconstructs the one set of corpus statistics that describes base plus journal together:
+`num_docs` and `avgdl` from the untouched base documents (lengths the build recorded) plus the
+rescanned ones (measured now), and `df` the same way. The two sets are disjoint and their union is
+exactly what a rebuild would index, which gives the property the tests assert after random
+mutations: a rebuild never changes an answer. The first implementation rescored the journal
+against the base's stale statistics and reordered 53 of 120 random queries; it was replaced.
+
+Consequences worth knowing:
+
+- `FtsStatus.stale` means something different on each half. On 0.1.1's index it is "N rows the
+  arm cannot see". On a generation a write is searchable at once, so it is "the answer would be
+  incomplete", which happens only when there is no usable generation AND the corpus is above
+  `SCAN_CEILING`. `pending_rows` is how many documents a search re-reads, not how many are hidden.
+- With no generation published the answer is still exact, by scanning. Below a few tens of
+  thousands of documents that scan is also the faster path, which is why `SCAN_CEILING` is 100,000
+  rather than lower. Above the ceiling with no generation, 0.1.1's index answers if the file still
+  has one, and the result says so.
+- `rebuild_fts_index()` still exists and still means "build now". On the framework it builds,
+  validates and publishes a generation, with reads answering from the previous one throughout;
+  `maintain_indexes()` does the same on `MaintenancePolicy`'s triggers (10,000 rows, 5%, 900 s).
+- This is what a rebuild is for. Measured on this machine, top-10 over one tenant:
+
+  ```
+  corpus     0.1.1 index    derived, nothing built    derived, generation    + 500 journalled
+   10,000       8.7 ms            10.1 ms                  11.5 ms               14.3 ms
+  100,000      17.9 ms            27.1 ms                  19.1 ms               21.4 ms
+  ```
+
+  The 0.1.1 column is the only one that cannot see a write made since its last rebuild.
+
+The graph arm is the 2-hop frontier of §3, semi-joined into `edges_about` and `memories`.
 
 ### Where fusion happens, and what that costs
 
@@ -314,14 +541,22 @@ staleness check) and per-arm bound-parameter overhead. If a future version needs
 back, the fix is a single-statement CTE fusion that projects each arm's rank out; the per-arm
 reporting described above is the reason it has not been written.
 
-## 6. What runs where
+## 7. What runs where
 
 ```
 your process
-├── anatid (pure Python)          verbs, tenant predicates, RRF fusion, staleness accounting
+├── anatid (pure Python)          verbs, visibility predicates, the derived-index framework,
+│                                 RRF fusion, health and staleness accounting
 ├── duckdb (C++, embedded)        storage, MVCC, joins, BM25, array_cosine_similarity
-└── anatid extension (C++, opt.)  anatid_build_csr / graph_expand, loaded unsigned
+├── duckdb fts extension          the postings a full-text generation is built on
+├── duckdb vss extension (opt.)   the HNSW index behind vector_backend="duckdb_vss"
+└── anatid extension (C++, opt.)  anatid_build_csr / graph_expand / anatid_drop_csr, one named
+                                  in-memory CSR per generation, loaded unsigned
 ```
+
+Nothing runs on a schedule. There is no background thread, no maintenance daemon and no worker
+process: `maintain_indexes()` is a call you make after a batch of writes, on a timer of your own,
+or when `index_health()` reports a stale generation.
 
 `Anatid.connection` returns the raw DuckDB cursor for this thread. Data in the file is queryable by
 anything that speaks SQL, joinable against Parquet and CSV in place, and readable by any DuckDB

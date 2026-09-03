@@ -348,6 +348,18 @@ def _every_column(db) -> dict[str, list[str]]:
     return out
 
 
+def _fts_source_of(names) -> set[str]:
+    """The full-text index's own source tables among ``names``, whichever half built them.
+
+    ``anatid_fts_documents`` is 0.1.1's; a derived generation's is ``anatid_idx_fts_g<n>``.
+    Both hold the memory's content verbatim, which is why a hard forget has to reach them.
+    """
+    return {
+        n for n in names
+        if n == "anatid_fts_documents" or (n.startswith("anatid_idx_fts") and "_" not in n[15:])
+    }
+
+
 def _bare_names(names) -> set[str]:
     """``{'"main"."memories"': 1}`` -> ``{"memories"}`` for readable assertions."""
     return {n.split(".")[-1].strip('"') for n in names}
@@ -436,7 +448,10 @@ def test_a_hard_forget_leaves_no_trace_of_the_memory_in_any_table(tmp_path):
         needles = [str(mid), secret]
         before = _bare_names(_tables_containing(db, needles))
         # the copies are real, and in more than one place, before the purge
-        assert {"memories", "agent_messages", "anatid_fts_documents"} <= before, before
+        assert {"memories", "agent_messages"} <= before, before
+        # ... including the full-text index's own source table, whichever half built it:
+        # anatid_fts_documents for 0.1.1's index, anatid_idx_fts_g<n> for a generation.
+        assert _fts_source_of(before), before
         assert "agent_run_states" in before, "the fixture did not reproduce the defect"
         assert store.load(run_id) is not None
 
@@ -482,8 +497,9 @@ def test_erasing_the_newest_indexed_memory_also_clears_the_fts_watermark(tmp_pat
                    session_id="conv-newest")
         db.rebuild_fts_index()
         needles = [str(mid), secret]
-        assert {"memories", "agent_messages", "agent_run_states", "anatid_fts_documents"} <= \
-            _bare_names(_tables_containing(db, needles))
+        before = _bare_names(_tables_containing(db, needles))
+        assert {"memories", "agent_messages", "agent_run_states"} <= before
+        assert _fts_source_of(before), before
 
         db.forget(mid, hard=True)
 

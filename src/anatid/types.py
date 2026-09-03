@@ -21,6 +21,12 @@ System columns (bitemporal, on every node and edge table by default)
 Intervals are half-open ``[from, to)``.  A row is visible "as of T" when
 ``valid_from <= T < valid_to`` (NULL ``valid_to`` = open) and ``tx_from <= T < tx_to``.
 
+``version``
+    Rows of ``memories``, ``edges_about`` and ``edges_relates`` are immutable versions of one
+    logical id (schema v4).  A correction closes the current version's ``tx_to`` and inserts
+    version ``n + 1`` with the corrected valid interval; ``memory_id`` / ``edge_id`` never
+    change.  :attr:`Memory.version` says which physical row an object was read from.
+
 Timestamps are naive ``datetime`` objects in UTC, because the underlying DuckDB columns are
 ``TIMESTAMP`` (no zone).  Use :func:`utcnow` and :func:`to_utc_naive` to stay consistent; every
 verb accepts an explicit ``now=`` so a run can be made deterministic.
@@ -218,6 +224,9 @@ class Memory:
     """One memory (node label ``memory`` -> table ``memories``).
 
     ``embedding`` is ``None`` when the row was read without hydrating the vector column.
+    ``version`` is the physical row this object was read from: 1 for a memory that has never
+    been corrected, higher after each ``supersede`` / soft ``forget`` / confidence change.
+    ``memory_id`` is the same across every version.
     """
 
     memory_id: int
@@ -235,15 +244,29 @@ class Memory:
     confidence: float | None = None
     access_count: int = 0
     last_access_at: _dt.datetime | None = None
+    version: int = 1
 
     @property
     def is_current(self) -> bool:
         """True when the row is neither superseded/forgotten (valid) nor retired (tx)."""
         return self.valid_to is None and self.tx_to is None
 
+    @property
+    def is_live(self) -> bool:
+        """True when no correction has closed this version (``tx_to`` is ``NULL``).
+
+        A superseded memory's live version is not current: it carries the ``valid_to`` the
+        correction gave it.  ``get()`` by id returns the live version.
+        """
+        return self.tx_to is None
+
     @classmethod
     def from_row(cls, row: Sequence[Any]) -> "Memory":
-        """Build from a row selected with :data:`anatid.schema.MEMORY_COLUMNS` order."""
+        """Build from a row selected with :data:`anatid.schema.MEMORY_COLUMNS` order.
+
+        A 15-column row (the v3 order, without ``version``) is accepted and read as version 1,
+        so a caller that selects the old column list keeps working.
+        """
         return cls(
             memory_id=int(row[0]),
             tenant_id=int(row[1]),
@@ -260,6 +283,7 @@ class Memory:
             confidence=None if row[12] is None else float(row[12]),
             access_count=0 if row[13] is None else int(row[13]),
             last_access_at=row[14],
+            version=1 if len(row) < 16 or row[15] is None else int(row[15]),
         )
 
 
@@ -307,7 +331,8 @@ class Edge:
 
     ``weight`` is only meaningful for ABOUT edges and ``rel_kind`` only for RELATES_TO edges;
     the other is ``None``.  SUPERSEDES edges carry only ``tx_from`` (they are a record of a
-    write, never re-dated).
+    write, never re-dated) and are always version 1.  ABOUT and RELATES_TO edges are versioned
+    like memories: closing one inserts version ``n + 1`` with ``valid_to`` set.
     """
 
     edge_id: int
@@ -324,6 +349,7 @@ class Edge:
     writer: str | None = None
     episode_id: int | None = None
     confidence: float | None = None
+    version: int = 1
 
     @property
     def is_current(self) -> bool:
@@ -466,6 +492,11 @@ class Provenance:
     ``chain[-1]`` is the original assertion nothing supersedes.  ``episodes`` holds the source
     material for the chain in the same order (an entry is absent when a link has no episode).
     ``writers`` is every distinct writer in the chain, newest-first.
+
+    ``versions`` is the other axis: every physical version of the memory asked about, oldest
+    first (``versions[0].version == 1``, ``versions[-1]`` is the live one).  The chain links
+    logical ids; the versions are the corrections one logical id went through, each with the
+    transaction interval during which the database believed it.
     """
 
     memory_id: int
@@ -473,6 +504,7 @@ class Provenance:
     episodes: tuple[Episode, ...] = ()
     edges: tuple[Edge, ...] = ()
     writers: tuple[str, ...] = ()
+    versions: tuple[Memory, ...] = ()
 
     @property
     def root(self) -> Memory | None:
@@ -500,9 +532,11 @@ class ForgetReceipt:
     ``memories``, not in any edge table, not the embedding (it is a column of the purged row),
     not the episode when no other memory cites it (entities and edges that carried its id as a
     provenance stamp keep existing with the stamp cleared), not the BM25 watermark in
-    ``anatid_meta``, and not in ``anatid_audit`` (neither as ``memory_id`` nor as the
-    ``related_memory_id`` of some other memory's supersede).  That is the point of erasure, so
-    the receipt is returned to the caller to log outside the database if they need a record.
+    ``anatid_meta``, not in the derived indexes (every generation's storage and the change
+    journal, see :attr:`derived_rows_deleted`), and not in ``anatid_audit`` (neither as
+    ``memory_id`` nor as the ``related_memory_id`` of some other memory's supersede).  That is
+    the point of erasure, so the receipt is returned to the caller to log outside the database
+    if they need a record.
 
     Beyond the memory graph it reaches the tables anatid's bundled integrations create -- the
     Agents SDK transcript, session, usage and run-state tables, which quote memory content and
@@ -517,7 +551,10 @@ class ForgetReceipt:
     tenant_id: int
     hard: bool
     at: _dt.datetime
+    #: Logical memories removed: 1 when the memory existed, 0 otherwise.  Every version of it
+    #: goes; :attr:`memory_versions_deleted` counts the physical rows.
     memories_deleted: int = 0
+    #: Distinct ABOUT edges removed; :attr:`about_edge_versions_deleted` counts their rows.
     about_edges_deleted: int = 0
     supersedes_edges_deleted: int = 0
     episodes_deleted: int = 0
@@ -529,18 +566,36 @@ class ForgetReceipt:
     fts_rows_deleted: int = 0
     #: Rows removed by :meth:`anatid.Anatid.register_erasure_hook` hooks (transcripts, etc).
     extra_rows_deleted: int = 0
+    #: Physical rows removed from ``memories`` and ``edges_about``: every version of the memory
+    #: and of each of its ABOUT edges (schema v4).  At least the logical counts above.
+    memory_versions_deleted: int = 0
+    about_edge_versions_deleted: int = 0
+    #: Rows removed from the derived indexes (schema v4): each generation's storage and the
+    #: change journal.  An accelerator's built generation holds a copy of what it indexed, so
+    #: an erasure that stopped at the canonical tables would leave the document findable
+    #: through the index.
+    derived_rows_deleted: int = 0
+    #: Generations this purge could not clean, because their storage cannot delete one document
+    #: (an index that only rebuilds) or because the erasure came from a handle holding no code
+    #: for that index.  They are taken out of service, report ``stale_generation`` until a
+    #: rebuild, and reads fall back to the SQL path, which is correct but slower.  A non-zero
+    #: count means the document is still inside that generation's storage until it is rebuilt
+    #: or its storage is dropped.
+    invalidated_generations: int = 0
     reason: str | None = None
 
     @property
     def rows_removed(self) -> int:
+        """Every physical row the purge removed, versions included."""
         return (
-            self.memories_deleted
-            + self.about_edges_deleted
+            max(self.memories_deleted, self.memory_versions_deleted)
+            + max(self.about_edges_deleted, self.about_edge_versions_deleted)
             + self.supersedes_edges_deleted
             + self.episodes_deleted
             + self.audit_rows_deleted
             + self.fts_rows_deleted
             + self.extra_rows_deleted
+            + self.derived_rows_deleted
         )
 
 

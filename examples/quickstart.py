@@ -66,12 +66,20 @@ def main() -> None:
         db.relate("Ada", "Kestrel", rel_kind="leads", writer="agent-1", now=t0)
         db.relate("Kestrel", "ingest service", rel_kind="depends_on", writer="agent-1", now=t0)
 
-        # 4. BM25 rides DuckDB's fts index, which is NOT incremental: rows written since the last
-        #    rebuild are invisible to the text arm. anatid never hides that -- you decide when to
-        #    pay for a rebuild, and every recall() result reports its own staleness.
+        # 4. Text search. DuckDB's own fts index is NOT incremental, so anatid keeps a journal
+        #    of every write beside the index and merges it into each search: the three memories
+        #    above are findable now, with nothing rebuilt. `pending_rows` is how many documents
+        #    a search re-reads from the canonical rows; `stale` means the answer would be
+        #    INCOMPLETE, which it is not. rebuild_fts_index() folds the journal into a new
+        #    generation and publishes it in one metadata switch, with reads running throughout.
         status = db.fts_status()
-        print(f"before rebuild: bm25 stale={status.stale}, rows waiting={status.pending_rows}")
+        print(f"before rebuild: bm25 stale={status.stale}, rows merged from the journal="
+              f"{status.pending_rows}")
+        print("  findable with nothing built:",
+              [h.content for h in db.recall("coffee roast", k=1)])
         db.rebuild_fts_index(now=t0)
+        print(f"after rebuild : bm25 stale={db.fts_status().stale}, "
+              f"index health={db.index_health()['fts'].reason.value}")
 
         # 5. Hybrid recall: cosine + BM25 + 2-hop graph expansion, fused with RRF (k=60).
         hits = db.recall("coffee roast", embedding=embed("coffee roast"),

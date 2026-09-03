@@ -3,6 +3,103 @@
 All notable changes to anatid are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); anatid uses semantic versioning.
 
+## [0.2.0] - 2026-09-03
+
+The derived-index release. Every retrieval structure anatid keeps beside the canonical tables is
+now built by one mechanism, described in `docs/design/derived-index-framework.md`: a versioned base
+generation plus a journal written in the same transaction as the row it describes, merged on every
+read before any tenant or time filter runs. A write is findable by the next read with nothing
+rebuilt, an index that is stale, damaged or absent costs latency rather than correctness, and every
+fallback reports which of eight reasons applies.
+
+Files written by 0.1.x (schema v3) migrate to schema v4 the first time they are opened for writing;
+the migration runs inside one transaction and adds columns and tables without rewriting a row. It
+is not reversible: 0.1.1 refuses to open a v4 file.
+
+### Added
+
+- The derived-index framework (`anatid.derived`, schema v4). `DerivedIndex` with generations,
+  an ordered journal, validation against the oracle, publication by one metadata-row `UPDATE`,
+  process-wide pins, retirement, health reporting and a `MaintenancePolicy`. Index definitions live
+  in the file (`anatid_index_registry`), so every handle journals every write for every enabled
+  index whether or not it holds that accelerator's code. `db.index_health()`, `db.maintain_indexes()`.
+- One visibility abstraction (`anatid.visibility`). `Visibility.at(tenant, as_of).predicate()`
+  renders the tenant predicate and both time axes; `visible_at(...)` is the same object named for
+  the axes; `Visibility.admits(row)` is the Python mirror. Every read path in the library goes
+  through it, and a test scans each module's SQL literals to prove none writes it by hand.
+- Immutable version rows. `memories`, `edges_about` and `edges_relates` carry a `version`
+  column. A correction closes the current version's `tx_to` and inserts the next version rather
+  than rewriting `valid_to` in place, so an `as_of(valid_time, tx_time)` read returns the belief
+  the database actually held then. `db.versions(id)` lists them; `Provenance.versions` carries
+  them beside the SUPERSEDES chain.
+- Full-text search on the framework (`anatid.fts`), attached by default. A search merges the
+  base generation with the journal and reconstructs one set of corpus statistics over their union,
+  so a rebuild never changes an answer. With no generation published the search is an exact scan.
+  `forget(hard=True)` deletes the document from every generation's storage.
+- The CSR on the framework (`anatid.csr`), attached by default. One generation per tenant with
+  its own dense vertex map, so the caller's 63-bit ids work and a `relate()` no longer invalidates
+  anything. The journal is applied level by level, in SQL or inside the C++ extension. The
+  extension is version 0.2.0: named snapshots, an external-id label mapping, delta arrays on
+  `graph_expand`, and `anatid_drop_csr`.
+- An opt-in HNSW vector backend (`anatid.vector`). `Anatid.open(vector_backend="duckdb_vss")`.
+  The approximate structure only chooses candidates; the score is always the exact cosine. Recall
+  at k measured against the exact oracle: 1.0000 at k=10 and 0.9982-0.9984 at k=50, at 9,500 and
+  95,000 rows per tenant.
+- Conflict primitives (`anatid.atomic`). `db.atomic(callback, max_attempts=3)` re-runs the
+  whole callback on a retryable conflict with jittered backoff; `db.update(id, content,
+  expected_version=n)` is a compare-and-swap; `relate(..., if_current=True)` refuses an endpoint
+  with no current entity row. `ConflictError` carries resource, expected version, current version,
+  retryability and attempt.
+- Pool hardening. `DatabasePool(opaque=True, secret=...)` maps a tenant to a keyed digest
+  instead of a name in a path; interpolated path components that could escape the pool root are
+  refused rather than sanitised; directories are created 0700 and files 0600; per-tenant
+  `delete()` and `backup()`; a bounded audit log with an `audit=` hook; and
+  `Anatid.unsafe_connection(reason=...)` as the named administrative cursor, with a per-handle
+  `raw_access` policy.
+- `HealthReason.damaged_base`, and a cheap invariant per index checked on every read, so a base
+  that is present, queryable and quietly incomplete becomes a reported fallback instead of a short
+  answer. `doctor()` gains `unusable_derived_index`.
+- `Anatid.last_expansion`, `Anatid.index_health(as_of=...)`, and `anatid.fts` / `anatid.vector` /
+  `anatid.csr` / `anatid.atomic` exported from the package root.
+
+### Changed
+
+- `Anatid.open()` gains `accelerators: bool = True`, which attaches the full-text and CSR derived
+  indexes, and `vector_backend: str = "exact"`. Attaching costs one journal `INSERT` per write per
+  index that derives from the table written, measured at 0.68 ms per `remember()` on this machine;
+  `accelerators=False` is 0.1.1's behaviour exactly.
+- `FtsStatus.stale` means something different on each half. On 0.1.1's index it is "rows the arm
+  cannot see". On a generation a write is searchable at once, so it is "the answer would be
+  incomplete", which happens only with no usable generation and a corpus above `SCAN_CEILING`.
+  `pending_rows` is how many documents a search re-reads, not how many are hidden.
+- `rebuild_fts_index()` on a database with the derived index attached builds, validates and
+  publishes a generation, with reads answering from the previous one throughout.
+- `db.expand_path` is documented as a forecast for the next current-state read on this handle's
+  own tenant rather than a record of the last read, which is what `db.last_expansion` is.
+- `doctor()`'s `stale_fts_index` check is about 0.1.1's index and is silent on a database that has
+  moved off it, correctly: nothing there is invisible.
+- The version string, the schema version and the C++ extension banner are checked against each
+  other by a test. 0.1.1 is published at schema v3; a build writing schema v4 cannot share its name.
+
+### Fixed
+
+- A schema-v3 file opened `read_only=True` or `ensure=False` raised a raw DuckDB
+  `BinderException` on every hydrating read, because the select list named the `version` column
+  that only the 3 -> 4 migration adds and neither open mode runs the migration ladder. Those are
+  supported open modes (`anatid-mcp --read-only` is one), and 0.1.1 answered the same reads on the
+  same file. The select list is now asked for rather than assembled, and renders `1 AS version`
+  against a table that predates the column.
+- `forget(hard=True)` now reaches derived-index storage, deletes the journal rows rather than
+  tombstoning them, lowers a generation watermark that was the erased id, and invalidates a
+  generation whose storage cannot delete one document. `ForgetReceipt` counts both halves.
+- A generation's storage name renders a negative tenant id as `n7` rather than `-7`, which is not
+  an identifier character.
+
+### Removed
+
+Nothing. Every 0.1.1 name still resolves and means what it meant; `Anatid.open(accelerators=False)`
+restores 0.1.1's retrieval behaviour on a v4 file.
+
 ## [0.1.1] - 2026-09-02
 
 A correctness and security release. An external review of 0.1.0 reported five defects with

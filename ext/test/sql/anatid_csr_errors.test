@@ -172,7 +172,7 @@ tenant 42 has no edges in the CSR
 statement error
 SELECT * FROM graph_expand(42, 1, 2, strict := true);
 ----
-CSR built from 'rel', 2 tenant(s) [0, 1], 3 edge(s)
+CSR (unnamed) built from 'rel', 2 tenant(s) [0, 1], 3 edge(s)
 
 statement error
 SELECT * FROM graph_expand(0, 777, 2, strict := true);

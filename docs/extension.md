@@ -168,9 +168,32 @@ macro filtered on `valid_to` alone. Adding the `tx_to` conjunct cannot change th
 has that column, so a plain three-column edge list still works and is treated as all-current.
 `anatid_csr_stats().current_filter` reports which conjuncts were applied.
 
+## What 0.2.0 added
+
+The extension is version 0.2.0 and the whole of the surface described below is unchanged: every
+0.1 call site still works and still means the same thing. Four things were added, all for
+`anatid.csr`'s derived index (`docs/architecture.md` §2 and §3):
+
+| addition | why |
+|---|---|
+| `key := 'gen3'` on `anatid_build_csr`, `graph_expand`, `anatid_csr_stats`, `anatid_csr_tenants` | a generation renumbers its vertices, so two generations must be able to coexist while a read is pinned to one of them. `key := ''` is the single unnamed 0.1 snapshot. |
+| `labels := 'anatid_idx_csr_t1_g3_vertices'` on `anatid_build_csr` | a table `(tenant_id, vertex_id, entity_id)` mapping dense vertices to external ids. With it, seeds, results and delta ids are EXTERNAL entity ids, which is what lets the extension run on an ordinary anatid database whose ids are sparse. The mapping must cover every endpoint of the edge table or the build is refused by name. |
+| `add_src` / `add_dst` / `drop_src` / `drop_dst` `BIGINT[]` on `graph_expand` | the journal, passed in. Edges to add to the traversal and base pairs to skip, applied level by level, because retiring an edge changes reachability rather than membership and a merge from outside would need one call per frontier vertex. |
+| `anatid_drop_csr(key)` | gives the memory back when a generation is retired. |
+
+`anatid_csr_stats()` gained `csr_key` and `vertex_map` columns; `anatid_csr_tenants()` reports
+external ids in `min_entity_id` / `max_entity_id` when a label mapping is loaded. Measured on the
+spike `small` dataset, tenant 0, 2-hop frontier: 0.414 ms through the extension with an empty
+journal and 1.501 ms with about 550 journal rows, against 0.954 ms and 2.271 ms for the same merge
+done in SQL, and 0.844 ms for the pure-SQL frontier over the canonical tables.
+
 ## The snapshot limitation
 
-The CSR does not see `RELATES_TO` writes until it is rebuilt. It is a snapshot taken by
+This section is about the unnamed 0.1 snapshot, which `db.build_csr()` still drives. A derived CSR
+generation does not have this limitation: its journal is written in the same transaction as the
+edge and applied on every read (`docs/architecture.md` §2).
+
+The snapshot does not see `RELATES_TO` writes until it is rebuilt. It is taken by
 `anatid_build_csr()`, and there is no incremental maintenance, no trigger, and no invalidation hook
 inside DuckDB. An edge inserted after the build is invisible to `graph_expand`, and an edge deleted
 or expired after the build is still traversed.
@@ -179,8 +202,9 @@ anatid tracks the snapshot's freshness in three places:
 
 * `CsrBackend.note_edge_write()` fires on every `RELATES_TO` write (`relate()`), marking the snapshot
   stale.
-* While the snapshot is stale, `db.expand_path` reports `"sql"` and every read silently takes the
-  pure-SQL path, which returns identical results more slowly.
+* While the snapshot is stale, `db.expand_path` reports `"sql"` and every read takes the pure-SQL
+  path, which returns identical results more slowly. It is not silent: `db.expand_path` is an
+  `ExpandPath`, which is that string and also carries `.reason` and `.explain()`.
 * `db.build_csr()` rebuilds and flips it back to `"extension"`.
 
 The extension therefore helps read-mostly graphs and falls back to SQL on write-heavy ones.
@@ -205,6 +229,11 @@ built on this database.
 
 ## The other limitation: entity ids must be dense per tenant
 
+This one too is about a raw build over `edges_relates`. A derived CSR generation numbers its own
+vertices densely and carries the mapping back to entity ids in a `labels` table, so the caller's
+63-bit ids work; the paragraphs below are what happens when you point `anatid_build_csr` straight
+at the canonical table, as `db.build_csr()` does.
+
 The CSR indexes by `entity_id - min_id`, so the `offsets` array costs 8 bytes for every id between a
 tenant's smallest and largest, occupied or not. anatid's default ids are 63-bit time-ordered values
 (`anatid.ids.new_id()`: 41 bits of milliseconds, then 22 low bits), so two entities created 10 ms
@@ -215,7 +244,7 @@ apart are about 42,000,000 ids apart, a third of a gigabyte of offsets for a sin
 | bound | default | override |
 |---|---|---|
 | a tenant's id range must be addressable by the dense array | 2^31 ids | none (hard) |
-| **density**: a tenant's id span ≤ `max_span_factor` × its current edge count, floor 4096 | `max_span_factor := 128` | `max_span_factor := 0` disables |
+| density: a tenant's id span ≤ `max_span_factor` × its current edge count, floor 4096 | `max_span_factor := 128` | `max_span_factor := 0` disables |
 | total snapshot allocation | `max_bytes := 1073741824` (1 GiB) | any BIGINT; `0` disables |
 
 The density bound is the one that catches real anatid ids:

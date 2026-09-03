@@ -87,27 +87,71 @@ scoping, not isolation (see :data:`CONTRACT_NOTES`), and isolation is file-per-t
 
 Time travel
 -----------
-DuckDB has no ``AS OF SYSTEM TIME``.  These columns plus the WHERE clauses anatid compiles in
-:mod:`anatid.recall` *are* the time-travel mechanism.
+DuckDB has no ``AS OF SYSTEM TIME``.  These columns plus the WHERE clauses anatid compiles from
+:mod:`anatid.visibility` *are* the time-travel mechanism.
+
+Versions (schema v4)
+--------------------
+:data:`VERSIONED_TABLES` (``memories``, ``edges_about``, ``edges_relates``) carry a
+``version INTEGER NOT NULL DEFAULT 1`` column (:data:`VERSION_COLUMN`).  ``memory_id`` and
+``edge_id`` stay the logical ids callers hold; ``(tenant_id, memory_id, version)`` identifies a
+physical row.  Rows are immutable: a correction closes the current version's ``tx_to`` and
+inserts version ``n + 1`` with the corrected valid interval, so the transaction axis records
+what the database believed before the correction.  Before v4 ``supersede`` and soft ``forget``
+rewrote ``valid_to`` in place and no ``as_of`` could see the earlier belief.  The 3->4
+migration carries every existing row over as version 1 with its ``tx_to`` untouched; the
+history rewritten before the migration is not recoverable.  Column order is unchanged and
+``version`` is last, so ``Memory.from_row`` reads the same positions as before.
+
+Derived indexes (schema v4)
+---------------------------
+Three catalog tables and one sequence carry the derived-index framework of
+``docs/design/derived-index-framework.md``.  :data:`INDEX_GENERATIONS_TABLE` records every base
+generation an accelerator has built, with its watermark and its ``validated`` / ``published``
+flags.  :data:`INDEX_REGISTRY_TABLE` records the index DEFINITIONS, in the file rather than on
+one handle, so every handle that writes into the file journals for every defined index whether
+or not it holds that accelerator's code.  :data:`INDEX_JOURNAL_TABLE` is that journal: one
+ordered row per change, written by the verbs in the same transaction as the canonical row and
+numbered from :data:`INDEX_CHANGE_SEQUENCE`, so a read that merges base + journal sees every
+write immediately.  The journal is ordered rather than split into a delta set and a tombstone
+set because two independent id sets cannot represent a document id that is purged and then
+reused: it would be in both, and the merge would drop it.  Every row of both is keyed by
+``(tenant_id, doc_id)``, including for an index whose generations cover the file, so one
+tenant's change never suppresses another tenant's document with the same id.  See
+:mod:`anatid.derived`.
 """
 
 from __future__ import annotations
 
 import contextlib
 import re
+import weakref
 from dataclasses import dataclass
-from typing import Callable, Iterable, Sequence
+from typing import Any, Callable, Iterable, Sequence
 
 from .errors import SchemaVersionError
+from .visibility import current_row_sql, temporal_predicate
 
 __all__ = [
     "SCHEMA_VERSION",
+    "SCHEMA_VERSION_RELEASES",
     "DEFAULT_EMBEDDING_DIM",
     "SchemaConfig",
     "SYSTEM_COLUMNS",
     "MEMORY_COLUMNS",
     "ENTITY_COLUMNS",
     "EPISODE_COLUMNS",
+    "EDGE_ABOUT_COLUMNS",
+    "EDGE_RELATES_COLUMNS",
+    "VERSION_COLUMN",
+    "VERSIONED_TABLES",
+    "ensure_version_columns",
+    "LEGACY_VERSION_SELECT",
+    "versioned_tables",
+    "has_version_column",
+    "memory_select",
+    "version_expr",
+    "forget_column_probes",
     "NODE_TABLES",
     "EDGE_TABLES",
     "ALL_TABLES",
@@ -123,6 +167,13 @@ __all__ = [
     "FTS_DICT_TABLE",
     "FTS_STATS_TABLE",
     "FTS_TABLES",
+    "INDEX_GENERATIONS_TABLE",
+    "INDEX_REGISTRY_TABLE",
+    "INDEX_JOURNAL_TABLE",
+    "INDEX_CHANGE_SEQUENCE",
+    "INDEX_TABLES",
+    "INDEX_GENERATION_ADDED_COLUMNS",
+    "ensure_index_columns",
     "FTS_INDEX_SCHEMA",
     "FTS_TOKENIZER",
     "FTS_DOC_ID_SQL",
@@ -157,8 +208,16 @@ __all__ = [
     "table_ddl",
 ]
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 DEFAULT_EMBEDDING_DIM = 1536
+
+#: The anatid release that introduced each schema version.  A file records the version of the
+#: build that wrote it, and a build refuses a file newer than its own :data:`SCHEMA_VERSION`, so
+#: "which release can open this file" is a real question with a real answer.  Two builds sharing
+#: a version string while writing different schema versions makes that answer a lie, which is
+#: what shipping schema v4 under the name 0.1.1 would have done; ``tests/test_core.py`` checks
+#: this table against :data:`anatid.__version__`.
+SCHEMA_VERSION_RELEASES: dict[int, str] = {1: "0.1.0", 2: "0.1.0", 3: "0.1.1", 4: "0.2.0"}
 
 #: The bitemporal / provenance columns present on every node and edge table by default.
 SYSTEM_COLUMNS: tuple[tuple[str, str], ...] = (
@@ -171,11 +230,33 @@ SYSTEM_COLUMNS: tuple[tuple[str, str], ...] = (
     ("confidence", "FLOAT"),
 )
 
+#: Name of the version column on every table in :data:`VERSIONED_TABLES` (schema v4).
+VERSION_COLUMN = "version"
+
+#: The tables whose rows are immutable versions of a logical id.  ``entities`` and
+#: ``episodes`` are not corrected by any verb and carry no version column.
+VERSIONED_TABLES: tuple[str, ...] = ("memories", "edges_about", "edges_relates")
+
 #: Column order used by ``SELECT`` for a full memory row (matches :meth:`anatid.Memory.from_row`).
+#: ``version`` is last so the positions a v3 build read are unchanged.
 MEMORY_COLUMNS: tuple[str, ...] = (
     "memory_id", "tenant_id", "content", "kind", "embedding", "created_at",
     "valid_from", "valid_to", "tx_from", "tx_to", "writer", "episode_id", "confidence",
-    "access_count", "last_access_at",
+    "access_count", "last_access_at", VERSION_COLUMN,
+)
+
+#: Every column of ``edges_about`` / ``edges_relates`` in table order.  The verbs copy a closed
+#: edge's version into its successor by name from these, so a column added later is carried
+#: over instead of silently defaulting.
+EDGE_ABOUT_COLUMNS: tuple[str, ...] = (
+    "edge_id", "src", "dst", "tenant_id", "weight",
+    "valid_from", "valid_to", "tx_from", "tx_to", "writer", "episode_id", "confidence",
+    VERSION_COLUMN,
+)
+EDGE_RELATES_COLUMNS: tuple[str, ...] = (
+    "edge_id", "src", "dst", "tenant_id", "rel_kind",
+    "valid_from", "valid_to", "tx_from", "tx_to", "writer", "episode_id", "confidence",
+    VERSION_COLUMN,
 )
 
 #: Same, minus the embedding, for callers that do not need the vector (cheaper scan).
@@ -283,6 +364,33 @@ FTS_STATS_TABLE = "anatid_fts_stats"
 #: ``forget(hard=True)`` MUST clear the memory's row from these -- :func:`fts_purge` does it.
 FTS_TABLES: tuple[str, ...] = (FTS_SOURCE_TABLE, FTS_DOCS_TABLE, FTS_DICT_TABLE, FTS_STATS_TABLE)
 
+# --------------------------------------------------------------------------- derived indexes
+
+#: One row per base generation of a derived index (schema v4).  ``tenant_id`` is NULL for an
+#: index whose generations cover the whole file.  ``published`` is the single flag a read pins
+#: on; ``validated`` is cleared by a bulk load and set by a successful validation.
+INDEX_GENERATIONS_TABLE = "anatid_index_generations"
+
+#: One row per derived index DEFINED in this file, whatever handle defined it.  The verbs
+#: journal a write for every ENABLED row here, so a second handle that holds no accelerator
+#: code still keeps the journal complete.  See :mod:`anatid.derived`.
+INDEX_REGISTRY_TABLE = "anatid_index_registry"
+
+#: The ordered change journal: one row per (index, tenant, document, change), written in the
+#: same transaction as the canonical write.  ``op`` is ``insert`` or ``close`` and the row with
+#: the largest ``change_seq`` for a ``(tenant_id, doc_id)`` wins, so a document id that is
+#: purged and then reused is represented exactly.  ``absorbed_by`` is the generation whose build
+#: already reflects the change; the row is deleted once no older generation is alive.
+INDEX_JOURNAL_TABLE = "anatid_index_journal"
+
+#: The sequence behind ``anatid_index_journal.change_seq``.  One sequence per file, so the
+#: order is total over every index, tenant and handle writing into that file.
+INDEX_CHANGE_SEQUENCE = "anatid_index_change_seq"
+
+#: The derived-index catalog tables, in creation order.
+INDEX_TABLES: tuple[str, ...] = (
+    INDEX_GENERATIONS_TABLE, INDEX_REGISTRY_TABLE, INDEX_JOURNAL_TABLE)
+
 #: The schema ``PRAGMA create_fts_index`` creates for :data:`FTS_SOURCE_TABLE`.
 FTS_INDEX_SCHEMA = f"fts_main_{FTS_SOURCE_TABLE}"
 
@@ -319,7 +427,7 @@ FTS_INDEX_SQL = (
 FTS_TERMS_INDEX_SQL = f"CREATE INDEX idx_fts_terms_termid ON {FTS_INDEX_SCHEMA}.terms(termid)"
 
 
-def fts_rebuild_statements(*, terms_index: bool = True) -> list[str]:
+def fts_rebuild_statements(*, terms_index: bool = True, con=None) -> list[str]:
     """Every statement that rebuilds the BM25 index, in order.  Run them in one transaction.
 
     The DuckDB fts index is not incremental -- ``PRAGMA create_fts_index`` rebuilds it wholesale
@@ -329,9 +437,10 @@ def fts_rebuild_statements(*, terms_index: bool = True) -> list[str]:
     Order matters:
 
     1. refill :data:`FTS_SOURCE_TABLE` from ``memories``, keyed ``'<tenant>:<memory>'``.  One
-       row per ``(tenant_id, memory_id)``: duplicate ids inside one tenant are an integrity
-       fault (``db.doctor()`` reports them) and must not become two documents here, because a
-       repeated document key is exactly the bug this key was introduced to fix.
+       row per ``(tenant_id, memory_id)``, taken from the newest version: the versions of one
+       memory share its content, and a repeated document key is exactly the bug this key was
+       introduced to fix.  Duplicate ids inside one tenant are an integrity fault
+       (``db.doctor()`` reports them) and do not become two documents either.
     2. build the index, and the ART index on its postings.
     3. materialise ``docid -> (tenant_id, memory_id, len)``.
     4. materialise per-tenant ``df`` and per-tenant ``(num_docs, avgdl)``.
@@ -340,14 +449,20 @@ def fts_rebuild_statements(*, terms_index: bool = True) -> list[str]:
 
     Every ``memories`` row is indexed, live or superseded, exactly as in v2 -- the temporal
     predicate is applied by the query, so ``as_of`` BM25 keeps working.
+
+    ``con`` is the connection the statements will run on, and is used only to render the
+    version expression: a file that predates schema v4 has no ``version`` column, and the
+    de-duplication then falls through to ``tx_from``.  Omit it for a v4 file.
     """
+    version = VERSION_COLUMN if con is None else version_expr(con)
     stmts = [
         f"DELETE FROM {FTS_SOURCE_TABLE}",
         f"""INSERT INTO {FTS_SOURCE_TABLE} (fts_doc_id, tenant_id, memory_id, content)
     SELECT {FTS_DOC_ID_SQL}, tenant_id, memory_id, content
     FROM memories
     QUALIFY row_number() OVER (PARTITION BY tenant_id, memory_id
-                               ORDER BY tx_from DESC NULLS LAST,
+                               ORDER BY {version} DESC NULLS LAST,
+                                        tx_from DESC NULLS LAST,
                                         created_at DESC NULLS LAST) = 1
     ORDER BY tenant_id, memory_id""",
         FTS_INDEX_SQL,
@@ -415,18 +530,18 @@ _FTS_PURGE_PLAN: tuple[tuple[tuple[str, ...], str], ...] = (
     # The ART index on terms(termid) serves the inner IN-list; the outer GROUP BY touches only
     # the postings of those termids.
     (("index", FTS_DOCS_TABLE),
-     f"DELETE FROM {FTS_INDEX_SCHEMA}.dict WHERE termid IN ("
-     f"SELECT t.termid FROM {FTS_INDEX_SCHEMA}.terms t WHERE t.termid IN ("
-     f"SELECT p.termid FROM {FTS_INDEX_SCHEMA}.terms p JOIN {FTS_DOCS_TABLE} d ON d.docid = p.docid "
-     f"WHERE d.tenant_id = ? AND d.memory_id = ?) "
-     f"GROUP BY t.termid HAVING count(*) = count(*) FILTER (WHERE t.docid IN ("
-     f"SELECT docid FROM {FTS_DOCS_TABLE} WHERE tenant_id = ? AND memory_id = ?)))"),
+     (f"DELETE FROM {FTS_INDEX_SCHEMA}.dict WHERE termid IN ("
+      f"SELECT t.termid FROM {FTS_INDEX_SCHEMA}.terms t WHERE t.termid IN ("
+      f"SELECT p.termid FROM {FTS_INDEX_SCHEMA}.terms p JOIN {FTS_DOCS_TABLE} d ON d.docid = p.docid "
+      f"WHERE d.tenant_id = ? AND d.memory_id = ?) "
+      f"GROUP BY t.termid HAVING count(*) = count(*) FILTER (WHERE t.docid IN ("
+      f"SELECT docid FROM {FTS_DOCS_TABLE} WHERE tenant_id = ? AND memory_id = ?)))")),
     (("index", FTS_DOCS_TABLE),
-     f"DELETE FROM {FTS_INDEX_SCHEMA}.terms WHERE docid IN "
-     f"(SELECT docid FROM {FTS_DOCS_TABLE} WHERE tenant_id = ? AND memory_id = ?)"),
+     (f"DELETE FROM {FTS_INDEX_SCHEMA}.terms WHERE docid IN "
+      f"(SELECT docid FROM {FTS_DOCS_TABLE} WHERE tenant_id = ? AND memory_id = ?)")),
     (("index",),
-     f"DELETE FROM {FTS_INDEX_SCHEMA}.docs WHERE name = "
-     f"CAST(? AS VARCHAR) || ':' || CAST(? AS VARCHAR)"),
+     (f"DELETE FROM {FTS_INDEX_SCHEMA}.docs WHERE name = "
+      f"CAST(? AS VARCHAR) || ':' || CAST(? AS VARCHAR)")),
     ((FTS_DOCS_TABLE,),
      f"DELETE FROM {FTS_DOCS_TABLE} WHERE tenant_id = ? AND memory_id = ?"),
     ((FTS_SOURCE_TABLE,),
@@ -455,7 +570,7 @@ def fts_purge(con, tenant_id: int, memory_id: int) -> int:
 
 NODE_TABLES: tuple[str, ...] = ("memories", "entities", "episodes")
 EDGE_TABLES: tuple[str, ...] = ("edges_about", "edges_relates", "edges_supersedes")
-CATALOG_TABLES: tuple[str, ...] = ("anatid_meta", "anatid_audit") + FTS_TABLES
+CATALOG_TABLES: tuple[str, ...] = ("anatid_meta", "anatid_audit") + FTS_TABLES + INDEX_TABLES
 ALL_TABLES: tuple[str, ...] = NODE_TABLES + EDGE_TABLES + CATALOG_TABLES
 
 #: Physical order each table is written in by a bulk load / recluster.  This is the measured
@@ -498,42 +613,68 @@ REQUIRED_INDEXES: dict[str, str] = {
 #: Written into ``anatid_meta.contract``.  These are the engine's real guarantees; they are stored
 #: in the file so anyone who opens it later reads the same sentences the docs make.
 CONTRACT_NOTES: tuple[str, ...] = (
-    "time travel: DuckDB has NO 'AS OF SYSTEM TIME'. as_of is anatid's own WHERE filter over "
-    "valid_from/valid_to and tx_from/tx_to. Intervals are half-open [from, to).",
-    "isolation: DuckDB has NO schema-level or row-level access control. Per-tenant ISOLATION is "
-    "file-per-tenant, enforced by anatid's wrapper and the filesystem. tenant_id inside one file "
-    "is SCOPING, not isolation: any connection to the file can read every tenant in it.",
-    "full-text: the DuckDB fts index is NOT incremental. Rows inserted after "
-    "PRAGMA create_fts_index are invisible to BM25 until rebuild_fts_index() runs. anatid records "
-    "both the indexed row count and the largest indexed memory_id in this table and reports "
-    "staleness on every recall() result. A raw SQL UPDATE of memories.content (something no "
-    "anatid verb ever issues) changes neither watermark and is NOT detected.",
-    "full-text scoping (schema v3): the index is built over anatid_fts_documents, whose document "
-    "key is '<tenant_id>:<memory_id>' -- unique across tenants, which memory_id alone is not. "
-    "df/idf and (num_docs, avgdl) come from anatid_fts_dict / anatid_fts_stats, which are "
-    "computed PER TENANT, so one tenant's BM25 scores depend on that tenant's rows only and no "
-    "term statistic crosses the boundary through recall(). The fts extension's own dict/stats "
-    "tables under fts_main_anatid_fts_documents still count every tenant; anatid reads only the "
-    "term->termid mapping from them, never a df or a corpus size, and a raw SQL reader of the file "
-    "can see them exactly as it can see every tenant's memories (scoping, not isolation). Schema "
-    "v2 files indexed memories(memory_id) and did leak: the 2->3 migration drops that index.",
-    "entity identity (schema v3): entities.entity_key is a GENERATED column, "
-    "trim(regexp_replace(lower(name), '\\s+', ' ', 'g')), with UNIQUE (tenant_id, entity_key) "
-    "enforced by an index. Concurrent remember() calls naming the same new entity can no longer "
-    "produce two entity rows; the losers get a retryable constraint/transaction error.",
-    "transactions: DuckDB MVCC is optimistic and snapshot-isolated, NOT serializable. Appends "
-    "never conflict; two concurrent updates to the SAME row abort the second with a retryable "
-    "error, surfaced as anatid.errors.ConflictError.",
-    "vector search: brute-force array_cosine_similarity over FLOAT[N]. Fine to roughly 1e5 "
-    "memories per tenant; beyond that latency grows linearly with the tenant's row count.",
-    "erasure: forget(hard=True) purges the memory GRAPH row, its edges, its embedding, its "
-    "orphaned episode, its provenance and its BM25 documents (anatid_fts_documents holds content "
-    "verbatim, so anatid.schema.fts_purge() is part of the purge), and no anatid_audit row "
-    "survives that references the purged memory_id. It does NOT reach tables anatid does not own. "
-    "Conversation transcripts (anatid.integrations.openai_agents.AnatidSession's agent_messages) "
-    "quote memory content and ids verbatim; AnatidSession registers an erasure hook so a purge "
-    "removes those rows too, but any other table you write into this file is yours to clean -- "
-    "see Anatid.erasure_hooks.",
+    ("time travel: DuckDB has NO 'AS OF SYSTEM TIME'. as_of is anatid's own WHERE filter over "
+     "valid_from/valid_to and tx_from/tx_to. Intervals are half-open [from, to)."),
+    ("isolation: DuckDB has NO schema-level or row-level access control. Per-tenant ISOLATION is "
+     "file-per-tenant, enforced by anatid's wrapper and the filesystem. tenant_id inside one file "
+     "is SCOPING, not isolation: any connection to the file can read every tenant in it."),
+    ("full-text: the DuckDB fts index is NOT incremental. Rows inserted after "
+     "PRAGMA create_fts_index are invisible to BM25 until rebuild_fts_index() runs. anatid records "
+     "both the indexed row count and the largest indexed memory_id in this table and reports "
+     "staleness on every recall() result. A raw SQL UPDATE of memories.content (something no "
+     "anatid verb ever issues) changes neither watermark and is NOT detected."),
+    ("full-text scoping (schema v3): the index is built over anatid_fts_documents, whose document "
+     "key is '<tenant_id>:<memory_id>' -- unique across tenants, which memory_id alone is not. "
+     "df/idf and (num_docs, avgdl) come from anatid_fts_dict / anatid_fts_stats, which are "
+     "computed PER TENANT, so one tenant's BM25 scores depend on that tenant's rows only and no "
+     "term statistic crosses the boundary through recall(). The fts extension's own dict/stats "
+     "tables under fts_main_anatid_fts_documents still count every tenant; anatid reads only the "
+     "term->termid mapping from them, never a df or a corpus size, and a raw SQL reader of the file "
+     "can see them exactly as it can see every tenant's memories (scoping, not isolation). Schema "
+     "v2 files indexed memories(memory_id) and did leak: the 2->3 migration drops that index."),
+    ("entity identity (schema v3): entities.entity_key is a GENERATED column, "
+     "trim(regexp_replace(lower(name), '\\s+', ' ', 'g')), with UNIQUE (tenant_id, entity_key) "
+     "enforced by an index. Concurrent remember() calls naming the same new entity can no longer "
+     "produce two entity rows; the losers get a retryable constraint/transaction error."),
+    ("transactions: DuckDB MVCC is optimistic and snapshot-isolated, NOT serializable. Appends "
+     "never conflict; two concurrent updates to the SAME row abort the second with a retryable "
+     "error, surfaced as anatid.errors.ConflictError."),
+    ("vector search: brute-force array_cosine_similarity over FLOAT[N]. Fine to roughly 1e5 "
+     "memories per tenant; beyond that latency grows linearly with the tenant's row count."),
+    ("erasure: forget(hard=True) purges the memory GRAPH row, its edges, its embedding, its "
+     "orphaned episode, its provenance and its BM25 documents (anatid_fts_documents holds content "
+     "verbatim, so anatid.schema.fts_purge() is part of the purge), and no anatid_audit row "
+     "survives that references the purged memory_id. It does NOT reach tables anatid does not own. "
+     "Conversation transcripts (anatid.integrations.openai_agents.AnatidSession's agent_messages) "
+     "quote memory content and ids verbatim; AnatidSession registers an erasure hook so a purge "
+     "removes those rows too, but any other table you write into this file is yours to clean -- "
+     "see Anatid.erasure_hooks."),
+    ("versions (schema v4): rows of memories, edges_about and edges_relates are immutable. "
+     "memory_id / edge_id is the logical id; version numbers the physical rows of one logical id "
+     "from 1. supersede, soft forget, unrelate and a reinforce that changes confidence close the "
+     "current version's tx_to and insert the next version in the same transaction; nothing "
+     "rewrites valid_to in place. as_of(valid_time, tx_time) therefore returns the version the "
+     "database believed at tx_time, and get() by id returns the live version (tx_to IS NULL). "
+     "access_count and last_access_at are usage counters, updated in place on the live version, "
+     "and are not bitemporal. Rows that existed before the 3->4 migration are version 1 with "
+     "tx_to NULL; the corrections made to them before the migration were rewritten in place and "
+     "are not recoverable."),
+    ("derived indexes (schema v4): every accelerator (full-text, CSR, vector) is a versioned base "
+     "generation recorded in anatid_index_generations plus an ORDERED journal "
+     "(anatid_index_journal, numbered from the anatid_index_change_seq sequence) written in the "
+     "SAME transaction as the canonical row. Every journal row is keyed by (tenant_id, doc_id) "
+     "and the newest op for a key wins, so a purged and reused id is represented exactly and one "
+     "tenant's change never suppresses another tenant's document with the same id. The index "
+     "DEFINITIONS live in anatid_index_registry, in the FILE: every handle that writes journals "
+     "for every enabled definition, whether or not it holds that accelerator's code. A read "
+     "merges base + journal and THEN applies the tenant and time predicate from "
+     "anatid.visibility, so an index that is stale, corrupt or absent narrows candidates badly but "
+     "never makes an answer wrong; the SQL path over the canonical tables is always the oracle. "
+     "Publication of a generation is one row switch inside a transaction and a read pins one "
+     "generation for its duration. A current-state index cannot answer an as_of query; those "
+     "always take the SQL path and the fallback reason is reported. forget(hard=True) deletes the "
+     "document from every generation's storage and from the journal, and invalidates any "
+     "generation whose storage cannot delete, so an erasure reaches the accelerators too."),
 )
 
 
@@ -655,6 +796,152 @@ _ENTITY_KEY_DDL = (
     f"({entity_key_sql('name')}) VIRTUAL"
 )
 
+#: The version-column clause appended to every table in :data:`VERSIONED_TABLES`.  Last in the
+#: column list for the same reason.  The DEFAULT is what lets a bulk load, a raw INSERT and the
+#: 3->4 migration leave the column alone and get version 1.
+_VERSION_DDL = f",\n    {VERSION_COLUMN:<12} INTEGER NOT NULL DEFAULT 1"
+
+
+def ensure_version_columns(con) -> list[str]:
+    """Add :data:`VERSION_COLUMN` to every :data:`VERSIONED_TABLES` member that lacks it.
+
+    Returns the tables that were altered.  ``ALTER TABLE ... ADD COLUMN`` cannot carry
+    ``NOT NULL`` in DuckDB (``Adding columns with constraints not yet supported``), so a
+    migrated table gets ``version INTEGER DEFAULT 1``: existing rows are backfilled with 1 and
+    every later insert that omits the column gets 1.  The verbs read ``coalesce(version, 1)``
+    where they compute a successor, so a NULL written by raw SQL into a migrated file is
+    treated as version 1 rather than poisoning the chain.  Run by the 3->4 migration and by
+    :func:`ensure_schema` on every open, so a v4 file written by a build that predates the
+    column is repaired on the next open.
+
+    Inside a transaction this must run before any statement modifies rows of these tables:
+    DuckDB cannot commit a transaction that updates a table and then alters it.
+    """
+    present = table_names(con)
+    altered: list[str] = []
+    for table in VERSIONED_TABLES:
+        if table not in present:
+            continue
+        cols = {r[1] for r in con.execute(f"PRAGMA table_info({quote_ident(table)})").fetchall()}
+        if VERSION_COLUMN in cols:
+            continue
+        con.execute(f"ALTER TABLE {quote_ident(table)} ADD COLUMN IF NOT EXISTS "
+                    f"{VERSION_COLUMN} INTEGER DEFAULT 1")
+        altered.append(table)
+    if altered:
+        forget_column_probes()
+    return altered
+
+
+# ------------------------------------------------------------- reading a pre-v4 file
+
+# A handle that cannot run the migration ladder still has to answer reads.  There are two such
+# handles: ``read_only=True`` (the file may be on a read-only mount, or another process holds
+# the single writer slot) and ``ensure=False`` (the caller said not to touch the file).  Both
+# are supported open modes, and ``anatid-mcp --read-only`` is the deployment that uses the
+# first, so a schema-v3 file has to keep answering ``get`` / ``recall`` / ``provenance`` there.
+#
+# Exactly one column separates a v3 table from a v4 one: ``version``.  A select list that names
+# it fails to bind against a v3 file with a raw DuckDB ``BinderException``, which is neither an
+# anatid error nor recoverable.  So the select list is asked for rather than assembled from
+# MEMORY_COLUMNS by hand, and against a pre-v4 table it renders ``1 AS version`` -- which is
+# the truth: every row of a table that predates the column is version 1, because nothing had
+# ever inserted a second version of a logical id.
+#
+# The probe is memoised per connection, so it costs one dict lookup on a read.  It is a probe
+# and not a read of ``anatid_meta.schema_version`` on purpose: a v4 file written by a build
+# that predates the column has the same shape as a v3 one, and the column is what the query
+# binds against.
+
+#: What a select list renders in place of :data:`VERSION_COLUMN` on a table that predates it.
+LEGACY_VERSION_SELECT = f"1 AS {VERSION_COLUMN}"
+
+_COLUMN_PROBE: "weakref.WeakKeyDictionary[Any, tuple[int, frozenset[str]]]" = (
+    weakref.WeakKeyDictionary()
+)
+_COLUMN_EPOCH = 0
+
+#: Rendered select lists, keyed ``(alias, embedding, versioned)``.  Four entries in practice.
+_SELECT_CACHE: dict[tuple[str, bool, bool], str] = {}
+
+
+def forget_column_probes() -> None:
+    """Discard every memoised column probe.  Called when a migration adds a column."""
+    global _COLUMN_EPOCH
+    _COLUMN_EPOCH += 1
+
+
+def versioned_tables(con) -> frozenset[str]:
+    """Which of :data:`VERSIONED_TABLES` carry :data:`VERSION_COLUMN` on this connection.
+
+    Empty for a file written before schema v4.  Memoised per connection and invalidated by
+    :func:`forget_column_probes`, which :func:`ensure_version_columns` calls when it alters a
+    table, so a handle that migrates the file mid-session sees the new column at once.
+    """
+    hit = _COLUMN_PROBE.get(con)
+    if hit is not None and hit[0] == _COLUMN_EPOCH:
+        return hit[1]
+    found: set[str] = set()
+    for table in VERSIONED_TABLES:
+        # A bind, not a catalog read: this asks the question the query itself will ask, which
+        # is the one that matters under an ATTACHed catalog or a non-default search path.
+        try:
+            con.execute(f"SELECT {VERSION_COLUMN} FROM {quote_ident(table)} LIMIT 0")
+        except Exception:  # noqa: BLE001 - a missing table has no version column either
+            continue
+        found.add(table)
+    out = frozenset(found)
+    with contextlib.suppress(TypeError):  # a connection object that cannot be weak-referenced
+        _COLUMN_PROBE[con] = (_COLUMN_EPOCH, out)
+    return out
+
+
+def has_version_column(con, table: str = "memories") -> bool:
+    """Whether ``table`` carries :data:`VERSION_COLUMN` on this connection."""
+    return table in versioned_tables(con)
+
+
+def memory_select(con, *, alias: str | None = None, embedding: bool = True) -> str:
+    """The ``SELECT`` list for a full memory row, in :data:`MEMORY_COLUMNS` order.
+
+    Use this rather than joining :data:`MEMORY_COLUMNS` directly: against a file written before
+    schema v4 it renders ``1 AS version`` for the column that file does not have, so the row
+    still arrives in the arity :meth:`anatid.Memory.from_row` expects.  ``embedding=False``
+    replaces the vector with ``NULL AS embedding``, which is what every read that does not need
+    it asks for.
+    """
+    versioned = has_version_column(con, "memories")
+    key = (alias or "", bool(embedding), versioned)
+    hit = _SELECT_CACHE.get(key)
+    if hit is not None:
+        return hit
+    parts: list[str] = []
+    for column in MEMORY_COLUMNS:
+        if column == "embedding" and not embedding:
+            parts.append("NULL AS embedding")
+        elif column == VERSION_COLUMN and not versioned:
+            parts.append(LEGACY_VERSION_SELECT)
+        else:
+            parts.append(f"{alias}.{column}" if alias else column)
+    out = ", ".join(parts)
+    _SELECT_CACHE[key] = out
+    return out
+
+
+def version_expr(con, table: str = "memories", alias: str | None = None) -> str:
+    """``coalesce(version, 1)`` for a versioned table, ``1`` for one that predates the column.
+
+    The expression a read orders or groups by.  ``coalesce`` because a table the 3->4 migration
+    altered has a nullable column (DuckDB cannot add a NOT NULL one) and a NULL written there
+    by raw SQL means version 1.
+    """
+    if table not in versioned_tables(con):
+        # CAST rather than a bare 1: this expression is rendered into ORDER BY clauses, where
+        # DuckDB reads an integer literal as a column ordinal.
+        return "CAST(1 AS INTEGER)"
+    column = f"{alias}.{VERSION_COLUMN}" if alias else VERSION_COLUMN
+    return f"coalesce({column}, 1)"
+
 
 def node_table_ddl(
     label: str,
@@ -734,6 +1021,98 @@ def _fts_table_ddl() -> list[str]:
     ]
 
 
+#: Columns added to :data:`INDEX_GENERATIONS_TABLE` after the first v4 development files were
+#: written.  ``ALTER TABLE ... ADD COLUMN`` cannot add ``NOT NULL`` in DuckDB, so readers of
+#: these columns coalesce (see :mod:`anatid.derived`).
+INDEX_GENERATION_ADDED_COLUMNS: tuple[tuple[str, str], ...] = (
+    ("published_unvalidated", "BOOLEAN DEFAULT FALSE"),
+)
+
+
+def ensure_index_columns(con) -> list[str]:
+    """Add any :data:`INDEX_GENERATION_ADDED_COLUMNS` the file is missing.  Returns the names.
+
+    Same shape as :func:`ensure_version_columns`: a v4 file written by an earlier development
+    build has the generations table without ``published_unvalidated``, and every open repairs
+    it rather than requiring a schema bump for a table no released version ever wrote.
+    """
+    if INDEX_GENERATIONS_TABLE not in table_names(con):
+        return []
+    have = {r[1] for r in con.execute(
+        f"PRAGMA table_info({quote_ident(INDEX_GENERATIONS_TABLE)})").fetchall()}
+    added = []
+    for name, decl in INDEX_GENERATION_ADDED_COLUMNS:
+        if name in have:
+            continue
+        con.execute(f"ALTER TABLE {quote_ident(INDEX_GENERATIONS_TABLE)} "
+                    f"ADD COLUMN IF NOT EXISTS {quote_ident(name)} {decl}")
+        added.append(name)
+    return added
+
+
+def _index_table_ddl() -> list[str]:
+    """The derived-index catalog (schema v4).  See :mod:`anatid.derived` for the protocol."""
+    return [
+        # One row per generation.  No constraint, per the house rule; (index_name, tenant_id,
+        # generation) is the identity and anatid.derived allocates generation numbers itself.
+        # published_unvalidated records that publish(force=True) skipped the oracle check, which
+        # is a different state from "invalidated" (validated FALSE with a note): the first is a
+        # deliberate, usable-but-flagged generation, the second is one no read may use.
+        f"""CREATE TABLE IF NOT EXISTS {INDEX_GENERATIONS_TABLE} (
+    index_name   VARCHAR   NOT NULL,
+    generation   INTEGER   NOT NULL,
+    tenant_id    INTEGER,
+    watermark_id BIGINT,
+    watermark_ts TIMESTAMP,
+    built_at     TIMESTAMP NOT NULL,
+    validated    BOOLEAN   NOT NULL DEFAULT FALSE,
+    published    BOOLEAN   NOT NULL DEFAULT FALSE,
+    published_unvalidated BOOLEAN NOT NULL DEFAULT FALSE,
+    stats        JSON,
+    notes        VARCHAR
+)""",
+        # The index DEFINITIONS, in the file rather than on one handle.  The verbs journal a
+        # write for every enabled row, so a handle that holds no code for an index still keeps
+        # that index's journal complete; source_table and delta_mode are columns because they
+        # are what such a handle needs in order to journal correctly.
+        f"""CREATE TABLE IF NOT EXISTS {INDEX_REGISTRY_TABLE} (
+    index_name       VARCHAR   NOT NULL,
+    kind             VARCHAR   NOT NULL,
+    per_tenant       BOOLEAN   NOT NULL DEFAULT TRUE,
+    source_table     VARCHAR,
+    source_id_column VARCHAR,
+    delta_mode       VARCHAR   NOT NULL DEFAULT 'table',
+    supports_delta   BOOLEAN   NOT NULL DEFAULT TRUE,
+    params           JSON,
+    created_at       TIMESTAMP NOT NULL,
+    enabled          BOOLEAN   NOT NULL DEFAULT TRUE
+)""",
+        # One totally ordered journal, not two independent id sets: with a delta table and a
+        # tombstone table an id that is purged and then reused appears in both and the merge
+        # loses it.  change_seq comes from INDEX_CHANGE_SEQUENCE and the largest one for a
+        # (tenant_id, doc_id) is the current state of that document.
+        # absorbed_by: the generation whose build snapshot already contained this row.  Set by
+        # the build transaction, so it is exact under MVCC: a canonical row and its journal row
+        # are written in one transaction and a build snapshot sees both or neither.
+        f"""CREATE TABLE IF NOT EXISTS {INDEX_JOURNAL_TABLE} (
+    index_name   VARCHAR   NOT NULL,
+    tenant_id    INTEGER   NOT NULL,
+    doc_id       BIGINT    NOT NULL,
+    change_seq   BIGINT    NOT NULL,
+    op           VARCHAR   NOT NULL,
+    written_at   TIMESTAMP NOT NULL,
+    reason       VARCHAR,
+    absorbed_by  INTEGER
+)""",
+    ]
+
+
+def _index_sequence_ddl() -> list[str]:
+    """The journal's ordering sequence.  One per file; gaps from rolled-back transactions are
+    expected and harmless, only the order matters."""
+    return [f"CREATE SEQUENCE IF NOT EXISTS {quote_ident(INDEX_CHANGE_SEQUENCE)} START 1"]
+
+
 def ddl_statements(config: SchemaConfig | None = None) -> list[str]:
     """Every CREATE TABLE / CREATE VIEW statement for a fresh anatid database, in order."""
     cfg = config or SchemaConfig()
@@ -778,6 +1157,8 @@ def ddl_statements(config: SchemaConfig | None = None) -> list[str]:
     kind         VARCHAR,
     name         VARCHAR{sysc}{_ENTITY_KEY_DDL}
 )""",
+        # version (schema v4): rows are immutable versions of one memory_id, see the module
+        # docstring.  Last, so every earlier column keeps its position.
         f"""CREATE TABLE IF NOT EXISTS memories (
     memory_id      BIGINT    NOT NULL,
     tenant_id      INTEGER   NOT NULL,
@@ -786,7 +1167,7 @@ def ddl_statements(config: SchemaConfig | None = None) -> list[str]:
     embedding      FLOAT[{dim}],
     created_at     TIMESTAMP NOT NULL{sysc},
     access_count   INTEGER   DEFAULT 0,
-    last_access_at TIMESTAMP
+    last_access_at TIMESTAMP{_VERSION_DDL}
 )""",
         # "Evidence before belief": raw source text is written first, derived facts carry the
         # episode_id, and provenance() walks back here.
@@ -809,14 +1190,14 @@ def ddl_statements(config: SchemaConfig | None = None) -> list[str]:
     src       BIGINT  NOT NULL,
     dst       BIGINT  NOT NULL,
     tenant_id INTEGER NOT NULL,
-    weight    FLOAT{sysc}
+    weight    FLOAT{sysc}{_VERSION_DDL}
 )""",
         f"""CREATE TABLE IF NOT EXISTS edges_relates (
     edge_id   BIGINT  NOT NULL,
     src       BIGINT  NOT NULL,
     dst       BIGINT  NOT NULL,
     tenant_id INTEGER NOT NULL,
-    rel_kind  VARCHAR{sysc}
+    rel_kind  VARCHAR{sysc}{_VERSION_DDL}
 )""",
         # SUPERSEDES is a record of a write, so it carries tx time only -- it is never re-dated.
         """CREATE TABLE IF NOT EXISTS edges_supersedes (
@@ -830,15 +1211,19 @@ def ddl_statements(config: SchemaConfig | None = None) -> list[str]:
     ]
     # ---- full text (schema v3) --------------------------------------------------------
     stmts += _fts_table_ddl()
+    # ---- derived indexes (schema v4) --------------------------------------------------
+    stmts += _index_sequence_ddl()
+    stmts += _index_table_ddl()
     stmts += [
         # ---- views --------------------------------------------------------------------
         # One row per direction so a 1-hop expansion is a plain equality lookup (no OR-join).
         # NOTE: this view is the CURRENT-state view used by the benchmarked recall path; the
-        # as-of paths build their own predicate instead of using it.
-        """CREATE OR REPLACE VIEW relates_undirected AS
-    SELECT tenant_id, src AS a, dst AS b FROM edges_relates WHERE valid_to IS NULL AND tx_to IS NULL
+        # as-of paths build their own predicate instead of using it.  The predicate text comes
+        # from anatid.visibility, the one place it is written.
+        f"""CREATE OR REPLACE VIEW relates_undirected AS
+    SELECT tenant_id, src AS a, dst AS b FROM edges_relates WHERE {current_row_sql()}
     UNION ALL
-    SELECT tenant_id, dst AS a, src AS b FROM edges_relates WHERE valid_to IS NULL AND tx_to IS NULL""",
+    SELECT tenant_id, dst AS a, src AS b FROM edges_relates WHERE {current_row_sql()}""",
     ]
     return stmts
 
@@ -1141,6 +1526,38 @@ def _migrate_2_to_3(con) -> None:
     con.execute(DEFAULT_INDEXES["idx_entities_name"])
 
 
+@register_migration(4)
+def _migrate_3_to_4(con) -> None:
+    """v3 -> v4.  Immutable versions and the derived-index catalog.
+
+    **Versions.**  Adds :data:`VERSION_COLUMN` to every :data:`VERSIONED_TABLES` member
+    (:func:`ensure_version_columns`).  Every existing row becomes version 1 with its ``tx_to``
+    untouched, which is ``NULL`` for every row a v3 build wrote: v3 never closed the
+    transaction axis, it rewrote ``valid_to`` in place.  A memory that was superseded or
+    forgotten before the migration therefore stays one version with ``valid_to`` set, and the
+    belief it held before that correction is not recoverable.  Corrections made after the
+    migration close the transaction axis and insert a successor, so from here on ``as_of``
+    answers on both axes.  No row is rewritten and no data is copied.
+
+    **Derived indexes.**  Adds :data:`INDEX_CHANGE_SEQUENCE`, :data:`INDEX_GENERATIONS_TABLE`,
+    :data:`INDEX_REGISTRY_TABLE` and :data:`INDEX_JOURNAL_TABLE`, all empty.  The BM25 index a
+    v3 file already has keeps working exactly as before (its ``anatid_meta`` watermark is
+    unchanged) and reports ``absent`` through the framework until an accelerator builds its
+    first generation.  Nothing is journalled until an index is registered, because the registry
+    table is what says an index exists; from then on every handle writing into the file
+    journals for it, so a generation built later is complete.
+
+    The contract is restated with both notes.
+    """
+    ensure_version_columns(con)
+    for stmt in _index_sequence_ddl():
+        con.execute(stmt)
+    for stmt in _index_table_ddl():
+        con.execute(stmt)
+    ensure_index_columns(con)
+    con.execute("UPDATE anatid_meta SET contract = ?", ["\n".join(CONTRACT_NOTES)])
+
+
 def current_version(con) -> int | None:
     """Schema version stored in the file, or ``None`` when the file has no anatid schema yet."""
     tables = {r[0] for r in con.execute(
@@ -1213,6 +1630,13 @@ def ensure_schema(con, config: SchemaConfig | None = None, *, anatid_version: st
         # One transaction for the whole ladder: a file is never left on a half-applied step, and
         # the recorded version moves with the data it describes.
         with _transaction(con):
+            # Structure before data.  DuckDB refuses to commit a transaction that modifies a
+            # table's rows and then ALTERs it ("Attempting to modify table ... but another
+            # transaction has altered this table"), and the 2->3 step rewrites edge rows, so
+            # the v4 version columns go in before any step touches a row.  _migrate_3_to_4
+            # calls this too and finds nothing left to do.
+            if found < 4:
+                ensure_version_columns(con)
             while found < SCHEMA_VERSION:
                 step = MIGRATIONS.get(found + 1)
                 if step is None:
@@ -1223,10 +1647,13 @@ def ensure_schema(con, config: SchemaConfig | None = None, *, anatid_version: st
                 con.execute("UPDATE anatid_meta SET schema_version = ?", [found + 1])
                 found += 1
 
-    # Make sure anything added since creation exists (views, new default indexes).
+    # Make sure anything added since creation exists (views, new default indexes, and the
+    # version column on a v4 file written before it existed).
     for stmt in ddl_statements(cfg):
         if stmt.startswith("CREATE OR REPLACE VIEW") or "IF NOT EXISTS" in stmt:
             con.execute(stmt)
+    ensure_version_columns(con)
+    ensure_index_columns(con)
     for stmt in index_statements(cfg):
         con.execute(stmt)
     _create_required_indexes(con)
@@ -1248,35 +1675,8 @@ def missing_tables(con, expected: Iterable[str] = ALL_TABLES) -> list[str]:
 
 
 # --------------------------------------------------------------------------- temporal predicate
-
-def temporal_predicate(alias: str, as_of, *, valid_only: bool = False) -> tuple[str, list]:
-    """WHERE fragment + bind params selecting the rows visible under ``as_of``.
-
-    This -- not any engine feature -- is anatid's time travel.  DuckDB has no ``AS OF SYSTEM
-    TIME``; the visibility rule is compiled here and pasted into every scoped query:
-
-    * current (``as_of`` is :data:`anatid.types.CURRENT`): ``valid_to IS NULL AND tx_to IS NULL``
-    * as of T (valid time): ``valid_from <= T AND (valid_to IS NULL OR valid_to > T)``
-    * as of T (transaction time): ``tx_from <= T AND (tx_to IS NULL OR tx_to > T)``
-
-    Intervals are half-open ``[from, to)``: a row closed exactly at T is already invisible at T,
-    and a row opened exactly at T is already visible.  ``valid_only=True`` skips the tx-time half
-    for tables that only have valid-time columns.
-    """
-    if as_of is None or as_of.is_current:
-        return (f"{alias}.valid_to IS NULL" if valid_only
-                else f"{alias}.valid_to IS NULL AND {alias}.tx_to IS NULL"), []
-    parts: list[str] = []
-    params: list = []
-    if as_of.valid_time is not None:
-        parts.append(f"{alias}.valid_from <= ? AND ({alias}.valid_to IS NULL OR {alias}.valid_to > ?)")
-        params += [as_of.valid_time, as_of.valid_time]
-    else:
-        parts.append(f"{alias}.valid_to IS NULL")
-    if not valid_only:
-        if as_of.tx_time is not None:
-            parts.append(f"{alias}.tx_from <= ? AND ({alias}.tx_to IS NULL OR {alias}.tx_to > ?)")
-            params += [as_of.tx_time, as_of.tx_time]
-        else:
-            parts.append(f"{alias}.tx_to IS NULL")
-    return " AND ".join(parts), params
+#
+# ``temporal_predicate`` lives in :mod:`anatid.visibility` since 0.2 and is imported above so
+# ``from anatid.schema import temporal_predicate`` keeps resolving under its v3 name.  It is
+# the time half of :meth:`anatid.visibility.Visibility.predicate`; new code should build a
+# ``Visibility`` and take the whole predicate from it.

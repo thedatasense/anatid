@@ -6,7 +6,7 @@ licensed, with its limits written down. Everything below is ordered by that goal
 This document carries no dates. A milestone ships when its exit criteria are met, and the items
 under each milestone state intent rather than commitment.
 
-## v0.1: the core (current)
+## v0.1: the core (shipped)
 
 Exit criteria: a single-file agent memory you can `pip install`, wire into the OpenAI Agents SDK in
 ten lines, and reason about when it goes wrong.
@@ -46,9 +46,39 @@ ten lines, and reason about when it goes wrong.
 
 No ANN index; the full-text index is not incremental; one writer process per file; brute-force
 cosine is comfortable to roughly 1e5 memories per tenant; DuckDB gives snapshot isolation rather
-than serializability.
+than serializability. The first two are what v0.2 addressed.
 
-## v0.2: framework drivers and a Cypher subset
+## v0.2: the derived-index framework (current)
+
+Exit criteria: every accelerator is derived from the canonical tables by one mechanism, a write is
+findable by the next read without a rebuild, and an index that is stale, damaged or absent costs
+latency rather than correctness.
+
+### Shipped
+
+- One framework for all three accelerators (`anatid.derived`, schema v4): a versioned base
+  generation, an ordered journal written in the same transaction as the canonical row, atomic
+  publication by one metadata row, pinned reads, validation against the oracle before publication,
+  and a machine-readable `HealthReason` on every fallback.
+- One visibility abstraction (`anatid.visibility`), rendering the tenant predicate and both time
+  axes, with a static scan over the library's own SQL literals proving no module writes it by hand.
+- Immutable version rows on `memories`, `edges_about` and `edges_relates`, which is what makes the
+  transaction axis answer "what did the database believe then" rather than "what does it believe
+  about then".
+- Full text and the CSR on the framework and attached by default; an HNSW vector backend on it and
+  opt in.
+- Conflict primitives: `db.atomic`, `db.update(expected_version=)`, `relate(if_current=True)`.
+- Pool hardening: opaque tenant-to-file mapping, path-traversal refusal, 0700/0600 permissions,
+  per-tenant `delete()` and `backup()`, audit events and a named `unsafe_connection`.
+
+### Limitations
+
+Maintenance is a call rather than a background worker; pins are process-wide rather than
+cross-process; the vector backend is opt in and has not been measured at 1M or 10M rows per tenant;
+a base that is structurally consistent but wrong is caught by `validate()` during a rebuild rather
+than by a read.
+
+## v0.3: framework drivers and a Cypher subset
 
 Graphiti deprecated its Kuzu driver, Mem0 removed open-source graph memory in v2.0.0, and Cognee is
 migrating away. Those projects' users need a graph backend that is maintained and MIT licensed.
@@ -78,13 +108,14 @@ changing configuration, and its test suite passes.
 Exit criteria: a team can operate anatid for a year without reading the source, and the failure
 modes are ones the docs already named.
 
-- Incremental text search, closing the staleness window instead of reporting it: a small hot index
-  over recent rows, unioned with the cold `fts` index and merged in the background, so `recall()`
-  sees writes immediately. `bm25_stale` and `pending_fts_rows` remain on the result and report zero.
-- A persistent, incrementally maintained CSR. Today the adjacency snapshot is in memory, rebuilt in
-  full, invalidated by any `relate()`, and dependent on dense vertex ids. All four are fixable:
-  store it in the file, apply edge deltas, and keep an internal dense-id mapping so callers keep
-  their 63-bit ids. This is the item that would make the extension worth turning on by default.
+- A background maintenance worker. v0.2 closed the staleness window and made a generation
+  rebuildable without interrupting reads, but choosing when to rebuild is still a call the caller
+  makes. v0.5 adds an optional in-process worker driving `MaintenancePolicy`, with the same
+  receipts and the same explicit alternative.
+- Generations built incrementally rather than in full. v0.2 stores the CSR's base in the file,
+  applies the journal on every read and keeps its own dense-id mapping, so the caller's 63-bit ids
+  work and no write invalidates the structure. What is left is the build itself: a new generation
+  reindexes the whole source, which is what bounds how large a journal is worth merging.
 - A multi-process story that is documented and tested. DuckDB allows one writing process per file.
   v0.5 ships the pattern that follows from that: a writer process plus read-only readers, a
   documented handoff, and a test that proves what happens on lock contention.
@@ -103,10 +134,10 @@ modes are ones the docs already named.
 Exit criteria: stable on-disk format, semver guarantees on the public API, and the two weak arms
 (vector search, adjacency) are no longer weak.
 
-- An owned ANN index, the single biggest gap in v0.1. DuckDB's team-maintained `vss` extension
-  provides an HNSW index, but its on-disk persistence is experimental and not recommended for
-  production, so anatid's vector arm is a brute-force scan with an enforced ~1e5-per-tenant
-  ceiling. v1.0 ships an HNSW index (or
+- An owned ANN index. v0.2 put DuckDB's team-maintained `vss` HNSW index behind the framework as
+  an opt-in backend, measured at recall 1.0000 (k=10) against the exact oracle, but its on-disk
+  persistence is experimental and not recommended for production, so the default vector arm is
+  still a brute-force scan with an enforced ~1e5-per-tenant ceiling. v1.0 ships an HNSW index (or
   IVF-PQ, decided by measurement) as an anatid DuckDB extension, with MVCC-correct incremental
   maintenance. An index that goes stale on write, or that ignores rows created inside a
   transaction, is not acceptable: the spike hit exactly that in Grafeo 0.5.42, whose HNSW index

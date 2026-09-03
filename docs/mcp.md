@@ -110,7 +110,7 @@ then point the client at `http://127.0.0.1:8765/mcp`.
 | `reinforce` | write | Bump `access_count` / `last_access_at`, optionally set confidence. |
 | `forget` | destructive | `hard=false` (default) closes validity and keeps the history; `hard=true` is a right-to-erasure purge. |
 | `prune` | destructive | Forget by age and/or usage. `dry_run=true` by default. Needs at least one policy argument. |
-| `rebuild_fts_index` | write | Rebuild the BM25 index. See "BM25 is not incremental" below. |
+| `rebuild_fts_index` | write | Fold the journal into a new BM25 generation. See "Text search" below. |
 | `recall` | read-only | Hybrid retrieval: BM25 + graph expansion + optional cosine, fused with RRF. |
 | `context` | read-only | Everything about one entity. `hops=0` direct, `1` neighbors, `2` two hops. |
 | `get` | read-only | One memory by id, with its entities. |
@@ -198,19 +198,29 @@ entry per tenant:
 One DuckDB file cannot be held open read-write by two processes at once, so give each server its
 own `ANATID_DB`. A second client trying to open the same file gets a DuckDB file-lock error.
 
-## BM25 is not incremental
+## Text search, and what `rebuild_fts_index` is for
 
-DuckDB's `fts` extension builds a static index: rows written after the last build are invisible
-to the text arm of `recall` until it is rebuilt. `recall` reports `bm25_stale` and
-`pending_fts_rows` on every result, and `stats` reports the same. Call `rebuild_fts_index` after a
-batch of writes, or whenever `bm25_stale` is true. The graph and vector arms are always current, so
-recall keeps working meanwhile, but cannot match on words in the newest rows.
+DuckDB's own `fts` extension builds a static index: rows written after the last build are
+invisible to it. Since 0.2.0 the server's database journals every write in the writing
+transaction and merges the journal into each search, so a memory the client just wrote is matched
+by the very next `recall` and `bm25_stale` is False. `pending_fts_rows` is how many documents a
+search re-reads from the canonical rows, not how many are hidden.
 
-The vector arm is a brute-force cosine scan. anatid has no ANN index; DuckDB's `vss` extension
-provides an HNSW index, but its on-disk persistence is experimental and not recommended for
-production, so anatid does not build on it. The scan's cost is linear in the tenant's current row
-count at every size. Past `BRUTE_FORCE_CEILING` (100,000 memories per tenant) `recall` refuses to
-run the vector arm and reports the error to the client; the text and graph arms still answer.
+`rebuild_fts_index` is therefore about speed rather than correctness: it folds the journal into a
+new generation, which is published in one metadata switch with reads answering from the previous
+one throughout. Call it after a large batch of writes. `stats` reports the same numbers, and
+`index_health` (through the library) names the state of each derived index.
+
+One case still returns nothing from the text arm: no generation has ever been published AND the
+tenant holds more than `SCAN_CEILING` (100,000) documents, which is more than an exact scan is
+worth. The result says so, and `rebuild_fts_index` fixes it.
+
+The vector arm is a brute-force cosine scan by default. DuckDB's `vss` extension provides an HNSW
+index, and 0.2.0 puts it behind the derived-index framework as an opt-in backend, but its on-disk
+persistence is experimental and not recommended for production, so the server does not turn it on.
+The scan's cost is linear in the tenant's current row count at every size. Past
+`BRUTE_FORCE_CEILING` (100,000 memories per tenant) `recall` refuses to run the vector arm and
+reports the error to the client; the text and graph arms still answer.
 
 ## Troubleshooting
 

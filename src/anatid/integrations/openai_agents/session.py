@@ -67,6 +67,7 @@ from ...database import Anatid
 from ...ids import new_id
 from ...schema import quote_ident
 from ...types import Memory, Namespace, utcnow
+from ...visibility import Visibility, current_row_sql
 from ..erasure import memory_needles, purge_rows_containing, register_table_erasure_hooks
 
 log = logging.getLogger("anatid.integrations.openai_agents")
@@ -120,9 +121,10 @@ _USAGE_COLUMNS: tuple[tuple[str, str], ...] = (
     ("created_at", "TIMESTAMP"),
 )
 
-#: anatid's current-state predicate, one conjunct more than "``valid_to IS NULL``" because that
-#: is what the bitemporal model actually means (see :func:`anatid.schema.temporal_predicate`).
-_CURRENT = "valid_to IS NULL AND tx_to IS NULL"
+#: anatid's current-state predicate, taken from :mod:`anatid.visibility` like every other
+#: tenant or time predicate in the tree: the session tables carry the system columns, so the
+#: rule that says which of their rows are current is the same rule, written once.
+_CURRENT = current_row_sql()
 
 
 def _json_default(value: Any) -> Any:
@@ -259,6 +261,8 @@ class AnatidSession:
             self.db = db
         self.namespace = self.db.resolve_tenant(tenant)
         self.tenant_id = self.namespace.tenant_id
+        #: The tenant predicate every read here binds, from anatid.visibility.
+        self._vis = Visibility(self.tenant_id)
         self.writer = writer or f"session:{session_id}"
         self.clear_mode = clear_mode
         self.session_settings = session_settings
@@ -356,11 +360,12 @@ class AnatidSession:
         return await asyncio.to_thread(self._get_items_sync, session_limit)
 
     def _get_items_sync(self, session_limit: int | None) -> list[Any]:
+        t_sql, t_p = self._vis.tenant()
         base = (f"SELECT item_json FROM {self._m} "
-                f"WHERE tenant_id = ? AND session_id = ?{self._visible}")
+                f"WHERE {t_sql} AND session_id = ?{self._visible}")
         if session_limit is None:
             rows = self.db.execute(f"{base} ORDER BY seq, message_id",
-                                   [self.tenant_id, self.session_id]).fetchall()
+                                   [*t_p, self.session_id]).fetchall()
             return self._decode(rows)
         if session_limit <= 0:
             return []
@@ -370,7 +375,7 @@ class AnatidSession:
         while True:
             rows = self.db.execute(
                 f"{base} ORDER BY seq DESC, message_id DESC LIMIT ?",
-                [self.tenant_id, self.session_id, window]).fetchall()
+                [*t_p, self.session_id, window]).fetchall()
             items = self._decode(reversed(rows))
             if len(items) >= session_limit:
                 return items[-session_limit:]
@@ -386,11 +391,12 @@ class AnatidSession:
 
     def _add_items_sync(self, items: list[Any]) -> None:
         now = utcnow()
+        t_sql, t_p = self._vis.tenant()
         with self.db.transaction():
             row = self.db.execute(
                 f"SELECT COALESCE(MAX(seq), 0), COALESCE(MAX(turn), 0) FROM {self._m} "
-                f"WHERE tenant_id = ? AND session_id = ?",
-                [self.tenant_id, self.session_id]).fetchone() or (0, 0)
+                f"WHERE {t_sql} AND session_id = ?",
+                [*t_p, self.session_id]).fetchone() or (0, 0)
             seq = int(row[0] or 0)
             turn = int(row[1] or 0)
             added_turns = 0
@@ -433,13 +439,14 @@ class AnatidSession:
         return await asyncio.to_thread(self._pop_item_sync)
 
     def _pop_item_sync(self) -> Any | None:
+        t_sql, t_p = self._vis.tenant()
         with self.db.transaction():
             while True:
                 row = self.db.execute(
                     f"SELECT message_id, item_json FROM {self._m} "
-                    f"WHERE tenant_id = ? AND session_id = ?{self._visible} "
+                    f"WHERE {t_sql} AND session_id = ?{self._visible} "
                     "ORDER BY seq DESC, message_id DESC LIMIT 1",
-                    [self.tenant_id, self.session_id]).fetchone()
+                    [*t_p, self.session_id]).fetchone()
                 if row is None:
                     return None
                 message_id, payload = int(row[0]), row[1]
@@ -498,10 +505,11 @@ class AnatidSession:
     def _store_usage_sync(self, usage: Any, turn: int | None) -> bool:
         now = utcnow()
         if turn is None:
+            t_sql, t_p = self._vis.tenant()
             row = self.db.execute(
                 f"SELECT COALESCE(MAX(turn), 0) FROM {self._m} "
-                f"WHERE tenant_id = ? AND session_id = ?",
-                [self.tenant_id, self.session_id]).fetchone()
+                f"WHERE {t_sql} AND session_id = ?",
+                [*t_p, self.session_id]).fetchone()
             turn = int((row or [0])[0] or 0)
         details_in = getattr(usage, "input_tokens_details", None)
         details_out = getattr(usage, "output_tokens_details", None)
@@ -590,8 +598,8 @@ class AnatidSession:
         return [{"tool_name": r[0], "calls": int(r[1]), "turns": int(r[2])} for r in rows]
 
     def _scope(self, all_sessions: bool, *, visible: bool = False) -> tuple[str, list[Any]]:
-        where = "tenant_id = ?"
-        params: list[Any] = [self.tenant_id]
+        where, t_p = self._vis.tenant()
+        params: list[Any] = list(t_p)
         if not all_sessions:
             where += " AND session_id = ?"
             params.append(self.session_id)
@@ -614,22 +622,23 @@ class AnatidSession:
         return await asyncio.to_thread(self._entities_mentioned_sync, limit, all_sessions)
 
     def _entities_mentioned_sync(self, limit: int, all_sessions: bool) -> list[dict[str, Any]]:
-        params: list[Any] = [self.tenant_id]
+        t_sql, t_p = self._vis.tenant("m")
+        params: list[Any] = list(t_p)
         session_clause = ""
         if not all_sessions:
             session_clause = " AND m.session_id = ?"
             params.append(self.session_id)
-        visible = " AND m.valid_to IS NULL AND m.tx_to IS NULL" if self.clear_mode == "close" else ""
+        visible = f" AND {current_row_sql('m')}" if self.clear_mode == "close" else ""
         params.append(int(limit))
         rows = self.db.execute(
             "SELECT e.entity_id, e.name, e.kind, COUNT(DISTINCT m.message_id) AS mentions\n"
             f"FROM {self._m} AS m\n"
             "JOIN entities AS e\n"
             "  ON e.tenant_id = m.tenant_id\n"
-            " AND e.valid_to IS NULL AND e.tx_to IS NULL\n"
+            f" AND {current_row_sql('e')}\n"
             " AND e.name IS NOT NULL AND e.name <> ''\n"
             " AND contains(lower(m.item_text), lower(e.name))\n"
-            "WHERE m.tenant_id = ?" + session_clause + visible + "\n"
+            f"WHERE {t_sql}" + session_clause + visible + "\n"
             "  AND m.item_text IS NOT NULL AND m.item_text <> ''\n"
             "GROUP BY e.entity_id, e.name, e.kind\n"
             "ORDER BY mentions DESC, e.name\n"
@@ -642,13 +651,16 @@ class AnatidSession:
         return await asyncio.to_thread(self._memories_written_sync, limit)
 
     def _memories_written_sync(self, limit: int) -> list[Memory]:
-        from ...schema import MEMORY_COLUMNS
+        from ...schema import memory_select
 
-        cols = ", ".join(MEMORY_COLUMNS)
+        cols = memory_select(self.db.connection)
+        # The current-state visibility of the memory graph: this tenant, believed now, live
+        # now.  One version per memory passes it (schema v4).
+        w, wp = self._vis.predicate()
         rows = self.db.execute(
-            f"SELECT {cols} FROM memories WHERE tenant_id = ? AND writer = ? AND {_CURRENT} "
+            f"SELECT {cols} FROM memories WHERE {w} AND writer = ? "
             "ORDER BY created_at DESC, memory_id DESC LIMIT ?",
-            [self.tenant_id, self.writer, int(limit)]).fetchall()
+            [*wp, self.writer, int(limit)]).fetchall()
         return [Memory.from_row(r) for r in rows]
 
     async def transcript(self, *, limit: int | None = None) -> list[dict[str, Any]]:
@@ -659,10 +671,11 @@ class AnatidSession:
         return await asyncio.to_thread(self._transcript_sync, limit)
 
     def _transcript_sync(self, limit: int | None) -> list[dict[str, Any]]:
+        t_sql, t_p = self._vis.tenant()
         sql = (f"SELECT seq, turn, item_type, role, tool_name, item_text, created_at "
-               f"FROM {self._m} WHERE tenant_id = ? AND session_id = ?{self._visible} "
+               f"FROM {self._m} WHERE {t_sql} AND session_id = ?{self._visible} "
                "ORDER BY seq, message_id")
-        params: list[Any] = [self.tenant_id, self.session_id]
+        params: list[Any] = [*t_p, self.session_id]
         if limit is not None:
             sql += " LIMIT ?"
             params.append(int(limit))

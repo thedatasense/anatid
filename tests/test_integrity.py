@@ -721,7 +721,41 @@ def test_doctor_reports_intervals_that_close_before_they_open(db):
     assert f is not None and f.count == 1 and f.samples[0][0] == "memories"
 
 
-def test_doctor_reports_a_stale_full_text_index(db):
+def test_doctor_reports_a_derived_index_that_cannot_serve_reads(db):
+    """The upkeep signal for a database on the framework.
+
+    ``stale_fts_index`` is about 0.1.1's non-incremental index and is silent here, correctly:
+    nothing is invisible, because the journal covers every write.  What an operator needs
+    instead is which generation reads cannot use and why, and doctor has to say so without
+    claiming the answers are wrong -- they are not, the SQL path is the oracle.
+    """
+    from anatid import fts as _fts
+
+    for i in range(20):
+        db.remember(f"note {i} about ducks", now=T0)
+    db.maintain_indexes()
+    assert db.doctor().find("unusable_derived_index") is None
+    assert db.doctor().find("stale_fts_index") is None
+    assert "unusable_derived_index" in db.doctor().checks_run
+
+    storage = _fts.FtsStorage.of(_fts.index_of(db).current_generation())
+    db.execute(f"DELETE FROM {storage.docmap} WHERE docid % 3 = 0")
+
+    finding = db.doctor().find("unusable_derived_index")
+    assert finding is not None and finding.severity is Severity.WARNING
+    assert finding.samples[0][0] == "fts" and finding.samples[0][1] == "damaged_base"
+    assert db.doctor().ok is True  # a fallback is a warning, not an integrity error
+    # ... and the answer is still the right one, from the oracle
+    assert len(db.recall("ducks", k=20)) == 20
+
+    db.maintain_indexes()
+    assert db.doctor().find("unusable_derived_index") is None
+
+
+def test_doctor_reports_a_stale_full_text_index(legacy_db):
+    # 0.1.1's file-wide BM25 index, whose tables these checks are about: with the derived
+    # index attached, rebuild_fts_index() builds a generation instead and leaves them empty.
+    db = legacy_db
     db.remember("indexed", now=T0)
     db.rebuild_fts_index(now=T0)
     assert db.doctor().find("stale_fts_index") is None
@@ -731,9 +765,12 @@ def test_doctor_reports_a_stale_full_text_index(db):
     assert db.doctor().ok is True  # staleness is a warning, not an error
 
 
-def test_doctor_reports_a_bm25_document_whose_memory_is_gone(db):
+def test_doctor_reports_a_bm25_document_whose_memory_is_gone(legacy_db):
     """The orphan check earns its severity: ``anatid_fts_documents.content`` is verbatim text,
     so an orphan is a copy of a deleted memory still sitting in the file."""
+    # 0.1.1's file-wide BM25 index, whose tables these checks are about: with the derived
+    # index attached, rebuild_fts_index() builds a generation instead and leaves them empty.
+    db = legacy_db
     m = db.remember("swordfish are extremely secret", now=T0)
     db.rebuild_fts_index(now=T0)
     db.execute("DELETE FROM memories WHERE memory_id = ?", [m.memory_id])  # raw, not forget()
@@ -742,9 +779,12 @@ def test_doctor_reports_a_bm25_document_whose_memory_is_gone(db):
     assert f.samples[0] == (1, m.memory_id)
 
 
-def test_a_hard_forget_leaves_no_orphaned_bm25_document(db):
+def test_a_hard_forget_leaves_no_orphaned_bm25_document(legacy_db):
     """The supported path does not create that orphan: ``forget(hard=True)`` purges the index
     rows in the same transaction, and says how many on the receipt."""
+    # 0.1.1's file-wide BM25 index, whose tables these checks are about: with the derived
+    # index attached, rebuild_fts_index() builds a generation instead and leaves them empty.
+    db = legacy_db
     m = db.remember("swordfish are extremely secret", now=T0)
     db.rebuild_fts_index(now=T0)
     receipt = db.forget(m.memory_id, hard=True, now=T0)
@@ -759,7 +799,10 @@ def test_a_hard_forget_leaves_no_orphaned_bm25_document(db):
     assert db.doctor().find("orphaned_fts_documents") is None
 
 
-def test_doctor_reports_per_tenant_fts_statistics_drift(db):
+def test_doctor_reports_per_tenant_fts_statistics_drift(legacy_db):
+    # 0.1.1's file-wide BM25 index, whose tables these checks are about: with the derived
+    # index attached, rebuild_fts_index() builds a generation instead and leaves them empty.
+    db = legacy_db
     db.remember("indexed", now=T0)
     db.rebuild_fts_index(now=T0)
     db.execute(f"DELETE FROM {S.FTS_STATS_TABLE} WHERE tenant_id = 1")
@@ -924,7 +967,7 @@ def test_opening_a_fractured_v2_file_merges_it_and_the_verbs_then_hold_the_line(
 
     with Anatid.open(path, tenant=1, embedding_dim=DIM) as db:
         con = db.connection
-        assert db.info().schema_version == S.SCHEMA_VERSION == 3
+        assert db.info().schema_version == S.SCHEMA_VERSION == 4
 
         rows = con.execute("SELECT entity_id, name FROM entities WHERE tenant_id = 1").fetchall()
         assert len(rows) == 1, rows
@@ -1208,13 +1251,16 @@ def _tables_containing(db, needles: list[str]) -> dict[str, int]:
     return found
 
 
-def test_erasing_the_newest_indexed_memory_clamps_the_fts_watermark(db):
+def test_erasing_the_newest_indexed_memory_clamps_the_fts_watermark(legacy_db):
     """``anatid_meta.fts_indexed_max_id`` is "the largest memory_id at the last rebuild".
 
     By construction that is the newest memory's id, so erasing the newest indexed memory left
     its id in ``anatid_meta`` -- a number, but the erased id, and a catalog-wide scan for it
     found it.  ``forget(hard=True)`` now clamps the watermark to the largest id still indexed.
     """
+    # 0.1.1's file-wide BM25 index, whose tables these checks are about: with the derived
+    # index attached, rebuild_fts_index() builds a generation instead and leaves them empty.
+    db = legacy_db
     older = db.remember("Ada likes DuckDB", entities=["Ada"], now=T0)
     target = db.remember("Ada's passport number is X9981", now=T0)
     db.rebuild_fts_index(now=T0)

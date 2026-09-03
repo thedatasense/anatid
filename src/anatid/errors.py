@@ -24,6 +24,8 @@ __all__ = [
     "IntegrityError",
     "StaleIndexError",
     "BruteForceCeilingError",
+    "IndexGenerationError",
+    "IndexValidationError",
 ]
 
 
@@ -45,20 +47,53 @@ class SchemaVersionError(AnatidError):
 
 
 class ConflictError(AnatidError):
-    """DuckDB's optimistic MVCC aborted this transaction because another transaction touched
-    the same row first.
+    """Two writers wanted the same row and one of them has to be told.
 
-    DuckDB detects write-write conflicts on the SAME row: the loser sees
-    ``TransactionContext Error: Conflict on update!`` (raised at statement time, not at COMMIT).
-    Appends never conflict.  The transaction is dead at this point -- roll back and retry the
-    whole unit of work.  This error is retryable by construction; nothing has been committed.
+    Two shapes reach this class, and ``retryable`` is what tells them apart.
+
+    The **engine** shape: DuckDB's optimistic MVCC aborted this transaction because another
+    transaction touched the same row first.  DuckDB detects write-write conflicts on the SAME
+    row: the loser sees ``TransactionContext Error: Conflict on update!`` (raised at statement
+    time, not at COMMIT).  Appends never conflict.  The transaction is dead at this point --
+    roll back and retry the whole unit of work.  ``retryable`` is True, because nothing was
+    committed and the next attempt re-reads.
+
+    The **compare-and-swap** shape: the caller asked to write only while the row was at the
+    version it had read (``memory.update(..., expected_version=7)``,
+    ``relate(..., if_current=True)``), and it is not at that version any more.  ``resource``
+    names the row, ``expected_version`` is what the caller held and ``current_version`` what
+    the database has.  ``retryable`` is False: the version the caller reasoned about is gone,
+    so an identical retry fails identically.  Re-read, decide whether the change still applies,
+    and write again against what is there now.
+
+    ``attempt`` is set by :func:`anatid.atomic.run` (:meth:`anatid.Anatid.atomic`) to the
+    attempt number that raised, so a caller that catches the error out of a retry loop can
+    report how hard anatid tried.  It is None for an error that never went through one.
     """
 
-    def __init__(self, message: str, *, cause: BaseException | None = None) -> None:
+    #: Class-level default so ``ConflictError.retryable`` is answerable without an instance,
+    #: and so code written against 0.1.1 (where it was only a class attribute) keeps working.
+    retryable = True
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        cause: BaseException | None = None,
+        resource: str | None = None,
+        expected_version: int | None = None,
+        current_version: int | None = None,
+        retryable: bool | None = None,
+        attempt: int | None = None,
+    ) -> None:
         super().__init__(message)
         self.cause = cause
-
-    retryable = True
+        self.resource = resource
+        self.expected_version = expected_version
+        self.current_version = current_version
+        self.attempt = attempt
+        if retryable is not None:
+            self.retryable = bool(retryable)
 
 
 class TenantIsolationError(AnatidError):
@@ -195,6 +230,41 @@ class BruteForceCeilingError(AnatidError):
         self.tenant_id = tenant_id
         self.rows = rows
         self.ceiling = ceiling
+
+
+class IndexGenerationError(AnatidError):
+    """A derived-index generation was asked for a transition its state does not allow.
+
+    Raised by :mod:`anatid.derived` when a generation that was never validated is published
+    without ``force=True``, when a build is started while another build of the same index and
+    tenant is in progress, when a published generation is retired, or when an index that has no
+    implementation registered (:class:`anatid.derived.NullIndex`) is asked to build.  ``index``
+    names the index and ``generation`` the generation number when one is involved.  Never
+    retryable on its own: the state has to change first.
+    """
+
+    retryable = False
+
+    def __init__(self, message: str, *, index: str | None = None,
+                 generation: int | None = None) -> None:
+        super().__init__(message)
+        self.index = index
+        self.generation = generation
+
+
+class IndexValidationError(IndexGenerationError):
+    """A derived-index generation failed validation against the SQL oracle.
+
+    ``report`` is the :class:`anatid.derived.ValidationReport`.  Raised by
+    :func:`anatid.derived.maintain` only when asked to (``raise_on_failure=True``); by default
+    the failed generation is retired, the previously published one stays in service and the
+    :class:`anatid.derived.MaintenanceReport` says what happened.
+    """
+
+    def __init__(self, message: str, *, report=None, index: str | None = None,
+                 generation: int | None = None) -> None:
+        super().__init__(message, index=index, generation=generation)
+        self.report = report
 
 
 class IntegrityError(AnatidError):

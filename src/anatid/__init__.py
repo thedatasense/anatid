@@ -39,8 +39,25 @@ queries.
 
 from __future__ import annotations
 
-from .csr import CsrBackend, CsrInfo, discover_extension_path
-from .database import Anatid, DatabasePool, connect
+from . import atomic, csr, fts, vector
+from .atomic import Attempt, AtomicOutcome
+from .csr import CsrBackend, CsrIndex, CsrInfo, ExpandPath, discover_extension_path
+from .database import Anatid, DatabasePool, PoolEvent, connect
+from .fts import FtsIndex, FtsSearch
+from .derived import (
+    DerivedIndex,
+    ErasureResult,
+    Generation,
+    HealthReason,
+    HealthReport,
+    IndexDefinition,
+    IndexEvent,
+    IndexRegistry,
+    MaintenancePolicy,
+    MaintenanceReport,
+    ValidationReport,
+    maintain,
+)
 from .errors import (
     AnatidError,
     BruteForceCeilingError,
@@ -49,6 +66,8 @@ from .errors import (
     EmbeddingDimensionError,
     EmbeddingValueError,
     ExtensionUnavailable,
+    IndexGenerationError,
+    IndexValidationError,
     IntegrityError,
     NotFoundError,
     RangeError,
@@ -91,15 +110,18 @@ from .types import (
     to_utc_naive,
     utcnow,
 )
+from .vector import VectorIndex, VectorSearch
 from .verbs import AsOfView, as_of
+from .visibility import Visibility, visible_at
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 __all__ = [
     "__version__",
     # handles
     "Anatid",
     "DatabasePool",
+    "PoolEvent",
     "connect",
     # value types
     "Memory",
@@ -135,10 +157,39 @@ __all__ = [
     "SCHEMA_VERSION",
     "DEFAULT_EMBEDDING_DIM",
     "CONTRACT_NOTES",
-    # graph backend
+    # visibility
+    "Visibility",
+    "visible_at",
+    # derived indexes
+    "DerivedIndex",
+    "ErasureResult",
+    "Generation",
+    "HealthReason",
+    "HealthReport",
+    "IndexDefinition",
+    "IndexEvent",
+    "IndexRegistry",
+    "MaintenancePolicy",
+    "MaintenanceReport",
+    "ValidationReport",
+    "maintain",
+    # the accelerators, and the modules that configure them
+    "fts",
+    "FtsIndex",
+    "FtsSearch",
+    "vector",
+    "VectorIndex",
+    "VectorSearch",
+    "csr",
     "CsrBackend",
+    "CsrIndex",
     "CsrInfo",
+    "ExpandPath",
     "discover_extension_path",
+    # conflict handling
+    "atomic",
+    "Attempt",
+    "AtomicOutcome",
     # constants
     "RRF_K",
     "BRUTE_FORCE_CEILING",
@@ -158,4 +209,6 @@ __all__ = [
     "IntegrityError",
     "StaleIndexError",
     "BruteForceCeilingError",
+    "IndexGenerationError",
+    "IndexValidationError",
 ]

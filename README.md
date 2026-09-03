@@ -8,6 +8,13 @@ graph traversal, fused into one ranked list). Writes can be routed through the O
 human-in-the-loop approval flow, so an agent proposes a change to its memory and a person decides
 whether it lands.
 
+Every retrieval structure in it is derived, not canonical. The full-text index, the graph CSR and
+the optional vector index are all built the same way: a versioned base generation plus a journal
+written in the same transaction as the row it describes, merged on every read before any tenant or
+time filter runs. A write is findable by the next read with nothing rebuilt, an index that is
+stale, damaged or absent costs latency rather than correctness, and every fallback says which of
+the eight reasons applies. The SQL path over the canonical tables is always the oracle.
+
 anatid exists because [Kuzu was archived on 2025-10-10](https://github.com/kuzudb/kuzu). Graphiti
 deprecated its Kuzu driver, Mem0 removed open-source graph memory in v2.0.0, and Cognee is
 migrating away.
@@ -25,7 +32,7 @@ pip install "anatid[agents]"          # + the OpenAI Agents SDK integration
 pip install "anatid[mcp]"             # + the MCP server
 ```
 
-Released on PyPI as [`anatid` 0.1.0](https://pypi.org/project/anatid/0.1.0/). To track `main` instead:
+Released on PyPI as [`anatid` 0.2.0](https://pypi.org/project/anatid/). To track `main` instead:
 
 ```bash
 pip install "git+https://github.com/thedatasense/anatid"
@@ -52,9 +59,7 @@ with Anatid.open("agent.anatid", tenant=1, embedding_dim=64) as db:
                     embedding=vec, writer="agent-1",
                     episode="Standup 2026-03-01: Ada takes it dark roast.")  # raw evidence first
     t0 = utcnow()
-    db.rebuild_fts_index()                                      # BM25 is not incremental: you say when
-
-    hits = db.recall("coffee", embedding=vec, seed_entity="Ada", k=3)
+    hits = db.recall("coffee", embedding=vec, seed_entity="Ada", k=3)   # findable already
     print(hits[0].content, hits[0].sources, "| bm25_stale:", hits.bm25_stale)
 
     new = db.supersede(m.memory_id, "Ada switched to decaf")    # closes the old row, keeps it
@@ -70,14 +75,21 @@ at t0: ['Ada prefers dark roast coffee']
 evidence: Standup 2026-03-01: Ada takes it dark roast.
 ```
 
-That is the output of running the block above. A longer, commented version covering `recall_2hop`,
-`forget(hard=True)` and `stats()` is in [`examples/quickstart.py`](examples/quickstart.py). It needs
-no API key and finishes in under a second.
+That is the output of running the block above. Nothing was rebuilt before that `recall`: the write
+was journalled inside its own transaction and the text arm merged it. `db.maintain_indexes()` folds
+the journal into new generations when you want the speed of a built index, and
+`db.index_health()` says whether that is due and why.
+
+A longer, commented version covering `recall_2hop`, `forget(hard=True)` and `stats()` is in
+[`examples/quickstart.py`](examples/quickstart.py). It needs no API key and finishes in under a
+second.
 
 ```
 $ python examples/quickstart.py
-anatid schema v3 on duckdb 1.5.5, tenant 1, expand path: sql
-before rebuild: bm25 stale=True, rows waiting=3
+anatid schema v4 on duckdb 1.5.5, tenant 1, expand path: sql
+before rebuild: bm25 stale=False, rows merged from the journal=3
+  findable with nothing built: ['Ada prefers dark roast coffee']
+after rebuild : bm25 stale=False, index health=fresh
 
 recall(query + embedding + seed): arms=('vector', 'text', 'graph') stale=False
   [1] 0.0487 'Ada prefers dark roast coffee' via vector+text+graph about=['Ada', 'coffee']
@@ -99,7 +111,7 @@ provenance(depth=1, writers=['agent-2', 'agent-1']):
   closed   'Ada prefers dark roast coffee' (by agent-1)
   source: 'Standup 2026-03-01: Ada is leading Project Kestrel; she take'...
 
-forget(hard=True): rows_removed=5 about_edges=2 supersedes_edges=1 audit_rows_deleted=1
+forget(hard=True): rows_removed=6 about_edges=2 supersedes_edges=1 audit_rows_deleted=1
 
 stats: memories=3 current=2 entities=5 about=6 relates=2
 ```
@@ -120,6 +132,10 @@ hops, `Ada → Kestrel → ingest service`.
 | `as_of(t)` | every read, as the database saw the world at `t` |
 | `provenance(id)` | the supersession chain, the raw episodes, and every writer involved |
 | `relate(a, b)` / `upsert_entity` / `episode` | the graph and evidence primitives underneath |
+| `update(id, content, expected_version=n)` | compare-and-swap: read the version, write, in one transaction |
+| `atomic(callback)` | re-run the whole callback on a retryable conflict, with jittered backoff |
+| `maintain_indexes()` / `index_health()` | build the derived indexes that are due; say what state each is in |
+| `doctor()` | integrity and upkeep checks, with severities and samples |
 
 Each write verb is exactly one DuckDB transaction. Reads (`recall`, `recall_2hop`, `context`,
 `get`, `provenance`, `stats`) run their statements outside an explicit transaction, so a concurrent
@@ -239,21 +255,31 @@ process.
 Every item here is measured or documented in the source. Behavior that contradicts the docs and is
 not listed below is a bug; please report it.
 
-- anatid has no ANN index. The vector arm is a brute-force `array_cosine_similarity` scan. DuckDB
-  does ship a team-maintained `vss` extension with an HNSW index, but its persistence to disk is
-  experimental and its own documentation advises against relying on it in production, so anatid
-  does not build on it. The cost of the scan is linear in one tenant's row count: measured at 64
-  dims on the spike hardware, 2.0 ms p50 with 10k memories in the tenant, 8.6 ms at 100k (an
-  independent run of the same measurement got 11.4 ms) and 23.3 ms at 1M.
-  `BRUTE_FORCE_CEILING = 100_000` is enforced since 0.1.1: `recall(embedding=...)` raises
-  `BruteForceCeilingError` when the scan would cover more rows than that, unless you pass
-  `allow_slow=True`. At that ceiling a recall already costs roughly 9-11 ms, and past it this is
-  the wrong tool. An owned ANN index is the headline item of v1.0.
-- The full-text index is not incremental. DuckDB's `fts` index does not see rows inserted after it
-  was built. The API reports it in three places: `rebuild_fts_index()` is explicit, `fts_status()`
-  reports how stale the index is, and every `recall()` result carries `.bm25_stale` and
-  `.pending_fts_rows` (with `on_stale_fts="error"` if you would rather raise). The staleness window
-  is the interval between rebuilds.
+- The default vector backend is still an exact scan. `Anatid.open(vector_backend="duckdb_vss")`
+  opts in to an HNSW generation, which measured recall at k of 1.0000 (k=10) and 0.9982-0.9984
+  (k=50) against the exact oracle at 9,500 and 95,000 rows per tenant, and 2.2-2.8x the speed at
+  95,000. It is opt in because DuckDB documents HNSW persistence as experimental with
+  write-ahead-log and crash-recovery caveats, because a persisted HNSW index silently loses its
+  `ef_search` across a reopen (anatid reissues it per connection), and because below roughly
+  15,000 rows per tenant the exact scan is the faster of the two anyway. The 1M and 10M
+  measurements the promotion criterion also names have not been taken.
+  `BRUTE_FORCE_CEILING = 100_000` is enforced since 0.1.1: on the exact backend
+  `recall(embedding=...)` raises `BruteForceCeilingError` when the scan would cover more rows than
+  that, unless you pass `allow_slow=True`. A usable generation lifts the ceiling, because the scan
+  then covers only the journal.
+- DuckDB's own full-text index is not incremental, and anatid builds incremental behaviour above
+  it rather than exposing that. A write is journalled in its own transaction and merged into the
+  next search, so `.bm25_stale` is False and the row is findable. What you still choose is when to
+  pay for a rebuild: `maintain_indexes()` on a policy, or `rebuild_fts_index()` by hand. Two
+  consequences. Merging costs read latency in proportion to the journal, not the corpus (measured:
+  +2.3 ms at 500 journalled writes over a 100,000-document corpus). And with no generation
+  published at all, a search scans the corpus exactly, which is refused above
+  `SCAN_CEILING = 100_000` documents per tenant; there 0.1.1's index answers if the file still has
+  one, and the result says so.
+- An index can be damaged in ways a read cannot afford to detect. Every read checks one cheap
+  invariant per index and falls back to the oracle with `HealthReason.damaged_base` when it fails,
+  but a base that is structurally consistent and wrong (postings lost from under a document map
+  that still points at them, say) is caught by `validate()` during a rebuild, not by a read.
 - One writing process per file. That is DuckDB's model, and the engine enforces it: a second
   read-write process cannot even open the file (`IO Error: Could not set lock on file ...:
   Conflicting lock is held`). Many threads inside that one process write concurrently and appends
@@ -269,21 +295,33 @@ not listed below is a bug; please report it.
 - DuckDB has no `AS OF SYSTEM TIME`. `as_of()` is a `WHERE` clause over
   `valid_from`/`valid_to`/`tx_from`/`tx_to` that anatid generates. It reaches back exactly as far as
   the rows still in the table, so a hard purge is gone from every as-of view too.
-- The CSR extension has sharp edges. It needs dense per-tenant entity ids (anatid's default 63-bit
-  time-ordered ids are not dense), it is rebuilt in full rather than incrementally, and any
-  `relate()` marks it stale, at which point recall silently falls back to the SQL path and returns
-  identical rows. It is an accelerator, off by default.
-- No Cypher yet. That is v0.2. Today the API is the verbs above plus SQL.
-- This is v0.1. The API may still move, so pin the version.
+- The CSR still has sharp edges, though fewer than in 0.1. A generation numbers its own vertices,
+  so dense entity ids are no longer required of you; `build_csr()`'s unnamed 0.1 snapshot still is,
+  and still goes stale on any `relate()`. A generation is built in full rather than updated in
+  place, so a large journal eventually costs more than the expansion saves (1.50 ms against
+  0.88 ms of pure SQL at about 550 journal rows on the spike graph), which is what
+  `MaintenancePolicy`'s ratio trigger prevents. The in-memory structure is not evicted by DuckDB's
+  object cache, so memory grows with the number of resident generations. The C++ extension is
+  still optional: without it the merge runs in SQL and returns the same rows.
+- Maintenance is a call, not a thread. There is no background worker; `maintain_indexes()` runs
+  when you run it.
+- Pins are process-wide, not cross-process. A second process can only open the file read-only, so
+  it cannot publish a generation, but it also cannot pin one against the writer process.
+- No Cypher yet. Today the API is the verbs above plus SQL.
+- This is v0.2. The API may still move, so pin the version.
 
 ## Documentation
 
-- [`docs/architecture.md`](docs/architecture.md): storage layout, the derived CSR and how it stays
-  MVCC-correct, the isolation contract, the temporal model, the recall pipeline.
+- [`docs/architecture.md`](docs/architecture.md): storage layout, the visibility predicate and the
+  derived-index framework, the graph paths and how they stay MVCC-correct, the isolation contract,
+  the temporal model, the recall pipeline.
+- [`docs/design/derived-index-framework.md`](docs/design/derived-index-framework.md): the design
+  the accelerators are built to, and what shipped in 0.2.0 against what was deferred.
 - [`docs/benchmarks.md`](docs/benchmarks.md): Phase 0 method, every result, and what the benchmark
   does not tell you.
-- [`docs/roadmap.md`](docs/roadmap.md): v0.2 (Cypher subset, Graphiti/Cognee drivers, Node
-  bindings), v0.5 (production operation), v1.0 (ANN index, persistent CSR, duckdb-wasm).
+- [`docs/roadmap.md`](docs/roadmap.md): v0.3 (Cypher subset, Graphiti/Cognee drivers, Node
+  bindings), v0.5 (background maintenance, multi-process, graph algorithms), v1.0 (an owned ANN
+  index, duckdb-wasm, format stability).
 - [`CONTRIBUTING.md`](CONTRIBUTING.md): how to build it, what we care about in a change, and the
   third-party notices.
 - `spike/`: the Phase 0 evidence, kept read-only.

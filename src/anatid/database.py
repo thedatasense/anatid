@@ -6,46 +6,66 @@ the same text stored in the file's ``anatid_meta.contract`` column.
 
 from __future__ import annotations
 
+import datetime as _dt
+import hashlib
 import logging
 import os
+import shutil
+import sys
 import threading
 import time
-from collections import OrderedDict
+from collections import OrderedDict, deque
 from contextlib import contextmanager
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterator, Sequence
+from typing import Any, Callable, Iterator, Sequence
 
 import duckdb
 
+from . import atomic as _atomic
 from . import recall as _recall
 from . import schema as _schema
 from .csr import CsrBackend
+from .derived import (
+    HealthReason,
+    HealthReport,
+    IndexRegistry,
+    MaintenancePolicy,
+    MaintenanceReport,
+)
 from .errors import (
     AnatidError,
     ConflictError,
     ExtensionUnavailable,
     IntegrityError,
+    NotFoundError,
     TenantIsolationError,
 )
 from .schema import SchemaConfig, quote_ident
+from .visibility import current_row_sql, live_row_sql, tenant_sql
 from .types import (
     DOCTOR_SAMPLE_LIMIT,
+    AsOf,
     DoctorFinding,
     DoctorReport,
+    Edge,
+    Entity,
     FtsStatus,
     Isolation,
+    Memory,
     Namespace,
     SchemaInfo,
     Severity,
+    to_utc_naive,
     utcnow,
 )
 from .verbs import MemoryVerbs
 
 log = logging.getLogger("anatid")
 
-__all__ = ["Anatid", "DatabasePool", "connect"]
+__all__ = ["Anatid", "DatabasePool", "PoolEvent", "connect"]
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 #: Substrings DuckDB uses for an MVCC abort.  Deliberately narrow, and it has to stay that way:
 #: :class:`~anatid.errors.ConflictError` promises the caller that retrying the unit of work is
@@ -56,13 +76,28 @@ __version__ = "0.1.1"
 #: "cannot start a transaction within a transaction", "cannot commit - no transaction is active",
 #: "cannot rollback - no transaction is active" -- which fail identically on every retry.  A
 #: retry loop keyed on ``ConflictError.retryable`` would spin forever on those.
-_CONFLICT_MARKERS = ("conflict on update", "conflict on delete", "conflict on tuple",
-                     "transaction is aborted", "could not serialize")
+_CONFLICT_MARKERS = (
+    "conflict on update",
+    "conflict on delete",
+    "conflict on tuple",
+    "transaction is aborted",
+    "could not serialize",
+    # A derived index's generation storage retired under a transaction that was
+    # writing to it (a hard erasure racing a rebuild).  DuckDB names the other
+    # transaction, so this is a race and not a deterministic misuse: retrying
+    # finds the table gone and succeeds.  The sibling message about a table
+    # another transaction ALTERED is deliberately NOT here: that one is the
+    # deterministic "modified rows then ran DDL in one transaction" mistake.
+    "has dropped this table",
+)
 
 #: Deterministic ``TransactionContext`` errors that must keep their own type.  Checked first.
-_NOT_CONFLICT_MARKERS = ("no transaction is active", "transaction within a transaction",
-                         "transaction is launched in read-only mode",
-                         "cannot write to database")
+_NOT_CONFLICT_MARKERS = (
+    "no transaction is active",
+    "transaction within a transaction",
+    "transaction is launched in read-only mode",
+    "cannot write to database",
+)
 
 
 def _translate(exc: BaseException) -> BaseException:
@@ -159,9 +194,13 @@ class Anatid(MemoryVerbs):
     --------------------
     DuckDB has **no** ``AS OF SYSTEM TIME``.  ``as_of=`` is anatid's own filter over the
     ``valid_from``/``valid_to`` and ``tx_from``/``tx_to`` columns, compiled into the WHERE clause
-    (:func:`anatid.schema.temporal_predicate`).  Intervals are half-open.  A hard purge
-    (``forget(hard=True)``) removes the row from history too -- erasure beats auditability by
-    design, and the receipt is handed back to the caller to log elsewhere.
+    (:mod:`anatid.visibility`).  Intervals are half-open.  Rows of ``memories``,
+    ``edges_about`` and ``edges_relates`` are immutable versions (schema v4): a correction
+    closes the current version on the transaction axis and inserts the next one, so the
+    ``tx_time`` half of an ``as_of`` returns what the database believed then, not what it
+    believes now.  A hard purge (``forget(hard=True)``) removes every version from history
+    too -- erasure beats auditability by design, and the receipt is handed back to the caller
+    to log elsewhere.
 
     Full-text contract
     ------------------
@@ -203,6 +242,11 @@ class Anatid(MemoryVerbs):
         self._lock = threading.RLock()
         self._attached: dict[str, str] = {}
         self.erasure_hooks: list[Any] = []
+        #: The derived indexes (:mod:`anatid.derived`).  The DEFINITIONS live in the file, so
+        #: the verbs journal every write for every index the file defines whether or not this
+        #: handle holds that accelerator's code; this object holds the implementations this
+        #: handle does have, plus a placeholder per accelerator name.
+        self.indexes = IndexRegistry(self)
 
     # ------------------------------------------------------------------ lifecycle
 
@@ -224,6 +268,8 @@ class Anatid(MemoryVerbs):
         require_extension: bool = False,
         duckdb_config: dict[str, Any] | None = None,
         fts: bool = True,
+        accelerators: bool = True,
+        vector_backend: str = "exact",
     ) -> "Anatid":
         """Open (and by default create) an anatid database.
 
@@ -245,6 +291,22 @@ class Anatid(MemoryVerbs):
             Install/load the ``fts`` extension so BM25 is available.  Set False for an air-gapped
             environment with no extension repository; ``recall()`` then runs without the text arm
             and says so.
+        ``accelerators``
+            Attach the derived-index accelerators that cost nothing to have: the full-text index
+            (:mod:`anatid.fts`) and the graph CSR (:mod:`anatid.csr`).  Attaching registers each
+            one's DEFINITION in the file, which is what makes every handle journal writes for it
+            inside the writing transaction, and it is what ``maintain_indexes()`` builds from.
+            Nothing is built at open time and no generation is published, so a fresh database
+            answers text search by scanning it exactly and expands the graph in SQL, as 0.1.1
+            did.  The cost of having them is one journal row per write per index that derives
+            from the table written (0.68 ms per ``remember`` for full text on this machine).
+            Set False for a write-heavy database that never searches text.
+        ``vector_backend``
+            ``"exact"`` (the default) is the brute-force cosine scan, which is also the oracle
+            every other backend is measured against.  ``"duckdb_vss"`` attaches an HNSW
+            accelerator (:mod:`anatid.vector`).  It is opt in because DuckDB documents HNSW
+            persistence as experimental, and because it only pays above roughly 15,000 rows per
+            tenant; below that the scan is faster.  Build it with ``maintain_indexes()``.
         """
         p = ":memory:" if str(path) == ":memory:" else str(Path(path).expanduser())
         ns = Namespace.coerce(tenant)
@@ -259,25 +321,35 @@ class Anatid(MemoryVerbs):
         if memory_limit is not None:
             cfg_kwargs["memory_limit"] = memory_limit
 
-        con = duckdb.connect(p, read_only=read_only, config=cfg_kwargs) if cfg_kwargs \
+        con = (
+            duckdb.connect(p, read_only=read_only, config=cfg_kwargs)
+            if cfg_kwargs
             else duckdb.connect(p, read_only=read_only)
+        )
 
         if fts:
             try:
                 con.execute("INSTALL fts")
                 con.execute("LOAD fts")
-            except duckdb.Error as exc:      # offline / no extension repository
+            except duckdb.Error as exc:  # offline / no extension repository
                 log.warning("fts extension unavailable (%s); BM25 recall will be disabled", exc)
 
-        backend = CsrBackend(enabled=use_csr_extension or require_extension,
-                             extension_path=extension_path, require=require_extension)
+        backend = CsrBackend(
+            enabled=use_csr_extension or require_extension,
+            extension_path=extension_path,
+            require=require_extension,
+        )
         if backend.enabled:
             backend.load(con)
 
         existing_dim = _schema.embedding_dim(con)
         if existing_dim is not None and int(existing_dim) != int(embedding_dim):
-            log.info("using embedding_dim=%s recorded in %s (open() was given %s)",
-                     existing_dim, p, embedding_dim)
+            log.info(
+                "using embedding_dim=%s recorded in %s (open() was given %s)",
+                existing_dim,
+                p,
+                embedding_dim,
+            )
             embedding_dim = int(existing_dim)
 
         idx = tuple(indexes) if indexes is not None else tuple(_schema.DEFAULT_INDEXES)
@@ -286,7 +358,69 @@ class Anatid(MemoryVerbs):
         db = cls(con, path=p, namespace=ns, config=cfg, backend=backend, read_only=read_only)
         if ensure and not read_only:
             db.ensure_schema()
+        db._attach_accelerators(
+            accelerators=accelerators, fts=fts, vector_backend=vector_backend
+        )
         return db
+
+    def _attach_accelerators(
+        self, *, accelerators: bool, fts: bool, vector_backend: str
+    ) -> None:
+        """Register the derived indexes this handle should hold.  Called by :meth:`open`.
+
+        Registering is two things: an object on this handle that can build and read a
+        generation, and a row in the file's ``anatid_index_registry`` that makes every OTHER
+        handle journal writes for the same index.  The second is why this runs on a handle that
+        holds no schema yet as well: the definitions are what a later ``maintain_indexes()``
+        builds from, and a journal with a hole in it is worse than no index at all.
+
+        A read-only handle attaches too, because a definition already in the file decides how a
+        READ is answered and this handle has to make the same decision the writer does; the
+        registry's own write is a no-op there.  A failure to attach is logged and swallowed:
+        every accelerator has an exact fallback, so an index that could not be set up must not
+        stop the database from opening.
+
+        Nothing is attached to a file that has no derived-index catalog: a pre-v4 file this
+        handle could not migrate (``read_only`` or ``ensure=False``) has neither the registry
+        nor the journal, so an accelerator there could not record a write even in principle,
+        and half-attaching one would put an index on the handle whose every catalog read
+        raises.  Those files read through the SQL path, which is what they did in 0.1.1.
+        """
+        try:
+            present = _schema.table_names(self.connection)
+        except duckdb.Error as exc:  # pragma: no cover - a handle whose connection is gone
+            log.warning("accelerators not attached: %s", exc)
+            return
+        if not set(_schema.INDEX_TABLES) <= present:
+            log.info(
+                "%s has no derived-index catalog (schema v%d); reads take the SQL path",
+                self.path,
+                _schema.current_version(self.connection) or 0,
+            )
+            return
+        if self.config.embedding_dim and vector_backend and vector_backend != "exact":
+            try:
+                from .vector import attach as _attach_vector
+
+                _attach_vector(self, backend=vector_backend)
+            except Exception as exc:  # noqa: BLE001 - the exact scan still answers
+                log.warning("vector backend %r could not be attached: %s", vector_backend, exc)
+        if not accelerators:
+            return
+        try:
+            from .csr import attach_csr_index
+
+            attach_csr_index(self, register=not self.read_only)
+        except Exception as exc:  # noqa: BLE001 - the SQL expansion still answers
+            log.warning("csr index could not be attached: %s", exc)
+        if not fts:
+            return
+        try:
+            from .fts import attach as _attach_fts
+
+            _attach_fts(self)
+        except Exception as exc:  # noqa: BLE001 - the exact scan still answers
+            log.warning("full-text index could not be attached: %s", exc)
 
     def close(self) -> None:
         """Close every connection this handle owns.  Idempotent."""
@@ -345,9 +479,11 @@ class Anatid(MemoryVerbs):
         self.close()
 
     def __repr__(self) -> str:
-        return (f"<Anatid path={self.path!r} tenant={self.namespace.tenant_id} "
-                f"isolation={self.namespace.isolation.value} dim={self.config.embedding_dim} "
-                f"expand={self.csr.active}{' closed' if self._closed else ''}>")
+        return (
+            f"<Anatid path={self.path!r} tenant={self.namespace.tenant_id} "
+            f"isolation={self.namespace.isolation.value} dim={self.config.embedding_dim} "
+            f"expand={self.csr.active}{' closed' if self._closed else ''}>"
+        )
 
     @property
     def closed(self) -> bool:
@@ -362,9 +498,16 @@ class Anatid(MemoryVerbs):
         Created on first use per thread.  Raw SQL run through it bypasses every tenant filter
         anatid would have added -- with ``Isolation.SCOPED`` that means it can read every tenant
         in the file.  That is a property of DuckDB, not a bug in anatid.
+
+        This is anatid's own seam: the verbs and :mod:`anatid.recall` reach the cursor through
+        it.  Administrative access from outside the package has a separate, honest name,
+        :meth:`unsafe_connection`, and on a handle a :class:`DatabasePool` opened this property
+        is guarded to say so (see the pool's ``raw_access`` argument).
         """
         if self._closed:
             raise AnatidError(f"database {self.path!r} is closed")
+        if self._raw_guard is not None:
+            self._check_raw_access()
         con = getattr(self._local, "con", None)
         if con is None:
             con = self._root.cursor()
@@ -458,7 +601,8 @@ class Anatid(MemoryVerbs):
             raise TenantIsolationError(
                 f"handle for {self.path!r} is bound to tenant {self.namespace.tenant_id} "
                 f"(file-per-tenant isolation); it will not touch tenant {ns.tenant_id}. "
-                f"Open that tenant's own file, or attach it read-only.")
+                f"Open that tenant's own file, or attach it read-only."
+            )
         return ns
 
     def attach_read_only(self, path: str | os.PathLike, alias: str) -> str:
@@ -495,23 +639,32 @@ class Anatid(MemoryVerbs):
     def ensure_schema(self) -> int:
         """Create the schema if absent, migrate it if behind.  Returns the schema version."""
         with self.transaction():
-            return _schema.ensure_schema(self.connection, self.config,
-                                         anatid_version=__version__)
+            return _schema.ensure_schema(self.connection, self.config, anatid_version=__version__)
 
     def info(self) -> SchemaInfo:
         """The ``anatid_meta`` catalog row, including the stored contract notes."""
         row = self.execute(
             "SELECT schema_version, created_at, embedding_dim, anatid_version, duckdb_version,"
-            " fts_indexed_at, fts_indexed_rows, contract FROM anatid_meta LIMIT 1").fetchone()
+            " fts_indexed_at, fts_indexed_rows, contract FROM anatid_meta LIMIT 1"
+        ).fetchone()
         if row is None:
             raise AnatidError(f"{self.path!r} has no anatid_meta row; call ensure_schema()")
         return SchemaInfo(
-            schema_version=int(row[0]), created_at=row[1], embedding_dim=int(row[2]),
-            anatid_version=row[3], duckdb_version=row[4], fts_indexed_at=row[5],
-            fts_indexed_rows=None if row[6] is None else int(row[6]), contract=row[7],
-            extras={"path": self.path, "tenant": self.namespace.tenant_id,
-                    "isolation": self.namespace.isolation.value,
-                    "expand_path": self.csr.active})
+            schema_version=int(row[0]),
+            created_at=row[1],
+            embedding_dim=int(row[2]),
+            anatid_version=row[3],
+            duckdb_version=row[4],
+            fts_indexed_at=row[5],
+            fts_indexed_rows=None if row[6] is None else int(row[6]),
+            contract=row[7],
+            extras={
+                "path": self.path,
+                "tenant": self.namespace.tenant_id,
+                "isolation": self.namespace.isolation.value,
+                "expand_path": self.csr.active,
+            },
+        )
 
     def create_node_label(
         self,
@@ -522,8 +675,9 @@ class Anatid(MemoryVerbs):
         system_columns: bool = True,
     ) -> str:
         """Create a table for a user-defined node label.  System columns are on by default."""
-        ddl = _schema.node_table_ddl(label, properties, id_column=id_column,
-                                     system_columns=system_columns)
+        ddl = _schema.node_table_ddl(
+            label, properties, id_column=id_column, system_columns=system_columns
+        )
         self.execute(ddl)
         return ddl
 
@@ -536,8 +690,9 @@ class Anatid(MemoryVerbs):
         system_columns: bool = True,
     ) -> str:
         """Create a table for a user-defined edge type.  System columns are on by default."""
-        ddl = _schema.edge_table_ddl(edge_type, properties, table=table,
-                                     system_columns=system_columns)
+        ddl = _schema.edge_table_ddl(
+            edge_type, properties, table=table, system_columns=system_columns
+        )
         self.execute(ddl)
         return ddl
 
@@ -568,7 +723,9 @@ class Anatid(MemoryVerbs):
         con = self.connection
         wanted = dict(_schema.REQUIRED_INDEXES)
         for index_name in self.config.indexes:
-            sql = _schema.DEFAULT_INDEXES.get(index_name) or _schema.OPTIONAL_INDEXES.get(index_name)
+            sql = _schema.DEFAULT_INDEXES.get(index_name) or _schema.OPTIONAL_INDEXES.get(
+                index_name
+            )
             if sql:
                 wanted[index_name] = sql
         for name in names:
@@ -586,8 +743,7 @@ class Anatid(MemoryVerbs):
             with self.transaction():
                 self.execute(f"DROP TABLE IF EXISTS {tmp}")
                 self.execute(ddl)
-                self.execute(f"INSERT INTO {tmp} ({cols}) "
-                             f"SELECT {cols} FROM {t} ORDER BY {order}")
+                self.execute(f"INSERT INTO {tmp} ({cols}) SELECT {cols} FROM {t} ORDER BY {order}")
                 self.execute(f"DROP TABLE {t}")
                 self.execute(f"ALTER TABLE {tmp} RENAME TO {quote_ident(name)}")
                 # Same transaction as the DROP: see the docstring.  `ON <table> (` is how the
@@ -602,7 +758,7 @@ class Anatid(MemoryVerbs):
         for stmt in _schema.index_statements(self.config) + _schema.required_index_statements():
             try:
                 self.execute(stmt)
-            except duckdb.Error as exc:      # index on a table we did not rebuild
+            except duckdb.Error as exc:  # index on a table we did not rebuild
                 log.debug("recluster: skipping %s (%s)", stmt, exc)
         return out
 
@@ -640,6 +796,9 @@ class Anatid(MemoryVerbs):
         ``duplicate_memory_ids`` / ``duplicate_entity_ids`` / ``duplicate_episode_ids``
             Two rows sharing an id **inside one tenant** (across tenants is legal and normal).
             ``get()`` then returns an arbitrary one of them and ``supersede`` closes both.
+            ``memories`` is versioned, so its check is two live versions of one id
+            (``tx_to IS NULL`` twice) or two rows with one version number; the closed
+            versions a correction leaves behind are the design, not a duplicate.
         ``duplicate_entity_names``
             Two entity rows whose names canonicalise to the same ``entity_key`` in one tenant --
             the fracture the v3 unique index exists to prevent.  Present only in a file the
@@ -668,9 +827,15 @@ class Anatid(MemoryVerbs):
             ``valid_from > valid_to`` or ``tx_from > tx_to``: an interval that was never open,
             so no ``as_of`` query can ever return the row.
         ``stale_fts_index`` / ``orphaned_fts_documents`` / ``fts_statistics_drift``
-            BM25 upkeep.  The orphan check matters beyond ranking: ``anatid_fts_documents``
-            holds ``content`` **verbatim**, so a document whose ``memories`` row is gone is a
-            copy of erased text still sitting in the file.
+            BM25 upkeep for 0.1.1's non-incremental file-wide index.  The orphan check matters
+            beyond ranking: ``anatid_fts_documents`` holds ``content`` **verbatim**, so a
+            document whose ``memories`` row is gone is a copy of erased text still sitting in
+            the file.
+        ``unusable_derived_index``
+            A derived index (:mod:`anatid.derived`) has a published generation that reads
+            cannot use: invalidated, damaged, or its storage will not load.  Answers stay
+            correct because the SQL path is the oracle; the sample names the index and the
+            :class:`~anatid.derived.HealthReason`.  ``maintain_indexes()`` rebuilds.
 
         ``all_tenants=False`` (the default) scopes every row-level check to one tenant;
         ``schema_drift`` is file-wide either way.  ``raise_on_error=True`` raises
@@ -692,25 +857,38 @@ class Anatid(MemoryVerbs):
             """Tenant predicate for a row-level check, or a no-op with ``all_tenants``."""
             if all_tenants:
                 return "TRUE", []
-            col = f"{alias}.tenant_id" if alias else "tenant_id"
-            return f"{col} = ?", [ns.tenant_id]
+            return tenant_sql(alias or None), [ns.tenant_id]
 
-        def probe(check: str, severity: Severity, table: str | None, detail: str,
-                  sql: str, params: Sequence[Any] = ()) -> None:
+        def probe(
+            check: str,
+            severity: Severity,
+            table: str | None,
+            detail: str,
+            sql: str,
+            params: Sequence[Any] = (),
+        ) -> None:
             """Run one check.  ``sql`` selects the offending rows; the report gets the count.
 
             Always fetches at least one row: ``samples=0`` means "no examples in the report",
             not "no report" -- ``LIMIT 0`` would have made every check pass.
             """
             ran.append(check)
-            rows = con.execute(f"SELECT * FROM ({sql}) LIMIT {max(1, n_samples)}",
-                               list(params)).fetchall()
+            rows = con.execute(
+                f"SELECT * FROM ({sql}) LIMIT {max(1, n_samples)}", list(params)
+            ).fetchall()
             if not rows:
                 return
             total = _scalar_int(con.execute(f"SELECT count(*) FROM ({sql})", list(params)))
-            findings.append(DoctorFinding(
-                check=check, severity=severity, count=total, detail=detail, table=table,
-                samples=tuple(tuple(r) for r in rows[:n_samples])))
+            findings.append(
+                DoctorFinding(
+                    check=check,
+                    severity=severity,
+                    count=total,
+                    detail=detail,
+                    table=table,
+                    samples=tuple(tuple(r) for r in rows[:n_samples]),
+                )
+            )
 
         # The dimension the FILE records, which is what every write is checked against; the
         # handle's config adopts it on open, so they agree unless someone edited anatid_meta.
@@ -732,42 +910,106 @@ class Anatid(MemoryVerbs):
             drift.append(("missing_table", missing))
         declared = con.execute(
             "SELECT data_type FROM information_schema.columns "
-            "WHERE table_name = 'memories' AND column_name = 'embedding'").fetchone()
+            "WHERE table_name = 'memories' AND column_name = 'embedding'"
+        ).fetchone()
         if declared is not None and str(declared[0]).upper() != f"FLOAT[{dim}]":
             # The column type IS part of the schema: anatid_meta.embedding_dim is what every
             # write is validated against, and a column that disagrees accepts what the verbs
             # refuse.  The per-row check below then says which rows actually differ.
             drift.append(("embedding_column_type", str(declared[0]), f"FLOAT[{dim}]"))
-        have_idx = {r[0] for r in con.execute(
-            "SELECT index_name FROM duckdb_indexes()").fetchall()}
+        have_idx = {r[0] for r in con.execute("SELECT index_name FROM duckdb_indexes()").fetchall()}
         for name in _schema.REQUIRED_INDEXES:
             if name not in have_idx:
                 drift.append(("missing_required_index", name))
         for name in self.config.indexes:
             if name not in have_idx and name in _schema.DEFAULT_INDEXES:
                 drift.append(("missing_index", name))
+        # Last, so the samples an older file's report leads with (version, tables, indexes)
+        # keep their places within the sample cap.
+        versioned: set[str] = set()
+        for table in _schema.VERSIONED_TABLES:
+            if table not in present:
+                continue
+            table_cols = {
+                r[1] for r in con.execute(f"PRAGMA table_info({quote_ident(table)})").fetchall()
+            }
+            if _schema.VERSION_COLUMN in table_cols:
+                versioned.add(table)
+            else:
+                # A v4 file written by a build that predates the version column, or a v2/v3
+                # file opened read-only: the verbs cannot version its rows.  ensure_schema()
+                # adds the column on the next writable open.
+                drift.append(("missing_column", table, _schema.VERSION_COLUMN))
+        if _schema.INDEX_GENERATIONS_TABLE in present:
+            # Same story for the derived-index catalog: a v4 file written before the column
+            # existed cannot tell a force-published generation from an invalidated one, so the
+            # framework treats both as unusable until the next writable open repairs it.
+            gen_cols = {
+                r[1]
+                for r in con.execute(
+                    f"PRAGMA table_info({quote_ident(_schema.INDEX_GENERATIONS_TABLE)})"
+                ).fetchall()
+            }
+            for name, _decl in _schema.INDEX_GENERATION_ADDED_COLUMNS:
+                if name not in gen_cols:
+                    drift.append(("missing_column", _schema.INDEX_GENERATIONS_TABLE, name))
         if drift:
-            findings.append(DoctorFinding(
-                check="schema_drift", severity=Severity.ERROR, count=len(drift),
-                detail=(f"file is schema v{version} against this build's "
+            findings.append(
+                DoctorFinding(
+                    check="schema_drift",
+                    severity=Severity.ERROR,
+                    count=len(drift),
+                    detail=(
+                        f"file is schema v{version} against this build's "
                         f"v{_schema.SCHEMA_VERSION}, and/or a built-in table, a required index "
                         f"or the declared embedding column type does not match; re-open the "
-                        f"file to run the migration ladder"),
-                table=None, samples=tuple(drift[:n_samples])))
+                        f"file to run the migration ladder"
+                    ),
+                    table=None,
+                    samples=tuple(drift[:n_samples]),
+                )
+            )
 
         # -- duplicate ids ----------------------------------------------- per tenant
-        for table, column, check in (("memories", "memory_id", "duplicate_memory_ids"),
-                                     ("entities", "entity_id", "duplicate_entity_ids"),
-                                     ("episodes", "episode_id", "duplicate_episode_ids")):
+        for table, column, check in (
+            ("memories", "memory_id", "duplicate_memory_ids"),
+            ("entities", "entity_id", "duplicate_entity_ids"),
+            ("episodes", "episode_id", "duplicate_episode_ids"),
+        ):
             if table not in present:
                 skipped[check] = f"table {table} is missing"
                 continue
             where, params = scope()
-            probe(check, Severity.ERROR, table,
-                  f"{table}.{column} is not unique within a tenant; get() returns an arbitrary "
-                  f"one of the rows and supersede/forget act on all of them",
-                  f"SELECT tenant_id, {column}, count(*) AS n FROM {table} WHERE {where} "
-                  f"GROUP BY 1, 2 HAVING count(*) > 1 ORDER BY 3 DESC, 2", params)
+            if table in versioned:
+                # Versions of one id are expected; two LIVE versions, or two rows carrying
+                # the same version number, are not.  (A table without the column is checked
+                # the plain way below; schema_drift already names the missing column.)
+                live = live_row_sql()
+                version_expr = f"coalesce({_schema.VERSION_COLUMN}, 1)"
+                probe(
+                    check,
+                    Severity.ERROR,
+                    table,
+                    f"{table}.{column} has two live versions (tx_to IS NULL twice) or two "
+                    f"rows with one version number within a tenant; get() returns an "
+                    f"arbitrary one of the rows and supersede/forget act on all of them",
+                    f"SELECT tenant_id, {column}, count(*) FILTER (WHERE {live}) AS live_rows, "
+                    f"count(*) AS n FROM {table} WHERE {where} GROUP BY 1, 2 "
+                    f"HAVING count(*) FILTER (WHERE {live}) > 1 "
+                    f"OR count(*) > count(DISTINCT {version_expr}) ORDER BY 3 DESC, 4 DESC, 2",
+                    params,
+                )
+                continue
+            probe(
+                check,
+                Severity.ERROR,
+                table,
+                f"{table}.{column} is not unique within a tenant; get() returns an arbitrary "
+                f"one of the rows and supersede/forget act on all of them",
+                f"SELECT tenant_id, {column}, count(*) AS n FROM {table} WHERE {where} "
+                f"GROUP BY 1, 2 HAVING count(*) > 1 ORDER BY 3 DESC, 2",
+                params,
+            )
 
         # -- duplicate entity names -------------------------------------- per tenant
         if "entities" in present:
@@ -775,13 +1017,18 @@ class Anatid(MemoryVerbs):
             # The canonicalisation EXPRESSION, not the generated column: on a v3 file they are
             # the same value, and on a v2 file opened read_only (so never migrated) only the
             # expression exists -- and that file is exactly the one this check matters for.
-            probe("duplicate_entity_names", Severity.ERROR, "entities",
-                  "two entity rows canonicalise to one name in a tenant, so the graph has two "
-                  "nodes for one thing; the v3 UNIQUE (tenant_id, entity_key) index prevents "
-                  "new ones and the 2->3 migration merges old ones",
-                  f"SELECT tenant_id, {_schema.entity_key_sql('name')} AS entity_key, "
-                  f"count(*) AS n FROM entities WHERE {where} AND name IS NOT NULL "
-                  f"GROUP BY 1, 2 HAVING count(*) > 1 ORDER BY 3 DESC, 2", params)
+            probe(
+                "duplicate_entity_names",
+                Severity.ERROR,
+                "entities",
+                "two entity rows canonicalise to one name in a tenant, so the graph has two "
+                "nodes for one thing; the v3 UNIQUE (tenant_id, entity_key) index prevents "
+                "new ones and the 2->3 migration merges old ones",
+                f"SELECT tenant_id, {_schema.entity_key_sql('name')} AS entity_key, "
+                f"count(*) AS n FROM entities WHERE {where} AND name IS NOT NULL "
+                f"GROUP BY 1, 2 HAVING count(*) > 1 ORDER BY 3 DESC, 2",
+                params,
+            )
 
         # -- dangling edges ---------------------------------------------- per tenant
         endpoints = (
@@ -803,21 +1050,28 @@ class Anatid(MemoryVerbs):
                     f"SELECT '{edge_table}' AS edge_table, '{column}' AS endpoint, e.edge_id, "
                     f"e.{column} AS missing_id FROM {edge_table} e WHERE {where} "
                     f"AND NOT EXISTS (SELECT 1 FROM {target} t WHERE t.{target_id} = e.{column} "
-                    f"AND t.tenant_id = e.tenant_id)")
+                    f"AND t.tenant_id = e.tenant_id)"
+                )
                 params += p
-            probe("dangling_edges", Severity.ERROR, None,
-                  "an edge points at a row that does not exist in its tenant; graph expansion "
-                  "silently drops that hop",
-                  " UNION ALL ".join(parts) + " ORDER BY 1, 3", params)
+            probe(
+                "dangling_edges",
+                Severity.ERROR,
+                None,
+                "an edge points at a row that does not exist in its tenant; graph expansion "
+                "silently drops that hop",
+                " UNION ALL ".join(parts) + " ORDER BY 1, 3",
+                params,
+            )
 
         # -- dangling evidence -------------------------------------------- per tenant
         # A row whose episode_id names no episode in its tenant.  forget(hard=True) deletes an
         # episode only when nothing cites it, so this is raw SQL or a bulk load.  A WARNING,
         # not an ERROR: provenance() tolerates it (the chain stays, the source text is gone).
-        citing = [(t, "memory_id" if t == "memories" else "entity_id" if t == "entities"
-                   else "edge_id")
-                  for t in ("memories", "entities", "edges_about", "edges_relates")
-                  if t in present]
+        citing = [
+            (t, "memory_id" if t == "memories" else "entity_id" if t == "entities" else "edge_id")
+            for t in ("memories", "entities", "edges_about", "edges_relates")
+            if t in present
+        ]
         if "episodes" not in present or not citing:
             skipped["dangling_episode_references"] = "episodes or every citing table is missing"
         else:
@@ -828,18 +1082,24 @@ class Anatid(MemoryVerbs):
                     f"SELECT '{table}' AS \"table\", r.tenant_id, r.{id_col} AS row_id, "
                     f"r.episode_id FROM {table} r WHERE {where} AND r.episode_id IS NOT NULL "
                     f"AND NOT EXISTS (SELECT 1 FROM episodes e WHERE e.episode_id = r.episode_id "
-                    f"AND e.tenant_id = r.tenant_id)")
+                    f"AND e.tenant_id = r.tenant_id)"
+                )
                 params += p
-            probe("dangling_episode_references", Severity.WARNING, None,
-                  "a row cites an episode_id that has no episodes row in its tenant, so "
-                  "provenance() cannot reach the evidence it was derived from",
-                  " UNION ALL ".join(parts) + " ORDER BY 1, 3", params)
+            probe(
+                "dangling_episode_references",
+                Severity.WARNING,
+                None,
+                "a row cites an episode_id that has no episodes row in its tenant, so "
+                "provenance() cannot reach the evidence it was derived from",
+                " UNION ALL ".join(parts) + " ORDER BY 1, 3",
+                params,
+            )
 
         # -- duplicate live edges ---------------------------------------- per tenant
         # Two current edges saying the same thing.  Not an integrity break (both endpoints
         # exist) but it doubles a 2-hop weight and repeats an entity in about_names(), so a
         # WARNING.  Only edges live now: a closed edge next to its replacement is history.
-        live = "valid_to IS NULL AND tx_to IS NULL"
+        live = current_row_sql()
         edge_keys = [("edges_about", "src, dst"), ("edges_relates", "src, dst, rel_kind")]
         edge_keys = [(t, k) for t, k in edge_keys if t in present]
         if not edge_keys:
@@ -853,24 +1113,35 @@ class Anatid(MemoryVerbs):
                     f"SELECT '{table}' AS \"table\", tenant_id, src, dst, "
                     f"{'rel_kind' if 'rel_kind' in key else 'NULL AS rel_kind'}, "
                     f"count(*) AS n FROM {table} WHERE {where} AND {live} "
-                    f"GROUP BY tenant_id, {key_cols} HAVING count(*) > 1")
+                    f"GROUP BY tenant_id, {key_cols} HAVING count(*) > 1"
+                )
                 params += p
-            probe("duplicate_live_edges", Severity.WARNING, None,
-                  "two current edges in a tenant say the same thing (same src/dst[/rel_kind]); "
-                  "about_names() repeats the entity and a 2-hop weight is doubled",
-                  " UNION ALL ".join(parts) + " ORDER BY 1, 6 DESC, 3", params)
+            probe(
+                "duplicate_live_edges",
+                Severity.WARNING,
+                None,
+                "two current edges in a tenant say the same thing (same src/dst[/rel_kind]); "
+                "about_names() repeats the entity and a 2-hop weight is doubled",
+                " UNION ALL ".join(parts) + " ORDER BY 1, 6 DESC, 3",
+                params,
+            )
 
         # -- embeddings --------------------------------------------------- per tenant
         if "memories" not in present:
             skipped["embedding_dimension_mismatch"] = "table memories is missing"
         else:
             where, params = scope()
-            probe("embedding_dimension_mismatch", Severity.ERROR, "memories",
-                  f"a stored vector is not {dim}-dimensional, so array_cosine_similarity "
-                  f"cannot compare it with a query vector",
-                  f"SELECT tenant_id, memory_id, len(embedding) AS dim FROM memories "
-                  f"WHERE {where} AND embedding IS NOT NULL AND len(embedding) <> ? "
-                  f"ORDER BY memory_id", params + [dim])
+            probe(
+                "embedding_dimension_mismatch",
+                Severity.ERROR,
+                "memories",
+                f"a stored vector is not {dim}-dimensional, so array_cosine_similarity "
+                f"cannot compare it with a query vector",
+                f"SELECT tenant_id, memory_id, len(embedding) AS dim FROM memories "
+                f"WHERE {where} AND embedding IS NOT NULL AND len(embedding) <> ? "
+                f"ORDER BY memory_id",
+                params + [dim],
+            )
 
         if "memories" not in present:
             skipped["non_finite_embeddings"] = "table memories is missing"
@@ -878,43 +1149,65 @@ class Anatid(MemoryVerbs):
             skipped["non_finite_embeddings"] = "deep=False (this check reads every vector)"
         else:
             where, params = scope()
-            probe("non_finite_embeddings", Severity.ERROR, "memories",
-                  "a stored vector contains NaN, inf or a NULL element; "
-                  "array_cosine_similarity returns NaN/NULL against that row for every query, "
-                  "so it ranks arbitrarily instead of ranking badly",
-                  f"SELECT tenant_id, memory_id FROM memories WHERE {where} "
-                  f"AND embedding IS NOT NULL "
-                  f"AND len(list_filter(embedding::DOUBLE[], "
-                  f"                    x -> x IS NULL OR NOT isfinite(x))) > 0 "
-                  f"ORDER BY memory_id", params)
+            probe(
+                "non_finite_embeddings",
+                Severity.ERROR,
+                "memories",
+                "a stored vector contains NaN, inf or a NULL element; "
+                "array_cosine_similarity returns NaN/NULL against that row for every query, "
+                "so it ranks arbitrarily instead of ranking badly",
+                f"SELECT tenant_id, memory_id FROM memories WHERE {where} "
+                f"AND embedding IS NOT NULL "
+                f"AND len(list_filter(embedding::DOUBLE[], "
+                f"                    x -> x IS NULL OR NOT isfinite(x))) > 0 "
+                f"ORDER BY memory_id",
+                params,
+            )
 
         # -- value ranges -------------------------------------------------- per tenant
-        conf_tables = [t for t in ("memories", "entities", "edges_about", "edges_relates")
-                       if t in present]
+        conf_tables = [
+            t for t in ("memories", "entities", "edges_about", "edges_relates") if t in present
+        ]
         if conf_tables:
             parts, params = [], []
             for table in conf_tables:
                 where, p = scope()
-                parts.append(f"SELECT '{table}' AS \"table\", tenant_id, confidence FROM {table} "
-                             f"WHERE {where} AND confidence IS NOT NULL "
-                             f"AND (confidence < 0 OR confidence > 1 OR NOT isfinite(confidence))")
+                parts.append(
+                    f"SELECT '{table}' AS \"table\", tenant_id, confidence FROM {table} "
+                    f"WHERE {where} AND confidence IS NOT NULL "
+                    f"AND (confidence < 0 OR confidence > 1 OR NOT isfinite(confidence))"
+                )
                 params += p
-            probe("confidence_out_of_range", Severity.ERROR, None,
-                  "confidence is documented and validated as a number in [0, 1]; a row outside "
-                  "it came from a bulk load or raw SQL and will skew any caller that weights by "
-                  "it", " UNION ALL ".join(parts) + " ORDER BY 1", params)
+            probe(
+                "confidence_out_of_range",
+                Severity.ERROR,
+                None,
+                "confidence is documented and validated as a number in [0, 1]; a row outside "
+                "it came from a bulk load or raw SQL and will skew any caller that weights by "
+                "it",
+                " UNION ALL ".join(parts) + " ORDER BY 1",
+                params,
+            )
 
         if "edges_about" in present:
             where, params = scope()
-            probe("weight_out_of_range", Severity.ERROR, "edges_about",
-                  "an ABOUT edge weight is outside [0, 1]",
-                  f"SELECT tenant_id, edge_id, weight FROM edges_about WHERE {where} "
-                  f"AND weight IS NOT NULL AND (weight < 0 OR weight > 1 OR NOT isfinite(weight))"
-                  f" ORDER BY edge_id", params)
+            probe(
+                "weight_out_of_range",
+                Severity.ERROR,
+                "edges_about",
+                "an ABOUT edge weight is outside [0, 1]",
+                f"SELECT tenant_id, edge_id, weight FROM edges_about WHERE {where} "
+                f"AND weight IS NOT NULL AND (weight < 0 OR weight > 1 OR NOT isfinite(weight))"
+                f" ORDER BY edge_id",
+                params,
+            )
 
         # -- timestamp ordering -------------------------------------------- per tenant
-        temporal = [t for t in ("memories", "entities", "episodes", "edges_about",
-                                "edges_relates") if t in present]
+        temporal = [
+            t
+            for t in ("memories", "entities", "episodes", "edges_about", "edges_relates")
+            if t in present
+        ]
         if temporal:
             parts, params = [], []
             for table in temporal:
@@ -923,56 +1216,120 @@ class Anatid(MemoryVerbs):
                     f"SELECT '{table}' AS \"table\", tenant_id, valid_from, valid_to, tx_from, "
                     f"tx_to FROM {table} WHERE {where} AND ((valid_to IS NOT NULL AND "
                     f"valid_from IS NOT NULL AND valid_to < valid_from) OR (tx_to IS NOT NULL "
-                    f"AND tx_from IS NOT NULL AND tx_to < tx_from))")
+                    f"AND tx_from IS NOT NULL AND tx_to < tx_from))"
+                )
                 params += p
-            probe("timestamp_order", Severity.ERROR, None,
-                  "a row's interval closes before it opens ([from, to) with to < from), so no "
-                  "as_of query can ever return it",
-                  " UNION ALL ".join(parts) + " ORDER BY 1", params)
+            probe(
+                "timestamp_order",
+                Severity.ERROR,
+                None,
+                "a row's interval closes before it opens ([from, to) with to < from), so no "
+                "as_of query can ever return it",
+                " UNION ALL ".join(parts) + " ORDER BY 1",
+                params,
+            )
 
         # -- full-text upkeep ----------------------------------------------- file-wide
         try:
             status = _recall.fts_status(con)
-        except Exception as exc:                      # pragma: no cover - fts not installed
+        except Exception as exc:  # pragma: no cover - fts not installed
             skipped["stale_fts_index"] = f"fts status unavailable: {exc}"
             status = None
         if status is not None:
             ran.append("stale_fts_index")
             if status.available and status.stale:
-                findings.append(DoctorFinding(
-                    check="stale_fts_index", severity=Severity.WARNING,
-                    count=int(status.pending_rows),
-                    detail=("rows have been written since the last rebuild_fts_index(); "
-                            "DuckDB's fts index is not incremental, so BM25 cannot see them"),
-                    table=_schema.FTS_SOURCE_TABLE,
-                    samples=((status.indexed_rows, status.current_rows, status.indexed_at),)))
+                findings.append(
+                    DoctorFinding(
+                        check="stale_fts_index",
+                        severity=Severity.WARNING,
+                        count=int(status.pending_rows),
+                        detail=(
+                            "rows have been written since the last rebuild_fts_index(); "
+                            "DuckDB's fts index is not incremental, so BM25 cannot see them"
+                        ),
+                        table=_schema.FTS_SOURCE_TABLE,
+                        samples=((status.indexed_rows, status.current_rows, status.indexed_at),),
+                    )
+                )
             elif not status.available and status.current_rows:
-                findings.append(DoctorFinding(
-                    check="stale_fts_index", severity=Severity.WARNING,
-                    count=int(status.current_rows),
-                    detail=("no BM25 index has been built, so recall() runs without its text "
-                            "arm; call rebuild_fts_index()"),
-                    table=_schema.FTS_SOURCE_TABLE, samples=()))
+                findings.append(
+                    DoctorFinding(
+                        check="stale_fts_index",
+                        severity=Severity.WARNING,
+                        count=int(status.current_rows),
+                        detail=(
+                            "no BM25 index has been built, so recall() runs without its text "
+                            "arm; call rebuild_fts_index()"
+                        ),
+                        table=_schema.FTS_SOURCE_TABLE,
+                        samples=(),
+                    )
+                )
 
         if _schema.FTS_SOURCE_TABLE in present and "memories" in present:
             where, params = scope("d")
-            probe("orphaned_fts_documents", Severity.ERROR, _schema.FTS_SOURCE_TABLE,
-                  "a BM25 document has no memories row, and anatid_fts_documents stores content "
-                  "VERBATIM -- this is a copy of deleted text still in the file and still "
-                  "findable by recall()",
-                  f"SELECT d.tenant_id, d.memory_id FROM {_schema.FTS_SOURCE_TABLE} d "
-                  f"WHERE {where} AND NOT EXISTS (SELECT 1 FROM memories m "
-                  f"WHERE m.memory_id = d.memory_id AND m.tenant_id = d.tenant_id) "
-                  f"ORDER BY d.tenant_id, d.memory_id", params)
+            probe(
+                "orphaned_fts_documents",
+                Severity.ERROR,
+                _schema.FTS_SOURCE_TABLE,
+                "a BM25 document has no memories row, and anatid_fts_documents stores content "
+                "VERBATIM -- this is a copy of deleted text still in the file and still "
+                "findable by recall()",
+                f"SELECT d.tenant_id, d.memory_id FROM {_schema.FTS_SOURCE_TABLE} d "
+                f"WHERE {where} AND NOT EXISTS (SELECT 1 FROM memories m "
+                f"WHERE m.memory_id = d.memory_id AND m.tenant_id = d.tenant_id) "
+                f"ORDER BY d.tenant_id, d.memory_id",
+                params,
+            )
 
         if _schema.FTS_DICT_TABLE in present and _schema.FTS_STATS_TABLE in present:
             where, params = scope("d")
-            probe("fts_statistics_drift", Severity.WARNING, _schema.FTS_DICT_TABLE,
-                  "a tenant has per-term document frequencies but no (num_docs, avgdl) row, so "
-                  "its BM25 scores cannot be computed; rebuild_fts_index()",
-                  f"SELECT DISTINCT d.tenant_id FROM {_schema.FTS_DICT_TABLE} d WHERE {where} "
-                  f"AND NOT EXISTS (SELECT 1 FROM {_schema.FTS_STATS_TABLE} s "
-                  f"WHERE s.tenant_id = d.tenant_id) ORDER BY 1", params)
+            probe(
+                "fts_statistics_drift",
+                Severity.WARNING,
+                _schema.FTS_DICT_TABLE,
+                "a tenant has per-term document frequencies but no (num_docs, avgdl) row, so "
+                "its BM25 scores cannot be computed; rebuild_fts_index()",
+                f"SELECT DISTINCT d.tenant_id FROM {_schema.FTS_DICT_TABLE} d WHERE {where} "
+                f"AND NOT EXISTS (SELECT 1 FROM {_schema.FTS_STATS_TABLE} s "
+                f"WHERE s.tenant_id = d.tenant_id) ORDER BY 1",
+                params,
+            )
+
+        # -- derived indexes ------------------------------------------------- per tenant
+        # The framework's own upkeep signal.  `stale_fts_index` above is about 0.1.1's
+        # non-incremental index and is silent on a database that has moved off it, because
+        # nothing there is invisible; what an operator needs instead is which generation cannot
+        # be used and why.  A usable-but-due generation is not reported: the read merges the
+        # journal, so it is a performance note, not an integrity one.
+        if set(_schema.INDEX_TABLES) <= present:
+            try:
+                reports = self.indexes.health(ns.tenant_id)
+            except Exception as exc:  # noqa: BLE001 - a diagnostic must not be the thing that fails
+                skipped["unusable_derived_index"] = f"index health unavailable: {exc}"
+                reports = {}
+            else:
+                ran.append("unusable_derived_index")
+            unusable = [
+                (name, report.reason.value, report.detail)
+                for name, report in sorted(reports.items())
+                if not report.usable and report.reason is not HealthReason.ABSENT
+            ]
+            if unusable:
+                findings.append(
+                    DoctorFinding(
+                        check="unusable_derived_index",
+                        severity=Severity.WARNING,
+                        count=len(unusable),
+                        detail=(
+                            "a derived index cannot serve reads, so they fall back to the SQL "
+                            "path: correct, slower, and the reason is per index below; "
+                            "maintain_indexes() rebuilds"
+                        ),
+                        table=_schema.INDEX_GENERATIONS_TABLE,
+                        samples=tuple(unusable[:n_samples]),
+                    )
+                )
 
         # -- counts, for context -------------------------------------------------------
         counts: dict[str, int] = {}
@@ -980,27 +1337,39 @@ class Anatid(MemoryVerbs):
             if table not in present or table == "anatid_meta":
                 continue
             has_tenant = "tenant_id" in {
-                r[1] for r in con.execute(f"PRAGMA table_info({quote_ident(table)})").fetchall()}
+                r[1] for r in con.execute(f"PRAGMA table_info({quote_ident(table)})").fetchall()
+            }
             if all_tenants or not has_tenant:
-                counts[table] = _scalar_int(con.execute(
-                    f"SELECT count(*) FROM {quote_ident(table)}"))
+                counts[table] = _scalar_int(
+                    con.execute(f"SELECT count(*) FROM {quote_ident(table)}")
+                )
             else:
-                counts[table] = _scalar_int(con.execute(
-                    f"SELECT count(*) FROM {quote_ident(table)} WHERE tenant_id = ?",
-                    [ns.tenant_id]))
+                counts[table] = _scalar_int(
+                    con.execute(
+                        f"SELECT count(*) FROM {quote_ident(table)} WHERE {tenant_sql()}",
+                        [ns.tenant_id],
+                    )
+                )
 
         report = DoctorReport(
-            checked_at=utcnow(), schema_version=version,
+            checked_at=utcnow(),
+            schema_version=version,
             expected_schema_version=_schema.SCHEMA_VERSION,
-            tenant_id=None if all_tenants else ns.tenant_id, all_tenants=all_tenants,
-            findings=tuple(findings), counts=counts, checks_run=tuple(ran),
+            tenant_id=None if all_tenants else ns.tenant_id,
+            all_tenants=all_tenants,
+            findings=tuple(findings),
+            counts=counts,
+            checks_run=tuple(ran),
             checks_skipped=skipped,
-            duration_ms=round((time.perf_counter() - started) * 1000, 3))
+            duration_ms=round((time.perf_counter() - started) * 1000, 3),
+        )
         if raise_on_error and not report.ok:
             raise IntegrityError(
                 f"doctor() found {len(report.errors)} integrity fault(s) in {self.path!r}: "
                 + ", ".join(f"{f.check}={f.count}" for f in report.errors),
-                report=report, findings=report.errors)
+                report=report,
+                findings=report.errors,
+            )
         return report
 
     # ------------------------------------------------------------------ full text
@@ -1027,14 +1396,73 @@ class Anatid(MemoryVerbs):
 
     @property
     def expand_path(self) -> str:
-        """Which graph-expansion path current-state reads take: ``"extension"`` or ``"sql"``."""
+        """Which path a CURRENT-STATE expansion for this handle's own tenant would take now.
+
+        ``"extension"``, ``"csr"`` or ``"sql"``.  It is a forecast about the next such read, not
+        a record of the last one: a read carrying ``as_of``, or a read for another tenant, makes
+        its own decision and can take a different path while this still says ``"csr"``.  The
+        value is an :class:`~anatid.csr.ExpandPath`, which IS that string and also carries
+        ``.reason`` and ``.explain()``; :attr:`last_expansion` is the honest per-read record.
+        """
         return self.csr.active
+
+    @property
+    def last_expansion(self):
+        """The path the last graph expansion on this handle actually took, or ``None``.
+
+        An :class:`~anatid.csr.ExpandPath`: ``str(...)`` is the path and ``.explain()`` says why
+        it was chosen, which is how a fallback reports itself for the graph arm the way
+        :class:`~anatid.derived.HealthReport` does for the others.
+        """
+        return self.csr.last_expansion
 
     def require_csr_extension(self) -> None:
         """Raise :class:`~anatid.errors.ExtensionUnavailable` unless the C++ path is live."""
         if not self.csr.fresh:
-            raise ExtensionUnavailable(
-                f"csr extension not active (state: {self.csr.describe()})")
+            raise ExtensionUnavailable(f"csr extension not active (state: {self.csr.describe()})")
+
+    # ------------------------------------------------------------------ derived indexes
+
+    def index_health(
+        self,
+        *,
+        tenant: int | Namespace | None = None,
+        policy: MaintenancePolicy | None = None,
+        as_of: AsOf | _dt.datetime | None = None,
+    ) -> dict[str, HealthReport]:
+        """A :class:`~anatid.derived.HealthReport` per derived index, for one tenant.
+
+        Covers every index DEFINED IN THE FILE, not only the ones this handle implements, so an
+        operator can see the state of an accelerator another process builds.  The reason is
+        machine-readable (:class:`~anatid.derived.HealthReason`): fresh, stale generation,
+        unvalidated, historical query, rebuild in progress, load failure, damaged base or
+        absent.
+
+        ``as_of`` asks what a HISTORICAL read would do.  Most accelerators index current state
+        and cannot answer one at all, so they report ``historical_query`` and the SQL path
+        answers; the full-text index can, because its base holds document identity and content
+        and the time predicate is applied to the canonical rows it joins.
+        """
+        ns = self.resolve_tenant(tenant)
+        return self.indexes.health(ns.tenant_id, as_of=as_of, policy=policy)
+
+    def maintain_indexes(
+        self,
+        *,
+        tenant: int | Namespace | None = None,
+        policy: MaintenancePolicy | None = None,
+        now=None,
+    ) -> dict[str, MaintenanceReport]:
+        """Run :func:`anatid.derived.maintain` on every index THIS HANDLE implements.
+
+        Building needs the accelerator's code, so unlike :meth:`index_health` this does not
+        reach a definition another process owns.
+
+        Explicitly callable, no background thread: call it after a batch of writes, on a timer
+        of your own, or when :meth:`index_health` reports a stale generation.
+        """
+        ns = self.resolve_tenant(tenant)
+        return self.indexes.maintain(ns.tenant_id, policy, now=now)
 
     # ------------------------------------------------------------------ bulk load
 
@@ -1055,37 +1483,72 @@ class Anatid(MemoryVerbs):
         :data:`anatid.schema.CLUSTER_ORDER` ``ORDER BY`` that the Phase 0 spike measured.
 
         Returns ``{table: rows_inserted}``.
+
+        A bulk load bypasses the verbs, so the derived indexes' journal cannot see it: every
+        published generation over a loaded table is marked invalidated
+        (:meth:`anatid.derived.IndexRegistry.invalidate`) and stops being usable until
+        :meth:`maintain_indexes` rebuilds it.  The rows are correct throughout; only the
+        accelerators fall back to the SQL path.
+
+        The inserts and the invalidation are **one transaction**.  With two, there was a window
+        in which the rows were committed and every generation was still marked validated, so a
+        read in that window used a base generation that could not contain them; and an
+        invalidation that failed left the generation trusted for good.  Now a failure rolls the
+        load back with it.  The optional BM25 and CSR rebuilds run afterwards, outside the
+        transaction, because they are rebuilds and not part of the load's atomicity.
         """
         d = Path(directory).expanduser()
-        wanted = list(tables) if tables is not None else [
-            "entities", "episodes", "memories", "edges_about", "edges_relates", "edges_supersedes"]
+        wanted = (
+            list(tables)
+            if tables is not None
+            else [
+                "entities",
+                "episodes",
+                "memories",
+                "edges_about",
+                "edges_relates",
+                "edges_supersedes",
+            ]
+        )
         dim = self.config.embedding_dim
         out: dict[str, int] = {}
         con = self.connection
-        for name in wanted:
-            f = d / f"{name}.parquet"
-            if not f.is_file():
-                continue
-            src = str(f).replace("'", "''")
-            have = [r[0] for r in con.execute(
-                "SELECT column_name FROM (DESCRIBE SELECT * FROM read_parquet(?))",
-                [str(f)]).fetchall()]
-            cols = [r[1] for r in con.execute(
-                f"PRAGMA table_info({quote_ident(name)})").fetchall()]
-            shared = [c for c in cols if c in have]
-            if not shared:
-                continue
-            proj = ", ".join(
-                (f"{quote_ident(c)}::FLOAT[{dim}]" if c == "embedding" else quote_ident(c))
-                for c in shared)
-            order = _schema.CLUSTER_ORDER.get(name)
-            order_sql = f" ORDER BY {order}" if order else ""
-            before = _scalar_int(con.execute(f"SELECT count(*) FROM {quote_ident(name)}"))
-            self.execute(
-                f"INSERT INTO {quote_ident(name)} ({', '.join(quote_ident(c) for c in shared)}) "
-                f"SELECT {proj} FROM read_parquet('{src}'){order_sql}")
-            after = _scalar_int(con.execute(f"SELECT count(*) FROM {quote_ident(name)}"))
-            out[name] = after - before
+        with self.transaction():
+            for name in wanted:
+                f = d / f"{name}.parquet"
+                if not f.is_file():
+                    continue
+                src = str(f).replace("'", "''")
+                have = [
+                    r[0]
+                    for r in con.execute(
+                        "SELECT column_name FROM (DESCRIBE SELECT * FROM read_parquet(?))", [str(f)]
+                    ).fetchall()
+                ]
+                cols = [
+                    r[1] for r in con.execute(f"PRAGMA table_info({quote_ident(name)})").fetchall()
+                ]
+                shared = [c for c in cols if c in have]
+                if not shared:
+                    continue
+                proj = ", ".join(
+                    (f"{quote_ident(c)}::FLOAT[{dim}]" if c == "embedding" else quote_ident(c))
+                    for c in shared
+                )
+                order = _schema.CLUSTER_ORDER.get(name)
+                order_sql = f" ORDER BY {order}" if order else ""
+                before = _scalar_int(con.execute(f"SELECT count(*) FROM {quote_ident(name)}"))
+                self.execute(
+                    f"INSERT INTO {quote_ident(name)} "
+                    f"({', '.join(quote_ident(c) for c in shared)}) "
+                    f"SELECT {proj} FROM read_parquet('{src}'){order_sql}"
+                )
+                after = _scalar_int(con.execute(f"SELECT count(*) FROM {quote_ident(name)}"))
+                out[name] = after - before
+                if out[name]:
+                    self.indexes.invalidate(
+                        name, reason=f"bulk load of {out[name]} row(s) into {name}"
+                    )
         if rebuild_fts and out.get("memories"):
             try:
                 self.rebuild_fts_index()
@@ -1095,6 +1558,248 @@ class Anatid(MemoryVerbs):
             self.build_csr()
         return out
 
+    # ------------------------------------------------------------------ conflicts
+
+    #: Raw-cursor policy for :attr:`connection`.  ``None`` on a handle opened directly, which
+    #: is the unguarded 0.1 behaviour; :class:`DatabasePool` sets ``"warn"`` or ``"deny"`` on
+    #: the handles it opens so administrative access to a tenant file has to say its name.
+    _raw_guard: str | None = None
+    _raw_warned: bool = False
+    #: The pool that opened this handle, when one did.  Audit events go there.
+    _pool: "DatabasePool | None" = None
+
+    def _check_raw_access(self) -> None:
+        """Enforce the pool's ``raw_access`` policy for a caller outside :mod:`anatid`.
+
+        Called from :attr:`connection`, so the frame two up is whoever asked for the cursor.
+        anatid's own modules are always allowed: the verbs, ``recall`` and this module reach
+        the cursor through that property on every call, and a policy that stopped them would
+        stop the database.  Everyone else is warned once per handle, or refused, and the pool
+        records it.
+
+        A guardrail against reaching for the cursor by accident, not a sandbox.  Python has no
+        private state, so a caller determined to have the connection object will get it; the
+        point is that they cannot do it without either saying ``unsafe_connection`` or leaving
+        a record.
+        """
+        caller = sys._getframe(2)  # noqa: SLF001 -- the documented way to see the caller
+        module = caller.f_globals.get("__name__", "")
+        if module == "anatid" or module.startswith("anatid."):
+            return
+        where = f"{caller.f_code.co_filename}:{caller.f_lineno}"
+        pool = self._pool
+        if self._raw_guard == "deny":
+            if pool is not None:
+                # DatabasePool and Anatid are two halves of one component in one module;
+                # the audit log belongs to the pool, so the handle writes into it.
+                pool._audit("raw_access_denied", self.namespace.tenant_id, self.path, where)  # noqa: SLF001
+            raise TenantIsolationError(
+                f"{where} asked a pooled handle for its raw DuckDB cursor. A cursor bypasses "
+                f"every tenant and time predicate anatid compiles in, so this pool "
+                f"(raw_access='deny') hands one out only through unsafe_connection(), which "
+                f"says what it is and is audited."
+            )
+        if not self._raw_warned:
+            self._raw_warned = True
+            log.warning(
+                "%s used the raw DuckDB cursor of pooled tenant %s; it bypasses every predicate "
+                "anatid adds. Call unsafe_connection(reason=...) instead, which is audited.",
+                where,
+                self.namespace.tenant_id,
+            )
+            if pool is not None:
+                pool._audit("raw_access", self.namespace.tenant_id, self.path, where)  # noqa: SLF001
+
+    def unsafe_connection(self, *, reason: str | None = None) -> duckdb.DuckDBPyConnection:
+        """This thread's raw DuckDB cursor, named for what it is.
+
+        The administrative escape hatch, and the only sanctioned way to get a cursor out of a
+        handle a :class:`DatabasePool` opened.  What comes back is a plain DuckDB connection:
+        every statement run on it bypasses the tenant predicate, the valid-time and
+        transaction-time predicates, the derived-index journal and the erasure path.  On a
+        ``SCOPED`` handle that means it reads every tenant in the file; on a file-per-tenant
+        handle it still means it can write rows anatid's verbs would have refused.
+
+        ``reason`` is recorded with the pool's audit event, so an operator can see later why a
+        cursor was taken.  Use the verbs for everything they cover.
+        """
+        pool = self._pool
+        if pool is not None:
+            pool._audit("unsafe_connection", self.namespace.tenant_id, self.path, reason)  # noqa: SLF001
+        else:
+            log.info("unsafe_connection on %s (%s)", self.path, reason or "no reason given")
+        return self.connection
+
+    def atomic(
+        self,
+        callback: Callable[..., Any],
+        *,
+        max_attempts: int = _atomic.DEFAULT_MAX_ATTEMPTS,
+        backoff: float = _atomic.DEFAULT_BACKOFF,
+        max_backoff: float = _atomic.DEFAULT_MAX_BACKOFF,
+        sleep: Callable[[float], Any] | None = None,
+        rng: Callable[[], float] | None = None,
+    ) -> Any:
+        """Run ``callback`` in one transaction, re-running the WHOLE callback on a conflict.
+
+        ::
+
+            def move():
+                db.forget(old_id)
+                return db.remember("Ada drinks tea now", entities=["Ada"])
+
+            memory = db.atomic(move)
+
+        Returns whatever the callback returns.  Between attempts anatid sleeps a jittered
+        exponential backoff, so two writers that collided do not wake together and collide
+        again.
+
+        Re-running the *whole* callback is the only thing that can work.  DuckDB marks a
+        transaction aborted at the first conflict, so the failed statement cannot be re-run
+        inside it, and a unit of work that read a row before writing it has to read it again to
+        be correct.  Write the callback so it is safe to run more than once: it must not depend
+        on anything it computed in a previous attempt, and any id it mints should be minted
+        inside it.
+
+        Only a **retryable** :class:`~anatid.errors.ConflictError` is re-run.  A compare-and-swap
+        failure (``expected_version=`` did not match, ``if_current=True`` found a closed row) is
+        raised straight through, because the version the caller reasoned about is gone and the
+        same callback would fail the same way every time.  No other exception is ever retried.
+        The error that ends the last attempt carries ``attempt`` set to the number of attempts
+        made.
+
+        Inside a transaction the caller opened, this steps aside and runs the callback once:
+        only the caller can decide to re-run the caller's transaction.  The callback is called
+        with no arguments, or with an :class:`anatid.atomic.Attempt` if it accepts one.
+        """
+        return _atomic.run(
+            self,
+            callback,
+            max_attempts=max_attempts,
+            backoff=backoff,
+            max_backoff=max_backoff,
+            sleep=sleep,
+            rng=rng,
+        ).result
+
+    def memory_version(self, memory_id: int, *, tenant: int | Namespace | None = None) -> int | None:
+        """The version number of a memory's live row, or None when the id is not in this tenant.
+
+        This is the number to hold for :meth:`update`'s ``expected_version``.  It is also
+        ``db.get(memory_id).version``; this method reads one column instead of the row.
+        """
+        ns = self.resolve_tenant(tenant)
+        return _atomic.version_of(self, "memories", "memory_id", int(memory_id), tenant_id=ns.tenant_id)
+
+    def update(
+        self,
+        memory_id: int,
+        content: str,
+        *,
+        expected_version: int | None = None,
+        tenant: int | Namespace | None = None,
+        **supersede_kwargs: Any,
+    ) -> Memory:
+        """Correct a memory, refusing the write if it is not at the version you read.
+
+        ::
+
+            m = db.get(mid)
+            db.update(mid, "Ada drinks tea now", expected_version=m.version)
+
+        A correction in anatid is a :meth:`~anatid.verbs.MemoryVerbs.supersede`: the new belief
+        is a new memory with its own id, the old one is closed at ``now``, and a ``SUPERSEDES``
+        edge records the link.  Every keyword :meth:`supersede` takes is passed through, and
+        the new :class:`~anatid.types.Memory` comes back, so this is that verb plus the
+        compare-and-swap the design asks for.
+
+        ``expected_version`` is the version of the memory's live row
+        (:meth:`memory_version`).  The check and the write are in one transaction, so nothing
+        can slip between them: a writer that committed a correction first moves the version on
+        and this call raises :class:`~anatid.errors.ConflictError` with ``expected_version``,
+        ``current_version`` and ``retryable=False``.  A writer that is *concurrently*
+        correcting the same row loses the write-write race instead and gets a retryable
+        conflict from the engine.  Leave ``expected_version`` out and this is exactly
+        ``supersede``.
+
+        Retry policy stays with the caller, because only the caller knows whether a change
+        computed from the old version still applies to the new one.  ``db.atomic(...)`` re-runs
+        the engine-level conflict; the compare-and-swap failure is yours to handle.
+        """
+        ns = self.resolve_tenant(tenant)
+        mid = int(memory_id)
+        expected = None if expected_version is None else int(expected_version)
+
+        def _work() -> Memory:
+            with self.transaction():
+                current = _atomic.version_of(
+                    self, "memories", "memory_id", mid, tenant_id=ns.tenant_id
+                )
+                if current is None:
+                    raise NotFoundError(f"memory {mid} not found in tenant {ns.tenant_id}")
+                if expected is not None and current != expected:
+                    raise _atomic.version_conflict(
+                        f"memory {mid}",
+                        expected_version=expected,
+                        current_version=current,
+                        action="update",
+                    )
+                return self.supersede(mid, content, tenant=ns, **supersede_kwargs)
+
+        return self._atomic(_work)
+
+    def relate(
+        self,
+        src: "int | str | Entity",
+        dst: "int | str | Entity",
+        *,
+        if_current: bool = False,
+        **kwargs: Any,
+    ) -> Edge:
+        """:meth:`~anatid.verbs.MemoryVerbs.relate`, with an optional guard on the endpoints.
+
+        ``if_current=True`` refuses to write the edge unless both endpoints have a current,
+        live row in this tenant, and raises a non-retryable
+        :class:`~anatid.errors.ConflictError` naming the first one that does not.  Without it
+        this is the verb unchanged, which takes an ``int`` endpoint verbatim and never checks
+        that the entity exists: relating to an id that was purged writes an edge into a graph
+        no traversal can explain.
+
+        The check runs in the transaction that writes the edge, so it sees that transaction's
+        own writes (an entity ``create_missing`` just minted counts as current) and one
+        consistent snapshot.  It is snapshot isolation, not serializability: an endpoint closed
+        by a transaction that commits after this one's snapshot opened is not seen, because
+        reading a row does not conflict with writing it in DuckDB's MVCC.  What the guard
+        removes is the serialized case, which is the one that happens: a caller acting on a
+        stale read, or a retry after a purge.
+        """
+        if not if_current:
+            return MemoryVerbs.relate(self, src, dst, **kwargs)
+        ns = self.resolve_tenant(kwargs.pop("tenant", None))
+        at = to_utc_naive(kwargs.pop("now", None)) or utcnow()
+        create_missing = kwargs.get("create_missing", True)
+        writer = kwargs.get("writer")
+
+        def _work() -> Edge:
+            with self.transaction():
+                s = self.entity_id(src, tenant=ns, create=create_missing, now=at, writer=writer)
+                d = self.entity_id(dst, tenant=ns, create=create_missing, now=at, writer=writer)
+                found = _atomic.current_ids(
+                    self, "entities", "entity_id", (s, d), tenant_id=ns.tenant_id
+                )
+                gone = _atomic.missing_or_closed(found, (s, d))
+                if gone:
+                    raise ConflictError(
+                        f"entity {gone[0]} has no current row in tenant {ns.tenant_id}, so "
+                        f"relate(if_current=True) will not attach an edge to it. Re-read the "
+                        f"entity: it was purged, or its row was closed.",
+                        resource=f"entity {gone[0]}",
+                        retryable=False,
+                    )
+                return MemoryVerbs.relate(self, s, d, tenant=ns, now=at, **kwargs)
+
+        return self._atomic(_work)
+
 
 def connect(path: str | os.PathLike = ":memory:", **kwargs) -> Anatid:
     """Shorthand for :meth:`Anatid.open`."""
@@ -1102,6 +1807,89 @@ def connect(path: str | os.PathLike = ":memory:", **kwargs) -> Anatid:
 
 
 # --------------------------------------------------------------------------- pool
+
+#: Mode a pool sets on a tenant file it creates.  Owner read/write, nothing for group or other.
+POOL_FILE_MODE = 0o600
+
+#: Mode a pool sets on a directory it creates.  The directory is the real protection for the
+#: files DuckDB writes on its own schedule (the write-ahead log appears at the first write, and
+#: nothing gives anatid a hook between its creation and its first byte).
+POOL_DIR_MODE = 0o700
+
+#: What a pool does when code outside :mod:`anatid` reads :attr:`Anatid.connection` on one of
+#: its handles.  ``"warn"`` logs once per handle and records an audit event; ``"deny"`` raises
+#: :class:`~anatid.errors.TenantIsolationError` and points at
+#: :meth:`Anatid.unsafe_connection`; ``"allow"`` is the unguarded 0.1 behaviour.
+RAW_ACCESS_MODES = ("allow", "warn", "deny")
+
+#: Characters that must never reach a path component the pool builds.  ``os.sep`` and
+#: ``os.altsep`` are added at run time so this is right on every platform.
+_PATH_SEPARATORS = {"/", "\\", "\x00", os.sep, os.altsep or "/"}
+
+
+@dataclass(frozen=True, slots=True)
+class PoolEvent:
+    """One thing a :class:`DatabasePool` did to a tenant's file.
+
+    ``action`` is one of ``open``, ``close``, ``evict``, ``delete``, ``backup``, ``attach``,
+    ``unsafe_connection``, ``raw_access``, ``raw_access_denied``, ``rejected``.  Events are
+    kept in a bounded deque on the pool and handed to the ``audit=`` callback as they happen,
+    so the record can go wherever the deployment keeps its audit log.
+    """
+
+    action: str
+    tenant_id: int | None
+    at: _dt.datetime
+    path: str | None = None
+    detail: str | None = None
+
+    def as_dict(self) -> dict:
+        return {
+            "action": self.action,
+            "tenant_id": self.tenant_id,
+            "at": self.at.isoformat(),
+            "path": self.path,
+            "detail": self.detail,
+        }
+
+    def __str__(self) -> str:
+        bits = [self.action, f"tenant={self.tenant_id}"]
+        if self.path:
+            bits.append(self.path)
+        if self.detail:
+            bits.append(f"({self.detail})")
+        return " ".join(bits)
+
+
+def _reject_component(text: str, *, what: str, tenant_id: int) -> str:
+    """Return ``text`` when it is a single, harmless path component, or refuse it.
+
+    A tenant label is caller data, and the pool turns caller data into a filesystem path.  A
+    label of ``"../secrets"`` in a ``{label}`` template would name a file outside the pool's
+    directory, which is the whole tenant boundary gone.  This refuses rather than sanitises:
+    rewriting ``"../x"`` into ``"x"`` would silently map two different tenants onto one file,
+    which is the same leak by another route.
+    """
+    bad = None
+    if not text:
+        bad = "it is empty"
+    elif text in (".", ".."):
+        bad = "it is a directory reference"
+    elif any(sep in text for sep in _PATH_SEPARATORS):
+        bad = "it contains a path separator"
+    elif text.startswith("~"):
+        bad = "it starts with ~, which expands to a home directory"
+    elif len(text) > 128:
+        bad = "it is longer than 128 characters"
+    if bad is None:
+        return text
+    raise TenantIsolationError(
+        f"tenant {tenant_id}'s {what} {text!r} cannot be part of a file name: {bad}. "
+        f"A pool builds one file per tenant inside its own directory; a name that could "
+        f"escape it would not be a tenant boundary. Use opaque=True, or a template that "
+        f"only interpolates {{tenant}}."
+    )
+
 
 class DatabasePool:
     """A directory of per-tenant anatid files, opened lazily and closed LRU.
@@ -1114,12 +1902,48 @@ class DatabasePool:
     ::
 
         pool = DatabasePool("/var/lib/anatid/tenant_{tenant}.duckdb", embedding_dim=1536)
-        db = pool.get(42)                       # opens (and creates) tenant 42's file
-        db.remember("...", entities=["Ada"])    # tenant 42, enforced
+        db = pool.get(42)  # opens (and creates) tenant 42's file
+        db.remember("...", entities=["Ada"])  # tenant 42, enforced
 
-    ``path_template`` may use ``{tenant}`` and ``{label}``.  Handles it hands out carry
+    ``path_template`` may use ``{tenant}`` (the integer tenant id) and ``{label}`` (the
+    namespace's name).  Handles it hands out carry
     :attr:`~anatid.types.Isolation.FILE_PER_TENANT`, so any verb called with a different tenant
     raises :class:`~anatid.errors.TenantIsolationError`.
+
+    Turning a tenant into a path
+    ----------------------------
+    A path built from caller data is an attack surface, so the pool never simply formats one in.
+    Every component it interpolates is checked (:func:`_reject_component`) and the finished path
+    must resolve inside the pool's :attr:`root`, which is the fixed prefix of the template.  A
+    label of ``"../../etc/passwd"`` is refused, not sanitised.  With ``opaque=True`` no caller
+    data reaches the path at all: both placeholders become a BLAKE2b digest of the tenant id
+    (keyed with ``secret=`` when one is given), so the directory listing carries no customer
+    names.  The digest is derived from the tenant id alone, so one tenant is one file however
+    it is addressed, and :meth:`registry` maps the digests back.
+
+    Permissions
+    -----------
+    A directory the pool creates is ``0o700`` and a file it creates is ``0o600``
+    (``dir_mode`` / ``file_mode``, ``None`` to leave both alone).  DuckDB creates the file
+    itself, so the pool chmods it immediately afterwards; the directory mode is what actually
+    protects the write-ahead log, which DuckDB creates on its own schedule.
+
+    Raw cursors
+    -----------
+    ``raw_access`` decides what happens when code outside anatid reads
+    :attr:`Anatid.connection` on a pooled handle, since a cursor bypasses every predicate
+    anatid compiles in.  The default warns once per handle and records it;
+    ``raw_access="deny"`` refuses outright and is what a deployment should run, because then
+    :meth:`Anatid.unsafe_connection` (or :meth:`unsafe_connection` here) is the ONLY way to get
+    a cursor out of a pooled file, and it says what it is and is audited.  The default is the
+    softer one only so that code written against 0.1 keeps working on upgrade.
+
+    Audit
+    -----
+    Opens, evictions, closes, deletions, backups, attachments, refused paths and raw-cursor
+    access are recorded as :class:`PoolEvent`s: kept in :meth:`events` (bounded by
+    ``audit_size``) and passed to the ``audit=`` callback as they happen.  The callback runs on
+    the calling thread and may hold the pool's lock, so it must not call back into the pool.
 
     Cross-tenant reads go through :meth:`attach_read_only`, which attaches another tenant's file
     READ ONLY under an alias -- explicit, auditable, and unable to write.
@@ -1132,34 +1956,181 @@ class DatabasePool:
         self,
         path_template: str | os.PathLike,
         *,
+        root: str | os.PathLike | None = None,
+        opaque: bool = False,
+        secret: bytes | None = None,
         max_open: int = 16,
         create_parents: bool = True,
+        file_mode: int | None = POOL_FILE_MODE,
+        dir_mode: int | None = POOL_DIR_MODE,
+        raw_access: str = "warn",
+        audit: "Callable[[PoolEvent], Any] | None" = None,
+        audit_size: int = 256,
         **open_kwargs: Any,
     ) -> None:
         self.path_template = str(path_template)
         if "{tenant}" not in self.path_template and "{label}" not in self.path_template:
             raise ValueError(
-                "path_template must contain {tenant} (or {label}) so tenants get separate files")
+                "path_template must contain {tenant} (or {label}) so tenants get separate files"
+            )
         self.max_open = int(max_open)
         if self.max_open < 1:
             raise ValueError("max_open must be >= 1")
+        if raw_access not in RAW_ACCESS_MODES:
+            raise ValueError(f"raw_access must be one of {RAW_ACCESS_MODES}, got {raw_access!r}")
         self.create_parents = create_parents
+        self.opaque = bool(opaque)
+        self.file_mode = file_mode
+        self.dir_mode = dir_mode
+        self.raw_access = raw_access
         self.open_kwargs = open_kwargs
+        self.root = Path(root).expanduser() if root is not None else self._template_root()
+        self._secret = bytes(secret) if secret else b""
         self._open: "OrderedDict[int, Anatid]" = OrderedDict()
+        self._paths: dict[int, str] = {}
+        self._audit_hook = audit
+        self._events: "deque[PoolEvent]" = deque(maxlen=max(1, int(audit_size)))
         self._lock = threading.RLock()
         self._closed = False
 
     # -------------------------------------------------------------- paths
 
+    def _template_root(self) -> Path:
+        """The fixed directory prefix of the template: everything before the first ``{``.
+
+        Every path this pool builds has to resolve inside it.  For
+        ``/var/lib/anatid/t_{tenant}.duckdb`` that is ``/var/lib/anatid``; for
+        ``/var/lib/anatid/{label}/db.anatid`` it is ``/var/lib/anatid`` as well.
+        """
+        head = self.path_template.split("{", 1)[0]
+        p = Path(head).expanduser()
+        return p if head.endswith(("/", os.sep)) else p.parent
+
+    def _digest(self, tenant_id: int) -> str:
+        """The opaque file name component for a tenant: a keyed BLAKE2b of its id.
+
+        Derived from the id alone, so ``get(7)`` and ``get(Namespace(7, "acme"))`` are one
+        file.  Without ``secret=`` the digest is stable but enumerable (a small integer space
+        is cheap to walk); that is enough to keep customer names out of a directory listing,
+        and ``secret=`` is what makes it unguessable.
+        """
+        h = hashlib.blake2b(digest_size=16, key=self._secret)
+        h.update(f"anatid-tenant:{int(tenant_id)}".encode())
+        return h.hexdigest()
+
     def path_for(self, tenant: int | Namespace) -> Path:
-        """The file this pool would use for ``tenant`` (whether or not it exists yet)."""
+        """The file this pool would use for ``tenant`` (whether or not it exists yet).
+
+        Refuses with :class:`~anatid.errors.TenantIsolationError` when the label cannot be a
+        file name, or when the finished path would land outside :attr:`root`.
+        """
         ns = Namespace.coerce(tenant)
-        return Path(self.path_template.format(tenant=ns.tenant_id, label=ns.name)).expanduser()
+        if self.opaque:
+            token = self._digest(ns.tenant_id)
+            fields = {"tenant": token, "label": token}
+        else:
+            try:
+                label = _reject_component(ns.name, what="label", tenant_id=ns.tenant_id)
+            except TenantIsolationError as exc:
+                self._audit("rejected", ns.tenant_id, None, str(exc).split(":", 1)[-1].strip())
+                raise
+            fields = {"tenant": str(int(ns.tenant_id)), "label": label}
+        try:
+            raw = self.path_template.format(**fields)
+        except (KeyError, IndexError) as exc:
+            raise ValueError(
+                f"path_template {self.path_template!r} uses a field this pool does not "
+                f"provide ({exc}); only {{tenant}} and {{label}} are substituted"
+            ) from exc
+        path = Path(raw).expanduser()
+        root = self.root.expanduser()
+        try:
+            path.resolve().relative_to(root.resolve())
+        except ValueError:
+            self._audit("rejected", ns.tenant_id, str(path), "outside the pool root")
+            raise TenantIsolationError(
+                f"tenant {ns.tenant_id} resolves to {path}, which is outside this pool's "
+                f"directory {root}. A pool keeps every tenant file under one root; a path "
+                f"that leaves it is not a tenant boundary."
+            ) from None
+        self._paths[ns.tenant_id] = str(path)
+        return path
+
+    def registry(self) -> dict[int, str]:
+        """``{tenant_id: path}`` for every tenant this pool has resolved a path for.
+
+        The way back from an opaque file name to the tenant it belongs to, for an operator
+        looking at a directory listing.  It covers the tenants this pool has seen, not every
+        file on disk: the mapping is a pure function of the tenant id (:meth:`path_for`), so
+        anything missing can be recomputed by asking for it.
+        """
+        return dict(self._paths)
 
     def known_tenants(self) -> list[int]:
         """Tenant ids currently held open by the pool, most recently used last."""
         with self._lock:
             return list(self._open)
+
+    # -------------------------------------------------------------- audit
+
+    def _audit(
+        self,
+        action: str,
+        tenant_id: int | None,
+        path: str | None = None,
+        detail: str | None = None,
+    ) -> PoolEvent:
+        event = PoolEvent(action=action, tenant_id=tenant_id, at=utcnow(), path=path, detail=detail)
+        self._events.append(event)
+        log.debug("pool %s", event)
+        hook = self._audit_hook
+        if hook is not None:
+            try:
+                hook(event)
+            except Exception:  # an audit sink must never break the operation it records
+                log.exception("pool audit hook failed for %s", event)
+        return event
+
+    def events(self, *, action: str | None = None, tenant: int | Namespace | None = None) -> list[PoolEvent]:
+        """The recorded :class:`PoolEvent`s, oldest first, optionally filtered."""
+        tid = None if tenant is None else Namespace.coerce(tenant).tenant_id
+        return [
+            e
+            for e in list(self._events)
+            if (action is None or e.action == action) and (tid is None or e.tenant_id == tid)
+        ]
+
+    # -------------------------------------------------------------- permissions
+
+    def _chmod(self, path: Path, mode: int | None) -> bool:
+        if mode is None:
+            return False
+        try:
+            os.chmod(path, mode)
+            return True
+        except OSError as exc:  # a filesystem that has no modes, or a file that just went away
+            log.warning("could not set mode %o on %s: %s", mode, path, exc)
+            return False
+
+    def harden(self, tenant: int | Namespace | None = None) -> list[str]:
+        """Re-apply ``file_mode`` to a tenant's file and write-ahead log (or to every known one).
+
+        The pool does this for a file it creates.  Call it after a restore, or on a schedule,
+        for the write-ahead log: DuckDB creates that at the first write, with the process
+        umask, and there is no hook in between.  A directory the pool created is ``0o700``, so
+        the log is unreachable there whatever its own mode.
+        """
+        targets = (
+            [self.path_for(tenant)]
+            if tenant is not None
+            else [Path(p) for p in self.registry().values()]
+        )
+        done: list[str] = []
+        for path in targets:
+            for candidate in (path, Path(f"{path}.wal")):
+                if candidate.exists() and self._chmod(candidate, self.file_mode):
+                    done.append(str(candidate))
+        return done
 
     # -------------------------------------------------------------- handles
 
@@ -1175,14 +2146,29 @@ class DatabasePool:
                 self._open.move_to_end(ns.tenant_id)
                 return db
             path = self.path_for(ns)
-            if self.create_parents:
+            existed = path.exists()
+            if self.create_parents and not path.parent.exists():
                 path.parent.mkdir(parents=True, exist_ok=True)
+                self._chmod(path.parent, self.dir_mode)
             kwargs = dict(self.open_kwargs)
             kwargs.pop("tenant", None)
             kwargs.pop("isolation", None)
             db = Anatid.open(path, tenant=ns, isolation=Isolation.FILE_PER_TENANT, **kwargs)
+            # The handle is this pool's from here on: it carries the pool for its audit
+            # events and the raw-cursor policy the pool was constructed with.
+            db._pool = self  # noqa: SLF001
+            db._raw_guard = None if self.raw_access == "allow" else self.raw_access  # noqa: SLF001
+            if not existed:
+                # DuckDB creates the file, so the mode is the process umask for the moment
+                # between its creation and this call.  The 0o700 directory above is what makes
+                # that window harmless.
+                self._chmod(path, self.file_mode)
+            for wal in (Path(f"{path}.wal"),):
+                if wal.exists():
+                    self._chmod(wal, self.file_mode)
             self._open[ns.tenant_id] = db
             self._open.move_to_end(ns.tenant_id)
+            self._audit("open", ns.tenant_id, str(path), "created" if not existed else "existing")
             self._evict()
             return db
 
@@ -1190,8 +2176,21 @@ class DatabasePool:
 
     def _evict(self) -> None:
         while len(self._open) > self.max_open:
-            _tid, victim = self._open.popitem(last=False)
+            tid, victim = self._open.popitem(last=False)
+            self._audit("evict", tid, victim.path, f"max_open={self.max_open}")
             victim.close()
+
+    def unsafe_connection(
+        self, tenant: int | Namespace, *, reason: str | None = None
+    ) -> duckdb.DuckDBPyConnection:
+        """The raw DuckDB cursor for one tenant's file, audited.
+
+        The only way this pool hands out a cursor, and the only one that works at all under
+        ``raw_access="deny"``.  Everything :meth:`Anatid.unsafe_connection` says applies: the
+        statements you run on it bypass every tenant and time predicate anatid compiles in, the
+        derived-index journal and the erasure path.
+        """
+        return self.get(tenant).unsafe_connection(reason=reason)
 
     def close(self, tenant: int | Namespace) -> bool:
         """Close one tenant's handle.  Returns True if it was open."""
@@ -1201,16 +2200,18 @@ class DatabasePool:
         if db is None:
             return False
         db.close()
+        self._audit("close", ns.tenant_id, db.path)
         return True
 
     def close_all(self) -> None:
         """Close every open handle.  Idempotent."""
         with self._lock:
             self._closed = True
-            handles = list(self._open.values())
+            handles = list(self._open.items())
             self._open.clear()
-        for db in handles:
+        for tid, db in handles:
             db.close()
+            self._audit("close", tid, db.path)
 
     def __enter__(self) -> "DatabasePool":
         return self
@@ -1223,8 +2224,83 @@ class DatabasePool:
             return len(self._open)
 
     def __repr__(self) -> str:
-        return (f"<DatabasePool template={self.path_template!r} open={len(self)}"
-                f"/{self.max_open}>")
+        return (
+            f"<DatabasePool template={self.path_template!r} open={len(self)}/{self.max_open}"
+            f"{' opaque' if self.opaque else ''}>"
+        )
+
+    # -------------------------------------------------------------- lifecycle
+
+    def delete(self, tenant: int | Namespace, *, missing_ok: bool = True) -> bool:
+        """Close a tenant's handle and remove its file.  Returns True if a file was removed.
+
+        Erasure at the granularity the file-per-tenant model actually gives you: the database,
+        its write-ahead log and any temporary directory beside it are unlinked, so nothing of
+        that tenant is left for another handle to open.  The audit event is written whether or
+        not a file was there.
+
+        This does not consult the tenant: whatever is in the file goes.  For erasing one
+        document while the tenant keeps working, use ``forget(hard=True)``.
+        """
+        ns = Namespace.coerce(tenant)
+        path = self.path_for(ns)
+        self.close(ns)
+        removed = False
+        for extra in (path, Path(f"{path}.wal")):
+            try:
+                extra.unlink()
+            except FileNotFoundError:
+                continue
+            except OSError as exc:
+                raise AnatidError(f"could not delete {extra}: {exc}") from exc
+            removed = removed or extra == path
+        tmp = Path(f"{path}.tmp")
+        if tmp.is_dir():
+            shutil.rmtree(tmp, ignore_errors=True)
+        self._paths.pop(ns.tenant_id, None)
+        self._audit("delete", ns.tenant_id, str(path), "removed" if removed else "no file")
+        if not removed and not missing_ok:
+            raise FileNotFoundError(f"no database file for tenant {ns.tenant_id} at {path}")
+        return removed
+
+    def backup(
+        self, tenant: int | Namespace, path: str | os.PathLike, *, overwrite: bool = False
+    ) -> Path:
+        """Copy one tenant's database to ``path`` and return it.
+
+        The copy is made by DuckDB (``COPY FROM DATABASE``) inside the handle that owns the
+        file, so it is a consistent snapshot of committed data: a transaction another thread
+        has open but has not committed is not in it.  Copying the file with ``cp`` while a
+        writer is running gives no such promise.
+
+        The destination is created with the pool's ``file_mode``.  An existing destination is
+        refused unless ``overwrite=True``, because a backup that silently replaced the previous
+        one is one crash away from having neither.
+        """
+        dest = Path(path).expanduser()
+        if dest.exists():
+            if not overwrite:
+                raise FileExistsError(
+                    f"{dest} exists; pass overwrite=True to replace it (a backup that "
+                    f"overwrites silently can leave you with neither copy)"
+                )
+            dest.unlink()
+        ns = Namespace.coerce(tenant)
+        db = self.get(ns)
+        if self.create_parents:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+        alias = "anatid_backup"
+        literal = str(dest).replace("'", "''")
+        name = db.execute("SELECT current_database()").fetchone()
+        catalog = quote_ident(str(name[0]) if name else "memory")
+        db.execute(f"ATTACH '{literal}' AS {quote_ident(alias)}")
+        try:
+            db.execute(f"COPY FROM DATABASE {catalog} TO {quote_ident(alias)}")
+        finally:
+            db.execute(f"DETACH {quote_ident(alias)}")
+        self._chmod(dest, self.file_mode)
+        self._audit("backup", ns.tenant_id, str(dest), f"from {db.path}")
+        return dest
 
     # -------------------------------------------------------------- cross-tenant
 
@@ -1238,12 +2314,16 @@ class DatabasePool:
         """Attach ``other``'s file READ ONLY inside ``host``'s handle and return the alias.
 
         The only supported cross-tenant read.  It is explicit by design: the resulting alias is
-        visible in ``host.attached``, the attachment cannot write, and anatid's own verbs never
-        look outside ``main``, so a cross-tenant query has to be written by hand::
+        visible in ``host.attached``, the attachment cannot write, anatid's own verbs never look
+        outside ``main``, and the pool records an audit event.  A cross-tenant query has to be
+        written by hand and run through the named administrative cursor::
 
             alias = pool.attach_read_only(1, 2)
-            rows = pool.get(1).connection.execute(
-                f"SELECT content FROM {alias}.memories LIMIT 5").fetchall()
+            rows = (
+                pool.unsafe_connection(1, reason="support ticket 91")
+                .execute(f"SELECT content FROM {alias}.memories LIMIT 5")
+                .fetchall()
+            )
 
         A DuckDB file cannot be attached while the same process holds it open read-write, so the
         pool closes ``other``'s handle first (it reopens on the next :meth:`get`).  If a *different*
@@ -1258,4 +2338,6 @@ class DatabasePool:
         path = self.path_for(other_ns)
         host_db = self.get(host_ns)
         self.close(other_ns)
-        return host_db.attach_read_only(path, name)
+        out = host_db.attach_read_only(path, name)
+        self._audit("attach", host_ns.tenant_id, str(path), f"read-only as {name}")
+        return out

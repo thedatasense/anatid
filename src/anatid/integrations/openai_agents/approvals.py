@@ -65,6 +65,7 @@ from ...errors import NotFoundError
 from ...ids import new_id
 from ...schema import quote_ident
 from ...types import Namespace, utcnow
+from ...visibility import Visibility, current_row_sql
 from ..erasure import register_table_erasure_hooks
 
 log = logging.getLogger("anatid.integrations.openai_agents")
@@ -84,7 +85,9 @@ RUN_STATE_COLUMNS: tuple[tuple[str, str], ...] = (
     ("updated_at", "TIMESTAMP"),
 )
 
-_CURRENT = "valid_to IS NULL AND tx_to IS NULL"
+#: anatid's current-state predicate, from :mod:`anatid.visibility`: the run-state table carries
+#: the system columns, and the rule that says which of its rows are current is written once.
+_CURRENT = current_row_sql()
 
 #: Status of a saved run.  Free-form -- these are the ones anatid itself writes.
 PENDING = "pending_approval"
@@ -138,6 +141,8 @@ class RunStateStore:
         self.db = db
         self.namespace = db.resolve_tenant(tenant)
         self.tenant_id = self.namespace.tenant_id
+        #: The tenant predicate every read here binds, from anatid.visibility.
+        self._vis = Visibility(self.tenant_id)
         self.table_name = table
         self._t = quote_ident(table)
         self.writer = writer
@@ -188,11 +193,12 @@ class RunStateStore:
         agent_name = agent_name or self._agent_name_of(state)
         row_writer = writer if writer is not None else self.writer
 
+        t_sql, t_p = self._vis.tenant()
         with self.db.transaction():
             existing = self.db.execute(
-                f"SELECT created_at FROM {self._t} WHERE tenant_id = ? AND run_id = ? "
+                f"SELECT created_at FROM {self._t} WHERE {t_sql} AND run_id = ? "
                 f"AND {_CURRENT} ORDER BY updated_at DESC LIMIT 1",
-                [self.tenant_id, rid]).fetchone()
+                [*t_p, rid]).fetchone()
             created_at = existing[0] if existing else at
             if existing:
                 self.db.execute(
@@ -269,26 +275,29 @@ class RunStateStore:
 
     def load(self, run_id: str) -> str | None:
         """The current serialised state string for a run, or ``None``."""
+        t_sql, t_p = self._vis.tenant()
         row = self.db.execute(
-            f"SELECT state_json FROM {self._t} WHERE tenant_id = ? AND run_id = ? "
+            f"SELECT state_json FROM {self._t} WHERE {t_sql} AND run_id = ? "
             f"AND {_CURRENT} ORDER BY updated_at DESC LIMIT 1",
-            [self.tenant_id, run_id]).fetchone()
+            [*t_p, run_id]).fetchone()
         return None if row is None else row[0]
 
     def get(self, run_id: str) -> StoredRun | None:
         """Metadata for a run (no state string), or ``None``."""
+        t_sql, t_p = self._vis.tenant()
         row = self.db.execute(
-            f"SELECT {_META_COLUMNS} FROM {self._t} WHERE tenant_id = ? AND run_id = ? "
+            f"SELECT {_META_COLUMNS} FROM {self._t} WHERE {t_sql} AND run_id = ? "
             f"AND {_CURRENT} ORDER BY updated_at DESC LIMIT 1",
-            [self.tenant_id, run_id]).fetchone()
+            [*t_p, run_id]).fetchone()
         return None if row is None else _stored_run(row)
 
     def pending(self, *, status: str = PENDING, session_id: str | None = None,
                 limit: int = 50) -> list[StoredRun]:
         """The approval work queue: saved runs with ``status``, oldest first."""
+        t_sql, t_p = self._vis.tenant()
         sql = (f"SELECT {_META_COLUMNS} FROM {self._t} "
-               f"WHERE tenant_id = ? AND status = ? AND {_CURRENT}")
-        params: list[Any] = [self.tenant_id, status]
+               f"WHERE {t_sql} AND status = ? AND {_CURRENT}")
+        params: list[Any] = [*t_p, status]
         if session_id is not None:
             sql += " AND session_id = ?"
             params.append(session_id)
@@ -298,9 +307,10 @@ class RunStateStore:
 
     def history(self, run_id: str) -> list[StoredRun]:
         """Every version of a run's row, oldest first -- including the closed ones."""
+        t_sql, t_p = self._vis.tenant()
         rows = self.db.execute(
-            f"SELECT {_META_COLUMNS} FROM {self._t} WHERE tenant_id = ? AND run_id = ? "
-            "ORDER BY updated_at, run_state_id", [self.tenant_id, run_id]).fetchall()
+            f"SELECT {_META_COLUMNS} FROM {self._t} WHERE {t_sql} AND run_id = ? "
+            "ORDER BY updated_at, run_state_id", [*t_p, run_id]).fetchall()
         return [_stored_run(row) for row in rows]
 
     async def resume(self, agent: Any, run_id: str, **from_string_kwargs: Any) -> Any:

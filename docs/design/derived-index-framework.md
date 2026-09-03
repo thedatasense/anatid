@@ -1,6 +1,7 @@
 # Derived index framework
 
-Status: accepted, not yet implemented. Targets 0.2.
+Status: implemented in 0.2.0. See "What shipped in 0.2.0" at the end for the parts that
+did not, and why.
 
 ## The problem this replaces
 
@@ -193,6 +194,95 @@ provenance, exports and maintenance.
 2. The framework. Generations, watermarks, transactional deltas, tombstones, validation, atomic
    publication and health reporting. Full-text and CSR move onto it first, vector follows.
 3. Operations. Writer service, idempotency, conflict helpers, quotas, backups and observability.
+
+## What shipped in 0.2.0
+
+### Shipped
+
+The framework itself, in `src/anatid/derived.py` and schema v4. A derived index is a base
+generation recorded in `anatid_index_generations` plus an ordered journal in
+`anatid_index_journal`, numbered from a sequence and keyed `(index_name, tenant_id, doc_id)` with
+the newest operation for a key winning. The journal row is written in the same transaction as the
+canonical row, so a write is in the next read with no rebuild. Index definitions live in
+`anatid_index_registry`, in the file, which is what makes a second handle journal for an
+accelerator whose code it does not hold. Publication is one `UPDATE` of one metadata row inside a
+transaction; a read pins a generation for its duration; a build writes its storage beside the
+live one and validates against the oracle before it is published.
+
+The visibility abstraction, in `src/anatid/visibility.py`. `Visibility.at(tenant, as_of)` renders
+the tenant predicate and both time axes, `visible_at(...)` is the constructor the design named,
+and `Visibility.admits(...)` is the Python mirror for an accelerator that post-filters in Python.
+Every read path in the library goes through it, and `tests/test_visibility.py` scans each module's
+SQL literals for a hand-written predicate as well as checking the behaviour against a pure-Python
+oracle for two tenants over five scopes.
+
+Immutable version rows. `memories`, `edges_about` and `edges_relates` carry a `version` column;
+a correction closes the current version's `tx_to` and inserts the next version rather than
+rewriting `valid_to` in place, so a bitemporal read returns the belief the database actually held.
+
+All three accelerators, on the framework and reachable by default:
+
+- Full text (`anatid.fts`). One file-wide generation, document key `<tenant>:<memory>`. A
+  search reads the base's untouched documents, re-reads the journalled ones from `memories`, and
+  reconstructs one set of corpus statistics over their union rather than merging two BM25 corpora,
+  so a rebuild does not change an answer. `Anatid.open(accelerators=True)`, the default, attaches
+  it; the exact index-free scan answers until a generation is published.
+- CSR (`anatid.csr`). One generation per tenant, two tables (a dense vertex map and an edge
+  list) and a named in-memory structure in the extension, so generations coexist and a pinned read
+  keeps its own. The journal resolves to added and removed entity pairs and the expansion applies
+  them level by level, in SQL or inside the extension. Attached by default; nothing is built until
+  `maintain_indexes()` runs, and until then the 0.1 snapshot or the SQL path answers.
+- Vector (`anatid.vector`). One generation per tenant, HNSW over a frozen copy of the tenant's
+  visible embeddings. Opt in with `Anatid.open(vector_backend="duckdb_vss")`: DuckDB documents
+  HNSW persistence as experimental, and below roughly 15,000 rows per tenant the exact scan is
+  faster anyway. The approximate structure only chooses candidates; the score is always the exact
+  cosine.
+
+Fallback reports why, as a `HealthReason`: `fresh`, `stale_generation`, `unvalidated`,
+`historical_query`, `rebuild_in_progress`, `load_failure`, `damaged_base`, `absent`. Every read
+path returns it (`FtsSearch.reason`, `VectorSearch.reason`, `ExpandPath.reason`), `index_health()`
+reports it per index, and `doctor()` raises `unusable_derived_index` when a published generation
+cannot serve reads.
+
+`damaged_base` is one reason beyond the design's list. "An index may be corrupt without making a
+query wrong" holds for free only when the corruption raises; a base that is present, queryable and
+quietly incomplete does not. Each index therefore checks one cheap invariant on every read: full
+text compares its source table with its document map, the vector arm compares the base's row count
+with what the build recorded and the number of candidates the approximate scan returned with the
+number available. Neither is a full validation, which is what a rebuild runs.
+
+Conflict primitives, as named: `db.atomic(callback, max_attempts=3)`,
+`db.update(id, content, expected_version=n)` and `db.relate(a, b, if_current=True)`, with
+`ConflictError` carrying resource, expected version, current version, retryability and attempt.
+
+Pool hardening: opaque tenant-to-file mapping, path-traversal refusal, 0700 directories and 0600
+files, per-tenant `delete()` and `backup()`, audit events, connection eviction, and
+`unsafe_connection(reason=...)` as the separately named administrative accessor with a per-handle
+`raw_access` policy.
+
+### Deferred
+
+- An owned postings implementation for full text. The design allows for one eventually. 0.2.0
+  reconstructs corpus statistics over base plus journal instead, which gives the property that
+  matters (a rebuild never changes an answer) without a second corpus.
+- A versioned vector index. An `as_of` vector read still takes the exact scan, and reports
+  `historical_query`. Full text does answer a historical read from a generation, because its base
+  holds document identity and content and the time predicate is applied to the canonical rows it
+  joins.
+- Promoting `duckdb_vss` to the default. Recall at k and the immediate-visibility, filtered
+  and corrupted-index criteria are met and tested at 9,500 and 95,000 rows per tenant. The 1M and
+  10M measurements the criterion also names have not been taken, and `ef_search` is calibrated at
+  100,000 rows, so the backend stays opt in.
+- `owned_hnsw`. `attach(backend="owned_hnsw")` raises `NotImplementedError` naming the two
+  backends that work rather than falling back silently.
+- The writer service (`AnatidServer`), idempotency keys, per-tenant queues and quotas, and
+  per-tenant encryption keys. Single writer process with multiple writer threads is still the
+  deployment profile.
+- Cross-process pinning. Pins, the published-generation cache and the erasure counter are
+  process-wide dictionaries. A second process can only open the file read-only, so it cannot
+  publish, but it also cannot pin a generation against the writer process.
+- A background maintenance worker. `maintain_indexes()` is explicitly callable and there is
+  still no background thread.
 
 ## References
 

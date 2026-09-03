@@ -43,6 +43,7 @@ import re
 import sys
 import textwrap
 from collections import deque
+from itertools import pairwise
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
@@ -152,9 +153,7 @@ def run_tool(db: Anatid, name: str, args: dict, state: dict) -> str:
         hits = db.recall(args["query"], seed_entity=seed, k=RECALL_K, on_stale_fts="ignore")
         # Kept so the explanation afterwards can quote the call the model actually made
         # and the rank the answer actually came back at, rather than a fresh read.
-        state.setdefault("recalls", []).append(
-            {"query": args["query"], "seed": seed, "hits": hits}
-        )
+        state.setdefault("recalls", []).append({"query": args["query"], "seed": seed, "hits": hits})
         if not hits:
             return "No memories matched."
         return json.dumps(
@@ -364,12 +363,69 @@ def walked_paths(db: Anatid, hits, seed: str, question: str) -> list[list[str]]:
 
 
 STOPWORDS = {
-    "the", "and", "for", "any", "are", "was", "with", "that", "this", "have", "has",
-    "you", "your", "our", "she", "her", "his", "him", "they", "them", "who", "why",
-    "what", "when", "how", "should", "would", "could", "can", "will", "not", "but",
-    "from", "into", "about", "there", "here", "then", "than", "some", "just", "get",
-    "got", "one", "two", "all", "out", "off", "now", "its", "it's", "i'm", "does",
-    "did", "make", "made", "same", "again", "still", "which", "were", "been", "being",
+    "the",
+    "and",
+    "for",
+    "any",
+    "are",
+    "was",
+    "with",
+    "that",
+    "this",
+    "have",
+    "has",
+    "you",
+    "your",
+    "our",
+    "she",
+    "her",
+    "his",
+    "him",
+    "they",
+    "them",
+    "who",
+    "why",
+    "what",
+    "when",
+    "how",
+    "should",
+    "would",
+    "could",
+    "can",
+    "will",
+    "not",
+    "but",
+    "from",
+    "into",
+    "about",
+    "there",
+    "here",
+    "then",
+    "than",
+    "some",
+    "just",
+    "get",
+    "got",
+    "one",
+    "two",
+    "all",
+    "out",
+    "off",
+    "now",
+    "its",
+    "it's",
+    "i'm",
+    "does",
+    "did",
+    "make",
+    "made",
+    "same",
+    "again",
+    "still",
+    "which",
+    "were",
+    "been",
+    "being",
 }
 
 
@@ -412,7 +468,7 @@ def path_kinds(edges, paths: list[list[str]]) -> set[str]:
     """The words in the rel_kinds the walk crossed, for example {invites, reacts, contains}."""
     kinds: set[str] = set()
     for path in paths:
-        for a, b in zip(path, path[1:]):
+        for a, b in pairwise(path):
             for src, dst, rel_kind in edges:
                 if {src, dst} == {a, b}:
                     kinds |= {w for w in rel_kind.lower().split("_") if len(w) > 2}
@@ -506,7 +562,9 @@ def wrap(text: str, indent: str = "  ") -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--scenario", default=scenarios.DEFAULT, choices=sorted(scenarios.SCENARIOS))
+    parser.add_argument(
+        "--scenario", default=scenarios.DEFAULT, choices=sorted(scenarios.SCENARIOS)
+    )
     parser.add_argument("--auto-approve", action="store_true")
     args = parser.parse_args()
 
@@ -550,8 +608,10 @@ def main() -> None:
 
         corpus = db.stats()["memories"]
         print()
-        print(f"  what word search alone returns from those {corpus} facts, with no seed "
-              f"and no graph:")
+        print(
+            f"  what word search alone returns from those {corpus} facts, with no seed "
+            f"and no graph:"
+        )
         for hit in db.recall(scenario.question, k=5, on_stale_fts="ignore"):
             print(f"    {hit.memory.content}")
 
@@ -568,8 +628,9 @@ def main() -> None:
             call = {
                 "query": scenario.question,
                 "seed": seed,
-                "hits": db.recall(scenario.question, seed_entity=seed, k=RECALL_K,
-                                  on_stale_fts="ignore"),
+                "hits": db.recall(
+                    scenario.question, seed_entity=seed, k=RECALL_K, on_stale_fts="ignore"
+                ),
             }
         hits = call["hits"]
         paths = walked_paths(db, hits, seed, scenario.question)
@@ -581,42 +642,59 @@ def main() -> None:
         if winner is not None:
             shared = sorted(content_words(scenario.question) & content_words(winner.content))
             # Every line below is measured against this run's database, not asserted.
-            wide = db.recall(scenario.question, seed_entity=seed, k=corpus,
-                             on_stale_fts="ignore")
+            wide = db.recall(scenario.question, seed_entity=seed, k=corpus, on_stale_fts="ignore")
             fused_rank, text_rank = rank_in(wide, winner.memory_id)
             call_rank, _ = rank_in(hits, winner.memory_id)
             print(f"    the fact that carried the answer: {winner.content}")
             print(f"    words it shares with the question: {', '.join(shared) or 'none'}")
-            print(f"    the text arm, given the question's own words: "
-                  + ("never returns it" if text_rank is None else f"rank {text_rank}"))
-            print(f"    the graph arm, walking out from {seed}: returns it, "
-                  f"{position} of the {reach} facts the walk reaches")
-            above = sum(1 for h in wide if fused_rank and h.rank < fused_rank
-                        and h.text_rank is not None)
-            print(f"    the two arms fused, with the question as the query: rank "
-                  f"{fused_rank or 'not returned'} of {len(wide)}, with {above} of the rows "
-                  f"above it put there by shared words")
-            print(f"    the model's own call, recall(query={call['query']!r}, "
-                  f"seed_entity={call['seed']!r}):")
-            print(f"      returned {len(hits)} of the {corpus} stored facts, and "
-                  + (f"this one came back at rank {call_rank}"
-                     if call_rank else "did not return this one"))
+            print(
+                "    the text arm, given the question's own words: "
+                + ("never returns it" if text_rank is None else f"rank {text_rank}")
+            )
+            print(
+                f"    the graph arm, walking out from {seed}: returns it, "
+                f"{position} of the {reach} facts the walk reaches"
+            )
+            above = sum(
+                1 for h in wide if fused_rank and h.rank < fused_rank and h.text_rank is not None
+            )
+            print(
+                f"    the two arms fused, with the question as the query: rank "
+                f"{fused_rank or 'not returned'} of {len(wide)}, with {above} of the rows "
+                f"above it put there by shared words"
+            )
+            print(
+                f"    the model's own call, recall(query={call['query']!r}, "
+                f"seed_entity={call['seed']!r}):"
+            )
+            print(
+                f"      returned {len(hits)} of the {corpus} stored facts, and "
+                + (
+                    f"this one came back at rank {call_rank}"
+                    if call_rank
+                    else "did not return this one"
+                )
+            )
         for path in paths:
             print(f"    the path the graph walked: {' -> '.join(path)}")
-            for a, b in zip(path, path[1:]):
+            for a, b in pairwise(path):
                 print(f"      {edge_between(edges, a, b)}")
         print()
         if text_rank is None:
-            wrap("The question as typed is a weak query and a strong seed. Its words pull "
-                 "the text arm toward recipe cards, which is why the fused rank for the raw "
-                 "sentence sits outside the budget. The seed pulls the graph arm toward the "
-                 "guests, and the assistant's own narrower question brings the fact back "
-                 "inside it. No query built from the question's words reaches this row, "
-                 "because they are not in it.")
+            wrap(
+                "The question as typed is a weak query and a strong seed. Its words pull "
+                "the text arm toward recipe cards, which is why the fused rank for the raw "
+                "sentence sits outside the budget. The seed pulls the graph arm toward the "
+                "guests, and the assistant's own narrower question brings the fact back "
+                "inside it. No query built from the question's words reaches this row, "
+                "because they are not in it."
+            )
         else:
-            wrap("Word search does reach this row here, because the question and the fact "
-                 "happen to share a word. The dinner story is the sharper demonstration, "
-                 "because there the two share none.")
+            wrap(
+                "Word search does reach this row here, because the question and the fact "
+                "happen to share a word. The dinner story is the sharper demonstration, "
+                "because there the two share none."
+            )
 
         # -----------------------------------------------------------------------------
         # A belief changes. The old one is closed, not deleted.
@@ -632,15 +710,21 @@ def main() -> None:
         print(f"  closed:  {old.content}")
         print(f"  wrote:   {replacement.content}")
         print(f"           stored as memory {replacement.memory_id}")
-        print(f"  the closed row is still there, and reports is_current="
-              f"{db.get(old.memory_id).is_current}")
+        print(
+            f"  the closed row is still there, and reports is_current="
+            f"{db.get(old.memory_id).is_current}"
+        )
 
         state["recalls"] = []
         ask(client, db, scenario.followup_question, history, state)
 
         call2 = best_recall(state["recalls"])
-        hits2 = call2["hits"] if call2 else db.recall(
-            scenario.followup_question, seed_entity=seed, k=RECALL_K, on_stale_fts="ignore"
+        hits2 = (
+            call2["hits"]
+            if call2
+            else db.recall(
+                scenario.followup_question, seed_entity=seed, k=RECALL_K, on_stale_fts="ignore"
+            )
         )
         print()
         print("  the edges the change brought, and the paths the graph walked this time:")
@@ -649,8 +733,10 @@ def main() -> None:
         for path in walked_paths(db, hits2, seed, scenario.followup_question):
             print(f"    {' -> '.join(path)}")
         print()
-        wrap("The old path is still walkable, because the edge that carried it is still "
-             "there. What changed is the fact at the end of it.")
+        wrap(
+            "The old path is still walkable, because the edge that carried it is still "
+            "there. What changed is the fact at the end of it."
+        )
 
         # -----------------------------------------------------------------------------
         # A write the model proposes, gated on a human.
@@ -687,17 +773,21 @@ def main() -> None:
                 mark = "unchanged"
             print(f"    {mark:<13}  {line}")
         print()
-        wrap("The March note is unchanged and the belief it was written under is closed. "
-             "Both are still readable, so the note can be explained rather than second "
-             "guessed. Nothing was overwritten.")
+        wrap(
+            "The March note is unchanged and the belief it was written under is closed. "
+            "Both are still readable, so the note can be explained rather than second "
+            "guessed. Nothing was overwritten."
+        )
 
         print()
         wrap(scenario.explain["provenance"])
         trail = db.provenance(replacement.memory_id)
         print()
         print(f"  the versions behind memory {replacement.memory_id}, the belief that stands now:")
-        print(f"    supersession chain: {len(trail.chain)} versions, "
-              f"writers {', '.join(sorted(trail.writers))}")
+        print(
+            f"    supersession chain: {len(trail.chain)} versions, "
+            f"writers {', '.join(sorted(trail.writers))}"
+        )
         for episode in sorted(trail.episodes, key=lambda e: e.created_at):
             print(f"    {episode.writer}, {scenarios.format_day(episode.created_at)}:")
             wrap(episode.content, indent="      ")
@@ -710,13 +800,16 @@ def main() -> None:
             f"{stats['entities']} entities"
         )
         if winner is not None:
-            reached_by = ("It shares no word with the question, so no amount of word search "
-                          "reaches it." if text_rank is None else
-                          "The question happens to share a word with it, so word search "
-                          "reaches it too.")
-            wrap(f"The fact that carried the first answer was one of {corpus} stored when "
-                 f"the question was asked. {reached_by} The walk from {seed} reaches it "
-                 f"along the path printed in step 1.")
+            reached_by = (
+                "It shares no word with the question, so no amount of word search reaches it."
+                if text_rank is None
+                else "The question happens to share a word with it, so word search reaches it too."
+            )
+            wrap(
+                f"The fact that carried the first answer was one of {corpus} stored when "
+                f"the question was asked. {reached_by} The walk from {seed} reaches it "
+                f"along the path printed in step 1."
+            )
         print()
 
 

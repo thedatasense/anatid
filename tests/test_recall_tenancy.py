@@ -32,12 +32,33 @@ import duckdb
 import pytest
 
 from anatid import Anatid
+from anatid import fts
 from anatid import recall as _recall
 from anatid import schema as S
 
 from conftest import DIM, T0
 
 MINUTE = _dt.timedelta(minutes=1)
+
+
+@pytest.fixture
+def db(legacy_db):
+    """0.1.1's file-wide BM25 index, which is what this file is about.
+
+    ``Anatid.open(accelerators=False)``.  The derived full-text index answers the same tenancy
+    questions -- ``tests/test_fts_framework.py`` asks them of it, memory 4242 in two tenants and
+    all -- but it answers the STALENESS questions here differently, because on the framework a
+    write is searchable at once and "stale" stops meaning "rows the arm cannot see".  Pinning
+    the 0.1.1 configuration is what keeps these assertions about the statement they are about.
+    """
+    return legacy_db
+
+
+@pytest.fixture
+def file_db(legacy_file_db):
+    """:func:`db` on disk.  Same reason."""
+    return legacy_file_db
+
 
 #: Enough other-tenant documents that a leaked corpus statistic could not hide in rounding: with
 #: 10k documents containing the query term, a global ``df`` drives ``idf`` to ~0 while the
@@ -598,7 +619,7 @@ def test_a_migrated_v2_file_never_serves_bm25_from_the_memory_id_index(tmp_path)
     path = tmp_path / "v2.anatid"
     write_v2_file(path)
 
-    with Anatid.open(path, tenant=1, embedding_dim=DIM) as db:
+    with Anatid.open(path, tenant=1, embedding_dim=DIM, accelerators=False) as db:
         con = db.connection
         assert db.info().schema_version == S.SCHEMA_VERSION
         assert (
@@ -827,8 +848,11 @@ def test_bm25_arm_matches_a_per_tenant_reference_on_the_spike_dataset(
     file-wide statistics, i.e. schema v2's scoring: it must disagree with anatid on the scores,
     or this test could not tell the fix from the bug.
     """
-    spike_db.rebuild_fts_index()
+    # The 0.1.1 statement over the 0.1.1 tables, by name.  `spike_db` is a default handle, so
+    # `rebuild_fts_index()` would build a generation and leave the legacy tables this test reads
+    # empty; the derived index's answer to the same question is in tests/test_fts_framework.py.
     con = spike_db.connection
+    fts.legacy_rebuild(con)
     rows = con.execute(
         "SELECT memory_id, tenant_id, content, valid_to IS NULL AND tx_to IS NULL "
         "FROM memories ORDER BY memory_id"
@@ -859,7 +883,7 @@ def test_bm25_arm_matches_a_per_tenant_reference_on_the_spike_dataset(
     for qid in qids:
         q = spike_queries[qid]
         tenant, text = int(q["tenant_id"]), str(q["query_text"])
-        got = _recall.bm25_arm(con, tenant_id=tenant, query_text=text, topn=topn)
+        got = fts.legacy_bm25_arm(con, tenant_id=tenant, query_text=text, topn=topn)
         ranked, score_of = oracle.rank(tenant, text)
         verdict = ranking_agrees(got, ranked, score_of, topn=topn)
         if verdict == "ties":
