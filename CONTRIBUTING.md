@@ -69,13 +69,13 @@ anatid is MIT licensed (see `LICENSE`), `Copyright (c) 2026 anatid contributors`
 on two other MIT-licensed projects and may carry ideas or code from either. When it does, the
 original notice travels with the code:
 
-- **DuckDB**, Copyright Stichting DuckDB Foundation, MIT. anatid is built on DuckDB and links
+- DuckDB, Copyright Stichting DuckDB Foundation, MIT. anatid is built on DuckDB and links
   against it. `ext/` and `spike/extension/` are built from DuckDB's extension template and keep the
   template's own `LICENSE` file (`Copyright 2018-2025 Stichting DuckDB Foundation`) in place. Any
   other file in anatid that contains code adapted from the DuckDB source tree, such as SQL adapted
   from DuckDB's `fts` extension, carries DuckDB's copyright line and MIT notice at the top of the
   file, in addition to anatid's own.
-- **Kuzu**, Copyright 2022-2025 Kùzu Inc., MIT. Kuzu was archived on 2025-10-10. Where we port an
+- Kuzu, Copyright 2022-2025 Kùzu Inc., MIT. Kuzu was archived on 2025-10-10. Where we port an
   idea whose expression comes from Kuzu's source (a query formulation, a data-layout trick, a test
   corpus), the file carries `Copyright 2022-2025 Kùzu Inc.` and Kuzu's MIT notice alongside ours.
   The same applies to code taken from LadybugDB, Kuzu's maintained MIT fork.

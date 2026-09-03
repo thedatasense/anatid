@@ -52,6 +52,10 @@ __all__ = [
     "FtsStatus",
     "EdgeType",
     "SchemaInfo",
+    "DoctorFinding",
+    "DoctorReport",
+    "Severity",
+    "DOCTOR_SAMPLE_LIMIT",
     "ABOUT",
     "RELATES_TO",
     "SUPERSEDES",
@@ -494,16 +498,19 @@ class ForgetReceipt:
 
     A *hard* purge leaves no row **in the memory graph** referencing the memory -- not in
     ``memories``, not in any edge table, not the embedding (it is a column of the purged row),
-    not the episode when nothing else cites it, and not in ``anatid_audit`` (neither as
-    ``memory_id`` nor as the ``related_memory_id`` of some other memory's supersede).  That is
-    the point of erasure, so the receipt is returned to the caller to log outside the database if
-    they need a record.
+    not the episode when no other memory cites it (entities and edges that carried its id as a
+    provenance stamp keep existing with the stamp cleared), not the BM25 watermark in
+    ``anatid_meta``, and not in ``anatid_audit`` (neither as ``memory_id`` nor as the
+    ``related_memory_id`` of some other memory's supersede).  That is the point of erasure, so
+    the receipt is returned to the caller to log outside the database if they need a record.
 
-    It does **not** reach tables anatid does not own.  Anything else you write into the file --
-    most importantly a conversation transcript, which quotes memory content and ids verbatim --
-    is covered only if you register it: see :meth:`anatid.Anatid.register_erasure_hook`.
-    ``anatid.integrations.openai_agents.AnatidSession`` registers one for its ``agent_messages``
-    table, and the rows those hooks removed are counted in :attr:`extra_rows_deleted`.
+    Beyond the memory graph it reaches the tables anatid's bundled integrations create -- the
+    Agents SDK transcript, session, usage and run-state tables, which quote memory content and
+    ids verbatim -- by name from the catalog, on every handle
+    (:data:`anatid.erasure.BUNDLED_INTEGRATION_TABLES`).  Anything else you write into the file
+    is covered only if you register it: see :meth:`anatid.Anatid.register_erasure_hook`.  Rows
+    removed from integration tables, by hook or by the bundled-table pass, are counted in
+    :attr:`extra_rows_deleted`.
     """
 
     memory_id: int
@@ -516,6 +523,10 @@ class ForgetReceipt:
     episodes_deleted: int = 0
     audit_rows_deleted: int = 0
     audit_rows_written: int = 0
+    #: Rows removed from the BM25 index tables (schema v3).  ``anatid_fts_documents`` holds the
+    #: memory's ``content`` **verbatim**, so a purge that skipped it would leave the erased text
+    #: in the file; :func:`anatid.schema.fts_purge` is part of the purge transaction.
+    fts_rows_deleted: int = 0
     #: Rows removed by :meth:`anatid.Anatid.register_erasure_hook` hooks (transcripts, etc).
     extra_rows_deleted: int = 0
     reason: str | None = None
@@ -528,6 +539,7 @@ class ForgetReceipt:
             + self.supersedes_edges_deleted
             + self.episodes_deleted
             + self.audit_rows_deleted
+            + self.fts_rows_deleted
             + self.extra_rows_deleted
         )
 
@@ -584,3 +596,153 @@ class SchemaInfo:
     fts_indexed_rows: int | None
     contract: str
     extras: dict[str, Any] = field(default_factory=dict)
+
+
+# --------------------------------------------------------------------------- integrity report
+
+class Severity(str, Enum):
+    """How bad a :class:`DoctorFinding` is.
+
+    ``ERROR``
+        The database contradicts something anatid's verbs assume.  Reads can already be wrong:
+        a duplicate ``(tenant_id, memory_id)`` makes ``get()`` return an arbitrary row, a
+        dangling edge makes ``recall_2hop`` skip a hop, a NaN embedding poisons every cosine
+        comparison against it.
+    ``WARNING``
+        A fault that costs correctness of *ranking* or freshness, not of content: a stale BM25
+        index, a missing performance index, per-tenant fts statistics that have drifted.
+    """
+
+    ERROR = "error"
+    WARNING = "warning"
+
+
+@dataclass(frozen=True, slots=True)
+class DoctorFinding:
+    """One fault :meth:`anatid.Anatid.doctor` found.
+
+    ``check``
+        Stable machine-readable name (``"duplicate_memory_ids"``, ``"dangling_edges"``, ...).
+        Never localised, never reworded: it is what a caller matches on.
+    ``count``
+        How many rows are affected.  Always ``>= 1`` -- a check with nothing to report produces
+        no finding at all.
+    ``samples``
+        Up to :data:`DOCTOR_SAMPLE_LIMIT` example rows, each a tuple, for the operator to chase.
+        Ids only; ``doctor()`` never copies memory *content* into its report.
+    ``detail``
+        One sentence naming the fault and its consequence.  For humans.
+    """
+
+    check: str
+    severity: Severity
+    count: int
+    detail: str
+    table: str | None = None
+    samples: tuple[tuple[Any, ...], ...] = ()
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "severity", Severity(self.severity))
+
+    @property
+    def is_error(self) -> bool:
+        return self.severity is Severity.ERROR
+
+    def as_dict(self) -> dict[str, Any]:
+        """JSON-ready mapping (the MCP/agent surface serialises this)."""
+        return {
+            "check": self.check,
+            "severity": self.severity.value,
+            "count": self.count,
+            "detail": self.detail,
+            "table": self.table,
+            "samples": [list(s) for s in self.samples],
+        }
+
+
+#: How many example rows :class:`DoctorFinding` carries per check.
+DOCTOR_SAMPLE_LIMIT = 10
+
+
+@dataclass(frozen=True, slots=True)
+class DoctorReport:
+    """The structured result of :meth:`anatid.Anatid.doctor` -- a health check, not a repair.
+
+    ``doctor()`` reads; it never writes.  Nothing here is a promise that the database *was*
+    consistent at any single instant either: the checks are separate statements, so a concurrent
+    writer can land between two of them.  Wrap the call in ``with db.transaction():`` for one
+    snapshot.
+
+    ``ok`` is True exactly when no finding has ``severity == ERROR``; warnings do not clear it
+    on their own -- read :attr:`clean` for "nothing at all to report".
+    """
+
+    checked_at: _dt.datetime
+    schema_version: int | None
+    expected_schema_version: int
+    tenant_id: int | None
+    all_tenants: bool = False
+    findings: tuple[DoctorFinding, ...] = ()
+    #: Row counts per table, for the tenants the report covers.
+    counts: dict[str, int] = field(default_factory=dict)
+    #: Checks that ran and found nothing.  Present so a caller can tell "clean" from "skipped".
+    checks_run: tuple[str, ...] = ()
+    #: Checks that could not run, and why (e.g. no BM25 index built yet).
+    checks_skipped: dict[str, str] = field(default_factory=dict)
+    duration_ms: float | None = None
+
+    @property
+    def errors(self) -> tuple[DoctorFinding, ...]:
+        return tuple(f for f in self.findings if f.severity is Severity.ERROR)
+
+    @property
+    def warnings(self) -> tuple[DoctorFinding, ...]:
+        return tuple(f for f in self.findings if f.severity is Severity.WARNING)
+
+    @property
+    def ok(self) -> bool:
+        """True when nothing of ``severity == ERROR`` was found."""
+        return not self.errors
+
+    @property
+    def clean(self) -> bool:
+        """True when there is no finding at all, not even a warning."""
+        return not self.findings
+
+    def find(self, check: str) -> DoctorFinding | None:
+        """The finding for ``check``, or None when that check passed (or did not run)."""
+        for f in self.findings:
+            if f.check == check:
+                return f
+        return None
+
+    def __bool__(self) -> bool:      # `if db.doctor():` reads as "is it healthy"
+        return self.ok
+
+    def as_dict(self) -> dict[str, Any]:
+        """JSON-ready mapping.  This is the machine-readable form; ``str()`` is the human one."""
+        return {
+            "ok": self.ok,
+            "clean": self.clean,
+            "checked_at": self.checked_at.isoformat(),
+            "schema_version": self.schema_version,
+            "expected_schema_version": self.expected_schema_version,
+            "tenant_id": self.tenant_id,
+            "all_tenants": self.all_tenants,
+            "counts": dict(self.counts),
+            "checks_run": list(self.checks_run),
+            "checks_skipped": dict(self.checks_skipped),
+            "duration_ms": self.duration_ms,
+            "findings": [f.as_dict() for f in self.findings],
+        }
+
+    def __str__(self) -> str:
+        scope = "all tenants" if self.all_tenants else f"tenant {self.tenant_id}"
+        head = (f"doctor({scope}) schema v{self.schema_version}: "
+                f"{'ok' if self.ok else 'FAULTS'} "
+                f"({len(self.errors)} error(s), {len(self.warnings)} warning(s), "
+                f"{len(self.checks_run)} check(s) run)")
+        lines = [head]
+        for f in self.findings:
+            lines.append(f"  [{f.severity.value}] {f.check}: {f.count} -- {f.detail}")
+        return "\n".join(lines)

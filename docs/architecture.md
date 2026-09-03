@@ -266,12 +266,16 @@ consequences follow:
 ### The three arms, and what each one costs
 
 The vector arm is a brute-force `array_cosine_similarity` scan over the tenant's current
-embeddings. DuckDB ships no ANN index, so anatid has none either, and the cost is linear in one
+embeddings. anatid has no ANN index. DuckDB ships a team-maintained `vss` extension with an HNSW
+index, but persisting that index to disk is experimental and its own documentation advises against
+relying on it in production, so anatid does not build on it, and the cost is linear in one
 tenant's row count rather than the file's. Measured at 64 dims on the spike hardware with DuckDB's
 default thread count, all rows in one tenant: 2.0 ms p50 at 10k, 8.6 ms at 100k (an independent run
 of the same measurement got 11.4 ms) and 23.3 ms at 1M. `BRUTE_FORCE_CEILING = 100_000` is
-documented and not enforced. At that ceiling a recall already costs 9-11 ms, so past roughly 1e5
-memories per tenant this arm is the wrong tool, and an owned ANN index is on the roadmap for v1.0.
+enforced: `recall(embedding=...)` raises `BruteForceCeilingError` when the scan would cover more
+rows than that, unless the caller passes `allow_slow=True`. At that ceiling a recall already costs
+9-11 ms, so past roughly 1e5 memories per tenant this arm is the wrong tool, and an owned ANN
+index is on the roadmap for v1.0.
 
 The BM25 arm uses DuckDB's `fts` extension index, which is not incremental. Rows inserted after
 `PRAGMA create_fts_index` are invisible to BM25 until the index is rebuilt, and rebuilding drops

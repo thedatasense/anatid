@@ -26,7 +26,9 @@ What anatid promises, and what it does not
 * **Transactions** are DuckDB's optimistic MVCC: snapshot isolation, not serializable.  Appends
   never conflict; two updates to the same row abort the second with a retryable
   :class:`~anatid.errors.ConflictError`.
-* **Vector search** is a brute-force cosine scan -- fine to roughly 1e5 memories per tenant.
+* **Vector search** is a brute-force cosine scan -- fine to roughly 1e5 memories per tenant,
+  and :data:`BRUTE_FORCE_CEILING` is enforced: past it ``recall(embedding=...)`` raises
+  :class:`~anatid.errors.BruteForceCeilingError` unless ``allow_slow=True``.
 * **Erasure** (``forget(hard=True)``) really erases: row, edges, embedding and provenance.
 
 The engine choice is settled by measurement, not taste: at 1,000,000 memories / 2.3M edges /
@@ -41,13 +43,19 @@ from .csr import CsrBackend, CsrInfo, discover_extension_path
 from .database import Anatid, DatabasePool, connect
 from .errors import (
     AnatidError,
+    BruteForceCeilingError,
     ConflictError,
+    DuplicateIdError,
     EmbeddingDimensionError,
+    EmbeddingValueError,
     ExtensionUnavailable,
+    IntegrityError,
     NotFoundError,
+    RangeError,
     SchemaVersionError,
     StaleIndexError,
     TenantIsolationError,
+    ValidationError,
 )
 from .ids import new_id
 from .recall import BRUTE_FORCE_CEILING, FTS_STALENESS_POLICY, RRF_K
@@ -63,6 +71,8 @@ from .types import (
     RELATES_TO,
     SUPERSEDES,
     AsOf,
+    DoctorFinding,
+    DoctorReport,
     Edge,
     EdgeType,
     Entity,
@@ -77,12 +87,13 @@ from .types import (
     RecallHit,
     RecallHits,
     SchemaInfo,
+    Severity,
     to_utc_naive,
     utcnow,
 )
 from .verbs import AsOfView, as_of
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "__version__",
@@ -103,6 +114,9 @@ __all__ = [
     "PruneReport",
     "FtsStatus",
     "SchemaInfo",
+    "DoctorReport",
+    "DoctorFinding",
+    "Severity",
     "Namespace",
     "Isolation",
     "AsOf",
@@ -136,6 +150,12 @@ __all__ = [
     "TenantIsolationError",
     "ExtensionUnavailable",
     "NotFoundError",
+    "ValidationError",
+    "RangeError",
+    "DuplicateIdError",
     "EmbeddingDimensionError",
+    "EmbeddingValueError",
+    "IntegrityError",
     "StaleIndexError",
+    "BruteForceCeilingError",
 ]

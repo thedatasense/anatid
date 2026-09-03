@@ -10,20 +10,45 @@ shapes that mattered are preserved:
   the ``memories`` scan.
 * The frontier is *not* deduplicated -- a semi join does not care and each DISTINCT costs a
   HASH_GROUP_BY.
-* BM25 is computed straight off the fts extension's index tables
-  (``fts_main_memories.dict / terms / docs / stats``) with Okapi k1=1.2, b=0.75 and
-  ``idf = ln((N - df + 0.5) / (df + 0.5) + 1)``.  That is the same ranking ``match_bm25``
-  produces and roughly 2x faster, because it skips the extension's per-document correlated
-  lookup.
+* BM25 is computed straight off the inverted index rather than through ``match_bm25``, with
+  Okapi k1=1.2, b=0.75 and ``idf = ln((N - df + 0.5) / (df + 0.5) + 1)``.  That is the same
+  ranking ``match_bm25`` produces and roughly 2x faster, because it skips the extension's
+  per-document correlated lookup.  Only *where the numbers come from* changed in schema v3 --
+  see "Tenant-scoped BM25" below.
 * The arms are fused with Reciprocal Rank Fusion, ``score = sum 1 / (k + rank)``, k = 60,
   1-based ranks, ties broken by ``memory_id ASC``.
 
-Two limits this module states rather than hides
------------------------------------------------
+Three limits this module states rather than hides
+-------------------------------------------------
+**Tenant-scoped BM25 (schema v3).**  DuckDB's fts extension needs a document key that is unique
+over the indexed table, and ``memory_id`` is unique only *within* a tenant: ``remember(memory_id=
+...)`` and per-tenant Parquet imports both mint the same id under two tenants.  Schema v2 keyed
+the index on ``memory_id`` anyway, so a BM25 hit on tenant 2's text returned tenant 1's row --
+one tenant could learn that another's corpus contains a term, and a scoped search returned
+documents that do not match the query -- and every ``df`` / ``avgdl`` behind every score was
+computed over every tenant's text.
+
+Since v3 the index is built over :data:`anatid.schema.FTS_SOURCE_TABLE`, whose document key is
+``'<tenant_id>:<memory_id>'`` (:func:`anatid.schema.fts_doc_id`).  :func:`bm25_arm` prunes the
+candidate documents to one tenant through :data:`~anatid.schema.FTS_DOCS_TABLE` *before* it
+scores, joins ``memories`` on ``(memory_id, tenant_id)``, and reads ``df`` and
+``(num_docs, avgdl)`` from the per-tenant :data:`~anatid.schema.FTS_DICT_TABLE` and
+:data:`~anatid.schema.FTS_STATS_TABLE`.  It never reads ``fts_main_*.dict.df`` or
+``fts_main_*.stats``: those count every tenant's documents, which skews the ranking and is a
+weaker leak of its own.  The property that buys is checkable, and ``tests/test_recall_tenancy.py``
+checks it: another tenant's writes change neither the rows nor the *scores* this tenant gets,
+and a brute-force per-tenant BM25 in numpy agrees with :func:`bm25_arm` on ids, order and
+scores for 500 spike queries over 100k memories / 10 tenants (498 exactly, 2 differing only in
+the order of equal scores) while the same reference with file-wide statistics -- v2's scoring
+-- ranks 492 of them differently.
+
 **Brute-force vector search.**  ``array_cosine_similarity`` over ``FLOAT[N]`` scans every current
-memory of the tenant.  There is no ANN index, and the cost is linear in **the tenant's** row
-count, not the file's.  Measured on the spike hardware at 64 dimensions with DuckDB's default
-thread count, all rows in one tenant:
+memory of the tenant.  anatid builds no ANN index, so the cost is linear in **the tenant's** row
+count, not the file's.  (DuckDB does ship a team-maintained ``vss`` extension with an HNSW index;
+its persistence is still experimental and its own documentation advises against relying on it in
+production, so anatid does not build on it --
+https://duckdb.org/docs/stable/core_extensions/vss.)  Measured on the spike hardware at 64
+dimensions with DuckDB's default thread count, all rows in one tenant:
 
 ===========  ==================
 rows/tenant  ``vector_arm`` p50
@@ -36,15 +61,33 @@ rows/tenant  ``vector_arm`` p50
 :data:`BRUTE_FORCE_CEILING` (1e5) is where anatid stops calling this cheap -- note that you are
 already paying roughly 9-11 ms per recall *at* that ceiling, not the ~1 ms this docstring used to
 claim.  (That 1 ms is real, but it is the spike's small-scale figure, where 100k memories were
-spread over 10 tenants and each scan saw 10k rows.)  Past the ceiling you want either
-file-per-tenant sharding or an ANN index that DuckDB does not yet ship.
+spread over 10 tenants and each scan saw 10k rows.)  Since 0.1.1 the ceiling is **enforced**:
+:func:`hybrid_recall` counts the rows the vector arm would score (:func:`vector_scan_rows`) and
+raises :class:`~anatid.errors.BruteForceCeilingError` past the ceiling unless the caller passes
+``allow_slow=True``.  Past the ceiling you want file-per-tenant sharding
+(:class:`anatid.DatabasePool`), a vector store outside anatid, or the ``vss`` extension with the
+caveat above.
 
 **Non-incremental BM25.**  DuckDB's ``fts`` index is rebuilt wholesale by
 ``PRAGMA create_fts_index``; rows inserted afterwards are invisible to BM25 until it runs again.
 anatid does not paper over this: :func:`fts_status` reports the pending row count, every
 :class:`~anatid.types.RecallHits` carries ``bm25_stale``, and a stale index is logged at WARNING
 on the ``anatid.recall`` logger.  The staleness window is whatever your rebuild policy makes it
--- see :func:`rebuild_fts_index`.
+-- see :func:`rebuild_fts_index`.  A rebuild covers the whole file, but *staleness is reported
+per tenant*: ``fts_status(con, tenant_id=...)`` compares that tenant's ``memories`` rows with
+the corpus the last rebuild recorded for that tenant -- its ``num_docs`` in
+:data:`~anatid.schema.FTS_STATS_TABLE`, the number its scores are computed with, and the ids in
+:data:`~anatid.schema.FTS_DOCS_TABLE` -- so tenant 1 is not told its index is stale because
+tenant 2 wrote something tenant 1 can never see.  ``fts_status(con)`` with no tenant keeps the
+file-wide watermark from ``anatid_meta``, which is what :meth:`anatid.Anatid.fts_status` and
+the MCP ``health`` tool report.
+
+What the scoping costs, measured on the spike's 100k memories / 10 tenants on this machine
+(duckdb 1.5.5, 100 spike queries x3, top-50): the v3 query runs at 6.5 ms p50 single-threaded
+against 6.4 ms for the v2 query over the same rows, 7.5 ms against 6.8 ms with four threads --
+within 10% either way, because the tenant's ``docmap`` slice is pruned before the postings are
+aggregated.  The rebuild materialises three sidecar tables on top of the index: 1.3 s for 100k
+rows here.
 """
 
 from __future__ import annotations
@@ -53,9 +96,17 @@ import datetime as _dt
 import logging
 from typing import Iterable, Sequence
 
+from . import schema as _schema
 from .csr import CsrBackend, _num, frontier_sql
-from .errors import EmbeddingDimensionError, StaleIndexError
-from .schema import MEMORY_COLUMNS, temporal_predicate
+from .errors import BruteForceCeilingError, EmbeddingDimensionError, StaleIndexError
+from .schema import (
+    FTS_DICT_TABLE,
+    FTS_DOCS_TABLE,
+    FTS_INDEX_SCHEMA,
+    FTS_STATS_TABLE,
+    MEMORY_COLUMNS,
+    temporal_predicate,
+)
 from .types import (
     CURRENT,
     AsOf,
@@ -77,6 +128,7 @@ __all__ = [
     "recall_2hop_ids",
     "graph_arm",
     "vector_arm",
+    "vector_scan_rows",
     "bm25_arm",
     "hydrate",
     "about_names",
@@ -92,17 +144,23 @@ RRF_K = 60
 DEFAULT_CANDIDATES = 50          # size of each arm's candidate list (spike R2_TOPN)
 BM25_K1, BM25_B = 1.2, 0.75
 
-#: Above roughly this many current memories in one tenant, the brute-force cosine scan stops
-#: being cheap -- measured 8.6-11.4 ms p50 *at* this number, 23.3 ms at 1M (64 dims, this
-#: machine).  anatid does not enforce it; :func:`vector_arm` logs once past it.
+#: Above this many visible memories in one tenant, the brute-force cosine scan stops being
+#: cheap -- measured 8.6-11.4 ms p50 *at* this number, 23.3 ms at 1M (64 dims, this machine).
+#: :func:`hybrid_recall` (and so :meth:`anatid.Anatid.recall`) enforces it: a vector-arm request
+#: whose scan would cover more rows than this raises
+#: :class:`~anatid.errors.BruteForceCeilingError` unless ``allow_slow=True`` is passed.  The
+#: bare :func:`vector_arm` primitive does not check; it is the scan itself.
 BRUTE_FORCE_CEILING = 100_000
 
 FTS_STALENESS_POLICY = (
-    "DuckDB's fts index is not incremental. anatid records the row count AND the largest "
-    "memory_id at index build time in anatid_meta (fts_indexed_rows / fts_indexed_max_id) and "
-    "compares both with the table on every recall(), so an insert cancelled out by a hard purge "
-    "is still reported stale. Default policy: report, never silently rebuild -- a rebuild is "
-    "O(corpus) and must be the caller's decision. "
+    "DuckDB's fts index is not incremental. anatid compares the row count AND the largest "
+    "memory_id against the index on every recall(), so an insert cancelled out by a hard purge "
+    "is still reported stale. A recall() compares only the querying tenant's rows (memories vs "
+    f"that tenant's num_docs in {FTS_STATS_TABLE} and its ids in {FTS_DOCS_TABLE}), so another "
+    "tenant's writes never report as this tenant's staleness; "
+    "fts_status() with no tenant reports the file-wide watermark recorded in anatid_meta "
+    "(fts_indexed_rows / fts_indexed_max_id). Default policy: report, never silently rebuild -- "
+    "a rebuild is O(corpus) and must be the caller's decision. "
     "Call rebuild_fts_index() after a batch of writes, on a timer, or when pending_rows crosses "
     "your threshold; the staleness window is the interval between those rebuilds."
 )
@@ -195,7 +253,7 @@ def recall_2hop_ids(
 
 
 def _split_with(sql: str) -> tuple[str, str]:
-    """Split ``WITH a AS (...), b AS (...) SELECT ...`` into (``WITH a AS (...), b AS (...)``, ``SELECT ...``).
+    """Split ``WITH a AS (...), b AS (...) SELECT ...`` into its CTE prefix and its ``SELECT`` body.
 
     The generator in :mod:`anatid.csr` is the only producer of these strings, so the split can rely
     on the final top-level ``SELECT`` starting the body.
@@ -234,6 +292,29 @@ def graph_arm(
 
 # --------------------------------------------------------------------------- vector arm
 
+def vector_scan_rows(
+    con,
+    *,
+    tenant_id: int,
+    as_of: AsOf = CURRENT,
+    kinds: Sequence[str] | None = None,
+) -> int:
+    """How many rows :func:`vector_arm` would score for this request.
+
+    The same tenant, temporal and kind predicates as the arm itself, over rows that have an
+    embedding -- that is the number the brute-force scan is linear in, and the number
+    :data:`BRUTE_FORCE_CEILING` is compared against.  A ``count(*)`` with these predicates is a
+    columnar scan of a few narrow columns: well under a millisecond at the ceiling, so the check
+    costs a small fraction of the scan it guards.
+    """
+    w, wp = temporal_predicate("m", as_of)
+    kf, kp = _kind_filter("m", kinds)
+    sql = (f"SELECT count(*) FROM memories m WHERE m.tenant_id = ? AND {w} "
+           f"AND m.embedding IS NOT NULL{kf}")
+    row = con.execute(sql, [int(tenant_id)] + wp + kp).fetchone()
+    return int(row[0]) if row and row[0] is not None else 0
+
+
 def vector_arm(
     con,
     *,
@@ -246,8 +327,9 @@ def vector_arm(
 ) -> list[tuple[int, float]]:
     """Brute-force cosine top-N over the tenant's visible memories.
 
-    No ANN index exists in DuckDB, so this is a full scan of the tenant's ``embedding`` column.
-    See :data:`BRUTE_FORCE_CEILING`.  Ties break on ``memory_id ASC``.
+    anatid builds no ANN index, so this is a full scan of the tenant's ``embedding`` column.
+    (DuckDB's ``vss`` extension can build an HNSW index; persisting one is still experimental --
+    see the module docstring.)  See :data:`BRUTE_FORCE_CEILING`.  Ties break on ``memory_id ASC``.
     """
     if len(embedding) != int(dim):
         raise EmbeddingDimensionError(
@@ -267,11 +349,76 @@ def vector_arm(
 # --------------------------------------------------------------------------- BM25 arm
 
 def fts_index_present(con) -> bool:
-    """True when ``PRAGMA create_fts_index('memories', ...)`` has been run on this database."""
-    row = con.execute(
-        "SELECT count(*) FROM information_schema.tables "
-        "WHERE table_schema = 'fts_main_memories' AND table_name = 'docs'").fetchone()
-    return bool(row and row[0])
+    """True when a BM25 index has been built on this database.
+
+    Delegates to :func:`anatid.schema.fts_objects_present`, which probes the schema
+    ``PRAGMA create_fts_index`` creates for :data:`~anatid.schema.FTS_SOURCE_TABLE`.  A
+    schema-v2 file's ``fts_main_memories`` does **not** count: it is keyed on ``memory_id`` and
+    leaks across tenants, and the 2->3 migration drops it, so a migrated file reports "no index"
+    until :func:`rebuild_fts_index` runs.  Reporting no index is the fail-safe answer; serving
+    BM25 from the old one would not be.
+    """
+    return _schema.fts_objects_present(con)
+
+
+#: BM25 over the schema-v3, per-tenant index.  ``{where}`` is the temporal predicate on ``m`` and
+#: ``{kinds}`` the optional kind filter; the rest is fixed.  Parameters, in order:
+#: ``(query_text, tenant, tenant, tenant, tenant, *temporal, *kinds, topn)``.
+#:
+#: Why each tenant predicate is there -- all four are load-bearing, none is belt-and-braces:
+#:
+#: * ``dt`` restricts the *candidate documents* to the tenant, so a matching document belonging
+#:   to another tenant never reaches ``tf``/``sc`` at all.  This is what makes the row set
+#:   correct;
+#: * ``qt`` takes ``df`` from the per-tenant dictionary, not ``fts_main_*.dict.df``;
+#: * ``st`` takes ``(num_docs, avgdl)`` from the per-tenant stats, not ``fts_main_*.stats``.
+#:   Those two make the *score* depend on this tenant's corpus alone;
+#: * the join to ``memories`` carries ``tenant_id`` because ``memory_id`` is not unique across
+#:   tenants -- the same reason :func:`hydrate` takes a tenant.
+#:
+#: ``fts_main_*.dict`` is still read, but only to map a query term to its ``termid``; the
+#: ``df`` column of that table is never selected.
+_BM25_SQL = f"""
+        WITH q AS (
+            SELECT DISTINCT term FROM (
+                SELECT unnest(string_split_regex(
+                    regexp_replace(lower(?), '(\\.|[^a-z])+', ' ', 'g'), '\\s+')) AS term)
+            WHERE term <> ''
+        ), dt AS (
+            SELECT docid, memory_id, len FROM {FTS_DOCS_TABLE} WHERE tenant_id = ?
+        ), qt AS (
+            SELECT d.termid, td.df
+            FROM {FTS_INDEX_SCHEMA}.dict d
+            JOIN q ON d.term = q.term
+            JOIN {FTS_DICT_TABLE} td ON td.termid = d.termid AND td.tenant_id = ?
+        ), st AS (
+            SELECT num_docs, avgdl FROM {FTS_STATS_TABLE} WHERE tenant_id = ?
+        ), tf AS (
+            SELECT t.docid, t.termid, count(*)::DOUBLE AS tf
+            FROM {FTS_INDEX_SCHEMA}.terms t
+            JOIN qt ON t.termid = qt.termid
+            JOIN dt ON dt.docid = t.docid
+            GROUP BY t.docid, t.termid
+        ), sc AS (
+            SELECT tf.docid,
+                   sum(ln((s.num_docs - qt.df + 0.5) / (qt.df + 0.5) + 1)
+                       * tf.tf * ({BM25_K1} + 1)
+                       / (tf.tf + {BM25_K1} * (1 - {BM25_B} + {BM25_B} * dt.len / s.avgdl))
+                      ) AS score
+            FROM tf
+            JOIN qt ON tf.termid = qt.termid
+            JOIN dt ON dt.docid = tf.docid
+            CROSS JOIN st s
+            GROUP BY tf.docid
+        )
+        SELECT m.memory_id, sc.score
+        FROM sc
+        JOIN dt ON dt.docid = sc.docid
+        JOIN memories m ON m.memory_id = dt.memory_id
+        WHERE m.tenant_id = ? AND {{where}}{{kinds}}
+        ORDER BY sc.score DESC, m.memory_id ASC
+        LIMIT ?
+"""
 
 
 def bm25_arm(
@@ -284,56 +431,56 @@ def bm25_arm(
     kinds: Sequence[str] | None = None,
     available: bool | None = None,
 ) -> list[tuple[int, float]]:
-    """Okapi BM25 top-N straight off the fts extension's index tables.
+    """Okapi BM25 top-N over **this tenant's** documents, straight off the inverted index.
 
     Query text is tokenised the way the index was built (lower-cased, ``(\\.|[^a-z])+`` treated as
-    a separator), so query terms and index terms agree.  Only memories matching at least one term
-    score.  Ties break on ``memory_id ASC``.
+    a separator -- :data:`anatid.schema.FTS_TOKENIZER`), so query terms and index terms agree.
+    Only memories matching at least one term score.  Ties break on ``memory_id ASC``.
+
+    Nothing outside ``tenant_id`` can influence the result: the candidate documents are pruned to
+    the tenant before scoring and the corpus statistics are the tenant's own.  See
+    :data:`_BM25_SQL` for which predicate does what, and the module docstring for what schema v2
+    got wrong.
 
     Returns ``[]`` when no fts index exists.  Rows written since the last index build cannot
     appear here at all -- see :func:`fts_status`.
+
+    One artifact worth stating: the rebuild keeps a single document per ``(tenant_id,
+    memory_id)``, but if ``memories`` holds two *current* rows under one id -- an integrity fault
+    ``Anatid.doctor()`` reports -- the final join matches both and the id is returned twice, so
+    RRF scores it twice and it costs two candidate slots.  Deduplicating here would put a hash
+    aggregate over the whole matching set on every query to compensate for a broken file, so this
+    is left to :func:`~anatid.Anatid.doctor` to find and to the write path to prevent.
     """
     if not (fts_index_present(con) if available is None else available):
         return []
     w, wp = temporal_predicate("m", as_of)
     kf, kp = _kind_filter("m", kinds)
-    sql = f"""
-        WITH q AS (
-            SELECT DISTINCT term FROM (
-                SELECT unnest(string_split_regex(
-                    regexp_replace(lower(?), '(\\.|[^a-z])+', ' ', 'g'), '\\s+')) AS term)
-            WHERE term <> ''
-        ), qt AS (
-            SELECT d.termid, d.df FROM fts_main_memories.dict d JOIN q ON d.term = q.term
-        ), tf AS (
-            SELECT t.docid, t.termid, count(*)::DOUBLE AS tf
-            FROM fts_main_memories.terms t JOIN qt ON t.termid = qt.termid
-            GROUP BY t.docid, t.termid
-        ), sc AS (
-            SELECT tf.docid,
-                   sum(ln((s.num_docs - qt.df + 0.5) / (qt.df + 0.5) + 1)
-                       * tf.tf * ({BM25_K1} + 1)
-                       / (tf.tf + {BM25_K1} * (1 - {BM25_B} + {BM25_B} * d.len / s.avgdl))) AS score
-            FROM tf
-            JOIN qt ON tf.termid = qt.termid
-            JOIN fts_main_memories.docs d ON d.docid = tf.docid
-            CROSS JOIN fts_main_memories.stats s
-            GROUP BY tf.docid
-        )
-        SELECT m.memory_id, sc.score
-        FROM sc
-        JOIN fts_main_memories.docs d ON d.docid = sc.docid
-        JOIN memories m ON m.memory_id = d.name
-        WHERE m.tenant_id = ? AND {w}{kf}
-        ORDER BY sc.score DESC, m.memory_id ASC
-        LIMIT ?
-    """
-    params = [str(query_text), int(tenant_id)] + wp + kp + [int(topn)]
+    sql = _BM25_SQL.format(where=w, kinds=kf)
+    t = int(tenant_id)
+    params = [str(query_text), t, t, t, t] + wp + kp + [int(topn)]
     return [(int(r[0]), float(r[1])) for r in con.execute(sql, params).fetchall()]
 
 
-def fts_status(con, *, deep: bool = False) -> FtsStatus:
+def fts_status(con, *, deep: bool = False, tenant_id: int | None = None) -> FtsStatus:
     """Report how far the BM25 index has fallen behind ``memories``.
+
+    With ``tenant_id`` the report covers **only that tenant's** rows, and comes from the
+    per-tenant tables the last rebuild wrote rather than from the file-wide watermark:
+    ``indexed_rows`` is the tenant's ``num_docs`` in :data:`~anatid.schema.FTS_STATS_TABLE` --
+    the corpus size its BM25 scores are computed with -- and ``indexed_max_id`` the largest
+    ``memory_id`` among its :data:`~anatid.schema.FTS_DOCS_TABLE` rows.  ``num_docs`` rather
+    than a count of those rows on purpose: a hard purge removes the document from the index but
+    not from the statistics, so a purge with no rebuild after it reports ``pending_rows = -1``
+    here exactly as the file-wide report does, because the scores are now computed over a
+    corpus that no longer exists.  That is what :func:`hybrid_recall` asks for, because a rebuild is
+    file-wide but *visibility* is not: since schema v3 no other tenant's writes can change this
+    tenant's BM25 rows or scores, so telling tenant 1 its index is stale because tenant 2 wrote
+    a row would be a false alarm -- and one that leaks the fact that tenant 2 wrote at all.
+    ``indexed_at`` stays the file-wide build time; there is only one.
+
+    Everything below describes the file-wide report (``tenant_id=None``), which is what
+    :meth:`anatid.Anatid.fts_status` returns.
 
     ``indexed_rows`` is the row count recorded by the last :func:`rebuild_fts_index`;
     ``current_rows`` is ``count(*)`` now (metadata-only in DuckDB, so this is cheap enough to run
@@ -362,21 +509,42 @@ def fts_status(con, *, deep: bool = False) -> FtsStatus:
     # metadata-only; adding max(memory_id) to it is a one-column scan measured at +0.04 ms on
     # 100k rows and +0.22 ms on 1M (0.12 -> 0.16 and 0.19 -> 0.41 ms p50 on this machine), inside
     # a fts_status() that costs ~1.5 ms either way because of the information_schema probe.  That
-    # is the price of not lying about staleness.
+    # is the price of not lying about staleness.  The per-tenant variant is the same shape with a
+    # tenant predicate on each scan, so its counts are real scans rather than metadata reads:
+    # measured 2.26 ms p50 against 1.79 ms for the file-wide one on the spike's 100k memories
+    # over 10 tenants.  That +0.5 ms buys a staleness answer that is about the caller's own rows.
+    if tenant_id is None:
+        sql = (
+            "SELECT (SELECT count(*) FROM information_schema.tables "
+            "        WHERE table_schema = ? AND table_name = 'docs'),"
+            "       (SELECT count(*) FROM memories),"
+            "       (SELECT max(memory_id) FROM memories),"
+            "       (SELECT fts_indexed_rows FROM anatid_meta LIMIT 1),"
+            "       (SELECT fts_indexed_max_id FROM anatid_meta LIMIT 1),"
+            "       (SELECT fts_indexed_at FROM anatid_meta LIMIT 1)")
+        params: list = [FTS_INDEX_SCHEMA]
+        deep_sql, deep_params = "SELECT max(tx_from) FROM memories", []
+    else:
+        t = int(tenant_id)
+        sql = (
+            "SELECT (SELECT count(*) FROM information_schema.tables "
+            "        WHERE table_schema = ? AND table_name = 'docs'),"
+            "       (SELECT count(*) FROM memories WHERE tenant_id = ?),"
+            "       (SELECT max(memory_id) FROM memories WHERE tenant_id = ?),"
+            f"       (SELECT max(num_docs) FROM {FTS_STATS_TABLE} WHERE tenant_id = ?),"
+            f"       (SELECT max(memory_id) FROM {FTS_DOCS_TABLE} WHERE tenant_id = ?),"
+            "       (SELECT fts_indexed_at FROM anatid_meta LIMIT 1)")
+        params = [FTS_INDEX_SCHEMA, t, t, t, t]
+        deep_sql = "SELECT max(tx_from) FROM memories WHERE tenant_id = ?"
+        deep_params = [t]
     present, current, current_max, indexed_rows, indexed_max, indexed_at = con.execute(
-        "SELECT (SELECT count(*) FROM information_schema.tables "
-        "        WHERE table_schema = 'fts_main_memories' AND table_name = 'docs'),"
-        "       (SELECT count(*) FROM memories),"
-        "       (SELECT max(memory_id) FROM memories),"
-        "       (SELECT fts_indexed_rows FROM anatid_meta LIMIT 1),"
-        "       (SELECT fts_indexed_max_id FROM anatid_meta LIMIT 1),"
-        "       (SELECT fts_indexed_at FROM anatid_meta LIMIT 1)").fetchone()
+        sql, params).fetchone()
     present = bool(present)
     current = int(current)
     current_max = None if current_max is None else int(current_max)
     indexed_rows = None if indexed_rows is None else int(indexed_rows)
     indexed_max = None if indexed_max is None else int(indexed_max)
-    newest = con.execute("SELECT max(tx_from) FROM memories").fetchone()[0] if deep else None
+    newest = con.execute(deep_sql, deep_params).fetchone()[0] if deep else None
     if not present:
         return FtsStatus(available=False, stale=True, indexed_rows=None, current_rows=current,
                          pending_rows=current, indexed_at=None, newest_row_at=newest,
@@ -392,37 +560,71 @@ def fts_status(con, *, deep: bool = False) -> FtsStatus:
                      indexed_max_id=indexed_max, current_max_id=current_max)
 
 
+def _ensure_fts_extension(con) -> None:
+    """Make the ``fts`` extension available on this connection, without an unnecessary ``INSTALL``.
+
+    ``INSTALL fts`` reads the extension directory, and a hardened connection refuses it: the MCP
+    sql gateway sets ``enable_external_access=false`` (DuckDB's own recommendation for an
+    untrusted caller), which turns every filesystem operation into a ``PermissionException`` --
+    including one for an extension already sitting in memory.  :meth:`anatid.Anatid.open`
+    installs and loads fts before any hardening runs, so probe the catalog first and skip both
+    statements when the extension is already there.
+
+    The probe is ``duckdb_functions()`` rather than ``duckdb_extensions()`` on purpose: the
+    latter reads the extension directory and so raises under exactly the configuration this
+    function exists to survive.  When the extension really is missing the two statements run and
+    their error propagates -- a BM25 index cannot be built without it, and pretending otherwise
+    would leave a caller searching an index that silently does not exist.
+    """
+    row = con.execute("SELECT count(*) FROM duckdb_functions() "
+                      "WHERE function_name = 'create_fts_index'").fetchone()
+    if row and int(row[0]):
+        return
+    con.execute("INSTALL fts")
+    con.execute("LOAD fts")
+
+
 def rebuild_fts_index(con, *, now: _dt.datetime | None = None,
                       terms_index: bool = True) -> FtsStatus:
     """Rebuild the BM25 index over ``memories`` and record the watermark in ``anatid_meta``.
 
-    This is ``PRAGMA create_fts_index(..., overwrite=1)``: it rebuilds the whole inverted index,
-    cost O(corpus).  It is never called implicitly by a read -- an implicit rebuild would turn an
-    unlucky ``recall()`` into a multi-second stall.  Call it after a batch of writes, on a timer,
-    or when :func:`fts_status`'s ``pending_rows`` crosses your threshold.
+    Runs :func:`anatid.schema.fts_rebuild_statements` in order: refill
+    :data:`~anatid.schema.FTS_SOURCE_TABLE` from ``memories`` keyed ``'<tenant>:<memory>'``,
+    ``PRAGMA create_fts_index(..., overwrite=1)`` over it, then re-derive the per-tenant
+    ``docid -> (tenant, memory, len)`` map, ``df`` dictionary and ``(num_docs, avgdl)`` stats
+    from the postings that build produced.  Cost O(corpus).  It runs as **one transaction**,
+    joining the caller's if one is open (:meth:`anatid.Anatid.rebuild_fts_index` opens one), and
+    opening its own on a bare connection: the index and the tables that scope it are only
+    meaningful together, so a rebuild that fails half-way leaves the previous index, its sidecar
+    tables and the ``anatid_meta`` watermark exactly as they were.
+
+    It is never called implicitly by a read: an implicit rebuild would turn an unlucky
+    ``recall()`` into a multi-second stall.  Call it after a batch of writes, on a timer, or when
+    :func:`fts_status`'s ``pending_rows`` crosses your threshold.
 
     The index covers every row in the file, all tenants; per-tenant filtering happens in the
-    query.  For file-per-tenant deployments that is exactly one tenant's corpus.
+    query, off tables this rebuild derives.  For file-per-tenant deployments that is exactly one
+    tenant's corpus.
 
-    ``terms_index`` also rebuilds the ART index on ``fts_main_memories.terms(termid)``, which the
-    spike measured at BM25 p50 8.57 ms with versus 12.51 ms without, for a 0.7 s build at 100k
-    memories.  ``create_fts_index`` drops the whole fts schema, so it has to be recreated here
-    every time.
+    ``terms_index`` also rebuilds the ART index on the postings table, which the spike measured
+    at BM25 p50 8.57 ms with versus 12.51 ms without, for a 0.7 s build at 100k memories.
+    ``create_fts_index`` drops the whole fts schema, so it has to be recreated here every time.
     """
-    from .schema import FTS_INDEX_SQL, FTS_TERMS_INDEX_SQL
     from .types import utcnow
 
     at = now or utcnow()
-    con.execute("INSTALL fts")
-    con.execute("LOAD fts")
-    con.execute(FTS_INDEX_SQL)
-    if terms_index:
-        con.execute(FTS_TERMS_INDEX_SQL)
-    rows, top = con.execute(
-        "SELECT count(*), max(memory_id) FROM memories").fetchone()
-    con.execute(
-        "UPDATE anatid_meta SET fts_indexed_rows = ?, fts_indexed_max_id = ?, fts_indexed_at = ?",
-        [int(rows), None if top is None else int(top), at])
+    _ensure_fts_extension(con)        # INSTALL/LOAD are not transactional: keep them outside
+    # schema's own migration wrapper: joins an open transaction (Anatid.rebuild_fts_index opens
+    # one) instead of issuing a nested BEGIN, which in DuckDB would abort the caller's.
+    with _schema._transaction(con):   # noqa: SLF001 -- shared with ensure_schema on purpose
+        for stmt in _schema.fts_rebuild_statements(terms_index=terms_index):
+            con.execute(stmt)
+        rows, top = con.execute(
+            "SELECT count(*), max(memory_id) FROM memories").fetchone()
+        con.execute(
+            "UPDATE anatid_meta SET fts_indexed_rows = ?, fts_indexed_max_id = ?, "
+            "fts_indexed_at = ?",
+            [int(rows), None if top is None else int(top), at])
     return fts_status(con)
 
 
@@ -472,11 +674,11 @@ def hydrate(
     reach the statement.
 
     ``tenant_id`` is **required**, and is not redundant with the arm queries that produced the
-    ids.  ``memory_id`` is not unique across tenants in a ``SCOPED`` file -- callers may pass
-    ``memory_id=`` to :meth:`~anatid.Anatid.remember`, and a per-tenant Parquet import can carry
-    colliding ids -- so hydrating by id alone could return another tenant's row into a result the
-    arms had correctly filtered.  Every generated query in anatid carries the tenant predicate;
-    this one included.
+    ids: an id identifies a memory only together with its tenant, so hydrating by id alone would
+    return another tenant's row into a result the arms had correctly filtered.  Every generated
+    query in anatid carries the tenant predicate -- this one, both ends of the BM25 join
+    (:data:`_BM25_SQL`), and the fts document key itself, which is ``'<tenant>:<memory>'`` for
+    exactly this reason.
     """
     ids = [int(i) for i in memory_ids]
     if not ids:
@@ -531,6 +733,7 @@ def hybrid_recall(
     with_embedding: bool = False,
     include_about: bool = True,
     on_stale_fts: str = "report",
+    allow_slow: bool = False,
 ) -> RecallHits:
     """Hybrid retrieval: cosine top-N + BM25 top-N + optional k-hop graph expansion, fused by RRF.
 
@@ -539,19 +742,38 @@ def hybrid_recall(
     the result is empty rather than a silent full-table scan.
 
     ``on_stale_fts``: ``"report"`` (default -- set ``bm25_stale`` on the result and log a warning),
-    ``"error"`` (raise :class:`~anatid.errors.StaleIndexError`), or ``"ignore"``.
+    ``"error"`` (raise :class:`~anatid.errors.StaleIndexError`), or ``"ignore"``.  Staleness is
+    judged against ``tenant_id``'s own rows only (:func:`fts_status`), so a busy neighbour in a
+    shared file does not make this tenant's fresh index look stale.
 
-    The brute-force cosine ceiling of roughly 1e5 memories per tenant applies here; see the module
-    docstring.
+    The brute-force cosine ceiling is enforced here: when ``embedding`` is given and the rows the
+    vector arm would scan (:func:`vector_scan_rows`) exceed :data:`BRUTE_FORCE_CEILING`, this
+    raises :class:`~anatid.errors.BruteForceCeilingError` before running any arm, unless
+    ``allow_slow=True``.  The other two arms are unaffected by the tenant's size; leave
+    ``embedding`` out to use them alone.  See the module docstring for the measured costs.
     """
     arms: dict[str, list[tuple[int, float]]] = {}
     notes: list[str] = []
 
     if embedding is not None:
+        if not allow_slow:
+            ceiling = int(BRUTE_FORCE_CEILING)
+            rows_to_scan = vector_scan_rows(con, tenant_id=tenant_id, as_of=as_of, kinds=kinds)
+            if rows_to_scan > ceiling:
+                raise BruteForceCeilingError(
+                    f"the vector arm would brute-force scan {rows_to_scan} embeddings in tenant "
+                    f"{int(tenant_id)}, above BRUTE_FORCE_CEILING={ceiling}; anatid has no ANN "
+                    f"index and refuses to get quietly slower. Pass allow_slow=True to run the "
+                    f"scan anyway, omit embedding= to answer from the text and graph arms, or "
+                    f"shard the tenant into its own file (anatid.DatabasePool).",
+                    tenant_id=int(tenant_id), rows=rows_to_scan, ceiling=ceiling)
         arms["vector"] = vector_arm(con, tenant_id=tenant_id, embedding=embedding, dim=dim,
                                     topn=candidates, as_of=as_of, kinds=kinds)
 
-    status = (fts_status(con) if query else
+    # Staleness is asked for per tenant: a rebuild is file-wide, but since schema v3 another
+    # tenant's rows can change neither this tenant's BM25 hits nor its scores, so counting them
+    # as "pending" would be a false alarm -- and would leak that the other tenant wrote at all.
+    status = (fts_status(con, tenant_id=tenant_id) if query else
               FtsStatus(available=False, stale=False, indexed_rows=None, current_rows=0,
                         pending_rows=0, indexed_at=None, policy=FTS_STALENESS_POLICY))
     if query:
@@ -568,16 +790,21 @@ def hybrid_recall(
                                   kinds=kinds)
 
     if query and status.stale:
-        if status.pending_rows:
-            what = (f"{status.pending_rows} memory row(s) written since the last rebuild are "
-                    f"invisible to full-text search")
+        if status.pending_rows > 0:
+            what = (f"{status.pending_rows} of this tenant's memory row(s) written since the "
+                    f"last rebuild are invisible to full-text search")
+        elif status.pending_rows < 0:
+            what = (f"this tenant's full-text statistics still count {-status.pending_rows} "
+                    f"document(s) that have since been removed from memories, so the corpus "
+                    f"statistics behind the scores are off")
         else:
             # count(*) matched but the id watermark moved: an insert cancelled out by a purge.
             what = (f"the row count is unchanged but memories have been written and removed since "
                     f"the last rebuild (max memory_id {status.indexed_max_id} -> "
                     f"{status.current_max_id}), so the newest rows are invisible to full-text "
                     f"search")
-        msg = f"BM25 index is stale: {what} (indexed_at={status.indexed_at}). {FTS_STALENESS_POLICY}"
+        msg = (f"BM25 index is stale: {what} (indexed_at={status.indexed_at}). "
+               f"{FTS_STALENESS_POLICY}")
         if on_stale_fts == "error":
             raise StaleIndexError(msg)
         if on_stale_fts != "ignore":

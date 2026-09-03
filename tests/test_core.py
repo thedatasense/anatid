@@ -19,6 +19,7 @@ import anatid
 from anatid import (
     Anatid,
     AsOf,
+    BruteForceCeilingError,
     ConflictError,
     DatabasePool,
     EmbeddingDimensionError,
@@ -28,7 +29,10 @@ from anatid import (
     SchemaVersionError,
     TenantIsolationError,
 )
+from anatid import database as database_mod
+from anatid import recall as recall_mod
 from anatid import schema as schema_mod
+from anatid import verbs as verbs_mod
 from anatid.csr import CsrBackend, frontier_sql
 
 from conftest import DIM, SPIKE_EXTENSION, SPIKE_SMALL, T0, vec
@@ -44,13 +48,29 @@ def test_schema_creates_every_table_and_the_catalog(db):
     assert missing == []
 
     info = db.info()
-    assert info.schema_version == schema_mod.SCHEMA_VERSION == 2
+    assert info.schema_version == schema_mod.SCHEMA_VERSION == 3
     assert info.embedding_dim == DIM
     assert info.duckdb_version == duckdb.__version__
+    assert info.anatid_version == anatid.__version__
     # The contract is stored in the file, not only in the docs.
     for phrase in ("AS OF SYSTEM TIME", "file-per-tenant", "NOT incremental",
                    "NOT serializable", "brute-force"):
         assert phrase in info.contract, phrase
+
+    # Schema v3: the four BM25 sidecar tables are part of the catalog set, the entity key is a
+    # generated column, and the UNIQUE index that makes entity creation race-safe is present
+    # on every file (REQUIRED_INDEXES, not selectable away through SchemaConfig.indexes).
+    present = schema_mod.table_names(con)
+    assert set(schema_mod.FTS_TABLES) <= set(schema_mod.CATALOG_TABLES) <= set(schema_mod.ALL_TABLES)
+    assert set(schema_mod.ALL_TABLES) <= present
+    assert set(schema_mod.FTS_TABLES) == {
+        "anatid_fts_documents", "anatid_fts_docmap", "anatid_fts_dict", "anatid_fts_stats"}
+    entity_cols = {r[1] for r in con.execute("PRAGMA table_info(entities)").fetchall()}
+    assert "entity_key" in entity_cols
+    assert "entity_key" not in schema_mod.insertable_columns(con, "entities")
+    indexes = {r[0] for r in con.execute("SELECT index_name FROM duckdb_indexes()").fetchall()}
+    assert set(schema_mod.REQUIRED_INDEXES) <= indexes
+    assert "ux_entities_tenant_key" in indexes
 
 
 def test_system_columns_are_on_by_default_on_every_node_and_edge_table(db):
@@ -100,10 +120,11 @@ def test_migration_hook_is_registered_and_used(tmp_path, monkeypatch):
 
     ran = []
     monkeypatch.setattr(schema_mod, "MIGRATIONS",
-                        {1: lambda con: ran.append(1), 2: lambda con: ran.append(2)})
+                        {1: lambda con: ran.append(1), 2: lambda con: ran.append(2),
+                         3: lambda con: ran.append(3)})
     with Anatid.open(path, tenant=0, embedding_dim=DIM) as db:
-        assert db.info().schema_version == schema_mod.SCHEMA_VERSION == 2
-    assert ran == [1, 2]
+        assert db.info().schema_version == schema_mod.SCHEMA_VERSION == 3
+    assert ran == [1, 2, 3]
 
 
 def test_the_real_v1_to_v2_migration_adds_the_columns_and_backfills(tmp_path):
@@ -112,24 +133,54 @@ def test_the_real_v1_to_v2_migration_adds_the_columns_and_backfills(tmp_path):
     Both columns exist because a claim in the docs was false without them (BM25 staleness that
     count(*) alone cannot see; a purged id surviving in another row's audit `reason` text), so
     the migration has to move the old free text into the new column, not just add it.
+
+    Since schema v3 the ladder continues 2->3 on the same open, so the file is rewound all the
+    way to v1 -- no fts sidecar tables, no entity_key, no unique entity index -- and the whole
+    ladder is asserted, not only its first rung.
     """
     path = tmp_path / "v1.anatid"
     with Anatid.open(path, tenant=0, embedding_dim=DIM) as db:
         m = db.remember("v1", entities=["Ada"])
         n = db.supersede(m.memory_id, "v2")
-        # rewind the file to what schema v1 actually looked like
+        con = db.connection
+        # rewind the file to what schema v1 actually looked like: first the v3 objects ...
+        db.execute("DROP INDEX IF EXISTS ux_entities_tenant_key")
+        for table in schema_mod.FTS_TABLES:
+            db.execute(f"DROP TABLE IF EXISTS {table}")
+        v1_entity_cols = [
+            (r[1], r[2], bool(r[3]))
+            for r in con.execute("PRAGMA table_info(entities)").fetchall()
+            if r[1] != "entity_key"]
+        db.execute("CREATE TABLE entities__v1 (" + ", ".join(
+            f"{name} {typ}{' NOT NULL' if notnull else ''}"
+            for name, typ, notnull in v1_entity_cols) + ")")
+        db.execute("INSERT INTO entities__v1 SELECT "
+                   + ", ".join(c for c, _t, _n in v1_entity_cols) + " FROM entities")
+        db.execute("DROP TABLE entities")
+        db.execute("ALTER TABLE entities__v1 RENAME TO entities")
+        # ... then the v2 ones
         db.execute("ALTER TABLE anatid_meta DROP COLUMN fts_indexed_max_id")
         db.execute("UPDATE anatid_audit SET reason = 'superseded by ' || related_memory_id")
         db.execute("ALTER TABLE anatid_audit DROP COLUMN related_memory_id")
         db.execute("UPDATE anatid_meta SET schema_version = 1")
         old_id, new_id_ = m.memory_id, n.memory_id
+        assert schema_mod.missing_tables(con) == list(schema_mod.FTS_TABLES)
+        assert "entity_key" not in {
+            r[1] for r in con.execute("PRAGMA table_info(entities)").fetchall()}
 
     with Anatid.open(path, tenant=0, embedding_dim=DIM) as db:
-        assert db.info().schema_version == 2
+        assert db.info().schema_version == 3
         cols = {r[1] for r in db.execute("PRAGMA table_info(anatid_audit)").fetchall()}
         assert "related_memory_id" in cols
         assert {r[1] for r in db.execute("PRAGMA table_info(anatid_meta)").fetchall()} \
             >= {"fts_indexed_max_id"}
+        # the 2->3 rung ran on the same open: sidecar tables, generated key, required index
+        assert schema_mod.missing_tables(db.connection) == []
+        assert "entity_key" in {
+            r[1] for r in db.execute("PRAGMA table_info(entities)").fetchall()}
+        assert "ux_entities_tenant_key" in {
+            r[0] for r in db.execute("SELECT index_name FROM duckdb_indexes()").fetchall()}
+        assert [e.name for e in db.entities_of(new_id_)] == ["Ada"]
         row = db.execute("SELECT memory_id, related_memory_id, reason FROM anatid_audit "
                          "WHERE action = 'supersede'").fetchone()
         assert row == (old_id, new_id_, "superseded")
@@ -144,6 +195,66 @@ def test_embedding_dim_is_taken_from_the_file_not_the_argument(tmp_path):
     Anatid.open(path, tenant=0, embedding_dim=16).close()
     with Anatid.open(path, tenant=0, embedding_dim=1536) as db:
         assert db.config.embedding_dim == 16
+
+
+def test_the_version_string_agrees_everywhere(db):
+    """pyproject, ``anatid.__version__``, ``anatid.database.__version__`` and the version a
+    new file records in ``anatid_meta`` are one string; CI checks the first two, this checks
+    the rest, because a wheel that reports 0.1.0 while pip says 0.1.1 is a bug report waiting
+    to happen."""
+    import pathlib
+    import re
+
+    pyproject = pathlib.Path(__file__).resolve().parent.parent / "pyproject.toml"
+    declared = re.search(r'^version\s*=\s*"([^"]+)"', pyproject.read_text(), re.MULTILINE).group(1)
+    assert anatid.__version__ == database_mod.__version__ == declared
+    assert db.info().anatid_version == anatid.__version__
+    assert db.execute("SELECT anatid_version FROM anatid_meta").fetchone()[0] == anatid.__version__
+
+
+def test_recall_refuses_the_vector_arm_past_the_brute_force_ceiling(db, monkeypatch):
+    """``BRUTE_FORCE_CEILING`` is behaviour, not a comment.
+
+    The ceiling is lowered with a monkeypatch rather than by writing 100k rows; the check
+    counts the rows the vector arm would scan (this tenant, this as_of, this kind filter, rows
+    with an embedding), so every one of those predicates is exercised below.
+    """
+    monkeypatch.setattr(recall_mod, "BRUTE_FORCE_CEILING", 5)
+    ids = [db.remember(f"m{i}", kind="note" if i % 2 else "fact", embedding=vec(1, i / 10),
+                       now=T0 + i * MINUTE).memory_id for i in range(6)]
+    db.remember("elsewhere", embedding=vec(0, 1), tenant=2, now=T0)     # another tenant
+    q = vec(1, 0)
+
+    with pytest.raises(BruteForceCeilingError) as exc:
+        db.recall(embedding=q)
+    assert exc.value.rows == 6 and exc.value.ceiling == 5 and exc.value.tenant_id == 1
+    assert exc.value.retryable is False
+    assert isinstance(exc.value, anatid.AnatidError)
+    assert "allow_slow=True" in str(exc.value)
+
+    # the escape hatch, on the method, the as-of view and the function form
+    hits = db.recall(embedding=q, allow_slow=True)
+    assert "vector" in hits.arms and len(hits) == 6
+    with pytest.raises(BruteForceCeilingError):
+        db.as_of(T0 + 10 * MINUTE).recall(embedding=q)
+    assert "vector" in db.as_of(T0 + 10 * MINUTE).recall(embedding=q, allow_slow=True).arms
+    with pytest.raises(BruteForceCeilingError):
+        verbs_mod.recall(db, embedding=q)
+    assert "vector" in verbs_mod.recall(db, embedding=q, allow_slow=True).arms
+
+    # only the vector arm is guarded: text and graph answer at any size
+    assert db.recall("m1").arms == ()                       # no fts index yet, no raise
+    db.rebuild_fts_index()
+    assert db.recall("m1").arms == ("text",)
+
+    # the count is of the rows the arm would scan, nothing else
+    assert db.recall(embedding=q, tenant=2).arms == ("vector",)          # 1 row there
+    assert db.recall(embedding=q, kinds=["note"]).arms == ("vector",)   # 3 rows pass the filter
+    assert db.as_of(T0 + 2 * MINUTE).recall(embedding=q).arms == ("vector",)   # 3 visible then
+    db.forget(ids[0], now=T0 + 10 * MINUTE)                             # soft: 5 current rows
+    assert db.recall(embedding=q).arms == ("vector",)
+    assert recall_mod.vector_scan_rows(db.connection, tenant_id=1) == 5
+    assert recall_mod.vector_scan_rows(db.connection, tenant_id=1, as_of=AsOf.coerce(T0)) == 1
 
 
 # ============================================================================ verbs

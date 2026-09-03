@@ -43,7 +43,7 @@ import datetime as _dt
 import json
 import logging
 from dataclasses import dataclass
-from typing import Any, Awaitable, Callable, Mapping, Sequence
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Mapping, Sequence
 
 from ...database import Anatid
 from ...errors import AnatidError
@@ -56,14 +56,19 @@ log = logging.getLogger("anatid.integrations.openai_agents")
 # module's globals -- so ``RunContextWrapper`` has to live here, not inside the factory.  The SDK
 # stays optional: without it these are None and :func:`create_memory_tools` raises before it
 # builds anything.
-try:  # pragma: no cover - exercised by the installed-SDK path
-    from agents import RunContextWrapper, function_tool  # type: ignore[import-not-found]
-
-    _SDK_IMPORT_ERROR: Exception | None = None
-except Exception as _exc:  # pragma: no cover - the SDK is an optional dependency
-    RunContextWrapper = None  # type: ignore[assignment,misc]
-    function_tool = None  # type: ignore[assignment]
-    _SDK_IMPORT_ERROR = _exc
+_SDK_IMPORT_ERROR: Exception | None = None
+if TYPE_CHECKING:
+    # The checker always sees the real SDK types; the run-time fallback below is what makes the
+    # SDK optional, and it is invisible to the checker on purpose (a variable named
+    # RunContextWrapper is not a type, and every tool signature below uses it as one).
+    from agents import RunContextWrapper, function_tool
+else:
+    try:  # pragma: no cover - exercised by the installed-SDK path
+        from agents import RunContextWrapper, function_tool
+    except Exception as _exc:  # pragma: no cover - the SDK is an optional dependency
+        RunContextWrapper = None
+        function_tool = None
+        _SDK_IMPORT_ERROR = _exc
 
 __all__ = [
     "ApprovalRequest",

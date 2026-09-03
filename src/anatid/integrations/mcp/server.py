@@ -8,16 +8,32 @@ the rename, so there is no ambiguity about which entry point this targets.)  The
 
 Configuration is environment-first, because that is what a client's JSON config block can set:
 
-===========================  =============================================================
-``ANATID_DB``                database file, or ``:memory:``.  Default ``~/.anatid/memory.anatid``
-``ANATID_TENANT``            tenant id (int).  Default ``0``
-``ANATID_EMBEDDING_DIM``     ``N`` in ``FLOAT[N]``, only used when creating a new file.  Default 1536
-``ANATID_READ_ONLY``         ``1`` opens the whole database read-only; write tools are not registered
-``ANATID_SQL_TOOL``          ``off`` removes the SQL escape hatch entirely.  Default ``on``
-``ANATID_MAX_ROWS``          row cap for the SQL tool.  Default ``200``
-``ANATID_MCP_TRANSPORT``     ``stdio`` (default), ``streamable-http`` or ``sse``
+===============================  =========================================================
+``ANATID_DB``                    database file, or ``:memory:``.  Default ``~/.anatid/memory.anatid``
+``ANATID_TENANT``                tenant id (int).  Default ``0``
+``ANATID_EMBEDDING_DIM``         ``N`` in ``FLOAT[N]``, only when creating a new file.  Default 1536
+``ANATID_READ_ONLY``             ``1`` opens the database read-only; write tools are not registered
+``ANATID_ENABLE_SQL``            ``1`` registers the raw-SQL escape hatch.  **Default off**
+``ANATID_SQL_TOOL``              legacy name; ``off`` still forces the escape hatch off
+``ANATID_MAX_ROWS``              row cap for the SQL tool.  Default ``200``
+``ANATID_SQL_TIMEOUT``           seconds before a SQL-tool statement is interrupted.  Default ``30``
+``ANATID_SQL_MEMORY_LIMIT``      ``SET memory_limit`` for the SQL tool's database.  Default ``1GB``
+``ANATID_MCP_TRANSPORT``         ``stdio`` (default), ``streamable-http`` or ``sse``
 ``ANATID_MCP_HOST`` / ``_PORT``  bind address for the HTTP transports.  Default ``127.0.0.1:8765``
-===========================  =============================================================
+``ANATID_MCP_AUTH``              declares that an authenticating proxy fronts an HTTP transport
+===============================  =========================================================
+
+The SQL escape hatch is **opt-in**.  ``sql`` runs arbitrary read-only SQL, and a default-on
+arbitrary-SQL primitive is exactly what a prompt-injected model wants; it is registered only when
+``ANATID_ENABLE_SQL=1`` (or ``--enable-sql``, or ``ServerConfig(sql_tool=True)``) says so.
+Enabling it also hardens the database -- ``enable_external_access=false``, a ``memory_limit`` and
+a per-statement timeout; see :mod:`anatid.integrations.mcp.sqlgate`.
+
+Transport security.  ``stdio`` is a pipe to the client process and needs no authentication.  The
+HTTP transports are a network listener, and anatid implements no authentication of its own, so
+binding one to a **non-loopback** address is refused unless ``ANATID_MCP_AUTH`` (or ``--auth``)
+declares that something in front of it authenticates -- see :func:`check_transport_security` and
+https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization.
 
 Tenancy.  The server is **pinned** to ``ANATID_TENANT``; no tool takes a ``tenant`` argument.
 ``Isolation.SCOPED`` -- a ``tenant_id`` column predicate that anatid's verbs add -- is scoping,
@@ -38,7 +54,9 @@ from __future__ import annotations
 import argparse
 import datetime as _dt
 import functools
+import ipaddress
 import os
+import socket
 import sys
 from pathlib import Path
 from typing import Any, Callable, Sequence
@@ -64,11 +82,30 @@ from anatid.types import (
     RecallHits,
 )
 
-from .sqlgate import ENFORCEMENT, SqlGateway, SqlNotAllowed
+from .sqlgate import (
+    DEFAULT_MEMORY_LIMIT,
+    DEFAULT_TIMEOUT_SECONDS,
+    ENFORCEMENT,
+    SqlGateway,
+    SqlNotAllowed,
+    SqlTimeout,
+)
 
-__all__ = ["build_server", "main", "ServerConfig", "DEFAULT_DB_PATH"]
+__all__ = [
+    "build_server",
+    "main",
+    "ServerConfig",
+    "DEFAULT_DB_PATH",
+    "HTTP_TRANSPORTS",
+    "InsecureTransport",
+    "check_transport_security",
+    "is_loopback_host",
+]
 
 DEFAULT_DB_PATH = "~/.anatid/memory.anatid"
+
+#: Transports that open a network listener rather than talking over the client's pipes.
+HTTP_TRANSPORTS = frozenset({"streamable-http", "sse", "http"})
 
 INSTRUCTIONS = """\
 anatid is a bitemporal graph memory for agents, stored in one embedded DuckDB file.
@@ -87,10 +124,15 @@ ISO-8601 timestamp) to any read to ask what the database believed then.
 
 BM25 in DuckDB is not incremental: rows written since the last index build are invisible to
 the text arm of `recall`, which reports this as bm25_stale. Call `rebuild_fts_index` to catch
-up. Graph and vector arms are always current.
-
-`sql` is a read-only escape hatch for questions the verbs do not answer.\
+up. Graph and vector arms are always current.\
 """
+
+#: Appended to :data:`INSTRUCTIONS` only when the operator opted the escape hatch in, so a model
+#: talking to a default server is never told about a tool that is not there.
+SQL_INSTRUCTIONS = """
+
+`sql` is a read-only escape hatch for questions the verbs do not answer. It is off by default
+and this server has it on."""
 
 
 # --------------------------------------------------------------------------- serialization
@@ -316,8 +358,31 @@ def _guard(fn: Callable[..., Any]) -> Callable[..., Any]:
 # --------------------------------------------------------------------------- configuration
 
 
+_TRUE = ("1", "true", "yes", "on")
+_FALSE = ("0", "false", "no", "off", "")
+
+
+def _flag(value: str | None, default: bool) -> bool:
+    """Parse an environment flag.  Anything unrecognised is the default, not a crash."""
+    if value is None:
+        return default
+    text = value.strip().lower()
+    if text in _TRUE:
+        return True
+    if text in _FALSE:
+        return False
+    return default
+
+
 class ServerConfig:
-    """Resolved server configuration -- environment, then CLI overrides."""
+    """Resolved server configuration -- environment, then CLI overrides.
+
+    ``sql_tool`` is **False** unless something says otherwise: ``ANATID_ENABLE_SQL=1``, the
+    legacy ``ANATID_SQL_TOOL=on``, or an explicit ``sql_tool=True``.  ``ANATID_SQL_TOOL=off``
+    keeps its old meaning and still forces the tool off, so a config block written against
+    0.1.0 that switched the tool *off* keeps working unchanged; one that relied on the old
+    default-on now has to say so.
+    """
 
     def __init__(
         self,
@@ -328,9 +393,12 @@ class ServerConfig:
         read_only: bool | None = None,
         sql_tool: bool | None = None,
         max_rows: int | None = None,
+        sql_timeout: float | None = None,
+        sql_memory_limit: str | None = None,
         transport: str | None = None,
         host: str | None = None,
         port: int | None = None,
+        auth: str | None = None,
         env: dict[str, str] | None = None,
     ) -> None:
         e = os.environ if env is None else env
@@ -342,16 +410,46 @@ class ServerConfig:
         )
         self.read_only = (
             read_only if read_only is not None
-            else e.get("ANATID_READ_ONLY", "0").lower() in ("1", "true", "yes", "on")
+            else _flag(e.get("ANATID_READ_ONLY"), False)
         )
-        self.sql_tool = (
-            sql_tool if sql_tool is not None
-            else e.get("ANATID_SQL_TOOL", "on").lower() not in ("0", "false", "no", "off")
-        )
+        if sql_tool is not None:
+            self.sql_tool = bool(sql_tool)
+        else:
+            # OFF by default.  ANATID_ENABLE_SQL is the name that says what it does; the legacy
+            # ANATID_SQL_TOOL still enables on "on" -- and an explicit ANATID_SQL_TOOL=off wins
+            # over everything, because a config block that says "off" must never end up on.
+            legacy = e.get("ANATID_SQL_TOOL")
+            enabled = _flag(e.get("ANATID_ENABLE_SQL"), _flag(legacy, False))
+            if legacy is not None and not _flag(legacy, True):
+                enabled = False
+            self.sql_tool = enabled
         self.max_rows = max_rows if max_rows is not None else int(e.get("ANATID_MAX_ROWS", "200"))
+        self.sql_timeout = (
+            float(sql_timeout) if sql_timeout is not None
+            else float(e.get("ANATID_SQL_TIMEOUT", str(DEFAULT_TIMEOUT_SECONDS)))
+        )
+        self.sql_memory_limit = (
+            sql_memory_limit if sql_memory_limit is not None
+            else e.get("ANATID_SQL_MEMORY_LIMIT", DEFAULT_MEMORY_LIMIT)
+        ) or None
         self.transport = transport or e.get("ANATID_MCP_TRANSPORT", "stdio")
         self.host = host or e.get("ANATID_MCP_HOST", "127.0.0.1")
         self.port = port if port is not None else int(e.get("ANATID_MCP_PORT", "8765"))
+        auth_value = auth if auth is not None else e.get("ANATID_MCP_AUTH")
+        self.auth = None if auth_value is None or auth_value.strip().lower() in _FALSE \
+            else auth_value.strip()
+
+    @property
+    def authenticated(self) -> bool:
+        """Whether the operator declared that requests to an HTTP transport are authenticated.
+
+        anatid ships no authentication of its own, so this is a *declaration* that something in
+        front of the server -- a reverse proxy, an API gateway, an OAuth resource server per the
+        MCP authorization spec -- does it.  It is deliberately not a password: the point is that
+        exposing an unauthenticated memory server on a public interface has to be a decision
+        somebody typed, not a default.
+        """
+        return self.auth is not None
 
     def resolved_db(self) -> str:
         """Expand ``~`` and create the parent directory for a file-backed database."""
@@ -364,7 +462,79 @@ class ServerConfig:
 
     def __repr__(self) -> str:                                        # pragma: no cover
         return (f"<ServerConfig db={self.db!r} tenant={self.tenant} read_only={self.read_only} "
-                f"sql_tool={self.sql_tool} transport={self.transport!r}>")
+                f"sql_tool={self.sql_tool} transport={self.transport!r} host={self.host!r} "
+                f"authenticated={self.authenticated}>")
+
+
+# --------------------------------------------------------------------------- transport security
+
+
+class InsecureTransport(RuntimeError):
+    """The requested transport would expose the database on a network with no authentication."""
+
+
+def is_loopback_host(host: str | None) -> bool:
+    """True when ``host`` can only be reached from this machine.
+
+    A literal address is decided by :mod:`ipaddress`.  A name is resolved and must map to
+    loopback addresses *only* -- "localhost" normally does, a name that also resolves to a LAN
+    address does not.  An empty host means "every interface" in every server framework there is,
+    so it is not loopback; a name that will not resolve is not loopback either, because refusing
+    to serve is the safe answer to "I cannot tell".
+    """
+    if host is None:
+        return False
+    text = host.strip()
+    if not text or text == "*":
+        return False
+    if text.startswith("[") and text.endswith("]"):          # [::1]
+        text = text[1:-1]
+    try:
+        return ipaddress.ip_address(text).is_loopback
+    except ValueError:
+        pass
+    try:
+        infos = socket.getaddrinfo(text, None)
+    except OSError:
+        return False
+    addresses = {info[4][0] for info in infos}
+    if not addresses:
+        return False
+    for address in addresses:
+        try:
+            if not ipaddress.ip_address(str(address).split("%")[0]).is_loopback:
+                return False
+        except ValueError:                                   # pragma: no cover - exotic family
+            return False
+    return True
+
+
+def check_transport_security(cfg: ServerConfig) -> None:
+    """Refuse to serve an unauthenticated HTTP transport on a non-loopback interface.
+
+    ``stdio`` is a pipe between the client and this process: there is nothing to authenticate
+    and nothing to reach it from.  The HTTP transports are a listener, and this server has no
+    authentication of its own -- so binding one to anything but loopback publishes every memory
+    in the file, plus every write tool, to whoever can route to the port.  The MCP authorization
+    spec (2025-06-18) puts authorization on the HTTP transports for exactly this reason.
+
+    ``ANATID_MCP_AUTH`` / ``--auth`` is the operator's declaration that something in front does
+    authenticate; with it, this passes.  Raises :class:`InsecureTransport` otherwise.
+    """
+    if cfg.transport not in HTTP_TRANSPORTS:
+        return
+    if is_loopback_host(cfg.host) or cfg.authenticated:
+        return
+    raise InsecureTransport(
+        f"refusing to start: transport {cfg.transport!r} would bind {cfg.host!r}:{cfg.port}, "
+        f"which is not a loopback address, and no authentication is configured. Anyone who can "
+        f"reach that port would get this database's memories and its write tools. Either bind "
+        f"127.0.0.1 (ANATID_MCP_HOST=127.0.0.1) and reach it through an SSH tunnel or a reverse "
+        f"proxy, or -- if an authenticating proxy or OAuth resource server really is in front of "
+        f"it -- say so with ANATID_MCP_AUTH=<description> / --auth <description>. anatid "
+        f"implements no authentication of its own; see "
+        f"https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization"
+    )
 
 
 # --------------------------------------------------------------------------- the server
@@ -376,22 +546,41 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
     ``db`` is an already-open :class:`anatid.Anatid`.  The server does **not** take ownership of
     it -- :func:`main` opens and closes it; a test can pass an in-memory handle and close it
     itself.  Every tool is pinned to ``db.namespace``; see the module docstring on tenancy.
+
+    Raises :class:`InsecureTransport` when ``config`` asks for an HTTP transport on a
+    non-loopback interface with no authentication declared -- here as well as in :func:`main`,
+    so a program that builds the server itself and calls ``server.run(...)`` cannot skip the
+    check.  Registering the ``sql`` tool additionally hardens ``db``'s DuckDB instance; see
+    :class:`~anatid.integrations.mcp.sqlgate.SqlGateway`.
     """
     cfg = config or ServerConfig()
+    check_transport_security(cfg)
     tenant_id = db.namespace.tenant_id
     server = MCPServer(
         "anatid",
         title="anatid graph memory",
         version=anatid.__version__,
-        instructions=INSTRUCTIONS,
+        instructions=INSTRUCTIONS + (SQL_INSTRUCTIONS if cfg.sql_tool else ""),
     )
 
-    read_only_tool = ToolAnnotations(readOnlyHint=True, destructiveHint=False,
-                                     idempotentHint=True, openWorldHint=False)
-    write_tool = ToolAnnotations(readOnlyHint=False, destructiveHint=False,
-                                 idempotentHint=False, openWorldHint=False)
-    destructive_tool = ToolAnnotations(readOnlyHint=False, destructiveHint=True,
-                                       idempotentHint=False, openWorldHint=False)
+    # Built before any tool is registered so `stats` can report the hardening that building it
+    # applied.  Constructing the gateway is what disables external access on `db`, so it happens
+    # only when the operator opted the escape hatch in.
+    gateway = SqlGateway(
+        lambda: db.connection,
+        max_rows=cfg.max_rows,
+        timeout=cfg.sql_timeout,
+        memory_limit=cfg.sql_memory_limit,
+    ) if cfg.sql_tool else None
+
+    # Field names as the pydantic model declares them; they serialise to the protocol's
+    # camelCase (readOnlyHint, ...) through the model's alias generator.
+    read_only_tool = ToolAnnotations(read_only_hint=True, destructive_hint=False,
+                                     idempotent_hint=True, open_world_hint=False)
+    write_tool = ToolAnnotations(read_only_hint=False, destructive_hint=False,
+                                 idempotent_hint=False, open_world_hint=False)
+    destructive_tool = ToolAnnotations(read_only_hint=False, destructive_hint=True,
+                                       idempotent_hint=False, open_world_hint=False)
 
     # ------------------------------------------------------------------ writes
 
@@ -669,6 +858,18 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
     @_guard
     def stats() -> dict[str, Any]:
         info = db.info()
+        sql_policy: dict[str, Any] = {
+            "enabled": cfg.sql_tool,
+            "opt_in": True,
+            "max_rows": cfg.max_rows,
+            "enforcement": ENFORCEMENT,
+        }
+        if gateway is not None:          # built exactly when cfg.sql_tool is set
+            sql_policy["limits"] = {
+                "timeout_seconds": gateway.timeout,
+                "memory_limit": gateway.hardening.get("memory_limit"),
+                "external_access_disabled": gateway.hardening.get("external_access_disabled"),
+            }
         return {
             "path": db.path,
             "tenant_id": tenant_id,
@@ -681,17 +882,21 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             "embedding_dim": info.embedding_dim,
             "anatid_version": info.anatid_version,
             "duckdb_version": info.duckdb_version,
-            "sql_tool": {
-                "enabled": cfg.sql_tool,
-                "max_rows": cfg.max_rows,
-                "enforcement": ENFORCEMENT,
-            },
+            "sql_tool": sql_policy,
         }
 
     # ------------------------------------------------------------------ escape hatch
 
-    if cfg.sql_tool:
-        gateway = SqlGateway(lambda: db.connection, max_rows=cfg.max_rows)
+    if gateway is not None:
+        memory_text = gateway.hardening.get("memory_limit") or "DuckDB's default"
+        limits_text = (
+            f"The database also runs with enable_external_access=false and "
+            f"memory_limit={memory_text}, and a statement that runs longer than "
+            f"{gateway.timeout:g}s is interrupted. "
+            if gateway.timeout else
+            f"The database also runs with enable_external_access=false and "
+            f"memory_limit={memory_text}. "
+        )
 
         @server.tool(
             name="sql",
@@ -699,16 +904,22 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             annotations=read_only_tool,
             description=(
                 "READ-ONLY SQL over the anatid database, for questions the memory verbs do not "
-                "answer. Only SELECT and EXPLAIN run. This is enforced by DuckDB, not by a "
-                "regex: (1) duckdb's own parser classifies every statement in the text and any "
+                "answer. This tool is OFF BY DEFAULT and this server was started with it "
+                "explicitly enabled (ANATID_ENABLE_SQL=1). Only SELECT and EXPLAIN run. This is "
+                "enforced by DuckDB, not by a "
+                "regex, and every check fails closed: (1) duckdb's own parser classifies every "
+                "statement in the text and any "
                 "type other than SELECT/EXPLAIN is refused -- so INSERT, UPDATE, DELETE, ATTACH, "
                 "COPY, CREATE, DROP, PRAGMA, INSTALL and a second statement after a semicolon "
                 "are all rejected before anything runs; an EXPLAIN must wrap a SELECT, because "
                 "EXPLAIN ANALYZE executes what it explains; (2) the statement's parse tree is "
                 "scanned for filesystem and external-connector functions (read_csv, "
-                "read_parquet, glob, postgres_scan, ...) and refused if any appear; (3) what is "
+                "read_parquet, glob, postgres_scan, ...) and for base-table names that are not "
+                "plain identifiers, and a statement DuckDB cannot serialize into a parse tree is "
+                "REFUSED rather than run unscanned; (3) what is "
                 "left runs inside BEGIN TRANSACTION READ ONLY on a private cursor and is always "
                 "ROLLBACKed, so DuckDB's transaction manager refuses any write regardless. "
+                + limits_text +
                 "NOTE: raw SQL is not tenant-filtered -- add `WHERE tenant_id = <n>` yourself. "
                 "Tables: memories, entities, episodes, edges_about (memory->entity), "
                 "edges_relates (entity->entity), edges_supersedes (new->old), anatid_audit, "
@@ -723,6 +934,10 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             # can see why and rewrite the query. Nothing has run at that point.
             try:
                 return gateway.run(query, limit=limit)
+            except SqlTimeout as exc:
+                # Ran, cost too much, was interrupted, nothing committed. Same shape as a
+                # rejection so the model rewrites the query rather than retrying it verbatim.
+                raise ToolError(str(exc)) from exc
             except duckdb.Error as exc:
                 # A query that passed the gate but that DuckDB will not run -- an unknown
                 # column, a bad cast, an ambiguous name. That is the caller's SQL to fix, so
@@ -741,20 +956,36 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         description="Serve an anatid graph-memory database over the Model Context Protocol.",
         epilog="Every option also reads an environment variable, which is what MCP client "
                "config blocks can set: ANATID_DB, ANATID_TENANT, ANATID_EMBEDDING_DIM, "
-               "ANATID_READ_ONLY, ANATID_SQL_TOOL, ANATID_MAX_ROWS, ANATID_MCP_TRANSPORT, "
-               "ANATID_MCP_HOST, ANATID_MCP_PORT.",
+               "ANATID_READ_ONLY, ANATID_ENABLE_SQL, ANATID_SQL_TOOL, ANATID_MAX_ROWS, "
+               "ANATID_SQL_TIMEOUT, ANATID_SQL_MEMORY_LIMIT, ANATID_MCP_TRANSPORT, "
+               "ANATID_MCP_HOST, ANATID_MCP_PORT, ANATID_MCP_AUTH.",
     )
     p.add_argument("--db", help=f"database file or ':memory:' (env ANATID_DB, default {DEFAULT_DB_PATH})")
     p.add_argument("--tenant", type=int, help="tenant id (env ANATID_TENANT, default 0)")
     p.add_argument("--embedding-dim", type=int, help="FLOAT[N] width for a NEW database file")
     p.add_argument("--read-only", action="store_true", default=None,
                    help="open the database read-only; no write tools are registered")
-    p.add_argument("--no-sql-tool", action="store_true", help="do not register the SQL escape hatch")
+    p.add_argument("--enable-sql", action="store_true", default=None,
+                   help="register the read-only SQL escape hatch (env ANATID_ENABLE_SQL=1). "
+                        "OFF by default; enabling it also sets enable_external_access=false, a "
+                        "memory_limit and a statement timeout on the database")
+    p.add_argument("--no-sql-tool", action="store_true",
+                   help="force the SQL escape hatch off even if the environment enables it")
     p.add_argument("--max-rows", type=int, help="row cap for the SQL tool (default 200)")
+    p.add_argument("--sql-timeout", type=float,
+                   help=f"seconds before a SQL-tool statement is interrupted "
+                        f"(default {DEFAULT_TIMEOUT_SECONDS:g}; 0 disables)")
+    p.add_argument("--sql-memory-limit",
+                   help=f"SET memory_limit for the SQL tool's database (default "
+                        f"{DEFAULT_MEMORY_LIMIT})")
     p.add_argument("--transport", choices=("stdio", "streamable-http", "sse"),
                    help="default stdio (env ANATID_MCP_TRANSPORT)")
     p.add_argument("--host", help="bind host for the HTTP transports")
     p.add_argument("--port", type=int, help="bind port for the HTTP transports")
+    p.add_argument("--auth", metavar="DESCRIPTION",
+                   help="declare that an authenticating proxy fronts an HTTP transport. Without "
+                        "it, binding a non-loopback address is refused: anatid implements no "
+                        "authentication of its own (env ANATID_MCP_AUTH)")
     p.add_argument("--version", action="version", version=f"anatid-mcp {anatid.__version__}")
     return p.parse_args(list(argv) if argv is not None else None)
 
@@ -766,17 +997,34 @@ def main(argv: Sequence[str] | None = None) -> int:
     Returns a process exit code.
     """
     args = _parse_args(argv)
+    if args.no_sql_tool:
+        sql_tool: bool | None = False              # an explicit off beats an enabling environment
+    elif args.enable_sql:
+        sql_tool = True
+    else:
+        sql_tool = None                            # environment decides; the default is off
     cfg = ServerConfig(
         db=args.db,
         tenant=args.tenant,
         embedding_dim=args.embedding_dim,
         read_only=args.read_only,
-        sql_tool=False if args.no_sql_tool else None,
+        sql_tool=sql_tool,
         max_rows=args.max_rows,
+        sql_timeout=args.sql_timeout,
+        sql_memory_limit=args.sql_memory_limit,
         transport=args.transport,
         host=args.host,
         port=args.port,
+        auth=args.auth,
     )
+
+    # Before the database is even opened: a refusal to serve must not create a file, and the
+    # operator must see why on stderr rather than as a traceback.
+    try:
+        check_transport_security(cfg)
+    except InsecureTransport as exc:
+        print(f"anatid-mcp: {exc}", file=sys.stderr)
+        return 2
 
     try:
         db = Anatid.open(

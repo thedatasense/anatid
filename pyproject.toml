@@ -4,53 +4,409 @@ build-backend = "hatchling.build"
 
 [project]
 name = "anatid"
-version = "0.1.0"
-description = "An open-source embedded graph database for AI agents, built on DuckDB."
+version = "0.1.1"
+# Keep in lockstep with src/anatid/__init__.py::__version__ (owned by another module).  The
+# `lint` job in .github/workflows/ci.yml fails the build when the two drift.
+description = "Embedded bitemporal graph memory for AI agents, built on DuckDB. Pure-Python wheel."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [{ name = "anatid contributors" }]
 keywords = ["duckdb", "graph", "memory", "agents", "embedded", "database", "bitemporal"]
+# NOTE ON THE C++ EXTENSION.  anatid ships a *pure-Python* wheel.  The optional DuckDB C++
+# extension that accelerates 2-hop expansion (`ext/`, `spike/extension/`) is NOT in the wheel
+# and NOT in the sdist: it is source-checkout-only and has to be built with CMake against a
+# matching DuckDB (DuckDB pins a loadable extension to the exact version it was built with, so a
+# prebuilt binary would break on every `pip install --upgrade duckdb`).  Without it anatid falls
+# back to recursive SQL, which is why the extension is an optimisation and not a dependency.
+# Nothing in this file may imply otherwise -- no `Programming Language :: C++` classifier, no
+# binary-distribution wording in `description`.  The `lint` CI job checks the classifiers.
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: Database :: Database Engines/Servers",
+    # src/anatid/py.typed is shipped in the wheel; inline types are part of the public API.
+    "Typing :: Typed",
 ]
 dependencies = ["duckdb>=1.5"]
 
 [project.optional-dependencies]
 agents = ["openai-agents>=0.22"]
 mcp = ["mcp>=2.1"]
-# `dev` deliberately pulls in BOTH integrations: without them tests/test_mcp.py and
-# tests/test_openai_agents.py `importorskip` at module level and CI runs 59 of 147 tests
-# green while the two headline integrations are never exercised.
-dev = ["pytest>=9", "openai-agents>=0.22", "mcp>=2.1"]
+
+# ---------------------------------------------------------------- test / benchmark deps
+#
+# `test` is everything `pytest tests` imports, transitively.  numpy and pyarrow are NOT
+# optional here even though nothing under src/ imports them: tests/conftest.py's `spike_common`
+# fixture loads spike/bench/common.py *by path*, and that module imports numpy and pyarrow at
+# module scope.  Five tests go through it --
+#
+#   tests/test_core.py::test_recall_2hop_matches_the_spike_reference_for_200_queries
+#   tests/test_core.py::test_recall_2hop_hydrated_matches_the_id_query
+#   tests/test_core.py::test_csr_extension_matches_the_reference_on_the_spike_dataset
+#   tests/test_core.py::test_hybrid_recall_on_the_spike_dataset_returns_relevant_results
+#   tests/test_extension.py::test_frontiers_match_the_numpy_oracle
+#
+# -- and in 0.1.0 they raised ModuleNotFoundError on a clean `pip install anatid[dev]` rather
+# than skipping, because the fixture only checks that the *files* exist.  Declaring them is the
+# fix: an incomplete `dev` extra that silently drops the oracle tests is worse than a slightly
+# heavier install.  Verified 2026-09-02: `pip install anatid-0.1.1-py3-none-any.whl[dev]` into
+# an empty venv, then `pytest tests` with every marker selected, collects and runs the whole
+# suite (the spike dataset is present in the checkout; it skips cleanly when it is not).
+test = [
+    "pytest>=9",
+    "pytest-cov>=5",
+    "numpy>=1.24",
+    "pyarrow>=14",
+]
+
+# The Phase 0 spike harness (spike/bench/*.py): dataset generation, the pure-numpy R1/R2
+# reference implementations and the result reporter.  Same two libraries as `test` today; kept
+# separate so a benchmark-only dependency never becomes a test dependency by accident.
+bench = [
+    "numpy>=1.24",
+    "pyarrow>=14",
+]
+
+# Pinned exactly: a lint job that changes verdict when a new ruff lands is a broken lint job.
+# 0.16.5 is the release the ratchet lists below were measured against.
+lint = ["ruff==0.16.5"]
+
+# Pinned for the same reason.  The integration extras are here because pyright cannot check
+# src/anatid/integrations/** without the packages they import.
+types = [
+    "pyright==1.1.411",
+    "openai-agents>=0.22",
+    "mcp>=2.1",
+    "numpy>=1.24",
+    "pyarrow>=14",
+]
+
+# `pip install -e ".[dev]"` must run the WHOLE suite -- both integrations, the oracle tests,
+# coverage, lint and types.  Self-referencing extras (PEP 508) so there is exactly one list of
+# each kind of dependency in this file; pip has resolved these since 21.2 (Python 3.10's bundled
+# pip is 21.2.3) and uv resolves them too, including from a local wheel path.
+dev = [
+    "anatid[agents,mcp,test,bench,lint,types]",
+    "build>=1.2",
+    "twine>=5",
+]
 
 [project.urls]
 Homepage = "https://github.com/thedatasense/anatid"
 Source = "https://github.com/thedatasense/anatid"
+Issues = "https://github.com/thedatasense/anatid/issues"
 
 [project.scripts]
-# The module is owned by the MCP integration agent; the entry point is declared here so the
-# console script exists as soon as that module lands.
 anatid-mcp = "anatid.integrations.mcp.server:main"
+
+# ---------------------------------------------------------------------------- packaging
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/anatid"]
+# hatchling copies every file under `packages`, data files included, so src/anatid/py.typed
+# lands in the wheel on its own.  It is named here anyway because a marker that silently stops
+# shipping turns a typed package back into an untyped one with no error anywhere; hatchling
+# de-duplicates the entry (verified: exactly one `anatid/py.typed` in the 0.1.1 wheel), and
+# .github/workflows/ci.yml's `wheel` job unzips the wheel and asserts it is there.
+force-include = { "src/anatid/py.typed" = "anatid/py.typed" }
 
 [tool.hatch.build.targets.sdist]
-include = ["src/anatid", "tests", "README.md"]
+# `ext/` and `spike/` are deliberately absent: see the C++ note above.  Every pattern is
+# ROOT-ANCHORED with a leading "/" -- an unanchored "README.md" matches at any depth and would
+# drag ext/README.md and ext/LICENSE into the sdist, i.e. the extension's documentation without
+# the extension, which is exactly the claim this release is correcting.
+include = [
+    "/src/anatid",
+    "/tests",
+    "/examples",
+    "/README.md",
+    "/CONTRIBUTING.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+exclude = ["/ext", "/spike", "/dist"]
+
+# ------------------------------------------------------------------------------- pytest
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+# NB: `-q` is already here, so `pytest -q` on the command line runs at -qq and prints no
+# "N passed" summary line.  Use `pytest -o addopts=""` when the count matters.
+addopts = "-q --strict-markers --strict-config"
 markers = [
     "slow: tests that load the 100k-memory spike dataset",
     "oracle: correctness tests against the Phase 0 spike reference implementation",
 ]
+filterwarnings = ["error::DeprecationWarning:anatid.*"]
+
+# ----------------------------------------------------------------------------- coverage
+
+[tool.coverage.run]
+source = ["anatid"]
+branch = true
+# The MCP stdio test spawns a server in a subprocess; without this its lines never count.
+parallel = true
+concurrency = ["thread", "multiprocessing"]
+
+[tool.coverage.paths]
+# Maps an installed-wheel path back onto the source tree so the wheel job and the editable
+# job produce comparable numbers (verified identical: 89.80% both ways on 2026-09-02).
+source = ["src/anatid", "*/site-packages/anatid"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "@(?:typing\\.)?overload",
+    "class .*\\(Protocol\\):",
+    "^\\s*\\.\\.\\.$",
+]
+# FLOOR, not a target.  Measured 89.80% on 2026-09-02 with the exact command the `coverage`
+# job in .github/workflows/ci.yml runs -- `pytest -m "not slow and not oracle" --cov` -- on
+# both an editable install and an installed wheel, so `pytest --cov` reproduces the CI verdict
+# locally with no extra flags.  The slack is for the `slow`/`oracle` tests CI has to deselect
+# (the 100k-row spike dataset is not in the repository) and for platform skips.  Raise this
+# whenever the real number moves up; never lower it to turn a red build green.
+fail_under = 85
+
+# --------------------------------------------------------------------------------- ruff
+
+[tool.ruff]
+# The house style the whole tree is already hand-written to.  The formatter owns this number;
+# the E501 lint rule is off (see `ignore`) so there is exactly one authority on line length.
+line-length = 100
+target-version = "py310"
+extend-exclude = [
+    "spike",   # Phase 0 spike tree: read-only, vendored, never linted
+    "ext",     # C++ extension checkout (vendored DuckDB + CMake scaffolding)
+    "dist",
+    ".venv",
+    # ruff >= 0.16 formats the fenced ```python blocks inside Markdown.  README.md and docs/*.md
+    # are prose; their snippets are hand-aligned (trailing comments in a column) for reading,
+    # not for import, and rewriting them is a documentation decision, not a lint one.
+    "*.md",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+# --- FORMATTING RATCHET -------------------------------------------------------------------
+# Every file below predates this config.  They are hand-formatted to a 100-column house style
+# that is close to, but not identical with, `ruff format`'s output: reformatting them rewrites
+# thousands of lines across two dozen files.  That is a sweep of its own, not something to bury
+# in a config change, and doing it here would collide with the in-flight 0.1.1 branches.
+#
+# The list is therefore a RATCHET: everything NOT named here is checked by `ruff format --check`
+# in CI from its first commit, so the list can only ever shrink.  Every file added in 0.1.1
+# (src/anatid/_typing.py, src/anatid/integrations/erasure.py, tests/test_integrity.py,
+# tests/test_recall_tenancy.py) is formatter-clean, deliberately absent here, and stays checked.
+#
+# To finish it: delete this whole `exclude` list, run `ruff format .`, commit that as one
+# formatting-only commit, and record its SHA in .git-blame-ignore-revs.
+exclude = [
+    "examples/agent_with_memory.py",
+    "examples/glm_openrouter_agent.py",
+    "examples/quickstart.py",
+    "src/anatid/__init__.py",
+    "src/anatid/csr.py",
+    "src/anatid/database.py",
+    "src/anatid/errors.py",
+    "src/anatid/ids.py",
+    "src/anatid/integrations/__init__.py",
+    "src/anatid/integrations/mcp/__init__.py",
+    "src/anatid/integrations/mcp/server.py",
+    "src/anatid/integrations/mcp/sqlgate.py",
+    "src/anatid/integrations/openai_agents/__init__.py",
+    "src/anatid/integrations/openai_agents/approvals.py",
+    "src/anatid/integrations/openai_agents/session.py",
+    "src/anatid/integrations/openai_agents/tools.py",
+    "src/anatid/recall.py",
+    "src/anatid/schema.py",
+    "src/anatid/types.py",
+    "src/anatid/verbs.py",
+    "tests/conftest.py",
+    "tests/test_core.py",
+    "tests/test_extension.py",
+    "tests/test_mcp.py",
+    "tests/test_openai_agents.py",
+    "tests/test_schema_v3.py",
+]
+
+[tool.ruff.lint]
+select = [
+    "F",      # pyflakes
+    "E", "W", # pycodestyle
+    "I",      # isort
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "A",      # flake8-builtins
+    "C4",     # flake8-comprehensions
+    "SIM",    # flake8-simplify
+    "PIE",    # flake8-pie
+    "RET",    # flake8-return
+    "RSE",    # flake8-raise
+    "SLF",    # private-member access across objects
+    "ISC",    # implicit str concat
+    "ICN",    # import conventions
+    "LOG", "G",   # logging call shape -- anatid logs a lot
+    "EXE", "SLOT", "YTT", "ASYNC", "FA",
+    "DTZ",    # naive-datetime traps
+    "N",      # pep8-naming
+    "Q",      # quote consistency
+    "T20",    # no stray print() in the library
+    "PERF",
+    "FLY", "FURB", "NPY", "ERA", "PGH",
+    "RUF",
+]
+ignore = [
+    # --- deliberate, permanent -------------------------------------------------------------
+    "RUF022",  # __all__ is grouped by topic (types, then verbs, then errors), not alphabetised
+    "RUF023",  # __slots__ likewise mirrors field order
+    "RUF005",  # `[memory_id, tenant_id] + params` is clearer than unpacking for SQL parameter
+               # lists, which is the only place this fires
+    "SIM105",  # `try/except duckdb.Error: pass` around close()/rollback() -- contextlib.suppress
+               # allocates a context manager on a path that runs per statement
+    "N818",    # AnatidError / SqlNotAllowed / ConflictError are the documented public names;
+               # an `...Error` suffix rule cannot rename them without breaking callers
+    "PERF203", # try/except inside a loop is exactly how the migration and doctor loops report a
+               # per-row fault instead of aborting the batch
+    "E501",    # line length is enforced by `line-length` above and by the formatter, not by a
+               # lint rule that also fires inside long URLs in docstrings
+    # --- deferred: fires today, in modules other agents are mid-edit on ----------------------
+    # A RATCHET like the format list.  Counts measured with ruff 0.16.5 on 2026-09-02 via
+    #     ruff check --select <code> --statistics .
+    # Delete each code in the same commit that fixes its last occurrence.  None is a
+    # correctness rule; every one of them is auto-fixable or a one-line rewrite.
+    "UP035",   # 12x `from typing import Sequence` -> collections.abc (every module)
+    "UP037",   # 24x quoted annotations that `from __future__ import annotations` makes
+               #     redundant (verbs 11, types 8, database 4, agents/session 1)
+    "I001",    #  9x unsorted import blocks (csr, verbs, mcp/server, mcp/sqlgate, agents/session,
+               #     tests/test_core, tests/test_mcp, tests/test_integrity, tests/test_recall_tenancy)
+    "ISC004",  # 10x unparenthesised implicit concatenation inside the DDL lists in schema.py --
+               #     the one rule here worth fixing soon, because a missing comma in a list of
+               #     SQL fragments silently fuses two statements
+    "Q000",    #  2x single-quoted strings (verbs.py, tests/test_openai_agents.py)
+    "Q003",    #  3x avoidable escaped quotes (mcp/server 2, agents/approvals 1)
+    "PERF401", #  7x manual list building that could be a comprehension (database 3, csr, schema,
+               #     types, tests/test_core)
+    "PYI036",  #  1x __exit__ annotation in agents/session.py
+]
+# Codes handled by tools other than ruff, so `RUF100` (unused-noqa) does not strip their
+# suppressions: E704 is pycodestyle-only, BLE001 is enabled in no profile here.
+external = ["E704", "BLE001"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "INP001",  # tests/ is intentionally not a package
+    "S101",    # asserts are the point
+    "B018",    # a bare attribute access is a legitimate "this must not raise" probe
+    "B905",    # zip(strict=) -- the sequences are asserted equal-length one line above
+    "C402",    # dict(generator) reads fine in a test
+    "SIM117",  # nested `with` keeps `pytest.raises` next to the statement that raises
+    "PIE808",  # range(0, n) mirrors the SQL it checks
+    "DTZ001",  # tests pin a fixed naive clock (conftest.T0) on purpose
+    "N802",    # test names spell out SQL identifiers
+    "N812",    # `import anatid.schema as schema_mod`
+    "SLF001",  # tests reach into internals deliberately
+]
+"examples/*" = [
+    "INP001",
+    "T201",    # examples print; that is what makes them examples
+    "DTZ001",
+    "ASYNC250",  # agent_with_memory.py is an interactive REPL: `input()` inside its async loop
+                 # is the whole point of the example, not a blocking call to hide
+]
+"src/anatid/integrations/mcp/server.py" = [
+    "T201",    # the CLI prints its banner and its config to stdout by design
+]
+"src/anatid/errors.py" = [
+    # DuplicateIdError(..., id=...) sets the public `.id` attribute and the keyword mirrors it.
+    # `id` shadows the builtin only inside that one __init__, where the builtin is not used;
+    # renaming the keyword would break every caller that constructs the error explicitly.
+    "A002",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["anatid"]
+
+# ------------------------------------------------------------------------------- pyright
+#
+# CI runs pyright (see .github/workflows/ci.yml, job `types`) against an error BUDGET, not a
+# clean gate.  Numbers, all measured with pyright 1.1.411, `typeCheckingMode = "standard"`,
+# imports resolved against a venv holding the `types` extra:
+#
+#   anatid 0.1.0 (sdist source):   58 errors /  6 warnings.  32 of the 58 came from ONE place:
+#       the bodyless `def execute(...): ...` / `def transaction(...): ...` placeholders on the
+#       verb mixin, which made the checker believe both really return None, so every
+#       `self.execute(...).fetchone()` was a member access on None.
+#   tree on 2026-09-02, mid-way:    25 errors /  9 warnings, after src/anatid/_typing.py::VerbHost
+#       replaced the placeholders (verbs.py: 32 -> 0) and the core modules' unchecked
+#       `fetchone()[0]` subscripts were fixed (database.py: 5 -> 0).  Everything left was in
+#       integrations/**:
+#         16  integrations/mcp/server.py     12x ToolAnnotations called with the protocol's
+#                                            camelCase aliases instead of the model's field
+#                                            names; 3x Optional member access; 1x int.split
+#          6  integrations/openai_agents/tools.py   a runtime-computed alias used as a type
+#          3  integrations/openai_agents/session.py  1x return type, 2x Optional subscript
+#       The 9 warnings were integrations/mcp/__init__.py re-exporting names in __all__ that
+#       only its lazy __getattr__ defined.
+#   tree on 2026-09-02, 0.1.1:       0 errors /  0 warnings.  The ToolAnnotations calls use the
+#       field names (read_only_hint=...; they still serialise as readOnlyHint), tools.py imports
+#       the SDK types under TYPE_CHECKING and falls back at run time only, session.py narrows
+#       its Optionals, and mcp/__init__.py declares its lazy re-exports under TYPE_CHECKING.
+#
+# The budget lives in .github/workflows/ci.yml (`PYRIGHT_ERROR_BUDGET`) and is 0; keep it there.
+
+[tool.pyright]
+include = ["src/anatid"]
+exclude = ["**/__pycache__", "**/node_modules", "spike", "ext", "dist", ".venv"]
+# The floor anatid supports, not the interpreter CI happens to run on: this is what catches a
+# 3.11+-only construct before a 3.10 user does.
+pythonVersion = "3.10"
+typeCheckingMode = "standard"
+reportMissingTypeStubs = false
+
+# ---------------------------------------------------------------------------------- mypy
+#
+# Not run in CI (pyright is the gate; running two checkers means arguing with two of them).
+# Provided so `mypy` from the repo root is usable locally without a wall of configuration noise.
+
+[tool.mypy]
+python_version = "3.10"
+files = ["src/anatid"]
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "src"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+# mcp and openai-agents ship no stubs mypy can consume.
+module = ["mcp.*", "agents.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# duckdb imports numpy (duckdb/experimental/spark/_typing.py) and its stubs name numpy and
+# pyarrow types, and numpy 2.x's `__init__.pyi` uses the PEP 695 `type X = ...` statement,
+# which mypy rejects under `python_version = "3.10"` ("Type statement is only supported in
+# Python 3.12 and greater") and then stops checking EVERYTHING.  Nothing under src/ imports
+# either library, so do not follow into them.  `follow_imports_for_stubs` is load-bearing:
+# without it mypy applies `follow_imports` only to .py files and still parses the .pyi
+# (verified with mypy 2.3.1 -- per-module, global, INI and TOML forms all fail without it).
+module = ["numpy", "numpy.*", "pyarrow", "pyarrow.*"]
+follow_imports = "skip"
+follow_imports_for_stubs = true
+ignore_missing_imports = true

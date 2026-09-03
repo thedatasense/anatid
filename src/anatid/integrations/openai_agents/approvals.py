@@ -34,6 +34,16 @@ arguments, and your run context.  It is **not** encrypted and anatid does not en
 the anatid file as being as sensitive as the conversation.  The SDK leaves the tracing API key
 out unless you pass ``include_tracing_api_key=True``; :meth:`RunStateStore.save` never passes it.
 
+Erasure
+-------
+Because that string is a verbatim copy of the conversation, ``agent_run_states`` is a copy of
+every memory the conversation quoted -- so :meth:`RunStateStore.__init__` registers an erasure
+hook on the handle for its table.  Before that, ``db.forget(mid, hard=True)`` returned a receipt
+saying the memory had been erased while this table still held the id *and* the text, and
+:meth:`resume` would hand them back to a model days later.  A parked run that quotes an erased
+memory is deleted whole: a partially redacted ``RunState`` would not deserialise, and keeping it
+would defeat the erasure.  See :mod:`anatid.integrations.erasure`.
+
 Resuming needs the *same agent* (same name, tools and handoffs) that produced the state:
 ``RunState.from_string(agent, s)`` rebuilds the run against the agent you hand it, so process B
 must construct an identical ``Agent``.  A state saved by a different version of your agent code
@@ -55,6 +65,7 @@ from ...errors import NotFoundError
 from ...ids import new_id
 from ...schema import quote_ident
 from ...types import Namespace, utcnow
+from ..erasure import register_table_erasure_hooks
 
 log = logging.getLogger("anatid.integrations.openai_agents")
 
@@ -131,6 +142,9 @@ class RunStateStore:
         self._t = quote_ident(table)
         self.writer = writer
         self.db.create_node_label(table, RUN_STATE_COLUMNS, id_column="run_state_id")
+        #: ``state_json`` is a verbatim copy of the conversation, so a hard forget has to reach
+        #: it.  Deduplicated by table name, so two stores on one handle register one hook.
+        self.erasure_hooks = register_table_erasure_hooks(self.db, (table,))
 
     def __repr__(self) -> str:
         return (f"<RunStateStore path={self.db.path!r} tenant={self.tenant_id} "

@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging
 import os
 import threading
+import time
 from collections import OrderedDict
 from contextlib import contextmanager
 from pathlib import Path
@@ -23,14 +24,20 @@ from .errors import (
     AnatidError,
     ConflictError,
     ExtensionUnavailable,
+    IntegrityError,
     TenantIsolationError,
 )
 from .schema import SchemaConfig, quote_ident
 from .types import (
+    DOCTOR_SAMPLE_LIMIT,
+    DoctorFinding,
+    DoctorReport,
     FtsStatus,
     Isolation,
     Namespace,
     SchemaInfo,
+    Severity,
+    utcnow,
 )
 from .verbs import MemoryVerbs
 
@@ -38,7 +45,7 @@ log = logging.getLogger("anatid")
 
 __all__ = ["Anatid", "DatabasePool", "connect"]
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 #: Substrings DuckDB uses for an MVCC abort.  Deliberately narrow, and it has to stay that way:
 #: :class:`~anatid.errors.ConflictError` promises the caller that retrying the unit of work is
@@ -75,6 +82,16 @@ def _translate(exc: BaseException) -> BaseException:
     if any(m in msg for m in _CONFLICT_MARKERS):
         return ConflictError(str(exc), cause=exc)
     return exc
+
+
+def _scalar_int(result: duckdb.DuckDBPyConnection) -> int:
+    """First column of the first row of an aggregate query, as an int (0 for no row / NULL).
+
+    ``fetchone()`` is typed ``Optional``; every ``count(*)`` here has exactly one row, and this
+    says so once instead of at every call site.
+    """
+    row = result.fetchone()
+    return int(row[0]) if row is not None and row[0] is not None else 0
 
 
 class Anatid(MemoryVerbs):
@@ -308,7 +325,13 @@ class Anatid(MemoryVerbs):
         a conversation transcript: ``AnatidSession`` writes the tool call and its JSON result --
         including the memory's id *and* its verbatim content -- into ``agent_messages`` in the
         same file, and would replay it into the model's context on the next turn.  The session
-        registers a hook for exactly that.  Any other table you write here is yours to cover.
+        registers a hook for exactly that, as ``RunStateStore`` does for ``agent_run_states``.
+
+        Hooks are per handle, and a file outlives every handle, so the tables anatid's own
+        integrations create are also purged **by name, on every handle**
+        (:data:`anatid.erasure.BUNDLED_INTEGRATION_TABLES`): a ``forget(hard=True)`` from a
+        second process or from the MCP server reaches them without any hook having been
+        registered there.  Any other table you write here is yours to cover with a hook.
         """
         if not callable(hook):
             raise TypeError("erasure hook must be callable")
@@ -409,6 +432,16 @@ class Anatid(MemoryVerbs):
                 except duckdb.Error:
                     pass
                 raise _translate(exc) from exc
+
+    @property
+    def in_transaction(self) -> bool:
+        """True when this thread already has a :meth:`transaction` open.
+
+        The verbs read it to decide whether a lost entity-creation race is theirs to retry: a
+        transaction the *caller* opened is the caller's to re-run, because only they know what
+        else went into it.  See :meth:`anatid.verbs.MemoryVerbs._atomic`.
+        """
+        return bool(getattr(self._local, "depth", 0))
 
     # ------------------------------------------------------------------ tenancy
 
@@ -522,11 +555,22 @@ class Anatid(MemoryVerbs):
         ``DEFAULT``, which would let ``memory_id``/``tenant_id``/``created_at`` go NULL
         afterwards and leave rows no verb can ever reach again.
 
-        Returns ``{table: row_count}``.  Indexes on the rebuilt tables are recreated afterwards.
+        Returns ``{table: row_count}``.  Indexes on a rebuilt table are recreated **inside the
+        same transaction** as the rebuild, which matters for one of them: ``DROP TABLE entities``
+        takes the ``UNIQUE (tenant_id, entity_key)`` index with it, and that index is the
+        enforcement behind "one entity per canonical name per tenant".  Recreating it afterwards
+        would leave a window in which two concurrent ``remember()`` calls could put two rows for
+        one name into the table -- re-opening exactly the race schema v3 closed, during
+        maintenance.
         """
         names = list(tables) if tables is not None else list(_schema.CLUSTER_ORDER)
         out: dict[str, int] = {}
         con = self.connection
+        wanted = dict(_schema.REQUIRED_INDEXES)
+        for index_name in self.config.indexes:
+            sql = _schema.DEFAULT_INDEXES.get(index_name) or _schema.OPTIONAL_INDEXES.get(index_name)
+            if sql:
+                wanted[index_name] = sql
         for name in names:
             order = _schema.CLUSTER_ORDER.get(name)
             if order is None:
@@ -535,8 +579,10 @@ class Anatid(MemoryVerbs):
             tmp_name = f"{name}__reclustered"
             tmp = quote_ident(tmp_name)
             ddl = _schema.table_ddl(name, self.config, as_table=tmp_name)
-            cols = ", ".join(quote_ident(r[1]) for r in
-                             con.execute(f"PRAGMA table_info({t})").fetchall())
+            # NOT PRAGMA table_info directly: it lists generated columns (entities.entity_key)
+            # like any other, and DuckDB rejects those in an INSERT column list with
+            # "Binder Error: Cannot insert into a generated column".
+            cols = ", ".join(quote_ident(c) for c in _schema.insertable_columns(con, name))
             with self.transaction():
                 self.execute(f"DROP TABLE IF EXISTS {tmp}")
                 self.execute(ddl)
@@ -544,13 +590,418 @@ class Anatid(MemoryVerbs):
                              f"SELECT {cols} FROM {t} ORDER BY {order}")
                 self.execute(f"DROP TABLE {t}")
                 self.execute(f"ALTER TABLE {tmp} RENAME TO {quote_ident(name)}")
-            out[name] = int(con.execute(f"SELECT count(*) FROM {t}").fetchone()[0])
-        for stmt in _schema.index_statements(self.config):
+                # Same transaction as the DROP: see the docstring.  `ON <table> (` is how the
+                # statement names its table -- every one of these is generated in schema.py.
+                for stmt in wanted.values():
+                    if f" ON {name} (" in stmt:
+                        self.execute(stmt)
+            out[name] = _scalar_int(con.execute(f"SELECT count(*) FROM {t}"))
+        # Anything the per-table pass did not cover (a user-configured index, or one whose
+        # table was not rebuilt).  All of these are CREATE INDEX IF NOT EXISTS, so this is a
+        # no-op for indexes that survived.
+        for stmt in _schema.index_statements(self.config) + _schema.required_index_statements():
             try:
                 self.execute(stmt)
             except duckdb.Error as exc:      # index on a table we did not rebuild
                 log.debug("recluster: skipping %s (%s)", stmt, exc)
         return out
+
+    # ------------------------------------------------------------------ health
+
+    def doctor(
+        self,
+        *,
+        tenant: int | Namespace | None = None,
+        all_tenants: bool = False,
+        deep: bool = True,
+        samples: int = DOCTOR_SAMPLE_LIMIT,
+        raise_on_error: bool = False,
+    ) -> DoctorReport:
+        """Check the file for the faults anatid's verbs assume cannot happen, and report them.
+
+        ``doctor()`` **reads only**.  It never repairs, never rebuilds an index and never
+        deletes a row, because every fault it finds has more than one defensible repair and
+        picking one silently is how a health check destroys data.  It hands you a
+        :class:`~anatid.types.DoctorReport`; what to do about it is yours.
+
+        Why it exists: anatid 0.1.0 accepted duplicate memory ids inside one tenant,
+        ``confidence=-1``, ``confidence=2`` and NaN embeddings, and wrote them all.  The verbs
+        now refuse those at the boundary (:class:`~anatid.errors.ValidationError`), but a
+        boundary check only covers rows that came through the boundary.  Bulk loads
+        (:meth:`load_parquet`), raw SQL through :attr:`connection`, a file written by an older
+        anatid and a half-finished migration all bypass it.  This is how you find out.
+
+        The checks, by ``check`` name:
+
+        ``schema_drift``
+            The file's ``schema_version`` is not this build's, a built-in table is missing, or a
+            REQUIRED index (the ``UNIQUE (tenant_id, entity_key)`` that makes entity creation
+            safe) is absent.  Every other finding below is less meaningful while this one holds.
+        ``duplicate_memory_ids`` / ``duplicate_entity_ids`` / ``duplicate_episode_ids``
+            Two rows sharing an id **inside one tenant** (across tenants is legal and normal).
+            ``get()`` then returns an arbitrary one of them and ``supersede`` closes both.
+        ``duplicate_entity_names``
+            Two entity rows whose names canonicalise to the same ``entity_key`` in one tenant --
+            the fracture the v3 unique index exists to prevent.  Present only in a file the
+            2->3 migration has not merged.
+        ``dangling_edges``
+            An edge whose ``src`` or ``dst`` has no row in the table it points at (same tenant).
+            2-hop recall silently loses that hop.
+        ``dangling_episode_references`` (warning)
+            A memory, entity or edge whose ``episode_id`` names no episode in its tenant, so
+            ``provenance()`` cannot reach the evidence behind it.
+        ``duplicate_live_edges`` (warning)
+            Two current ABOUT edges with the same ``(src, dst)``, or two current RELATES_TO
+            edges with the same ``(src, dst, rel_kind)``, in one tenant.  Nothing is lost, but
+            ``about_names()`` repeats the entity and a 2-hop weight is doubled.  The verbs never
+            write one; a bulk load can, and the 2->3 merge leaves a pair alone when neither edge
+            was repointed by it.
+        ``embedding_dimension_mismatch``
+            A stored vector whose length is not the file's ``anatid_meta.embedding_dim``, or a
+            column whose declared ``FLOAT[N]`` disagrees with it.
+        ``non_finite_embeddings`` (``deep=True`` only)
+            A vector containing NaN or +/-inf.  ``array_cosine_similarity`` returns NaN against
+            such a row for *every* query, so it sorts arbitrarily inside the vector arm.
+        ``confidence_out_of_range`` / ``weight_out_of_range``
+            A ``confidence`` or ABOUT ``weight`` outside ``[0, 1]``.
+        ``timestamp_order``
+            ``valid_from > valid_to`` or ``tx_from > tx_to``: an interval that was never open,
+            so no ``as_of`` query can ever return the row.
+        ``stale_fts_index`` / ``orphaned_fts_documents`` / ``fts_statistics_drift``
+            BM25 upkeep.  The orphan check matters beyond ranking: ``anatid_fts_documents``
+            holds ``content`` **verbatim**, so a document whose ``memories`` row is gone is a
+            copy of erased text still sitting in the file.
+
+        ``all_tenants=False`` (the default) scopes every row-level check to one tenant;
+        ``schema_drift`` is file-wide either way.  ``raise_on_error=True`` raises
+        :class:`~anatid.errors.IntegrityError` instead of returning a report with errors in it.
+
+        Not a snapshot: the checks are separate statements, so a concurrent writer can land
+        between two of them.  ``with db.transaction(): db.doctor()`` if you need one.
+        """
+        started = time.perf_counter()
+        ns = self.resolve_tenant(tenant)
+        con = self.connection
+        findings: list[DoctorFinding] = []
+        ran: list[str] = []
+        skipped: dict[str, str] = {}
+        present = _schema.table_names(con)
+        n_samples = max(0, int(samples))
+
+        def scope(alias: str = "") -> tuple[str, list[Any]]:
+            """Tenant predicate for a row-level check, or a no-op with ``all_tenants``."""
+            if all_tenants:
+                return "TRUE", []
+            col = f"{alias}.tenant_id" if alias else "tenant_id"
+            return f"{col} = ?", [ns.tenant_id]
+
+        def probe(check: str, severity: Severity, table: str | None, detail: str,
+                  sql: str, params: Sequence[Any] = ()) -> None:
+            """Run one check.  ``sql`` selects the offending rows; the report gets the count.
+
+            Always fetches at least one row: ``samples=0`` means "no examples in the report",
+            not "no report" -- ``LIMIT 0`` would have made every check pass.
+            """
+            ran.append(check)
+            rows = con.execute(f"SELECT * FROM ({sql}) LIMIT {max(1, n_samples)}",
+                               list(params)).fetchall()
+            if not rows:
+                return
+            total = _scalar_int(con.execute(f"SELECT count(*) FROM ({sql})", list(params)))
+            findings.append(DoctorFinding(
+                check=check, severity=severity, count=total, detail=detail, table=table,
+                samples=tuple(tuple(r) for r in rows[:n_samples])))
+
+        # The dimension the FILE records, which is what every write is checked against; the
+        # handle's config adopts it on open, so they agree unless someone edited anatid_meta.
+        dim = int(self.config.embedding_dim)
+        if "anatid_meta" in present:
+            recorded = con.execute("SELECT embedding_dim FROM anatid_meta LIMIT 1").fetchone()
+            if recorded is not None and recorded[0] is not None:
+                dim = int(recorded[0])
+
+        # -- schema drift ------------------------------------------------ file-wide
+        ran.append("schema_drift")
+        version = _schema.current_version(con)
+        drift: list[tuple[Any, ...]] = []
+        if version is None:
+            drift.append(("no_anatid_meta_row", None, _schema.SCHEMA_VERSION))
+        elif int(version) != _schema.SCHEMA_VERSION:
+            drift.append(("schema_version", int(version), _schema.SCHEMA_VERSION))
+        for missing in _schema.missing_tables(con):
+            drift.append(("missing_table", missing))
+        declared = con.execute(
+            "SELECT data_type FROM information_schema.columns "
+            "WHERE table_name = 'memories' AND column_name = 'embedding'").fetchone()
+        if declared is not None and str(declared[0]).upper() != f"FLOAT[{dim}]":
+            # The column type IS part of the schema: anatid_meta.embedding_dim is what every
+            # write is validated against, and a column that disagrees accepts what the verbs
+            # refuse.  The per-row check below then says which rows actually differ.
+            drift.append(("embedding_column_type", str(declared[0]), f"FLOAT[{dim}]"))
+        have_idx = {r[0] for r in con.execute(
+            "SELECT index_name FROM duckdb_indexes()").fetchall()}
+        for name in _schema.REQUIRED_INDEXES:
+            if name not in have_idx:
+                drift.append(("missing_required_index", name))
+        for name in self.config.indexes:
+            if name not in have_idx and name in _schema.DEFAULT_INDEXES:
+                drift.append(("missing_index", name))
+        if drift:
+            findings.append(DoctorFinding(
+                check="schema_drift", severity=Severity.ERROR, count=len(drift),
+                detail=(f"file is schema v{version} against this build's "
+                        f"v{_schema.SCHEMA_VERSION}, and/or a built-in table, a required index "
+                        f"or the declared embedding column type does not match; re-open the "
+                        f"file to run the migration ladder"),
+                table=None, samples=tuple(drift[:n_samples])))
+
+        # -- duplicate ids ----------------------------------------------- per tenant
+        for table, column, check in (("memories", "memory_id", "duplicate_memory_ids"),
+                                     ("entities", "entity_id", "duplicate_entity_ids"),
+                                     ("episodes", "episode_id", "duplicate_episode_ids")):
+            if table not in present:
+                skipped[check] = f"table {table} is missing"
+                continue
+            where, params = scope()
+            probe(check, Severity.ERROR, table,
+                  f"{table}.{column} is not unique within a tenant; get() returns an arbitrary "
+                  f"one of the rows and supersede/forget act on all of them",
+                  f"SELECT tenant_id, {column}, count(*) AS n FROM {table} WHERE {where} "
+                  f"GROUP BY 1, 2 HAVING count(*) > 1 ORDER BY 3 DESC, 2", params)
+
+        # -- duplicate entity names -------------------------------------- per tenant
+        if "entities" in present:
+            where, params = scope()
+            # The canonicalisation EXPRESSION, not the generated column: on a v3 file they are
+            # the same value, and on a v2 file opened read_only (so never migrated) only the
+            # expression exists -- and that file is exactly the one this check matters for.
+            probe("duplicate_entity_names", Severity.ERROR, "entities",
+                  "two entity rows canonicalise to one name in a tenant, so the graph has two "
+                  "nodes for one thing; the v3 UNIQUE (tenant_id, entity_key) index prevents "
+                  "new ones and the 2->3 migration merges old ones",
+                  f"SELECT tenant_id, {_schema.entity_key_sql('name')} AS entity_key, "
+                  f"count(*) AS n FROM entities WHERE {where} AND name IS NOT NULL "
+                  f"GROUP BY 1, 2 HAVING count(*) > 1 ORDER BY 3 DESC, 2", params)
+
+        # -- dangling edges ---------------------------------------------- per tenant
+        endpoints = (
+            ("edges_about", "src", "memories", "memory_id"),
+            ("edges_about", "dst", "entities", "entity_id"),
+            ("edges_relates", "src", "entities", "entity_id"),
+            ("edges_relates", "dst", "entities", "entity_id"),
+            ("edges_supersedes", "src", "memories", "memory_id"),
+            ("edges_supersedes", "dst", "memories", "memory_id"),
+        )
+        usable = [e for e in endpoints if e[0] in present and e[2] in present]
+        if not usable:
+            skipped["dangling_edges"] = "no edge tables present"
+        else:
+            parts, params = [], []
+            for edge_table, column, target, target_id in usable:
+                where, p = scope("e")
+                parts.append(
+                    f"SELECT '{edge_table}' AS edge_table, '{column}' AS endpoint, e.edge_id, "
+                    f"e.{column} AS missing_id FROM {edge_table} e WHERE {where} "
+                    f"AND NOT EXISTS (SELECT 1 FROM {target} t WHERE t.{target_id} = e.{column} "
+                    f"AND t.tenant_id = e.tenant_id)")
+                params += p
+            probe("dangling_edges", Severity.ERROR, None,
+                  "an edge points at a row that does not exist in its tenant; graph expansion "
+                  "silently drops that hop",
+                  " UNION ALL ".join(parts) + " ORDER BY 1, 3", params)
+
+        # -- dangling evidence -------------------------------------------- per tenant
+        # A row whose episode_id names no episode in its tenant.  forget(hard=True) deletes an
+        # episode only when nothing cites it, so this is raw SQL or a bulk load.  A WARNING,
+        # not an ERROR: provenance() tolerates it (the chain stays, the source text is gone).
+        citing = [(t, "memory_id" if t == "memories" else "entity_id" if t == "entities"
+                   else "edge_id")
+                  for t in ("memories", "entities", "edges_about", "edges_relates")
+                  if t in present]
+        if "episodes" not in present or not citing:
+            skipped["dangling_episode_references"] = "episodes or every citing table is missing"
+        else:
+            parts, params = [], []
+            for table, id_col in citing:
+                where, p = scope("r")
+                parts.append(
+                    f"SELECT '{table}' AS \"table\", r.tenant_id, r.{id_col} AS row_id, "
+                    f"r.episode_id FROM {table} r WHERE {where} AND r.episode_id IS NOT NULL "
+                    f"AND NOT EXISTS (SELECT 1 FROM episodes e WHERE e.episode_id = r.episode_id "
+                    f"AND e.tenant_id = r.tenant_id)")
+                params += p
+            probe("dangling_episode_references", Severity.WARNING, None,
+                  "a row cites an episode_id that has no episodes row in its tenant, so "
+                  "provenance() cannot reach the evidence it was derived from",
+                  " UNION ALL ".join(parts) + " ORDER BY 1, 3", params)
+
+        # -- duplicate live edges ---------------------------------------- per tenant
+        # Two current edges saying the same thing.  Not an integrity break (both endpoints
+        # exist) but it doubles a 2-hop weight and repeats an entity in about_names(), so a
+        # WARNING.  Only edges live now: a closed edge next to its replacement is history.
+        live = "valid_to IS NULL AND tx_to IS NULL"
+        edge_keys = [("edges_about", "src, dst"), ("edges_relates", "src, dst, rel_kind")]
+        edge_keys = [(t, k) for t, k in edge_keys if t in present]
+        if not edge_keys:
+            skipped["duplicate_live_edges"] = "no edge tables present"
+        else:
+            parts, params = [], []
+            for table, key in edge_keys:
+                where, p = scope()
+                key_cols = ", ".join(f"{c.strip()}" for c in key.split(","))
+                parts.append(
+                    f"SELECT '{table}' AS \"table\", tenant_id, src, dst, "
+                    f"{'rel_kind' if 'rel_kind' in key else 'NULL AS rel_kind'}, "
+                    f"count(*) AS n FROM {table} WHERE {where} AND {live} "
+                    f"GROUP BY tenant_id, {key_cols} HAVING count(*) > 1")
+                params += p
+            probe("duplicate_live_edges", Severity.WARNING, None,
+                  "two current edges in a tenant say the same thing (same src/dst[/rel_kind]); "
+                  "about_names() repeats the entity and a 2-hop weight is doubled",
+                  " UNION ALL ".join(parts) + " ORDER BY 1, 6 DESC, 3", params)
+
+        # -- embeddings --------------------------------------------------- per tenant
+        if "memories" not in present:
+            skipped["embedding_dimension_mismatch"] = "table memories is missing"
+        else:
+            where, params = scope()
+            probe("embedding_dimension_mismatch", Severity.ERROR, "memories",
+                  f"a stored vector is not {dim}-dimensional, so array_cosine_similarity "
+                  f"cannot compare it with a query vector",
+                  f"SELECT tenant_id, memory_id, len(embedding) AS dim FROM memories "
+                  f"WHERE {where} AND embedding IS NOT NULL AND len(embedding) <> ? "
+                  f"ORDER BY memory_id", params + [dim])
+
+        if "memories" not in present:
+            skipped["non_finite_embeddings"] = "table memories is missing"
+        elif not deep:
+            skipped["non_finite_embeddings"] = "deep=False (this check reads every vector)"
+        else:
+            where, params = scope()
+            probe("non_finite_embeddings", Severity.ERROR, "memories",
+                  "a stored vector contains NaN, inf or a NULL element; "
+                  "array_cosine_similarity returns NaN/NULL against that row for every query, "
+                  "so it ranks arbitrarily instead of ranking badly",
+                  f"SELECT tenant_id, memory_id FROM memories WHERE {where} "
+                  f"AND embedding IS NOT NULL "
+                  f"AND len(list_filter(embedding::DOUBLE[], "
+                  f"                    x -> x IS NULL OR NOT isfinite(x))) > 0 "
+                  f"ORDER BY memory_id", params)
+
+        # -- value ranges -------------------------------------------------- per tenant
+        conf_tables = [t for t in ("memories", "entities", "edges_about", "edges_relates")
+                       if t in present]
+        if conf_tables:
+            parts, params = [], []
+            for table in conf_tables:
+                where, p = scope()
+                parts.append(f"SELECT '{table}' AS \"table\", tenant_id, confidence FROM {table} "
+                             f"WHERE {where} AND confidence IS NOT NULL "
+                             f"AND (confidence < 0 OR confidence > 1 OR NOT isfinite(confidence))")
+                params += p
+            probe("confidence_out_of_range", Severity.ERROR, None,
+                  "confidence is documented and validated as a number in [0, 1]; a row outside "
+                  "it came from a bulk load or raw SQL and will skew any caller that weights by "
+                  "it", " UNION ALL ".join(parts) + " ORDER BY 1", params)
+
+        if "edges_about" in present:
+            where, params = scope()
+            probe("weight_out_of_range", Severity.ERROR, "edges_about",
+                  "an ABOUT edge weight is outside [0, 1]",
+                  f"SELECT tenant_id, edge_id, weight FROM edges_about WHERE {where} "
+                  f"AND weight IS NOT NULL AND (weight < 0 OR weight > 1 OR NOT isfinite(weight))"
+                  f" ORDER BY edge_id", params)
+
+        # -- timestamp ordering -------------------------------------------- per tenant
+        temporal = [t for t in ("memories", "entities", "episodes", "edges_about",
+                                "edges_relates") if t in present]
+        if temporal:
+            parts, params = [], []
+            for table in temporal:
+                where, p = scope()
+                parts.append(
+                    f"SELECT '{table}' AS \"table\", tenant_id, valid_from, valid_to, tx_from, "
+                    f"tx_to FROM {table} WHERE {where} AND ((valid_to IS NOT NULL AND "
+                    f"valid_from IS NOT NULL AND valid_to < valid_from) OR (tx_to IS NOT NULL "
+                    f"AND tx_from IS NOT NULL AND tx_to < tx_from))")
+                params += p
+            probe("timestamp_order", Severity.ERROR, None,
+                  "a row's interval closes before it opens ([from, to) with to < from), so no "
+                  "as_of query can ever return it",
+                  " UNION ALL ".join(parts) + " ORDER BY 1", params)
+
+        # -- full-text upkeep ----------------------------------------------- file-wide
+        try:
+            status = _recall.fts_status(con)
+        except Exception as exc:                      # pragma: no cover - fts not installed
+            skipped["stale_fts_index"] = f"fts status unavailable: {exc}"
+            status = None
+        if status is not None:
+            ran.append("stale_fts_index")
+            if status.available and status.stale:
+                findings.append(DoctorFinding(
+                    check="stale_fts_index", severity=Severity.WARNING,
+                    count=int(status.pending_rows),
+                    detail=("rows have been written since the last rebuild_fts_index(); "
+                            "DuckDB's fts index is not incremental, so BM25 cannot see them"),
+                    table=_schema.FTS_SOURCE_TABLE,
+                    samples=((status.indexed_rows, status.current_rows, status.indexed_at),)))
+            elif not status.available and status.current_rows:
+                findings.append(DoctorFinding(
+                    check="stale_fts_index", severity=Severity.WARNING,
+                    count=int(status.current_rows),
+                    detail=("no BM25 index has been built, so recall() runs without its text "
+                            "arm; call rebuild_fts_index()"),
+                    table=_schema.FTS_SOURCE_TABLE, samples=()))
+
+        if _schema.FTS_SOURCE_TABLE in present and "memories" in present:
+            where, params = scope("d")
+            probe("orphaned_fts_documents", Severity.ERROR, _schema.FTS_SOURCE_TABLE,
+                  "a BM25 document has no memories row, and anatid_fts_documents stores content "
+                  "VERBATIM -- this is a copy of deleted text still in the file and still "
+                  "findable by recall()",
+                  f"SELECT d.tenant_id, d.memory_id FROM {_schema.FTS_SOURCE_TABLE} d "
+                  f"WHERE {where} AND NOT EXISTS (SELECT 1 FROM memories m "
+                  f"WHERE m.memory_id = d.memory_id AND m.tenant_id = d.tenant_id) "
+                  f"ORDER BY d.tenant_id, d.memory_id", params)
+
+        if _schema.FTS_DICT_TABLE in present and _schema.FTS_STATS_TABLE in present:
+            where, params = scope("d")
+            probe("fts_statistics_drift", Severity.WARNING, _schema.FTS_DICT_TABLE,
+                  "a tenant has per-term document frequencies but no (num_docs, avgdl) row, so "
+                  "its BM25 scores cannot be computed; rebuild_fts_index()",
+                  f"SELECT DISTINCT d.tenant_id FROM {_schema.FTS_DICT_TABLE} d WHERE {where} "
+                  f"AND NOT EXISTS (SELECT 1 FROM {_schema.FTS_STATS_TABLE} s "
+                  f"WHERE s.tenant_id = d.tenant_id) ORDER BY 1", params)
+
+        # -- counts, for context -------------------------------------------------------
+        counts: dict[str, int] = {}
+        for table in _schema.ALL_TABLES:
+            if table not in present or table == "anatid_meta":
+                continue
+            has_tenant = "tenant_id" in {
+                r[1] for r in con.execute(f"PRAGMA table_info({quote_ident(table)})").fetchall()}
+            if all_tenants or not has_tenant:
+                counts[table] = _scalar_int(con.execute(
+                    f"SELECT count(*) FROM {quote_ident(table)}"))
+            else:
+                counts[table] = _scalar_int(con.execute(
+                    f"SELECT count(*) FROM {quote_ident(table)} WHERE tenant_id = ?",
+                    [ns.tenant_id]))
+
+        report = DoctorReport(
+            checked_at=utcnow(), schema_version=version,
+            expected_schema_version=_schema.SCHEMA_VERSION,
+            tenant_id=None if all_tenants else ns.tenant_id, all_tenants=all_tenants,
+            findings=tuple(findings), counts=counts, checks_run=tuple(ran),
+            checks_skipped=skipped,
+            duration_ms=round((time.perf_counter() - started) * 1000, 3))
+        if raise_on_error and not report.ok:
+            raise IntegrityError(
+                f"doctor() found {len(report.errors)} integrity fault(s) in {self.path!r}: "
+                + ", ".join(f"{f.check}={f.count}" for f in report.errors),
+                report=report, findings=report.errors)
+        return report
 
     # ------------------------------------------------------------------ full text
 
@@ -629,11 +1080,11 @@ class Anatid(MemoryVerbs):
                 for c in shared)
             order = _schema.CLUSTER_ORDER.get(name)
             order_sql = f" ORDER BY {order}" if order else ""
-            before = int(con.execute(f"SELECT count(*) FROM {quote_ident(name)}").fetchone()[0])
+            before = _scalar_int(con.execute(f"SELECT count(*) FROM {quote_ident(name)}"))
             self.execute(
                 f"INSERT INTO {quote_ident(name)} ({', '.join(quote_ident(c) for c in shared)}) "
                 f"SELECT {proj} FROM read_parquet('{src}'){order_sql}")
-            after = int(con.execute(f"SELECT count(*) FROM {quote_ident(name)}").fetchone()[0])
+            after = _scalar_int(con.execute(f"SELECT count(*) FROM {quote_ident(name)}"))
             out[name] = after - before
         if rebuild_fts and out.get("memories"):
             try:

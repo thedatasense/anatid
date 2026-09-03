@@ -19,7 +19,24 @@ Importing this subpackage without it raises :class:`ImportError` with that instr
 
 from __future__ import annotations
 
-__all__ = ["build_server", "main", "ServerConfig", "SqlGateway", "SqlNotAllowed", "ENFORCEMENT"]
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    # The names __getattr__ below hands out lazily, spelled out for type checkers (which do not
+    # run __getattr__) and for `from anatid.integrations.mcp import build_server` completions.
+    from .server import (
+        InsecureTransport,
+        ServerConfig,
+        build_server,
+        check_transport_security,
+        main,
+    )
+    from .sqlgate import ENFORCEMENT, SqlGateway, SqlNotAllowed, SqlTimeout
+
+__all__ = [
+    "build_server", "main", "ServerConfig", "SqlGateway", "SqlNotAllowed", "SqlTimeout",
+    "ENFORCEMENT", "InsecureTransport", "check_transport_security",
+]
 
 
 def __getattr__(name: str):
@@ -40,8 +57,11 @@ def __getattr__(name: str):
             "build_server": getattr(_server, "build_server", None),
             "main": getattr(_server, "main", None),
             "ServerConfig": getattr(_server, "ServerConfig", None),
+            "InsecureTransport": getattr(_server, "InsecureTransport", None),
+            "check_transport_security": getattr(_server, "check_transport_security", None),
             "SqlGateway": getattr(_sqlgate, "SqlGateway", None),
             "SqlNotAllowed": getattr(_sqlgate, "SqlNotAllowed", None),
+            "SqlTimeout": getattr(_sqlgate, "SqlTimeout", None),
             "ENFORCEMENT": getattr(_sqlgate, "ENFORCEMENT", None),
         }
         return ns[name]

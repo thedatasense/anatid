@@ -76,7 +76,7 @@ no API key and finishes in under a second.
 
 ```
 $ python examples/quickstart.py
-anatid schema v2 on duckdb 1.5.5, tenant 1, expand path: sql
+anatid schema v3 on duckdb 1.5.5, tenant 1, expand path: sql
 before rebuild: bm25 stale=True, rows waiting=3
 
 recall(query + embedding + seed): arms=('vector', 'text', 'graph') stale=False
@@ -239,12 +239,16 @@ process.
 Every item here is measured or documented in the source. Behavior that contradicts the docs and is
 not listed below is a bug; please report it.
 
-- There is no ANN index. The vector arm is a brute-force `array_cosine_similarity` scan, because
-  DuckDB ships no ANN index. The cost is linear in one tenant's row count: measured at 64 dims on
-  the spike hardware, 2.0 ms p50 with 10k memories in the tenant, 8.6 ms at 100k (an independent
-  run of the same measurement got 11.4 ms) and 23.3 ms at 1M. `BRUTE_FORCE_CEILING = 100_000` is
-  documented and not enforced. At that ceiling a recall already costs roughly 9-11 ms, and past it
-  this is the wrong tool. An owned ANN index is the headline item of v1.0.
+- anatid has no ANN index. The vector arm is a brute-force `array_cosine_similarity` scan. DuckDB
+  does ship a team-maintained `vss` extension with an HNSW index, but its persistence to disk is
+  experimental and its own documentation advises against relying on it in production, so anatid
+  does not build on it. The cost of the scan is linear in one tenant's row count: measured at 64
+  dims on the spike hardware, 2.0 ms p50 with 10k memories in the tenant, 8.6 ms at 100k (an
+  independent run of the same measurement got 11.4 ms) and 23.3 ms at 1M.
+  `BRUTE_FORCE_CEILING = 100_000` is enforced since 0.1.1: `recall(embedding=...)` raises
+  `BruteForceCeilingError` when the scan would cover more rows than that, unless you pass
+  `allow_slow=True`. At that ceiling a recall already costs roughly 9-11 ms, and past it this is
+  the wrong tool. An owned ANN index is the headline item of v1.0.
 - The full-text index is not incremental. DuckDB's `fts` index does not see rows inserted after it
   was built. The API reports it in three places: `rebuild_fts_index()` is explicit, `fts_status()`
   reports how stale the index is, and every `recall()` result carries `.bm25_stale` and

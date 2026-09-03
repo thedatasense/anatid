@@ -44,3 +44,4 @@ spike/extension
 # example scratch database
 examples/*.anatid
 examples/*.anatid.*
+.coverage

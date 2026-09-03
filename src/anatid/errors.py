@@ -16,8 +16,14 @@ __all__ = [
     "TenantIsolationError",
     "ExtensionUnavailable",
     "NotFoundError",
+    "ValidationError",
+    "RangeError",
     "EmbeddingDimensionError",
+    "EmbeddingValueError",
+    "DuplicateIdError",
+    "IntegrityError",
     "StaleIndexError",
+    "BruteForceCeilingError",
 ]
 
 
@@ -77,13 +83,82 @@ class NotFoundError(AnatidError):
     """A memory / entity / episode id does not exist in this database (or this tenant)."""
 
 
-class EmbeddingDimensionError(AnatidError):
+class ValidationError(AnatidError, ValueError):
+    """A verb was called with an argument anatid refuses to write.
+
+    These are *caller* errors caught at the verb boundary, before any statement runs: a
+    non-finite embedding value, a confidence outside ``[0, 1]``, a ``k`` of zero, a
+    ``memory_id`` that already exists in the tenant.  anatid 0.1.0 accepted all of those and
+    wrote the bad row; this class is what it raises instead.
+
+    It is also a :class:`ValueError`, so code written against 0.1.0 that catches ``ValueError``
+    around a verb keeps working.  Nothing here is retryable -- fix the argument.
+    """
+
+    retryable = False
+
+
+class RangeError(ValidationError):
+    """A numeric argument is outside the range anatid accepts.
+
+    ``field`` names the argument, ``value`` is what was passed, and ``low``/``high`` are the
+    inclusive bounds (``None`` = unbounded on that side).
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        field: str | None = None,
+        value: object = None,
+        low: float | None = None,
+        high: float | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.field = field
+        self.value = value
+        self.low = low
+        self.high = high
+
+
+class EmbeddingDimensionError(ValidationError):
     """An embedding was supplied whose length is not the database's configured dimension."""
 
     def __init__(self, message: str, *, expected: int | None = None, got: int | None = None) -> None:
         super().__init__(message)
         self.expected = expected
         self.got = got
+
+
+class EmbeddingValueError(ValidationError):
+    """An embedding contains a value that is not a finite number (NaN or +/-inf).
+
+    DuckDB stores them happily and ``array_cosine_similarity`` then returns NaN for *every*
+    comparison against that row, which sorts unpredictably and can silently displace real hits
+    from the vector arm.  ``index`` is the offending position and ``value`` what was there.
+    """
+
+    def __init__(self, message: str, *, index: int | None = None, value: object = None) -> None:
+        super().__init__(message)
+        self.index = index
+        self.value = value
+
+
+class DuplicateIdError(ValidationError):
+    """An explicit id passed to a verb is already in use in that tenant.
+
+    ``memory_id`` is unique per *tenant*, not per file: the same id in two tenants is legal and
+    the tests rely on it.  Two rows with one id inside one tenant are not: ``get()`` returns an
+    arbitrary one of them, ``supersede`` closes both, and the BM25 source table has to
+    de-duplicate them.  Passing ``memory_id=`` an id that already exists raises this.
+    """
+
+    def __init__(self, message: str, *, table: str | None = None, id: int | None = None,
+                 tenant_id: int | None = None) -> None:
+        super().__init__(message)
+        self.table = table
+        self.id = id
+        self.tenant_id = tenant_id
 
 
 class StaleIndexError(AnatidError):
@@ -94,3 +169,42 @@ class StaleIndexError(AnatidError):
     anatid reports staleness on the result object instead of raising; pass
     ``on_stale_fts="error"`` to :meth:`anatid.Anatid.recall` to get this exception.
     """
+
+
+class BruteForceCeilingError(AnatidError):
+    """The vector arm was asked to scan more of a tenant's memories than it is cheap for.
+
+    anatid has no ANN index: :func:`anatid.recall.vector_arm` is a full cosine scan of the
+    tenant's visible embeddings, linear in their number.  :data:`anatid.BRUTE_FORCE_CEILING`
+    (100,000) is where that stops being cheap -- roughly 9-11 ms per recall at the ceiling on
+    the spike hardware -- and since 0.1.1 :meth:`anatid.Anatid.recall` refuses to run the arm
+    past it rather than quietly getting slower with every write.  ``rows`` is how many rows the
+    scan would have covered, ``ceiling`` the limit it exceeded.
+
+    Pass ``allow_slow=True`` to run the scan anyway; leave ``embedding=`` out to answer from the
+    text and graph arms alone; or shard the tenant into its own file
+    (:class:`anatid.DatabasePool`) and keep each one under the ceiling.  Never retryable: the
+    corpus does not shrink by asking again.
+    """
+
+    retryable = False
+
+    def __init__(self, message: str, *, tenant_id: int | None = None, rows: int | None = None,
+                 ceiling: int | None = None) -> None:
+        super().__init__(message)
+        self.tenant_id = tenant_id
+        self.rows = rows
+        self.ceiling = ceiling
+
+
+class IntegrityError(AnatidError):
+    """:meth:`anatid.Anatid.doctor` found faults and was asked to raise.
+
+    ``report`` is the full :class:`~anatid.types.DoctorReport`; ``findings`` is the subset with
+    ``severity == "error"``.  Never raised by ``doctor()`` in its default reporting mode.
+    """
+
+    def __init__(self, message: str, *, report=None, findings=()) -> None:
+        super().__init__(message)
+        self.report = report
+        self.findings = tuple(findings)

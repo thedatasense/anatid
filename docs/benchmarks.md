@@ -46,30 +46,30 @@ current memories.
 Identical semantics on every engine. All timestamps are UTC and `now` is passed in by the harness,
 never taken from the engine's clock, so every engine produces the same rows.
 
-- **R1**, `recall_2hop(tenant, seed_entity, limit=20)`, the kill-criterion query. Frontier = seed
+- R1, `recall_2hop(tenant, seed_entity, limit=20)`, the kill-criterion query. Frontier = seed
   plus everything 1 or 2 hops away over current `RELATES_TO` edges, either direction, same tenant.
   Return current memories ABOUT anything in the frontier, `ORDER BY created_at DESC, memory_id DESC
   LIMIT 20`, as `(memory_id, created_at)`.
-- **R2**, `recall_hybrid(tenant, query_text, query_embedding, k=20)`: top-50 by cosine, top-50 by
+- R2, `recall_hybrid(tenant, query_text, query_embedding, k=20)`: top-50 by cosine, top-50 by
   BM25, fused with RRF (k=60), plus each hit's ABOUT entity names.
-- **W1**, `remember`: one transaction inserting a memory and its 1..3 ABOUT edges.
-- **W2**, `supersede`: one transaction inserting the new memory, setting `valid_to = now` on the old
+- W1, `remember`: one transaction inserting a memory and its 1..3 ABOUT edges.
+- W2, `supersede`: one transaction inserting the new memory, setting `valid_to = now` on the old
   one (never deleting it), and inserting a SUPERSEDES edge.
 
 ### Schedule
 
 Deterministic op list from `common.schedule(scale, seed=7)`, identical for every engine:
 
-1. **load**: bulk load all Parquet, build whatever indexes the engine needs. Record wall time and
+1. load: bulk load all Parquet, build whatever indexes the engine needs. Record wall time and
    on-disk size.
-2. **warmup**: 50 R1, untimed.
-3. **r1_only**: 1,000 R1 queries, single thread. This is the kill-criterion measurement.
-4. **r2_only**: 300 R2 queries, single thread.
-5. **mixed**: 10,000 ops, single thread, 70% writes (90% W1 / 10% W2) and 30% reads (80% R1 /
+2. warmup: 50 R1, untimed.
+3. r1_only: 1,000 R1 queries, single thread. This is the kill-criterion measurement.
+4. r2_only: 300 R2 queries, single thread.
+5. mixed: 10,000 ops, single thread, 70% writes (90% W1 / 10% W2) and 30% reads (80% R1 /
    20% R2).
-6. **concurrent**: 4 writer threads (W1) plus 2 reader threads (R1) for 30 s against the same open
+6. concurrent: 4 writer threads (W1) plus 2 reader threads (R1) for 30 s against the same open
    database, each thread on its own connection.
-7. **verify**: re-run R1 for query_ids 0..199 after the mixed phase and dump the id lists so the
+7. verify: re-run R1 for query_ids 0..199 after the mixed phase and dump the id lists so the
    engines can be compared row for row.
 
 Timing is `time.perf_counter_ns()` around the whole operation, including materializing results into

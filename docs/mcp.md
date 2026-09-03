@@ -206,9 +206,11 @@ to the text arm of `recall` until it is rebuilt. `recall` reports `bm25_stale` a
 batch of writes, or whenever `bm25_stale` is true. The graph and vector arms are always current, so
 recall keeps working meanwhile, but cannot match on words in the newest rows.
 
-The vector arm is a brute-force cosine scan, because DuckDB ships no ANN index. Its cost is linear
-in the tenant's current row count at every size, and past roughly 100,000 memories per tenant it is
-the wrong tool.
+The vector arm is a brute-force cosine scan. anatid has no ANN index; DuckDB's `vss` extension
+provides an HNSW index, but its on-disk persistence is experimental and not recommended for
+production, so anatid does not build on it. The scan's cost is linear in the tenant's current row
+count at every size. Past `BRUTE_FORCE_CEILING` (100,000 memories per tenant) `recall` refuses to
+run the vector arm and reports the error to the client; the text and graph arms still answer.
 
 ## Troubleshooting
 

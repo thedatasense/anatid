@@ -327,6 +327,282 @@ def test_hard_forget_erases_the_memory_from_the_transcript_too(session, db):
     assert db.execute("SELECT count(*) FROM agent_messages").fetchone()[0] == before
 
 
+# ------------------------------------------------------- erasure across EVERY bundled table
+
+
+def _every_column(db) -> dict[str, list[str]]:
+    """Every table in the database and its columns, **from the catalog**, schema-qualified.
+
+    Deliberately not a hard-coded list: the point of the test below is to catch a table nobody
+    remembered to cover, and a list written by hand can only ever contain the tables somebody
+    remembered.  ``duckdb_columns()`` sees the memory graph, the four anatid_fts_* tables, the
+    fts extension's own ``fts_main_anatid_fts_documents`` schema and whatever an integration
+    created, all the same way.
+    """
+    rows = db.execute(
+        "SELECT schema_name, table_name, column_name FROM duckdb_columns() "
+        "WHERE NOT internal ORDER BY schema_name, table_name, column_index").fetchall()
+    out: dict[str, list[str]] = {}
+    for schema_name, table_name, column_name in rows:
+        out.setdefault(f'"{schema_name}"."{table_name}"', []).append(column_name)
+    return out
+
+
+def _bare_names(names) -> set[str]:
+    """``{'"main"."memories"': 1}`` -> ``{"memories"}`` for readable assertions."""
+    return {n.split(".")[-1].strip('"') for n in names}
+
+
+def _tables_containing(db, needles: list[str]) -> dict[str, int]:
+    """``{table: matching rows}`` for every table with a row that mentions any needle anywhere.
+
+    Every column is cast to VARCHAR and substring-matched, so this looks inside numeric id
+    columns, JSON blobs, the FLOAT[] embedding and the BM25 source text alike -- an erased id
+    hiding in ``fts_doc_id`` as ``'1:883...'`` is still a hit.
+    """
+    found: dict[str, int] = {}
+    for table, columns in _every_column(db).items():
+        if not columns:
+            continue
+        tests = " OR ".join(
+            f"contains(coalesce(CAST(\"{c}\" AS VARCHAR), ''), ?)" for _ in needles
+            for c in columns)
+        params = [n for n in needles for _ in columns]
+        count = db.execute(f'SELECT count(*) FROM {table} WHERE {tests}', params).fetchone()[0]
+        if count:
+            found[table] = int(count)
+    return found
+
+
+def test_a_hard_forget_leaves_no_trace_of_the_memory_in_any_table(tmp_path):
+    """THE DEFECT: ``forget(hard=True)`` left the erased id *and* its verbatim text behind.
+
+    ``AnatidSession`` covered ``agent_messages``.  Nothing covered ``agent_run_states``, which
+    holds a whole serialised ``RunState`` -- the conversation so far, the pending tool calls and
+    their arguments -- so a purge returned a receipt saying the memory was erased while
+    ``store.load(run_id)`` still handed the id and the text back, ready to be replayed into a
+    model days later.
+
+    The test the review asked for: after a hard forget, scan **every table in the database**,
+    enumerated from the catalog rather than from a list in this file, for the memory id and the
+    exact content string, and assert zero rows anywhere.
+    """
+    secret = "Ada's passport number is X9981-DO-NOT-KEEP"
+    path = tmp_path / "erasure.anatid"
+    with Anatid.open(path, tenant=1, embedding_dim=DIM) as db:
+        session = AnatidSession("conv-erasure", db)
+        store = RunStateStore(db)
+
+        # No `entities=` on the target on purpose, and it is not incidental: `remember` stamps
+        # the episode_id onto the entity rows it creates, so an entity that outlives the memory
+        # still cites the episode and `forget(hard=True)` -- which deletes an episode only when
+        # nothing cites it -- leaves the raw source text in `episodes`. Measured, and reported
+        # to the orchestrator: it is a hole in verbs.forget, not in the integration tables this
+        # test owns, and it is not this test's to paper over. With the episode orphaned, the
+        # purge takes it, which is what the scan below then proves.
+        target = db.remember(secret, episode=f"user said: {secret}", writer=session.writer)
+        # `keeper` is written AFTER `target` on purpose, so that the BM25 watermark
+        # `anatid_meta.fts_indexed_max_id` (the largest memory_id at index time) is keeper's id,
+        # not the erased one.  When the erased memory IS the newest indexed row that watermark
+        # keeps its id -- a core-table hole this file does not own, pinned by
+        # test_erasing_the_newest_indexed_memory_leaves_its_id_in_the_fts_watermark below.
+        keeper = db.remember("Ada likes DuckDB", entities=["Ada"], writer=session.writer)
+        mid = target.memory_id
+
+        # a transcript that quotes the content (the call) and the id (the result)
+        run(session.add_items([
+            user("remember my passport number"),
+            {"type": "function_call", "call_id": "c1", "name": "anatid_remember",
+             "arguments": json.dumps({"content": secret, "entities": ["Ada"]})},
+            {"type": "function_call_output", "call_id": "c1",
+             "output": json.dumps({"memory_id": mid, "content": secret})},
+            assistant("Saved."),
+        ]))
+
+        # a parked approval whose serialised state quotes both -- the table with no hook
+        state = json.dumps({
+            "$schemaVersion": "test", "currentTurn": 2,
+            "generatedItems": [
+                {"type": "function_call_output", "call_id": "c1",
+                 "output": {"memory_id": mid, "content": secret}},
+            ],
+        })
+        run_id = store.save(state, session_id="conv-erasure", agent_name="assistant",
+                            pending_tools=["anatid_forget"], metadata={"quoted": secret})
+
+        # and the BM25 index, whose source table keeps the content verbatim
+        db.rebuild_fts_index()
+
+        needles = [str(mid), secret]
+        before = _bare_names(_tables_containing(db, needles))
+        # the copies are real, and in more than one place, before the purge
+        assert {"memories", "agent_messages", "anatid_fts_documents"} <= before, before
+        assert "agent_run_states" in before, "the fixture did not reproduce the defect"
+        assert store.load(run_id) is not None
+
+        receipt = db.forget(mid, hard=True)
+        assert receipt.hard is True
+        assert receipt.memories_deleted == 1
+        assert receipt.extra_rows_deleted >= 3        # 2 transcript rows + the parked run
+
+        after = _tables_containing(db, needles)
+        assert after == {}, (
+            f"hard forget left the erased id or its content in {sorted(after)}; "
+            f"every table in the file was scanned: {sorted(_every_column(db))}")
+
+        # the erasure is not a table drop: everything else is still there and still works
+        assert store.load(run_id) is None
+        assert db.get(keeper.memory_id) is not None
+        assert run(session.get_items()) != []
+        assert db.execute("SELECT count(*) FROM agent_messages").fetchone()[0] == 2
+        assert db.stats()["memories"] == 1
+
+
+def test_erasing_the_newest_indexed_memory_also_clears_the_fts_watermark(tmp_path):
+    """The same catalog-wide scan, with the erased memory as the NEWEST indexed row.
+
+    Found while writing the test above: every integration table was clean, but the core
+    ``anatid_meta.fts_indexed_max_id`` watermark -- "the largest memory_id the BM25 index has
+    seen" -- is by construction equal to the newest memory's id, and an early 0.1.1 draft did
+    not clamp it when that memory was erased.  ``forget(hard=True)`` now clamps it to the
+    largest id still in the index, and this test holds the whole file to zero leftovers.
+    """
+    secret = "Ada's passport number is X9981-DO-NOT-KEEP"
+    with Anatid.open(tmp_path / "erasure-newest.anatid", tenant=1, embedding_dim=DIM) as db:
+        session = AnatidSession("conv-newest", db)
+        store = RunStateStore(db)
+        db.remember("Ada likes DuckDB", entities=["Ada"], writer=session.writer)
+        target = db.remember(secret, episode=f"user said: {secret}", writer=session.writer)
+        mid = target.memory_id
+        run(session.add_items([
+            {"type": "function_call_output", "call_id": "c1",
+             "output": json.dumps({"memory_id": mid, "content": secret})},
+        ]))
+        store.save(json.dumps({"quoted": {"memory_id": mid, "content": secret}}),
+                   session_id="conv-newest")
+        db.rebuild_fts_index()
+        needles = [str(mid), secret]
+        assert {"memories", "agent_messages", "agent_run_states", "anatid_fts_documents"} <= \
+            _bare_names(_tables_containing(db, needles))
+
+        db.forget(mid, hard=True)
+
+        after = _tables_containing(db, needles)
+        integration_leftovers = {t for t in _bare_names(after) if t.startswith("agent_")}
+        assert integration_leftovers == set(), (
+            f"an integration table kept the erased id or content: {sorted(after)}")
+
+        watermark = db.execute(
+            "SELECT fts_indexed_max_id FROM anatid_meta").fetchone()[0]
+        assert watermark != mid
+        assert after == {}, f"hard forget left the erased id or its content in {sorted(after)}"
+
+
+def test_a_hard_forget_from_another_handle_still_erases_the_integration_tables(tmp_path):
+    """Erasure hooks live on a handle; the file does not care which handle asks.
+
+    The break the verifier found in the first 0.1.1 draft: build the session and the store in
+    one process (hooks registered on *that* handle), then issue ``forget(hard=True)`` from a
+    plain ``Anatid.open`` of the same file -- what a maintenance script, a second process or the
+    ``anatid-mcp`` ``forget`` tool does.  The draft deleted nothing from ``agent_messages`` or
+    ``agent_run_states`` and reported ``extra_rows_deleted=0``.  Now ``forget`` finds the bundled
+    integration tables in the catalog itself (``anatid.erasure.BUNDLED_INTEGRATION_TABLES``) and
+    the receipt counts what it removed from them.
+    """
+    from anatid.erasure import BUNDLED_INTEGRATION_TABLES
+
+    secret = "Bee's door code is 4471-KEEP-OUT"
+    path = tmp_path / "cross-handle.anatid"
+    with Anatid.open(path, tenant=1, embedding_dim=DIM) as writer:
+        session = AnatidSession("conv-cross", writer)
+        store = RunStateStore(writer)
+        target = writer.remember(secret, episode=f"user said: {secret}", writer=session.writer)
+        mid = target.memory_id
+        run(session.add_items([
+            {"type": "function_call", "call_id": "c1", "name": "anatid_remember",
+             "arguments": json.dumps({"content": secret})},
+            {"type": "function_call_output", "call_id": "c1",
+             "output": json.dumps({"memory_id": mid, "content": secret})},
+            assistant("Saved."),
+        ]))
+        run_id = store.save(json.dumps({"quoted": {"memory_id": mid, "content": secret}}),
+                            session_id="conv-cross")
+        store.save(json.dumps({"quoted": "nothing to do with it"}), session_id="conv-cross")
+        writer.rebuild_fts_index()
+        assert len(writer.erasure_hooks) == 4
+
+    needles = [str(mid), secret]
+    with Anatid.open(path, tenant=1, embedding_dim=DIM) as other:
+        assert other.erasure_hooks == []                       # nothing registered here
+        before = _bare_names(_tables_containing(other, needles))
+        assert {"memories", "agent_messages", "agent_run_states"} <= before, before
+
+        receipt = other.forget(mid, hard=True)
+
+        assert receipt.extra_rows_deleted == 3                 # 2 transcript rows + 1 run state
+        after = _tables_containing(other, needles)
+        assert after == {}, (
+            f"a hard forget from a handle without hooks left the erased id or its content in "
+            f"{sorted(after)}")
+        # the pass is a purge of matching rows, not a table drop
+        assert other.execute("SELECT count(*) FROM agent_messages").fetchone()[0] == 1
+        assert other.execute("SELECT count(*) FROM agent_run_states").fetchone()[0] == 1
+        assert set(BUNDLED_INTEGRATION_TABLES) <= _bare_names(_every_column(other))
+
+    # and the handle that DID register hooks does not count the same rows twice
+    with Anatid.open(path, tenant=1, embedding_dim=DIM) as again:
+        session = AnatidSession("conv-cross", again)
+        store = RunStateStore(again)
+        m2 = again.remember("Bee's second secret", writer=session.writer)
+        run(session.add_items([
+            {"type": "function_call_output", "call_id": "c2",
+             "output": json.dumps({"memory_id": m2.memory_id, "content": "Bee's second secret"})},
+        ]))
+        store.save(json.dumps({"memory_id": m2.memory_id}), session_id="conv-cross")
+        receipt = again.forget(m2.memory_id, hard=True)
+        assert receipt.extra_rows_deleted == 2
+        assert store.load(run_id) is None
+        assert _tables_containing(again, [str(m2.memory_id), "Bee's second secret"]) == {}
+
+
+def test_every_bundled_integration_table_has_an_erasure_hook(db):
+    """A hook per table, registered once however many sessions and stores share the handle."""
+    from anatid.integrations.erasure import TableErasureHook
+
+    AnatidSession("conv-a", db)
+    AnatidSession("conv-b", db)                       # a second session must not double-register
+    RunStateStore(db)
+    RunStateStore(db, tenant=2)
+
+    hooked = {h.table for h in db.erasure_hooks if isinstance(h, TableErasureHook)}
+    integration_tables = {t for t in _bare_names(_every_column(db)) if t.startswith("agent_")}
+    assert integration_tables == {"agent_messages", "agent_sessions", "agent_turn_usage",
+                                  "agent_run_states"}
+    assert integration_tables <= hooked, f"no erasure hook for {integration_tables - hooked}"
+    assert len(db.erasure_hooks) == len(hooked), "a hook was registered twice"
+    # and the list core purges by name on every handle is exactly these tables
+    from anatid.erasure import BUNDLED_INTEGRATION_TABLES
+
+    assert set(BUNDLED_INTEGRATION_TABLES) == integration_tables
+
+
+def test_the_run_state_hook_is_scoped_to_the_tenant_and_leaves_other_runs_alone(db):
+    store = RunStateStore(db, tenant=1)
+    other_tenant = RunStateStore(db, tenant=2)
+
+    m = db.remember("Bee keeps bees in Bristol", tenant=1)
+    quoting = store.save(json.dumps({"note": "Bee keeps bees in Bristol"}))
+    unrelated = store.save(json.dumps({"note": "nothing to do with it"}))
+    elsewhere = other_tenant.save(json.dumps({"note": "Bee keeps bees in Bristol"}))
+
+    db.forget(m.memory_id, hard=True, tenant=1)
+
+    assert store.load(quoting) is None                # erased
+    assert store.load(unrelated) is not None          # untouched
+    assert other_tenant.load(elsewhere) is not None   # a different tenant is a different file's
+    #                                                   worth of data; scoping is by tenant_id
+
+
 def test_session_can_own_its_own_database(tmp_path):
     path = tmp_path / "owned.anatid"
     with AnatidSession("owned", path=str(path), tenant=4, embedding_dim=DIM) as owned:

@@ -13,16 +13,174 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  FORCE_COLOR: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
 jobs:
+  # ---------------------------------------------------------------------------------------
+  # 1. Style and metadata.  Cheapest job, so it runs first and everything else can be read
+  #    against it.
+  # ---------------------------------------------------------------------------------------
+  lint:
+    name: ruff + metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Only the linter, at the version the `lint` extra pins -- no duckdb, no integrations.  A
+      # style job that needs the runtime installed is a style job that can go red for runtime
+      # reasons.  The pin is read from pyproject.toml so there is one place to bump it.
+      - name: Install ruff (pinned in pyproject's `lint` extra)
+        run: |
+          python - <<'PY'
+          import pathlib, subprocess, sys, tomllib
+          extras = tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["optional-dependencies"]
+          (req,) = [r for r in extras["lint"] if r.startswith("ruff")]
+          print("installing", req)
+          subprocess.check_call([sys.executable, "-m", "pip", "install", req])
+          PY
+          ruff --version
+
+      # `ruff format` config, including the shrinking exclude list of files that predate it,
+      # lives in pyproject.toml under [tool.ruff.format].
+      - name: ruff format --check
+        run: ruff format --check --diff .
+
+      - name: ruff check
+        run: ruff check --output-format=github .
+
+      # anatid carries its version in two places: pyproject's [project].version (what pip and
+      # PyPI see) and anatid.__version__ (what a user prints).  Drift is a build failure rather
+      # than a surprise in a bug report.
+      - name: pyproject version == anatid.__version__
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys, tomllib
+          meta = tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"]
+          src = pathlib.Path("src/anatid/__init__.py").read_text()
+          m = re.search(r'^__version__\s*=\s*["\']([^"\']+)["\']', src, re.M)
+          if m is None:
+              sys.exit("no __version__ in src/anatid/__init__.py")
+          if m.group(1) != meta:
+              sys.exit(f"version drift: pyproject={meta!r} but anatid.__version__={m.group(1)!r}")
+          print(f"version {meta} agrees in both places")
+          PY
+
+      # The wheel is pure Python.  Nothing in the metadata may suggest the C++ DuckDB extension
+      # (ext/, spike/extension/) ships with it -- it is source-checkout-only and built with CMake.
+      - name: metadata does not claim the C++ extension ships
+        run: |
+          python - <<'PY'
+          import pathlib, sys, tomllib
+          proj = tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]
+          bad = [c for c in proj.get("classifiers", []) if "C++" in c or "Cython" in c]
+          if bad:
+              sys.exit(f"classifiers imply compiled code in the wheel: {bad}")
+          if "Typing :: Typed" not in proj["classifiers"]:
+              sys.exit("py.typed ships but the `Typing :: Typed` classifier is missing")
+          print("classifiers: pure Python, typed, as built")
+          PY
+
+  # ---------------------------------------------------------------------------------------
+  # 2. Types.  An error BUDGET that has ratcheted down to 0 -- see [tool.pyright] in
+  #    pyproject.toml for how it got there.
+  # ---------------------------------------------------------------------------------------
+  types:
+    name: pyright
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # The job FAILS when the error count exceeds this.  When the count drops below it the job
+      # passes and prints a warning annotation asking for the budget to be lowered in the same
+      # PR, so the number only ever ratchets down.  (A hard two-sided gate was considered and
+      # rejected: five branches are landing type fixes concurrently, and a build that goes red
+      # because somebody else fixed an error is a build people learn to ignore.)
+      #
+      # Measured 2026-09-02 with pyright 1.1.411 against a venv holding the `types` extra:
+      # 0 errors / 0 warnings (0.1.0 was 58 / 6; the verb-mixin Protocol in
+      # src/anatid/_typing.py removed 32, and the integrations' remaining 25 were fixed in the
+      # same release).  The budget is therefore 0: this is now a clean gate.
+      # Reproduce locally with
+      #     pip install -e ".[types]" && pyright --pythonpath "$(which python)" --outputjson
+      PYRIGHT_ERROR_BUDGET: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # The pip `pyright` package is a launcher around the Node implementation; pin the Node
+      # major rather than inherit whatever the runner image has this month.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # `types` pulls in mcp and openai-agents: pyright cannot check integrations/** without
+      # the packages they import, and "missing import" errors would swamp the real ones.
+      - name: Install anatid[types]
+        run: python -m pip install -e ".[types]"
+
+      # `--pythonpath` pins import resolution to the interpreter that has the `types` extra.
+      # Without it pyright picks whichever `python` it finds first and reports 11 phantom
+      # `reportMissingImports` errors instead of the real ones -- measured, not hypothetical.
+      - name: pyright
+        run: |
+          pyright --pythonpath "$(which python)" --outputjson > pyright.json || true
+          python - <<'PY'
+          import json, os, pathlib, sys
+          report = json.loads(pathlib.Path("pyright.json").read_text())
+          summary = report["summary"]
+          errors, warnings = summary["errorCount"], summary["warningCount"]
+          budget = int(os.environ["PYRIGHT_ERROR_BUDGET"])
+          for d in report["generalDiagnostics"]:
+              if d["severity"] == "error":
+                  f = d["file"].split("/src/anatid/")[-1]
+                  line = d["range"]["start"]["line"] + 1
+                  print(f"src/anatid/{f}:{line} [{d.get('rule', '-')}] {d['message'].splitlines()[0]}")
+          print(f"\npyright: {errors} error(s), {warnings} warning(s); budget {budget}")
+          if errors > budget:
+              sys.exit(f"type errors went UP: {errors} > {budget}. Fix them, or justify a raise.")
+          if errors < budget:
+              print(
+                  f"::warning file=.github/workflows/ci.yml::pyright errors are down to {errors} "
+                  f"(budget {budget}). Lower PYRIGHT_ERROR_BUDGET to {errors} so it cannot creep back."
+              )
+          PY
+
+      # Informational: does the py.typed marker actually buy a downstream user anything?
+      # Never fails the build -- it reports how much of the public surface is inferred.
+      - name: pyright --verifytypes (informational)
+        continue-on-error: true
+        run: pyright --pythonpath "$(which python)" --verifytypes anatid --ignoreexternal
+
+  # ---------------------------------------------------------------------------------------
+  # 3. The suite, across OSes and Python versions.
+  # ---------------------------------------------------------------------------------------
   test:
     name: pytest (${{ matrix.os }}, py${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
+        include:
+          # The other two platforms at both ends of the supported range.  anatid opens files,
+          # spawns an MCP server over stdio and leans on DuckDB's storage layer, all of which
+          # behave differently on Windows -- so Windows is in the matrix, not assumed.
+          - os: macos-latest
+            python-version: "3.10"
+          - os: macos-latest
+            python-version: "3.13"
+          - os: windows-latest
+            python-version: "3.10"
+          - os: windows-latest
+            python-version: "3.13"
 
     steps:
       - uses: actions/checkout@v4
@@ -34,22 +192,183 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
 
-      - name: Install anatid with every extra
+      # `[dev]` is the whole suite by construction: both integration extras (so tests/test_mcp.py
+      # and tests/test_openai_agents.py do not importorskip themselves out of existence) plus
+      # numpy and pyarrow (so tests/conftest.py's spike harness imports rather than erroring).
+      # If this line ever needs an extra package appended, the package belongs in `[dev]` instead.
+      - name: Install anatid[dev]
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[agents,mcp,dev]"
+          python -m pip install -e ".[dev]"
 
       - name: Show versions
+        shell: bash
         run: |
           python -c "import anatid, duckdb, sys; print('python', sys.version); print('anatid', anatid.__version__); print('duckdb', duckdb.__version__)"
 
-      # The spike dataset is not in the repository, so the slow/oracle tests that load it
-      # cannot run here; they are run locally against spike/data before a release. The C++
-      # extension is not built here either, so tests/test_extension.py skips itself. Everything
-      # else runs -- including the MCP and OpenAI-Agents suites, which is why the install step
-      # above pulls in both extras rather than `[dev]` alone.
+      # The 100k-row spike dataset is not in the repository, so `slow`/`oracle` are deselected
+      # here; they run locally against spike/data before a release, and the `bench` extra exists
+      # so that run needs no ad-hoc pip install.  The C++ extension is not built here either, so
+      # tests/test_extension.py and the two extension tests in test_core.py skip themselves.
       - name: Run tests
         run: pytest -m "not slow and not oracle"
 
       - name: Run the quickstart example
         run: python examples/quickstart.py
+
+  # ---------------------------------------------------------------------------------------
+  # 4. Coverage floor.  Separate from `test` so a coverage regression is legible on its own and
+  #    so the floor is measured on exactly one platform (it is not comparable across OSes:
+  #    Windows and macOS skip different tests).
+  # ---------------------------------------------------------------------------------------
+  coverage:
+    name: coverage floor
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: python -m pip install -e ".[dev]"
+
+      # The floor itself is `fail_under` in [tool.coverage.report]; keeping it in pyproject
+      # means `pytest --cov` reproduces the CI verdict locally with no extra flags.
+      - name: pytest --cov
+        run: pytest -m "not slow and not oracle" --cov --cov-report=term-missing --cov-report=xml
+
+      - name: Upload coverage.xml
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------------------------------
+  # 5. Lowest declared versions.  The default jobs all resolve to the newest release of every
+  #    dependency, so a lower bound like `duckdb>=1.5` is never actually tested and slowly
+  #    becomes a lie.  `--resolution lowest-direct` installs the oldest version each DIRECT
+  #    dependency's specifier allows (transitives stay at their newest compatible release,
+  #    which is what upstream actually supports).
+  #
+  #    Verified locally 2026-09-02 on py3.10: resolves to duckdb 1.5.0, mcp 2.1.0,
+  #    openai-agents 0.22.0, numpy 1.24.0, pyarrow 14.0.0, pytest 9.0.0, pytest-cov 5.0.0 and
+  #    the suite passes (`current_transaction_id()`, which schema v3 relies on, exists in 1.5.0).
+  # ---------------------------------------------------------------------------------------
+  lowest-direct:
+    name: pytest (lowest direct deps, py3.10)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install at the declared lower bounds
+        run: uv pip install --system --resolution lowest-direct -e ".[dev]"
+
+      # Worth reading in the log: this is the only job where `duckdb>=1.5` means 1.5.0 rather
+      # than whatever shipped last week.
+      - name: Show what the lower bounds actually resolve to
+        run: uv pip list --system
+
+      - name: Run tests
+        run: pytest -m "not slow and not oracle"
+
+  # ---------------------------------------------------------------------------------------
+  # 6. The artefact users actually get.  Everything above tests a source checkout; this tests
+  #    the wheel -- which is where a missing py.typed, a missing package or a file that only
+  #    exists in the repo shows up.
+  # ---------------------------------------------------------------------------------------
+  wheel:
+    name: build + install the wheel
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install --upgrade build twine
+      - run: python -m build
+      - run: python -m twine check --strict dist/*
+
+      # py.typed is what makes the inline annotations visible to a downstream type checker
+      # (PEP 561).  It is one zero-byte file, it is trivially droppable by a packaging change,
+      # and nothing else in the build would notice -- so assert it.
+      - name: the wheel ships py.typed, and the sdist ships no C++ tree
+        run: |
+          python - <<'PY'
+          import glob, sys, tarfile, zipfile
+
+          (whl,) = glob.glob("dist/*.whl")
+          names = zipfile.ZipFile(whl).namelist()
+          print(f"{whl}:")
+          for n in sorted(names):
+              print("   ", n)
+          missing = [n for n in ("anatid/py.typed", "anatid/__init__.py") if n not in names]
+          if missing:
+              sys.exit(f"wheel is missing {missing}")
+          if names.count("anatid/py.typed") != 1:
+              sys.exit("anatid/py.typed appears more than once in the wheel (force-include duplicate)")
+
+          (sd,) = glob.glob("dist/*.tar.gz")
+          members = tarfile.open(sd).getnames()
+          stowaways = [m for m in members if "/ext/" in m or "/spike/" in m]
+          if stowaways:
+              sys.exit(
+                  "sdist contains part of the C++ extension tree, which the wheel cannot "
+                  f"build and the metadata does not promise: {stowaways[:10]}"
+              )
+          print(f"\n{whl}: py.typed present exactly once")
+          print(f"{sd}: no ext/ or spike/ members ({len(members)} files)")
+          PY
+
+      # `WHEEL[agents,mcp,test]` -- the runtime, both integrations and the test deps, resolved
+      # from the wheel's own metadata, so this job cannot drift from pyproject.toml.  (pip
+      # resolves extras on a local wheel path; verified with pip 26.)
+      - name: Install the wheel into a clean venv and use it
+        run: |
+          python -m venv /tmp/wheelenv
+          /tmp/wheelenv/bin/python -m pip install --upgrade pip
+          /tmp/wheelenv/bin/pip install "$(ls dist/*.whl)[agents,mcp,test]"
+          /tmp/wheelenv/bin/python - <<'PY'
+          import pathlib
+          import anatid
+          from anatid import Anatid
+
+          here = pathlib.Path(anatid.__file__).parent
+          assert "site-packages" in str(here), f"imported the source tree, not the wheel: {here}"
+          assert (here / "py.typed").is_file(), "py.typed did not survive installation"
+
+          with Anatid.open(":memory:", tenant=1, embedding_dim=4) as db:
+              m = db.remember("hello", entities=["Ada"], embedding=[0, 0, 0, 1.0])
+              assert db.recall_2hop("Ada")[0].memory_id == m.memory_id
+          print("wheel import + smoke test passed from", here)
+          PY
+
+      - name: The console script the wheel declares actually exists
+        run: |
+          test -x /tmp/wheelenv/bin/anatid-mcp
+          /tmp/wheelenv/bin/anatid-mcp --help > /dev/null
+          echo "anatid-mcp entry point resolves"
+
+      # Run the suite against the INSTALLED wheel rather than src/, which is the only way to
+      # catch a module that exists in the repo but never made it into the distribution.  The
+      # conftest does not put src/ on sys.path, so `import anatid` inside the tests is the
+      # site-packages copy; the smoke step above already proved that resolution.
+      - name: Run the suite against the installed wheel
+        run: /tmp/wheelenv/bin/python -m pytest -m "not slow and not oracle" -p no:cacheprovider
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/

@@ -103,8 +103,10 @@ modes are ones the docs already named.
 Exit criteria: stable on-disk format, semver guarantees on the public API, and the two weak arms
 (vector search, adjacency) are no longer weak.
 
-- An owned ANN index, the single biggest gap in v0.1. DuckDB ships no ANN index, so anatid's vector
-  arm is a brute-force scan with a documented ~1e5-per-tenant ceiling. v1.0 ships an HNSW index (or
+- An owned ANN index, the single biggest gap in v0.1. DuckDB's team-maintained `vss` extension
+  provides an HNSW index, but its on-disk persistence is experimental and not recommended for
+  production, so anatid's vector arm is a brute-force scan with an enforced ~1e5-per-tenant
+  ceiling. v1.0 ships an HNSW index (or
   IVF-PQ, decided by measurement) as an anatid DuckDB extension, with MVCC-correct incremental
   maintenance. An index that goes stale on write, or that ignores rows created inside a
   transaction, is not acceptable: the spike hit exactly that in Grafeo 0.5.42, whose HNSW index

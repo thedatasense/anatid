@@ -46,11 +46,13 @@ Erasure
 Putting the transcript in the same file as the memory graph is the point of this class, and it
 is also a right-to-erasure obligation: a tool result row quotes the memory's id *and* its
 content verbatim, and ``get_items()`` would replay it into the model's context after the memory
-itself had been purged.  The constructor therefore registers an erasure hook on the handle
-(:meth:`anatid.Anatid.register_erasure_hook`), so ``db.forget(mid, hard=True)`` deletes the
-matching ``agent_messages`` rows in the same transaction and reports them as the receipt's
-``extra_rows_deleted``.  A *soft* forget deliberately leaves the transcript alone -- it is not
-an erasure.
+itself had been purged.  The constructor therefore registers erasure hooks on the handle
+(:meth:`anatid.Anatid.register_erasure_hook`) for **all three** of its tables, so
+``db.forget(mid, hard=True)`` deletes the matching rows in the same transaction and reports them
+as the receipt's ``extra_rows_deleted``.  A *soft* forget deliberately leaves the transcript
+alone -- it is not an erasure.  See :mod:`anatid.integrations.erasure` for how a row is matched
+and what that costs; ``agent_sessions`` and ``agent_turn_usage`` hold only counters today, and
+are covered anyway so that a column added to them later cannot quietly reopen the hole.
 """
 
 from __future__ import annotations
@@ -65,6 +67,7 @@ from ...database import Anatid
 from ...ids import new_id
 from ...schema import quote_ident
 from ...types import Memory, Namespace, utcnow
+from ..erasure import memory_needles, purge_rows_containing, register_table_erasure_hooks
 
 log = logging.getLogger("anatid.integrations.openai_agents")
 
@@ -144,9 +147,10 @@ def _as_mapping(item: Any) -> Mapping[str, Any]:
     dump = getattr(item, "model_dump", None)
     if callable(dump):
         try:
-            return dump()
+            out = dump()
         except Exception:  # pragma: no cover - defensive
             return {}
+        return out if isinstance(out, Mapping) else {}
     return {}
 
 
@@ -266,7 +270,10 @@ class AnatidSession:
         self._s = quote_ident(sessions_table)
         self._u = quote_ident(usage_table)
         self._ensure_tables()
-        self.db.register_erasure_hook(self._purge_memory_from_transcript)
+        #: One hook per table this session owns, deduplicated by table name, so a second
+        #: AnatidSession on the same handle does not double-count the rows it removes.
+        self.erasure_hooks = register_table_erasure_hooks(
+            self.db, (self._messages, self._sessions, self._usage))
 
     # ------------------------------------------------------------------ schema
 
@@ -295,44 +302,22 @@ class AnatidSession:
 
     def _purge_memory_from_transcript(self, db: Anatid, memory_id: int, tenant_id: int,
                                       content: str | None = None) -> int:
-        """Erasure hook: drop transcript rows that quote a hard-purged memory.
+        """Erasure hook for the messages table.  Kept as a method for callers who registered it.
 
-        Registered on the handle in :meth:`__init__`, so ``db.forget(mid, hard=True)`` removes
-        them **inside its own transaction**.  Without it, ``forget(hard=True)`` deleted the
-        memory row while the tool call that created it and the tool result that echoed its
-        ``content`` verbatim stayed in ``agent_messages`` in the same file -- and
-        :meth:`get_items` handed them straight back to the model on the next turn.  A right to
-        erasure that a conversation replay defeats is not one.
+        :meth:`__init__` registers :class:`~anatid.integrations.erasure.TableErasureHook` objects
+        for all three of this session's tables instead of this bound method (see
+        :attr:`erasure_hooks`), because ``agent_messages`` was never the only copy: this delegates
+        to the same code so a caller who registered *this* by hand keeps working, and calling both
+        is harmless -- the second finds the rows already gone and returns 0.
 
-        A row goes if its stored JSON or extracted text contains the memory's decimal **id** or
-        its **content** verbatim (plain substring, via DuckDB ``contains`` -- no LIKE wildcards,
-        so punctuation in the content is literal).  Both are needed: the tool *call* carries the
-        content without the id, the tool *result* carries the id.
-
-        Two honest consequences, neither hidden:
-
-        * It is scoped to this session's messages table and the memory's tenant, but **not** to
-          this ``session_id`` -- another conversation that quoted the same text is erased too,
-          which is the point.
-        * A very short memory ("hi") will match unrelated rows.  Erasure is destructive by
-          definition, and anatid resolves the tie towards erasing: a false positive costs one
-          transcript row, a false negative costs the erasure.
+        Without a hook, ``forget(hard=True)`` deleted the memory row while the tool call that
+        created it and the tool result that echoed its ``content`` verbatim stayed in
+        ``agent_messages`` in the same file -- and :meth:`get_items` handed them straight back to
+        the model on the next turn.  A right to erasure that a conversation replay defeats is not
+        one.
         """
-        needles = [str(int(memory_id))]
-        if content:
-            needles.append(str(content))
-        where = " OR ".join(
-            "contains(coalesce(item_json, ''), ?) OR contains(coalesce(item_text, ''), ?)"
-            for _ in needles)
-        params: list[Any] = [int(tenant_id)]
-        for n in needles:
-            params += [n, n]
-        cur = db.execute(f"DELETE FROM {self._m} WHERE tenant_id = ? AND ({where})", params)
-        try:
-            row = cur.fetchone()
-        except Exception:                          # pragma: no cover - driver dependent
-            return 0
-        return 0 if row is None or row[0] is None else int(row[0])
+        return purge_rows_containing(
+            db, self._messages, memory_needles(memory_id, content), tenant_id=tenant_id)
 
     # ------------------------------------------------------------------ helpers
 
@@ -405,7 +390,7 @@ class AnatidSession:
             row = self.db.execute(
                 f"SELECT COALESCE(MAX(seq), 0), COALESCE(MAX(turn), 0) FROM {self._m} "
                 f"WHERE tenant_id = ? AND session_id = ?",
-                [self.tenant_id, self.session_id]).fetchone()
+                [self.tenant_id, self.session_id]).fetchone() or (0, 0)
             seq = int(row[0] or 0)
             turn = int(row[1] or 0)
             added_turns = 0
