@@ -176,8 +176,9 @@ of it, and publication is one metadata row.
 
 On the WRITE side, journalling costs ``remember()`` 0.76 ms (1.13 ms without a full-text index,
 1.89 ms with one): one ``INSERT`` per event, most of it DuckDB's fixed per-statement cost.  That
-is the price of the write being searchable, and it is why :func:`attach` is a decision rather
-than a default.
+is the price of the write being searchable by the next read, and it is what
+``Anatid.open(accelerators=False)`` declines.  Opening with the default attaches this index, so
+the searchable-immediately behaviour above is what an ordinary anatid database does.
 """
 
 from __future__ import annotations
@@ -1700,8 +1701,11 @@ def attach(db: Any, *, terms_index: bool = True, build: bool = False) -> FtsInde
     load failure on every read is more useful than refusing to start.  A build does need it,
     and says so then.
 
-    This is what ``Anatid.open(fts=...)`` should call.  Wiring it into :meth:`anatid.Anatid.open`
-    is one branch after ``ensure_schema``; until that lands, call this directly.
+    :meth:`anatid.Anatid.open` calls this itself for ``accelerators=True`` and ``fts=True``,
+    which are the defaults, so an ordinary database is already on the framework and a write on
+    it is searchable with no rebuild.  Call this directly on a handle opened with
+    ``accelerators=False``, or on one whose file predates the derived-index catalog and has
+    since been migrated.
     """
     existing = index_of(db)
     if existing is None:

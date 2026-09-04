@@ -35,6 +35,12 @@ embedding and its provenance, and that is not a decision to hand to a model.
 Every tool returns a JSON string.  anatid errors are returned as ``{"error": ..., "message":
 ...}`` rather than raised, so the model can correct itself instead of failing the run;
 everything else propagates.
+
+**Ids are decimal strings**, going out and coming back: ``"883768514279557120"``, never
+``883768514279557120``.  anatid ids are 63-bit and a JSON number is a double once it reaches
+any JavaScript in the chain, which silently rounds one.  The three tools that take an id
+declare a string in their JSON schema and accept a plain integer as well; see
+:mod:`anatid.integrations.wire`.
 """
 
 from __future__ import annotations
@@ -48,6 +54,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, Mapping, Sequence
 from ...database import Anatid
 from ...errors import AnatidError
 from ...types import Namespace
+from ..wire import WireId, wire_id
 
 log = logging.getLogger("anatid.integrations.openai_agents")
 
@@ -195,8 +202,11 @@ def _iso(value: Any) -> Any:
 
 
 def _memory_json(memory: Any, *, about: Sequence[str] = ()) -> dict[str, Any]:
+    # memory_id goes out as a decimal string: 63 bits do not survive a JSON number, and this
+    # is the value the model hands back to anatid_supersede, anatid_forget and
+    # anatid_provenance.
     return {
-        "memory_id": memory.memory_id,
+        "memory_id": wire_id(memory.memory_id),
         "content": memory.content,
         "kind": memory.kind,
         "created_at": _iso(memory.created_at),
@@ -317,7 +327,7 @@ def create_memory_tools(
     @function_tool(name_override="anatid_supersede", needs_approval=gate("anatid_supersede"))
     def anatid_supersede(
         ctx: RunContextWrapper[Any],
-        memory_id: int,
+        memory_id: WireId,
         content: str,
         entities: list[str] | None = None,
         kind: str | None = None,
@@ -328,7 +338,9 @@ def create_memory_tools(
         anatid_provenance can walk back to what was believed before.
 
         Args:
-            memory_id: The id of the memory being corrected.
+            memory_id: The id of the memory being corrected, as the decimal string anatid
+                gave you, e.g. "883768514279557120". anatid ids are 63-bit and a JSON
+                number loses precision above 2**53, so ids travel as strings.
             content: The corrected fact.
             entities: Names the corrected fact is about. Omit to keep the old memory's entities.
             kind: Label for the new memory. Omit to keep the old one's.
@@ -343,21 +355,23 @@ def create_memory_tools(
                 writer=writer_for(ctx),
                 tenant=ns,
             )
-            return _ok({"superseded": int(memory_id), **_memory_json(memory)})
+            return _ok({"superseded": wire_id(int(memory_id)), **_memory_json(memory)})
         except AnatidError as exc:
             return _err(exc)
 
     @function_tool(name_override="anatid_forget", needs_approval=gate("anatid_forget"))
     def anatid_forget(
         ctx: RunContextWrapper[Any],
-        memory_id: int,
+        memory_id: WireId,
         hard: bool | None = None,
         reason: str | None = None,
     ) -> str:
         """Stop believing a memory.
 
         Args:
-            memory_id: The id of the memory to forget.
+            memory_id: The id of the memory to forget, as the decimal string anatid gave
+                you, e.g. "883768514279557120". anatid ids are 63-bit and a JSON
+                number loses precision above 2**53, so ids travel as strings.
             hard: False (the default) closes the memory so it stops being recalled but stays in
                 history. True permanently erases the row, its edges, its embedding and its
                 provenance -- use only for an actual erasure request.
@@ -367,7 +381,7 @@ def create_memory_tools(
             receipt = db.forget(int(memory_id), hard=bool(hard), reason=reason,
                                 writer=writer_for(ctx), tenant=ns)
             return _ok({
-                "memory_id": receipt.memory_id,
+                "memory_id": wire_id(receipt.memory_id),
                 "hard": receipt.hard,
                 "at": _iso(receipt.at),
                 "rows_removed": receipt.rows_removed,
@@ -450,20 +464,22 @@ def create_memory_tools(
             return _err(exc)
 
     @function_tool(name_override="anatid_provenance")
-    def anatid_provenance(ctx: RunContextWrapper[Any], memory_id: int) -> str:
+    def anatid_provenance(ctx: RunContextWrapper[Any], memory_id: WireId) -> str:
         """Explain where a memory came from: its correction chain, sources and writers.
 
         Args:
-            memory_id: The id of the memory to explain.
+            memory_id: The id of the memory to explain, as the decimal string anatid gave
+                you, e.g. "883768514279557120". anatid ids are 63-bit and a JSON
+                number loses precision above 2**53, so ids travel as strings.
         """
         try:
             prov = db.provenance(int(memory_id), tenant=ns)
             return _ok({
-                "memory_id": prov.memory_id,
+                "memory_id": wire_id(prov.memory_id),
                 "depth": prov.depth,
                 "chain": [_memory_json(m) for m in prov.chain],
                 "source_text": prov.source_text,
-                "episodes": [{"episode_id": e.episode_id, "source": e.source,
+                "episodes": [{"episode_id": wire_id(e.episode_id), "source": e.source,
                               "content": e.content, "created_at": _iso(e.created_at)}
                              for e in prov.episodes],
                 "writers": list(prov.writers),

@@ -199,6 +199,25 @@ def ask(client, db: Anatid, question: str, history: list) -> str:
     return "(stopped after six tool rounds)"
 
 
+def current_relations(db: Anatid) -> list[tuple[str, str, str]]:
+    """Every relates edge the database still believes, as (source, target, rel_kind).
+
+    Current means both valid_to and tx_to are null: unrelate closes an edge by stamping
+    tx_to on the version it corrects and inserting a successor whose valid_to is the
+    closing instant, so a query that tests only valid_to keeps returning the corrected one.
+    """
+    return db.execute(
+        """
+        select s.name, d.name, coalesce(r.rel_kind, 'relates_to')
+        from edges_relates r
+        join entities s on s.entity_id = r.src and s.valid_to is null and s.tx_to is null
+        join entities d on d.entity_id = r.dst and d.valid_to is null and d.tx_to is null
+        where r.valid_to is null and r.tx_to is null
+        order by s.name, d.name
+        """
+    ).fetchall()
+
+
 def main() -> None:
     from openai import OpenAI
 
@@ -273,17 +292,27 @@ def main() -> None:
         bo_fact = next(
             m for m in db.recall_2hop("ingest-service") if m.content.startswith("Bo maintains")
         )
-        replacement = db.supersede(
-            bo_fact.memory_id,
-            "Cy maintains the ingest-service. Bo moved to Project Harrier on 2026-04-15.",
-            entities=["Cy", "ingest-service", "Bo"],
-            writer="handover-notes",
-            episode="Handover notes, 2026-04-15: Bo -> Harrier, Cy takes ingest-service.",
-        )
-        db.relate("Cy", "ingest-service", rel_kind="maintains")
+        # The sentence and the graph change together. Bo's maintains edge is closed in the
+        # same transaction that opens Cy's, so no read can see two maintainers at once and a
+        # failure part-way leaves the handover unapplied rather than half applied.
+        with db.transaction():
+            replacement = db.supersede(
+                bo_fact.memory_id,
+                "Cy maintains the ingest-service. Bo moved to Project Harrier on 2026-04-15.",
+                entities=["Cy", "ingest-service", "Bo"],
+                writer="handover-notes",
+                episode="Handover notes, 2026-04-15: Bo -> Harrier, Cy takes ingest-service.",
+            )
+            closed = db.unrelate("Bo", "ingest-service", rel_kind="maintains")
+            db.relate("Cy", "ingest-service", rel_kind="maintains")
         db.rebuild_fts_index()
         print(f"  superseded memory {bo_fact.memory_id} -> {replacement.memory_id}")
         print(f"  old fact still stored, is_current={db.get(bo_fact.memory_id).is_current}")
+        print(f"  closed {closed} maintains edge from Bo, opened one from Cy")
+        standing = [
+            f"{src} {kind} {dst}" for src, dst, kind in current_relations(db) if kind == "maintains"
+        ]
+        print(f"  every maintains edge the database still believes: {', '.join(standing)}")
 
         ask(client, db, "Same question again. Who do I page for Ada's project?", history)
 

@@ -155,11 +155,14 @@ def test_remember_then_recall_returns_the_memory(server, mcp_db):
         "writer": "test",
     }))
     memory_id = written["memory"]["memory_id"]
+    assert isinstance(memory_id, str), "an id crosses the wire as a decimal string"
     assert written["memory"]["is_current"] is True
-    assert written["memory"]["tenant_id"] == 3
+    assert written["memory"]["tenant_id"] == "3"
     assert {e["name"] for e in written["about"]} == {"Ada Lovelace", "Analytical Engine"}
 
-    # DuckDB's fts index is not incremental, so the text arm cannot see the row yet.
+    # Not needed for the row to be found: this server's handle journals the write inside the
+    # writing transaction, so the recall below would match it either way (see
+    # tests/test_fts_visibility.py).  Called here to exercise the tool on a real corpus.
     ok(call(server, "rebuild_fts_index"))
 
     hits = ok(call(server, "recall", {"query": "Analytical Engine algorithm", "k": 5}))
@@ -169,8 +172,9 @@ def test_remember_then_recall_returns_the_memory(server, mcp_db):
     assert top["content"] == written["memory"]["content"]
     assert set(top["about"]) == {"Ada Lovelace", "Analytical Engine"}
 
-    # And the write really is in the database, not just in the response.
-    assert mcp_db.get(memory_id) is not None
+    # And the write really is in the database, not just in the response.  int() here is the
+    # decode half of the wire contract: the tool speaks decimal strings, anatid speaks ints.
+    assert mcp_db.get(int(memory_id)) is not None
 
 
 def test_recall_reports_bm25_staleness_rather_than_hiding_it(tmp_path):
@@ -316,7 +320,7 @@ def test_prune_defaults_to_a_dry_run_and_refuses_a_missing_policy(server, mcp_db
 def test_stats_reports_the_database_and_the_sql_policy(server):
     ok(call(server, "remember", {"content": "one", "entities": ["x"]}))
     got = ok(call(server, "stats"))
-    assert got["tenant_id"] == 3
+    assert got["tenant_id"] == "3"
     assert got["counts"]["memories"] == 1
     assert got["counts"]["entities"] == 1
     assert got["expand_path"] == "sql"
@@ -450,7 +454,7 @@ def test_sql_tool_rejects_everything_that_is_not_a_select(server, mcp_db, label,
 
     # the database is exactly as it was
     rows = mcp_db.execute("SELECT memory_id, content FROM memories").fetchall()
-    assert rows == [(canary_id, "canary")], f"{label} mutated the database"
+    assert rows == [(int(canary_id), "canary")], f"{label} mutated the database"
     tables = {r[0] for r in mcp_db.execute(
         "SELECT table_name FROM duckdb_tables()").fetchall()}
     assert "evil" not in tables
@@ -909,7 +913,7 @@ def test_server_runs_over_stdio_in_a_subprocess(tmp_path):
     assert found.is_error is False, _text(found)
     assert memory_id in [h["memory_id"] for h in found.structured_content["hits"]]
 
-    assert stats.structured_content["tenant_id"] == 11, "ANATID_TENANT was not honoured"
+    assert stats.structured_content["tenant_id"] == "11", "ANATID_TENANT was not honoured"
     assert stats.structured_content["path"] == str(db_path), "ANATID_DB was not honoured"
 
     assert blocked.is_error is True, "the sql escape hatch ran a DELETE over stdio"
@@ -918,7 +922,7 @@ def test_server_runs_over_stdio_in_a_subprocess(tmp_path):
     # the subprocess really wrote the file, and the DELETE really did not land
     assert db_path.is_file()
     with Anatid.open(db_path, tenant=11, embedding_dim=DIM, read_only=True) as check:
-        assert check.get(memory_id) is not None
+        assert check.get(int(memory_id)) is not None
         assert check.stats()["memories"] == 1
 
 

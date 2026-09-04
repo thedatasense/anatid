@@ -1326,11 +1326,21 @@ class MemoryVerbs(VerbHostMixin):
         fts index for BM25, ``seed_entity`` for the graph arm -- and are fused by Reciprocal Rank
         Fusion.  The result is a ``list[RecallHit]`` that also reports how it was answered:
 
-        * ``hits.bm25_stale`` -- rows written since the last :meth:`~anatid.Anatid.rebuild_fts_index`
-          are invisible to the text arm (DuckDB's fts index is not incremental).  A warning is
-          also logged on ``anatid.recall``.  ``on_stale_fts="error"`` raises instead.
-        * ``hits.pending_fts_rows`` -- how many rows that is.
+        * ``hits.bm25_stale`` -- the text arm could not answer exactly.  On the derived text
+          index that ``Anatid.open()`` attaches by default this is rare, because a write is
+          searchable by the very next ``recall()`` with nothing rebuilt: it means no generation
+          was usable AND the tenant's corpus is above :data:`anatid.fts.SCAN_CEILING`, so the
+          exact fallback scan was refused.  On a database opened with ``accelerators=False`` it
+          keeps 0.1.1's meaning, which is that rows written since the last
+          :meth:`~anatid.Anatid.rebuild_fts_index` are invisible to the arm.  A warning is also
+          logged on ``anatid.recall``, and ``on_stale_fts="error"`` raises instead.
+        * ``hits.pending_fts_rows`` -- how many documents the search re-read from ``memories``
+          because the journal had touched them since the last build.  Every one of them was
+          searched.  On the 0.1.1 half it is how many rows the arm cannot see.
         * ``hits.arms`` -- which arms actually ran.
+
+        Nothing is rebuilt implicitly and nothing needs to be: a rebuild compacts the journal
+        into a new generation, which is a read-latency and storage decision.
 
         The vector arm is a brute-force scan of the tenant's embeddings: comfortable to roughly
         1e5 memories per tenant, linear beyond that.  That limit is

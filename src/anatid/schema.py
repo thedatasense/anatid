@@ -618,11 +618,18 @@ CONTRACT_NOTES: tuple[str, ...] = (
     ("isolation: DuckDB has NO schema-level or row-level access control. Per-tenant ISOLATION is "
      "file-per-tenant, enforced by anatid's wrapper and the filesystem. tenant_id inside one file "
      "is SCOPING, not isolation: any connection to the file can read every tenant in it."),
-    ("full-text: the DuckDB fts index is NOT incremental. Rows inserted after "
-     "PRAGMA create_fts_index are invisible to BM25 until rebuild_fts_index() runs. anatid records "
-     "both the indexed row count and the largest indexed memory_id in this table and reports "
-     "staleness on every recall() result. A raw SQL UPDATE of memories.content (something no "
-     "anatid verb ever issues) changes neither watermark and is NOT detected."),
+    ("full-text: the DuckDB fts index is NOT incremental, so anatid does not depend on it for "
+     "freshness. Since schema v4 the text arm is a derived index (anatid.fts), which "
+     "Anatid.open() attaches by default: a published base generation plus a journal written "
+     "inside the transaction that writes the memory, so a row is searchable by the very next "
+     "recall() with no rebuild, on any handle on this file, and a supersede or a forget takes "
+     "effect on that same read. rebuild_fts_index() compacts the journal into a new generation, "
+     "which buys read latency. On a file whose handles never attached that index "
+     "(Anatid.open(accelerators=False)) 0.1.1's file-wide index answers instead, and there rows "
+     "inserted after PRAGMA create_fts_index ARE invisible to BM25 until rebuild_fts_index() "
+     "runs. anatid records both the indexed row count and the largest indexed memory_id in this "
+     "table and reports the state on every recall() result. A raw SQL UPDATE of memories.content "
+     "(something no anatid verb ever issues) changes neither watermark and is NOT detected."),
     ("full-text scoping (schema v3): the index is built over anatid_fts_documents, whose document "
      "key is '<tenant_id>:<memory_id>' -- unique across tenants, which memory_id alone is not. "
      "df/idf and (num_docs, avgdl) come from anatid_fts_dict / anatid_fts_stats, which are "

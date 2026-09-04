@@ -25,6 +25,7 @@ from typing import Any, Mapping
 __all__ = [
     "Fact",
     "Supersede",
+    "Correction",
     "Scenario",
     "SCENARIOS",
     "DEFAULT",
@@ -53,7 +54,15 @@ class Fact:
 
 @dataclass(frozen=True)
 class Supersede:
-    """A belief that changes later. The old row is closed, never deleted."""
+    """A belief that changes later. The old row is closed, never deleted.
+
+    A correction is rarely only a sentence. Priya's allergy moves from pine nuts to prawns
+    and the graph has to move with it, because the graph is what recall walks: the old edge
+    stops being true at the same instant the new one starts. ``removed_relations`` holds
+    the edges the change closes and ``extra_relations`` the edges it opens, both as
+    (source, target, rel_kind). :func:`apply_supersede` writes the memory and both sets of
+    edges in one transaction.
+    """
 
     match_text: str
     new_content: str
@@ -62,7 +71,23 @@ class Supersede:
     episode: str
     when: str | None = None
     extra_relations: tuple[tuple[str, str, str], ...] = ()
+    removed_relations: tuple[tuple[str, str, str], ...] = ()
     extra_entities: tuple[tuple[str, str], ...] = ()
+
+
+@dataclass(frozen=True)
+class Correction:
+    """What applying a scenario's supersede did, as the database now has it.
+
+    ``old`` is the memory that was closed and ``new`` the one written in its place.
+    ``closed_relations`` are the edges the same transaction stopped believing, and
+    ``opened_relations`` the ones it added.
+    """
+
+    old: Any
+    new: Any
+    closed_relations: tuple[tuple[str, str, str], ...] = ()
+    opened_relations: tuple[tuple[str, str, str], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -377,6 +402,7 @@ DINNER = Scenario(
             ("Priya", "prawns", "reacts_to"),
             ("prawn cocktail", "prawns", "contains"),
         ),
+        removed_relations=(("Priya", "pine nuts", "reacts_to"),),
         extra_entities=(("prawn cocktail", "dish"),),
     ),
     write_request=(
@@ -523,6 +549,7 @@ ONCALL = Scenario(
         episode=("Handover notes, 2026-04-15. Bo moves to Harrier, Cy takes the ingest-service."),
         when="2026-04-15T09:00:00",
         extra_relations=(("Cy", "ingest-service", "maintains"),),
+        removed_relations=(("Bo", "ingest-service", "maintains"),),
         extra_entities=(("Cy", "person"),),
     ),
     write_request=(
@@ -636,32 +663,46 @@ def find_fact(db: Any, scenario: Scenario) -> Any:
     )
 
 
-def apply_supersede(db: Any, scenario: Scenario) -> tuple[Any, Any]:
-    """Close the old belief, write the new one, add any edges the change brings.
+def apply_supersede(db: Any, scenario: Scenario) -> Correction:
+    """Close the old belief, write the new one, and move the edges the change moves.
 
-    Returns (old_memory, new_memory). The old memory is still readable afterwards and
-    reports is_current False.
+    The whole correction is one transaction: the memory, the entities the change
+    introduces, the edges it closes and the edges it opens. Half of it landing would leave
+    the graph saying two contradictory things at once, so if any step raises, the old
+    memory is still current and every edge is where it was.
+
+    Returns a :class:`Correction`. The old memory is still readable afterwards and reports
+    is_current False.
     """
     change = scenario.supersede
     when = parse_time(change.when) if change.when else None
+    stamp: dict[str, Any] = {"now": when} if when is not None else {}
     old = find_fact(db, scenario)
 
-    replacement = db.supersede(
-        old.memory_id,
-        change.new_content,
-        entities=list(change.entities),
-        writer=change.writer,
-        episode=change.episode,
-        **({"now": when} if when is not None else {}),
-    )
-
-    for name, kind in change.extra_entities:
-        db.upsert_entity(name, kind=kind, **({"now": when} if when is not None else {}))
-    for src, dst, rel_kind in change.extra_relations:
-        db.relate(src, dst, rel_kind=rel_kind, **({"now": when} if when is not None else {}))
+    with db.transaction():
+        replacement = db.supersede(
+            old.memory_id,
+            change.new_content,
+            entities=list(change.entities),
+            writer=change.writer,
+            episode=change.episode,
+            **stamp,
+        )
+        for name, kind in change.extra_entities:
+            db.upsert_entity(name, kind=kind, **stamp)
+        # unrelate returns how many edge versions it closed, so what is recorded here is
+        # what the database did rather than what the scenario asked for; an edge that was
+        # already closed returns zero and is left out.
+        closed = tuple(
+            (src, dst, rel_kind)
+            for src, dst, rel_kind in change.removed_relations
+            if db.unrelate(src, dst, rel_kind=rel_kind, **stamp)
+        )
+        for src, dst, rel_kind in change.extra_relations:
+            db.relate(src, dst, rel_kind=rel_kind, **stamp)
 
     db.rebuild_fts_index()
-    return old, replacement
+    return Correction(old, replacement, closed, tuple(change.extra_relations))
 
 
 def entity_kinds(scenario: Scenario) -> dict[str, str]:
@@ -671,7 +712,14 @@ def entity_kinds(scenario: Scenario) -> dict[str, str]:
 
 
 def all_relations(scenario: Scenario) -> tuple[tuple[str, str, str], ...]:
+    """Every edge the scenario ever writes, including the ones the correction later closes."""
     return tuple(scenario.relations) + tuple(scenario.supersede.extra_relations)
+
+
+def current_relations(scenario: Scenario) -> tuple[tuple[str, str, str], ...]:
+    """The edges that stand once the correction has been applied."""
+    removed = set(scenario.supersede.removed_relations)
+    return tuple(edge for edge in all_relations(scenario) if edge not in removed)
 
 
 def timeline(scenario: Scenario) -> list[tuple[str, Fact]]:

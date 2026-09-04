@@ -235,14 +235,19 @@ def ask(client, db: Anatid, question: str, history: list, state: dict) -> str:
 
 
 def read_edges(db: Anatid) -> list[tuple[str, str, str]]:
-    """Every open relates edge, as (source name, target name, rel_kind)."""
+    """Every current relates edge, as (source name, target name, rel_kind).
+
+    Current means both columns null. unrelate closes an edge by stamping tx_to on the
+    version it corrects and inserting a successor whose valid_to is the closing instant, so
+    a query that tests only valid_to keeps returning the corrected version for ever.
+    """
     rows = db.execute(
         """
         select s.name, d.name, coalesce(r.rel_kind, 'relates_to')
         from edges_relates r
-        join entities s on s.entity_id = r.src and s.valid_to is null
-        join entities d on d.entity_id = r.dst and d.valid_to is null
-        where r.valid_to is null
+        join entities s on s.entity_id = r.src and s.valid_to is null and s.tx_to is null
+        join entities d on d.entity_id = r.dst and d.valid_to is null and d.tx_to is null
+        where r.valid_to is null and r.tx_to is null
         """
     ).fetchall()
     seen, edges = set(), []
@@ -254,13 +259,13 @@ def read_edges(db: Anatid) -> list[tuple[str, str, str]]:
 
 
 def about_map(db: Anatid) -> dict[int, set[str]]:
-    """Every open memory, as memory_id -> the names of the entities it is about."""
+    """Every current memory, as memory_id -> the names of the entities it is about."""
     rows = db.execute(
         """
         select a.src, e.name
         from edges_about a
-        join entities e on e.entity_id = a.dst and e.valid_to is null
-        where a.valid_to is null
+        join entities e on e.entity_id = a.dst and e.valid_to is null and e.tx_to is null
+        where a.valid_to is null and a.tx_to is null
         """
     ).fetchall()
     out: dict[int, set[str]] = {}
@@ -705,7 +710,8 @@ def main() -> None:
         print(f"  new information, from {scenario.supersede.writer}:")
         wrap(scenario.supersede.episode, indent="    ")
 
-        old, replacement = scenarios.apply_supersede(db, scenario)
+        correction = scenarios.apply_supersede(db, scenario)
+        old, replacement = correction.old, correction.new
         print()
         print(f"  closed:  {old.content}")
         print(f"  wrote:   {replacement.content}")
@@ -714,6 +720,26 @@ def main() -> None:
             f"  the closed row is still there, and reports is_current="
             f"{db.get(old.memory_id).is_current}"
         )
+
+        # The sentence is half the correction. The other half is the edges, moved in the
+        # same transaction, and read back out of the database here rather than asserted.
+        print()
+        print("  the edges the same transaction moved:")
+        for src, dst, rel_kind in correction.closed_relations:
+            print(f"    closed:  {src} {rel_kind} {dst}")
+        for src, dst, rel_kind in correction.opened_relations:
+            print(f"    opened:  {src} {rel_kind} {dst}")
+        moved_kinds = {rel_kind for _, _, rel_kind in correction.closed_relations}
+        standing = [edge for edge in read_edges(db) if edge[2] in moved_kinds]
+        if moved_kinds:
+            print(
+                f"  every {', '.join(sorted(moved_kinds))} edge the database still believes, "
+                f"read back:"
+            )
+            for src, dst, rel_kind in standing:
+                print(f"    {src} {rel_kind} {dst}")
+            if not standing:
+                print("    (none)")
 
         state["recalls"] = []
         ask(client, db, scenario.followup_question, history, state)
@@ -727,15 +753,15 @@ def main() -> None:
             )
         )
         print()
-        print("  the edges the change brought, and the paths the graph walked this time:")
-        for src, dst, rel_kind in scenario.supersede.extra_relations:
-            print(f"    new edge: {src} {rel_kind} {dst}")
+        print("  the paths the graph walked this time:")
         for path in walked_paths(db, hits2, seed, scenario.followup_question):
             print(f"    {' -> '.join(path)}")
         print()
         wrap(
-            "The old path is still walkable, because the edge that carried it is still "
-            "there. What changed is the fact at the end of it."
+            "The memory and the edges moved in one transaction, so nothing can read a "
+            "database where the sentence has changed and the graph has not. The closed edge "
+            "is not deleted. A read as_of an instant before the change still walks it, which "
+            "is what step 4 does."
         )
 
         # -----------------------------------------------------------------------------
@@ -753,7 +779,7 @@ def main() -> None:
         wrap(scenario.explain["as_of"])
 
         def matching(memories):
-            return [m.content for m in memories if scenario.asof_match in m.content]
+            return {m.content: m for m in memories if scenario.asof_match in m.content}
 
         past_at = scenarios.parse_time(scenario.asof_time)
         then = matching(db.as_of(past_at).recall_2hop(scenario.seed_entity, limit=40))
@@ -764,14 +790,30 @@ def main() -> None:
         for line in sorted(then) or ["(nothing on record)"]:
             print(f"    {line}")
         print(f"  {scenario.asof_label_now}, every line marked:")
+        out_of_reach = False
         for line in sorted(set(then) | set(now)) or ["(nothing on record)"]:
-            if line not in now:
+            # The mark is read off the row, not off whether today's walk returned it. A
+            # correction that closes an edge can put a line out of the seed's two hops
+            # while leaving the belief standing, and calling that closed would be a lie.
+            memory = then.get(line) or now[line]
+            live = db.get(memory.memory_id)
+            if live is not None and not live.is_current:
                 mark = "closed"
             elif line not in then:
                 mark = "written since"
+            elif line not in now:
+                mark = "still true"
+                out_of_reach = True
             else:
                 mark = "unchanged"
             print(f"    {mark:<13}  {line}")
+        if out_of_reach:
+            print()
+            wrap(
+                f"A line marked still true is one the database still believes and the walk "
+                f"from {scenario.seed_entity} no longer reaches in two hops, because the edge "
+                f"that led to it is the one the correction closed."
+            )
         print()
         wrap(
             "The March note is unchanged and the belief it was written under is closed. "
@@ -807,9 +849,25 @@ def main() -> None:
             )
             wrap(
                 f"The fact that carried the first answer was one of {corpus} stored when "
-                f"the question was asked. {reached_by} The walk from {seed} reaches it "
+                f"the question was asked. {reached_by} The walk from {seed} reached it "
                 f"along the path printed in step 1."
             )
+            # That path is a statement about the graph as it was then. Step 2 may have
+            # closed one of the edges it crosses, and saying otherwise would be a claim
+            # this run has already disproved.
+            crossed = {pair for path in paths for pair in pairwise(path)}
+            closed_on_path = [
+                f"{src} {rel_kind} {dst}"
+                for src, dst, rel_kind in correction.closed_relations
+                if (src, dst) in crossed or (dst, src) in crossed
+            ]
+            if closed_on_path:
+                wrap(
+                    f"The correction in step 2 closed {', '.join(closed_on_path)}, which that "
+                    f"path crosses, so the walk does not run that way any more. The edge is "
+                    f"closed rather than deleted, so a read as of an earlier instant still "
+                    f"crosses it."
+                )
         print()
 
 

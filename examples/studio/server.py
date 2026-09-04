@@ -422,7 +422,7 @@ def scenario_dict(scenario: Any) -> dict:
 def about_names(db: Anatid) -> dict[int, list[str]]:
     rows = db.connection.execute(
         "SELECT a.src, e.name FROM edges_about a JOIN entities e ON e.entity_id = a.dst "
-        "WHERE a.tenant_id = ? ORDER BY a.edge_id",
+        "WHERE a.tenant_id = ? AND a.tx_to IS NULL ORDER BY a.edge_id",
         [TENANT],
     ).fetchall()
     out: dict[int, list[str]] = {}
@@ -504,7 +504,7 @@ def snapshot(db: Anatid) -> dict:
         }
         for r in con.execute(
             "SELECT edge_id, src, dst, rel_kind, valid_from, valid_to, writer FROM edges_relates "
-            "WHERE tenant_id = ? ORDER BY edge_id",
+            "WHERE tenant_id = ? AND tx_to IS NULL ORDER BY edge_id",
             [TENANT],
         ).fetchall()
     ]
@@ -887,7 +887,8 @@ def supersede() -> dict:
     scenario = STATE.scenario
     with STATE.lock:
         try:
-            old, replacement = scenarios.apply_supersede(db, scenario)
+            correction = scenarios.apply_supersede(db, scenario)
+            old, replacement = correction.old, correction.new
         except LookupError:
             raise HTTPException(
                 409, "The change has already been applied. Reset to run it again."
@@ -901,8 +902,10 @@ def supersede() -> dict:
             "old_is_current": closed.is_current if closed else None,
             "old_valid_to": ts(closed.valid_to) if closed else None,
             "new_edges": [
-                f"{src} {rel_kind} {dst}"
-                for src, dst, rel_kind in scenario.supersede.extra_relations
+                f"{src} {rel_kind} {dst}" for src, dst, rel_kind in correction.opened_relations
+            ],
+            "closed_edges": [
+                f"{src} {rel_kind} {dst}" for src, dst, rel_kind in correction.closed_relations
             ],
             "state": snapshot(db),
         }

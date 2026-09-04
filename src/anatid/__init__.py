@@ -7,8 +7,7 @@
     with Anatid.open("agent.anatid", tenant=1, embedding_dim=1536) as db:
         db.relate("Ada", "coffee")
         m = db.remember("Ada prefers dark roast", entities=["Ada"], embedding=vec)
-        db.rebuild_fts_index()                       # BM25 is not incremental; you say when
-        hits = db.recall("coffee", embedding=q, seed_entity="Ada", k=5)
+        hits = db.recall("coffee", embedding=q, seed_entity="Ada", k=5)   # finds m, nothing built
         newer = db.supersede(m.memory_id, "Ada switched to decaf")
         db.as_of(t0).recall_2hop("Ada")              # the answer before the supersession
         db.provenance(newer.memory_id).source_text   # the evidence behind the belief
@@ -20,9 +19,15 @@ What anatid promises, and what it does not
 * **Tenant isolation** is file-per-tenant, enforced by this wrapper and the filesystem.  DuckDB
   has no schema- or row-level access control; ``tenant_id`` inside one file is *scoping*, not
   isolation.
-* **BM25** rides DuckDB's ``fts`` index, which is **not incremental**: rows written after the
-  last :meth:`~anatid.Anatid.rebuild_fts_index` are invisible to the text arm, and every
-  :meth:`~anatid.Anatid.recall` result says so.
+* **BM25** rides DuckDB's ``fts`` index, which is not incremental, so :mod:`anatid.fts` runs
+  the text arm as a derived index instead: a published base generation plus a journal written
+  in the same transaction as the memory.  A write is **searchable by the very next**
+  :meth:`~anatid.Anatid.recall` with nothing rebuilt, on the handle that wrote it and on any
+  other handle on the file, and a ``supersede`` or a ``forget`` leaves the text results on that
+  same read.  :meth:`~anatid.Anatid.rebuild_fts_index` compacts the journal into a new
+  generation, which buys read latency rather than visibility.  ``Anatid.open()`` attaches this
+  by default; ``accelerators=False`` keeps 0.1.1's single file-wide index, and there a write
+  really is invisible until a rebuild.
 * **Transactions** are DuckDB's optimistic MVCC: snapshot isolation, not serializable.  Appends
   never conflict; two updates to the same row abort the second with a retryable
   :class:`~anatid.errors.ConflictError`.

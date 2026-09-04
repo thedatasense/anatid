@@ -204,11 +204,22 @@ class Anatid(MemoryVerbs):
 
     Full-text contract
     ------------------
-    The DuckDB ``fts`` index is not incremental.  Rows written after the last
-    :meth:`rebuild_fts_index` are invisible to the BM25 arm of :meth:`recall`, which reports it on
-    the result (``hits.bm25_stale``, ``hits.pending_fts_rows``) and logs a warning.  Nothing is
-    rebuilt implicitly: a rebuild is O(corpus) and belongs to your write path, not to an unlucky
-    read.
+    The DuckDB ``fts`` index is not incremental, so :mod:`anatid.fts` runs the BM25 arm as a
+    derived index, which :meth:`open` attaches by default.  A published base generation carries
+    the corpus and an ordered journal carries every document written or closed since, written
+    inside the same transaction as the memory, so **a write is searchable by the very next**
+    :meth:`recall` **with nothing rebuilt**: on this handle, on any other handle on the file,
+    and for a ``supersede`` or a ``forget`` as well as an insert.
+    :meth:`rebuild_fts_index` compacts the journal into a new generation.  That buys read
+    latency, because a search rescans the journalled documents and the rescan is linear in the
+    journal, and it is never required for a write to be found.  Nothing is rebuilt implicitly:
+    a rebuild is O(corpus) and belongs to your write path rather than to an unlucky read.
+    ``hits.pending_fts_rows`` counts the documents a search rescanned, all of them searched;
+    ``hits.bm25_stale`` means the arm could not answer exactly, which on this path takes both no
+    usable generation and a corpus above :data:`anatid.fts.SCAN_CEILING`.  A handle opened with
+    ``accelerators=False`` keeps 0.1.1's single file-wide index, and there ``bm25_stale`` has
+    its old meaning: rows written since the last :meth:`rebuild_fts_index` are invisible to the
+    arm until the next one.
 
     Threading
     ---------
@@ -1230,6 +1241,8 @@ class Anatid(MemoryVerbs):
             )
 
         # -- full-text upkeep ----------------------------------------------- file-wide
+        from .fts import staleness_message
+
         try:
             status = _recall.fts_status(con)
         except Exception as exc:  # pragma: no cover - fts not installed
@@ -1243,10 +1256,11 @@ class Anatid(MemoryVerbs):
                         check="stale_fts_index",
                         severity=Severity.WARNING,
                         count=int(status.pending_rows),
-                        detail=(
-                            "rows have been written since the last rebuild_fts_index(); "
-                            "DuckDB's fts index is not incremental, so BM25 cannot see them"
-                        ),
+                        # What "stale" means depends on which half of anatid.fts answered, so
+                        # the sentence comes from there rather than being hardcoded here: on
+                        # 0.1.1's index it is rows the arm cannot see, on the derived index it
+                        # is that no generation was usable and the corpus was too big to scan.
+                        detail=staleness_message(status),
                         table=_schema.FTS_SOURCE_TABLE,
                         samples=((status.indexed_rows, status.current_rows, status.indexed_at),),
                     )
@@ -1375,7 +1389,10 @@ class Anatid(MemoryVerbs):
     # ------------------------------------------------------------------ full text
 
     def fts_status(self, *, deep: bool = False) -> FtsStatus:
-        """How far the (non-incremental) BM25 index has fallen behind ``memories``."""
+        """How the text arm will answer, as :class:`~anatid.types.FtsStatus`: which half of the
+        library is running, how far its base generation is behind ``memories``, and what a
+        rebuild would compact.  See the class docstring for what each field means on each half.
+        """
         return _recall.fts_status(self.connection, deep=deep)
 
     def rebuild_fts_index(self, *, now=None, terms_index: bool = True) -> FtsStatus:

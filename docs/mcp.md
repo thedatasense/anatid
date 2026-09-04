@@ -87,7 +87,8 @@ matching command-line flag for running the server by hand.
 | `ANATID_TENANT` | `--tenant` | `0` | Tenant id. Every tool is pinned to it. |
 | `ANATID_EMBEDDING_DIM` | `--embedding-dim` | `1536` | `N` in `FLOAT[N]`. Only used when creating a new file; an existing file keeps its own. |
 | `ANATID_READ_ONLY` | `--read-only` | off | Open the database read-only. No write tools are registered at all. |
-| `ANATID_SQL_TOOL` | `--no-sql-tool` | on | `off` removes the SQL escape hatch entirely. |
+| `ANATID_ENABLE_SQL` | `--enable-sql` | off | The read-only SQL escape hatch is off unless this is set. |
+| `ANATID_SQL_TOOL` | `--no-sql-tool` | on | Legacy switch, kept for older configs. `off` removes the tool entirely. |
 | `ANATID_MAX_ROWS` | `--max-rows` | `200` | Row cap for the SQL tool. |
 | `ANATID_MCP_TRANSPORT` | `--transport` | `stdio` | `stdio`, `streamable-http`, or `sse`. |
 | `ANATID_MCP_HOST` / `ANATID_MCP_PORT` | `--host` / `--port` | `127.0.0.1:8765` | Bind address for the HTTP transports. |
@@ -127,6 +128,34 @@ Every read takes `as_of` (an ISO-8601 timestamp) to ask what the database believ
 Time travel is anatid's own filter over the valid-time and transaction-time columns. DuckDB has no
 `AS OF SYSTEM TIME`, nothing rewinds, and rows removed by a hard purge are gone from every as-of
 view too.
+
+## Ids are decimal strings
+
+Every id in a tool result is a decimal string: `"memory_id": "883768514279557120"`, never
+`883768514279557120`. That holds for `memory_id`, `entity_id`, `edge_id`, `episode_id` and
+`tenant_id` wherever they appear, including inside a provenance chain, a forget receipt and a
+prune report. A tool that takes an id accepts either spelling, a string or an integer, so a client
+written against 0.2.0 keeps working. The tool's JSON schema declares the parameter as a string, so
+a model reading the schema sends one.
+
+anatid mints 63-bit ids, and a JSON number is an IEEE-754 double in every JavaScript client, so an
+id above 2^53 sent as a number comes back changed with nothing raised:
+
+```sh
+node -e 'console.log(JSON.parse(String.raw`{"memory_id": 883768514279557120}`).memory_id)'
+# 883768514279557100
+```
+
+The client then holds an id that addresses no row, and every `get`, `supersede` and `forget` it
+makes with that id is wrong. Sending the id as a string is what stops that.
+
+The `sql` tool cannot name the id columns of an arbitrary `SELECT`, so it applies the rule by
+range: an integer a JSON number cannot carry exactly leaves as a decimal string and everything
+else is untouched. A `memory_id` you select is the same string the other tools take, and a
+`count(*)` is still a number.
+
+`version` is a small per-row counter rather than an id, and counts, ranks and scores are not ids
+either, so all of them stay numbers.
 
 ## The `sql` tool is read-only, and DuckDB is what enforces it
 
@@ -210,6 +239,22 @@ search re-reads from the canonical rows, not how many are hidden.
 new generation, which is published in one metadata switch with reads answering from the previous
 one throughout. Call it after a large batch of writes. `stats` reports the same numbers, and
 `index_health` (through the library) names the state of each derived index.
+
+What it buys is read latency in proportion to the journal, not to the corpus. Measured on this
+machine, one tenant of 8-word memories, `recall(query, k=10)` p50 over 15 calls:
+
+| corpus | pending | recall p50 | the rebuild itself |
+| --- | --- | --- | --- |
+| 20,000 | 20,000 (nothing ever built) | 19.01 ms | |
+| 20,000 | 0 (just rebuilt) | 15.56 ms | 489 ms |
+| 21,000 | 1,000 | 17.32 ms | |
+| 26,000 | 6,000 | 21.33 ms | |
+| 26,000 | 0 (rebuilt again) | 16.61 ms | 724 ms |
+
+Repeated runs move those by up to 10%. The top-10 ids across each rebuild are identical, which is
+the point of the numbers: a rebuild moves milliseconds and never membership. Skipping it costs
+about 1 ms per 1,000 documents in the journal, and skipping it forever is a slow read rather than
+a wrong one.
 
 One case still returns nothing from the text arm: no generation has ever been published AND the
 tenant holds more than `SCAN_CEILING` (100,000) documents, which is more than an exact scan is

@@ -130,8 +130,10 @@ Op counts are identical across engines by construction: W1 6,283, W2 724, R1 2,4
 finishes the same 10,000 ops in under half the wall time.
 
 Both DuckDB and LadybugDB report exactly 7,007 memories invisible to BM25 after this phase. Neither
-engine's full-text index is incremental, and both report the count. That number is why anatid
-requires `rebuild_fts_index()` to be explicit and has `recall()` report its own staleness.
+engine's full-text index is incremental, and both report the count. That measurement predates the
+derived text index. On a database opened with today's defaults the same workload leaves nothing
+invisible, because the journal carries writes the base generation has not absorbed yet, and a
+rebuild buys read latency rather than correctness.
 
 ### Load, size, memory
 

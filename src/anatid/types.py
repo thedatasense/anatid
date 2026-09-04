@@ -441,17 +441,23 @@ class RecallHits(list):
     """``list[RecallHit]`` that also carries how the search was answered.
 
     It *is* a plain list, so callers can ignore the extra attributes entirely.  They exist so
-    :meth:`anatid.Anatid.recall` can state -- rather than hide -- that the BM25 arm was stale or
-    absent:
+    :meth:`anatid.Anatid.recall` can state -- rather than hide -- how the BM25 arm answered:
 
     ``bm25_available``
-        False when no fts index exists on ``memories`` yet.
+        False when this database has no full-text index at all.
     ``bm25_stale``
-        True when rows have been written since the last ``PRAGMA create_fts_index``.  DuckDB's
-        fts index is NOT incremental; those rows cannot be found by the BM25 arm until
-        :meth:`anatid.Anatid.rebuild_fts_index` runs.
+        True when the BM25 arm could not answer exactly.  On the derived text index that
+        :meth:`anatid.Anatid.open` attaches by default a write is searchable by the very next
+        recall with nothing rebuilt, so this means no generation was usable AND the tenant's
+        corpus is above :data:`anatid.fts.SCAN_CEILING`, which made the exact fallback scan too
+        expensive to run.  On 0.1.1's file-wide index (``accelerators=False``) it keeps its old
+        meaning: rows have been written since the last ``PRAGMA create_fts_index`` and the arm
+        cannot find them until :meth:`anatid.Anatid.rebuild_fts_index` runs.
     ``pending_fts_rows``
-        How many ``memories`` rows are not in the index (``count(*) - fts_indexed_rows``).
+        On the derived index, how many documents the search re-read from ``memories`` because
+        the journal had touched them since the last build.  They were searched.  On 0.1.1's
+        index, how many rows are missing from it (``count(*) - fts_indexed_rows``), which are
+        the rows it cannot see.
     ``arms``
         The arms that actually ran, e.g. ``("vector", "text", "graph")``.
     """
@@ -618,7 +624,17 @@ class PruneReport:
 
 @dataclass(frozen=True, slots=True)
 class FtsStatus:
-    """State of the (non-incremental) BM25 index on ``memories``."""
+    """How the text arm on ``memories`` will answer, on either half of the library.
+
+    On the derived text index that :meth:`anatid.Anatid.open` attaches by default, a write is
+    searchable by the very next :meth:`anatid.Anatid.recall` with nothing rebuilt, ``stale``
+    means the answer would not be exact rather than that rows are missing, and ``pending_rows``
+    counts documents a search rescans from the canonical rows, all of which it searched.  On
+    0.1.1's file-wide index (``accelerators=False``) the index is not incremental, ``stale``
+    means rows have been written since the last build, and ``pending_rows`` is how many rows the
+    index cannot see.  ``policy`` says which half produced this status and is the one field to
+    read when a caller has to tell them apart.
+    """
 
     available: bool
     stale: bool

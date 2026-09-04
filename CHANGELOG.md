@@ -3,6 +3,47 @@
 All notable changes to anatid are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); anatid uses semantic versioning.
 
+## [Unreleased]
+
+### Changed
+
+- Every id crossing an integration boundary is now a decimal string. The MCP tools and the OpenAI
+  Agents SDK tools return `memory_id`, `entity_id`, `edge_id`, `episode_id` and `tenant_id` as
+  strings wherever they appear, including inside a provenance chain, a forget receipt and a prune
+  report, and the `sql` escape hatch turns any integer a JSON number cannot carry exactly into a
+  string the same way. A tool accepts an id as a string or as an integer, and a tool's JSON schema
+  declares an id parameter as a string and says why. This is a breaking change for any client that
+  parsed an id as a number: anatid ids are 63-bit, a JSON number is an IEEE-754 double in every
+  JavaScript client, and an id above 2^53 was rounded silently, so the id such a client held
+  addressed no row and every call it made with that id was wrong. The contract has one definition,
+  `anatid.integrations.wire`, and both boundaries use it.
+
+### Fixed
+
+- The documentation said a write was invisible to the text arm until `rebuild_fts_index()` ran.
+  That stopped being true in 0.2.0, which attaches the derived text index by default: a new memory
+  is matched by the very next `recall` with nothing rebuilt, and a `supersede` or a `forget` leaves
+  the text results on that same read. The package docstring, `recall()`'s docstring, the `Anatid`
+  class contract, `StaleIndexError`, `FtsStatus`, the contract stamped into every new file,
+  `docs/mcp.md` and the MCP server instructions a model is given now describe that, and say what a
+  rebuild is for: it compacts the journal into a new base generation and buys read latency.
+  `doctor()`'s stale-index detail comes from the same source `recall()` uses, so it describes the
+  half the database is actually running. The old claim is kept where it is still true, on
+  `Anatid.open(accelerators=False)` and on DuckDB's own `PRAGMA create_fts_index`.
+- The examples corrected the sentence and left the graph contradicting it. `examples/scenarios.py`
+  only ever added relations, so after the dinner scenario's handover Priya reacted to both pine
+  nuts and prawns, and after the on-call handover both Bo and Cy maintained the service. A
+  `Supersede` now declares the relations a correction closes as well as the ones it opens, and
+  `supersede`, `unrelate` and `relate` run inside one transaction, so a correction cannot half
+  land. `examples/dinner_party.py`, `examples/glm_openrouter_agent.py` and the studio print and
+  return the edges that were closed beside the ones that were opened, and read current edges with
+  the predicate anatid means by current.
+- `anatid-mcp` refused an HTTP bind host that is loopback spelled another way. The check now
+  normalises a host before deciding: whitespace, a trailing dot, an IPv6 URL literal in brackets,
+  an interface scope such as `::1%lo0`, and case. `127.0.0.1.` and `[::1].` were refused on every
+  platform, and `LOCALHOST` on any platform whose resolver does not fold case. A host that is not
+  loopback is still refused, including a name that also resolves off this machine.
+
 ## [0.2.0] - 2026-09-03
 
 The derived-index release. Every retrieval structure anatid keeps beside the canonical tables is

@@ -107,6 +107,10 @@ Issues = "https://github.com/thedatasense/anatid/issues"
 
 [project.scripts]
 anatid-mcp = "anatid.integrations.mcp.server:main"
+# The server profile's operator surface: start, stop, status, backup, restore, doctor.  Also
+# reachable as `python -m anatid.server` (src/anatid/server/__main__.py) for the environments
+# where a console script is not on PATH.
+anatid-server = "anatid.server.cli:main"
 
 # ---------------------------------------------------------------------------- packaging
 
@@ -368,6 +372,8 @@ known-first-party = ["anatid"]
 # The budget lives in .github/workflows/ci.yml (`PYRIGHT_ERROR_BUDGET`) and is 0; keep it there.
 
 [tool.pyright]
+venvPath = "."
+venv = ".venv"
 include = ["src/anatid"]
 exclude = ["**/__pycache__", "**/node_modules", "spike", "ext", "dist", ".venv"]
 # The floor anatid supports, not the interpreter CI happens to run on: this is what catches a

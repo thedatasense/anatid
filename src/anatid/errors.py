@@ -197,12 +197,17 @@ class DuplicateIdError(ValidationError):
 
 
 class StaleIndexError(AnatidError):
-    """The BM25 (fts) index is stale and the caller asked for it to be an error.
+    """The BM25 (fts) arm could not answer exactly and the caller asked for that to raise.
 
-    DuckDB's ``fts`` extension index is NOT incremental: rows inserted after
-    ``PRAGMA create_fts_index`` are invisible to BM25 until the index is rebuilt.  By default
-    anatid reports staleness on the result object instead of raising; pass
-    ``on_stale_fts="error"`` to :meth:`anatid.Anatid.recall` to get this exception.
+    On the derived text index that :meth:`anatid.Anatid.open` attaches by default, a write is
+    searchable by the very next ``recall()`` with nothing rebuilt, so this is raised only when
+    no generation was usable AND the tenant's corpus is above :data:`anatid.fts.SCAN_CEILING`,
+    which made the exact fallback scan too expensive to run.  On 0.1.1's file-wide index
+    (``accelerators=False``) it means what it always meant: rows inserted after
+    ``PRAGMA create_fts_index`` are invisible to BM25 until the index is rebuilt.  Either way
+    anatid reports the condition on the result object by default; pass ``on_stale_fts="error"``
+    to :meth:`anatid.Anatid.recall` to get this exception, and read the message for which of the
+    two it was.
     """
 
 

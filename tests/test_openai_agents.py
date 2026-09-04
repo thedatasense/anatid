@@ -716,7 +716,8 @@ def test_tool_bodies_read_and_write_the_database(db, session):
     saved = _invoke(tools["anatid_remember"], content="Ada prefers DuckDB",
                     entities=["Ada"], kind="preference")
     assert saved["saved"] is True and saved["about"] == ["Ada"]
-    memory = db.get(saved["memory_id"])
+    assert isinstance(saved["memory_id"], str), "an id crosses the wire as a decimal string"
+    memory = db.get(int(saved["memory_id"]))
     assert memory is not None and memory.writer == "session:conv-1"
 
     found = _invoke(tools["anatid_recall"], query="DuckDB", k=5, seed_entity="Ada", hops=2)
@@ -735,7 +736,7 @@ def test_tool_bodies_read_and_write_the_database(db, session):
     receipt = _invoke(tools["anatid_forget"], memory_id=corrected["memory_id"], hard=True,
                       reason="test erasure")
     assert receipt["hard"] is True and receipt["rows_removed"] > 0
-    assert db.get(corrected["memory_id"]) is None
+    assert db.get(int(corrected["memory_id"])) is None
 
 
 def test_tool_errors_come_back_as_json_not_exceptions(db):
@@ -755,7 +756,7 @@ def test_tools_use_the_agent_name_as_writer_when_no_session(db):
                       agent=agent)
     payload = json.dumps({"content": "written by an agent", "entities": None, "kind": None})
     saved = json.loads(run(tools["anatid_remember"].on_invoke_tool(ctx, payload)))
-    assert db.get(saved["memory_id"]).writer == "agent:archivist"
+    assert db.get(int(saved["memory_id"])).writer == "agent:archivist"
 
 
 # --------------------------------------------------------------------------- run-state store

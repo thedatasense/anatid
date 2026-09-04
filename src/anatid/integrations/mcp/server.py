@@ -82,6 +82,13 @@ from anatid.types import (
     RecallHits,
 )
 
+from ..wire import (
+    WireEntityRef,
+    WireId,
+    wire_id,
+    wire_ids,
+    wire_unsafe_ints,
+)
 from .sqlgate import (
     DEFAULT_MEMORY_LIMIT,
     DEFAULT_TIMEOUT_SECONDS,
@@ -100,6 +107,7 @@ __all__ = [
     "InsecureTransport",
     "check_transport_security",
     "is_loopback_host",
+    "normalise_host",
 ]
 
 DEFAULT_DB_PATH = "~/.anatid/memory.anatid"
@@ -122,9 +130,20 @@ erases when you pass hard=true; `prune` is a dry run unless you pass dry_run=fal
 Time travel is a filter over valid-time and transaction-time columns, so pass `as_of` (an
 ISO-8601 timestamp) to any read to ask what the database believed then.
 
-BM25 in DuckDB is not incremental: rows written since the last index build are invisible to
-the text arm of `recall`, which reports this as bm25_stale. Call `rebuild_fts_index` to catch
-up. Graph and vector arms are always current.\
+Every id -- memory_id, entity_id, edge_id, episode_id -- is a decimal string such as
+"883768514279557120", in what you send and in what you get back. anatid ids are 63-bit
+integers and a JSON number cannot carry one exactly, so hand an id back the way you received
+it, as a string, never as a number.
+
+Text search is current the moment you write. A new memory is matched by the very next `recall`
+with nothing rebuilt, and a memory you `supersede` or `forget` leaves the text results on that
+same read. `rebuild_fts_index` compacts the writes made since the last build into a new BM25
+generation, which buys read speed rather than visibility, so call it after a large batch of
+writes and never to make a write findable. On a recall, `pending_fts_rows` counts documents the
+text arm re-read from the memories themselves and searched, and `bm25_stale` is the rare case
+where the text arm could not answer exactly, which takes a database with no generation ever
+built and more than 100,000 memories in this tenant. Graph and vector arms are always current
+too.\
 """
 
 #: Appended to :data:`INSTRUCTIONS` only when the operator opted the escape hatch in, so a model
@@ -136,6 +155,12 @@ and this server has it on."""
 
 
 # --------------------------------------------------------------------------- serialization
+#
+# Every id leaves as a decimal string (:mod:`anatid.integrations.wire`).  anatid ids are
+# 63-bit, JSON numbers are doubles in most clients, and an id that goes out as a number comes
+# back rounded with nothing raised anywhere -- so `wire_id` is not optional politeness, it is
+# what makes a returned id usable as the argument to the next call.  Counts, ranks, scores and
+# `version` (a small per-row counter, not an id) stay numbers.
 
 
 def _iso(value: _dt.datetime | None) -> str | None:
@@ -144,7 +169,7 @@ def _iso(value: _dt.datetime | None) -> str | None:
 
 def _memory(m: Memory, *, with_embedding: bool = False) -> dict[str, Any]:
     out: dict[str, Any] = {
-        "memory_id": m.memory_id,
+        "memory_id": wire_id(m.memory_id),
         "content": m.content,
         "kind": m.kind,
         "created_at": _iso(m.created_at),
@@ -154,11 +179,11 @@ def _memory(m: Memory, *, with_embedding: bool = False) -> dict[str, Any]:
         "tx_to": _iso(m.tx_to),
         "is_current": m.is_current,
         "writer": m.writer,
-        "episode_id": m.episode_id,
+        "episode_id": wire_id(m.episode_id),
         "confidence": None if m.confidence is None else float(m.confidence),
         "access_count": m.access_count,
         "last_access_at": _iso(m.last_access_at),
-        "tenant_id": m.tenant_id,
+        "tenant_id": wire_id(m.tenant_id),
         "version": m.version,
     }
     if with_embedding and m.embedding is not None:
@@ -168,50 +193,50 @@ def _memory(m: Memory, *, with_embedding: bool = False) -> dict[str, Any]:
 
 def _entity(e: Entity) -> dict[str, Any]:
     return {
-        "entity_id": e.entity_id,
+        "entity_id": wire_id(e.entity_id),
         "name": e.name,
         "kind": e.kind,
         "valid_from": _iso(e.valid_from),
         "valid_to": _iso(e.valid_to),
         "is_current": e.is_current,
         "writer": e.writer,
-        "episode_id": e.episode_id,
+        "episode_id": wire_id(e.episode_id),
         "confidence": None if e.confidence is None else float(e.confidence),
-        "tenant_id": e.tenant_id,
+        "tenant_id": wire_id(e.tenant_id),
     }
 
 
 def _episode(ep: Episode) -> dict[str, Any]:
     return {
-        "episode_id": ep.episode_id,
+        "episode_id": wire_id(ep.episode_id),
         "content": ep.content,
         "source": ep.source,
         "kind": ep.kind,
         "created_at": _iso(ep.created_at),
         "writer": ep.writer,
-        "tenant_id": ep.tenant_id,
+        "tenant_id": wire_id(ep.tenant_id),
     }
 
 
 def _edge(e: Edge) -> dict[str, Any]:
     return {
-        "edge_id": e.edge_id,
+        "edge_id": wire_id(e.edge_id),
         "edge_type": e.edge_type.value,
-        "src": e.src,
-        "dst": e.dst,
+        "src": wire_id(e.src),
+        "dst": wire_id(e.dst),
         "rel_kind": e.rel_kind,
         "weight": None if e.weight is None else float(e.weight),
         "valid_from": _iso(e.valid_from),
         "valid_to": _iso(e.valid_to),
         "is_current": e.is_current,
-        "tenant_id": e.tenant_id,
+        "tenant_id": wire_id(e.tenant_id),
         "version": e.version,
     }
 
 
 def _hit(h: RecallHit) -> dict[str, Any]:
     return {
-        "memory_id": h.memory_id,
+        "memory_id": wire_id(h.memory_id),
         "content": h.content,
         "score": float(h.score),
         "rank": h.rank,
@@ -251,8 +276,8 @@ def _asof_json(scope: AsOf | None) -> dict[str, Any] | None:
 
 def _receipt(r: ForgetReceipt) -> dict[str, Any]:
     return {
-        "memory_id": r.memory_id,
-        "tenant_id": r.tenant_id,
+        "memory_id": wire_id(r.memory_id),
+        "tenant_id": wire_id(r.tenant_id),
         "hard": r.hard,
         "at": _iso(r.at),
         "memories_deleted": r.memories_deleted,
@@ -272,7 +297,7 @@ def _receipt(r: ForgetReceipt) -> dict[str, Any]:
 
 def _provenance(p: Provenance) -> dict[str, Any]:
     return {
-        "memory_id": p.memory_id,
+        "memory_id": wire_id(p.memory_id),
         "depth": p.depth,
         "chain": [_memory(m) for m in p.chain],
         "root": None if p.root is None else _memory(p.root),
@@ -290,7 +315,7 @@ def _prune(rep: PruneReport) -> dict[str, Any]:
         "hard": rep.hard,
         "at": _iso(rep.at),
         "count": rep.count,
-        "memory_ids": list(rep.memory_ids),
+        "memory_ids": wire_ids(rep.memory_ids),
         "receipts": [_receipt(r) for r in rep.receipts],
         "older_than": _iso(rep.older_than),
         "max_access_count": rep.max_access_count,
@@ -305,8 +330,8 @@ def _fts(s: FtsStatus) -> dict[str, Any]:
         "current_rows": s.current_rows,
         "pending_rows": s.pending_rows,
         # Row count alone cancels out (one insert + one hard purge); the id watermark does not.
-        "indexed_max_id": s.indexed_max_id,
-        "current_max_id": s.current_max_id,
+        "indexed_max_id": wire_id(s.indexed_max_id),
+        "current_max_id": wire_id(s.current_max_id),
         "indexed_at": _iso(s.indexed_at),
         "newest_row_at": _iso(s.newest_row_at),
         "policy": s.policy,
@@ -330,7 +355,12 @@ def _parse_ts(value: str | None, *, field: str) -> _dt.datetime | None:
 
 
 def _entity_ref(value: str) -> int | str:
-    """Tool arguments carry entities as strings; a decimal string is an entity_id."""
+    """Resolve one entity argument: a decimal string is an entity_id, anything else a name.
+
+    The argument reaches this as a string whatever the client sent, because the parameter is
+    annotated :class:`~anatid.integrations.wire.WireEntityRef`, which declares a string in the
+    schema and turns an integer into its decimal form before the tool body runs.
+    """
     text = value.strip()
     if text and (text.isdigit() or (text[0] == "-" and text[1:].isdigit())):
         return int(text)
@@ -480,24 +510,54 @@ class InsecureTransport(RuntimeError):
     """The requested transport would expose the database on a network with no authentication."""
 
 
+def normalise_host(host: str) -> str:
+    """Reduce a bind host to the one spelling everything downstream reasons about.
+
+    Surrounding whitespace goes; then the trailing dot of a fully-qualified name ("localhost.",
+    which RFC 1034 calls the same name as "localhost"); then the brackets of the URL form of an
+    IPv6 literal ("[::1]"); then case, because hostnames are case-insensitive (RFC 4343) and a
+    hex IPv6 literal is too.  The dot is taken off before the brackets so that "[::1]." reduces
+    the same way "[::1]" does.
+
+    Case is the one that bit: :func:`is_loopback_host` used to hand the name straight to
+    ``getaddrinfo``, which made "LOCALHOST" a question about the platform resolver rather than
+    about the address.  glibc folds case when it reads /etc/hosts and musl does not, so the same
+    configuration served on Debian and refused to start on Alpine.
+    """
+    text = host.strip()
+    if len(text) > 1 and text.endswith("."):                 # localhost. / 127.0.0.1. / [::1].
+        text = text[:-1]
+    if text.startswith("[") and text.endswith("]"):          # [::1]
+        text = text[1:-1]
+    return text.lower()
+
+
 def is_loopback_host(host: str | None) -> bool:
     """True when ``host`` can only be reached from this machine.
 
-    A literal address is decided by :mod:`ipaddress`.  A name is resolved and must map to
-    loopback addresses *only* -- "localhost" normally does, a name that also resolves to a LAN
-    address does not.  An empty host means "every interface" in every server framework there is,
-    so it is not loopback; a name that will not resolve is not loopback either, because refusing
-    to serve is the safe answer to "I cannot tell".
+    The host is reduced by :func:`normalise_host` first, so "LOCALHOST", "Localhost",
+    "localhost." and "localhost" are one question, and so are "::1", "[::1]" and "[::1].".
+
+    A literal address is then decided by :mod:`ipaddress`, which knows that loopback is the
+    whole of 127.0.0.0/8 and not just 127.0.0.1, and that ``::1`` is its IPv6 counterpart; an
+    address with an interface scope ("::1%lo0") is decided by the address part.  A name is
+    resolved and must map to loopback addresses *only* -- "localhost" normally does, a name that
+    also resolves to a LAN address does not.  The name is still resolved rather than accepted on
+    sight, deliberately: this function's answer decides whether an unauthenticated listener is
+    allowed, and a host whose /etc/hosts points "localhost" somewhere else must not be told that
+    binding it is private.
+
+    An empty host means "every interface" in every server framework there is, so it is not
+    loopback; a name that will not resolve is not loopback either, because refusing to serve is
+    the safe answer to "I cannot tell".
     """
     if host is None:
         return False
-    text = host.strip()
+    text = normalise_host(host)
     if not text or text == "*":
         return False
-    if text.startswith("[") and text.endswith("]"):          # [::1]
-        text = text[1:-1]
     try:
-        return ipaddress.ip_address(text).is_loopback
+        return ipaddress.ip_address(text.split("%")[0]).is_loopback
     except ValueError:
         pass
     try:
@@ -601,13 +661,15 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
                 "Entities are given by name and created on demand, so `entities=[\"Ada\", "
                 "\"DuckDB\"]` is enough; a decimal string is treated as an existing entity_id. "
                 "Pass `episode` to record the raw source text first and attach it as this "
-                "memory's provenance -- evidence before belief. Appends never conflict."
+                "memory's provenance -- evidence before belief. Appends never conflict. Every "
+                "id in the result is a decimal string: anatid ids are 63-bit and a JSON number "
+                "would round them."
             ),
         )
         @_guard
         def remember(
             content: str,
-            entities: list[str] | None = None,
+            entities: list[WireEntityRef] | None = None,
             kind: str = "fact",
             writer: str | None = None,
             episode: str | None = None,
@@ -640,8 +702,8 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
         )
         @_guard
         def relate(
-            src: str,
-            dst: str,
+            src: WireEntityRef,
+            dst: WireEntityRef,
             rel_kind: str | None = None,
             writer: str | None = None,
             confidence: float = 1.0,
@@ -665,9 +727,9 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
         )
         @_guard
         def supersede(
-            old_id: int,
+            old_id: WireId,
             content: str,
-            entities: list[str] | None = None,
+            entities: list[WireEntityRef] | None = None,
             kind: str | None = None,
             writer: str | None = None,
             episode: str | None = None,
@@ -678,7 +740,7 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
                 entities=None if entities is None else [_entity_ref(x) for x in entities],
                 kind=kind, writer=writer, episode=episode, confidence=confidence,
             )
-            return {"memory": _memory(m), "superseded": int(old_id)}
+            return {"memory": _memory(m), "superseded": wire_id(int(old_id))}
 
         @server.tool(
             title="Reinforce a memory",
@@ -691,7 +753,7 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
         )
         @_guard
         def reinforce(
-            memory_id: int, amount: int = 1, confidence: float | None = None
+            memory_id: WireId, amount: int = 1, confidence: float | None = None
         ) -> dict[str, Any]:
             m = db.reinforce(int(memory_id), amount=int(amount), confidence=confidence)
             return {"memory": _memory(m)}
@@ -714,7 +776,7 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
         )
         @_guard
         def forget(
-            memory_id: int, hard: bool = False, reason: str | None = None,
+            memory_id: WireId, hard: bool = False, reason: str | None = None,
             writer: str | None = None,
         ) -> dict[str, Any]:
             r = db.forget(int(memory_id), hard=bool(hard), reason=reason, writer=writer)
@@ -754,10 +816,11 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             title="Rebuild the BM25 index",
             annotations=write_tool,
             description=(
-                "Rebuild the full-text index over memories.content and record the watermark. "
-                "DuckDB's fts index is NOT incremental: rows written since the last build are "
-                "invisible to the text arm of `recall` until this runs. Call it after a batch of "
-                "`remember` calls, or whenever `recall` reports bm25_stale."
+                "Compact the writes made since the last build into a new BM25 generation over "
+                "memories.content, and record the watermark. This buys read speed rather than "
+                "visibility: a memory is matched by the very next `recall` without it. Call it "
+                "after a large batch of `remember` calls, when text recall feels slow, or "
+                "whenever `recall` reports bm25_stale."
             ),
         )
         @_guard
@@ -774,15 +837,17 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             "from seed_entity (up to `hops`), and cosine over `embedding` if you supply one -- "
             "whichever arms have input, fused with Reciprocal Rank Fusion. Pass `as_of` "
             "(ISO-8601) to ask what the database believed at that time. The result reports which "
-            "arms ran and whether the BM25 index is stale; a stale index means recent memories "
-            "are missing from the text arm only."
+            "arms ran. A memory written a moment ago is already findable by the text arm: "
+            "`pending_fts_rows` counts documents that arm re-read from the memories themselves "
+            "and searched, and `bm25_stale` is the rare case where the text arm could not "
+            "answer exactly, which affects the text arm alone."
         ),
     )
     @_guard
     def recall(
         query: str | None = None,
         k: int = 10,
-        seed_entity: str | None = None,
+        seed_entity: WireEntityRef | None = None,
         hops: int = 2,
         kinds: list[str] | None = None,
         as_of: str | None = None,
@@ -813,7 +878,7 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
     )
     @_guard
     def context(
-        entity: str,
+        entity: WireEntityRef,
         limit: int = 20,
         hops: int = 0,
         kinds: list[str] | None = None,
@@ -836,7 +901,7 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
         ),
     )
     @_guard
-    def get(memory_id: int, as_of: str | None = None) -> dict[str, Any]:
+    def get(memory_id: WireId, as_of: str | None = None) -> dict[str, Any]:
         scope = _parse_ts(as_of, field="as_of")
         m = db.get(int(memory_id), as_of=scope, with_embedding=False)
         if m is None:
@@ -854,7 +919,7 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
         ),
     )
     @_guard
-    def provenance(memory_id: int) -> dict[str, Any]:
+    def provenance(memory_id: WireId) -> dict[str, Any]:
         return _provenance(db.provenance(int(memory_id)))
 
     @server.tool(
@@ -882,7 +947,7 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             }
         return {
             "path": db.path,
-            "tenant_id": tenant_id,
+            "tenant_id": wire_id(tenant_id),
             "isolation": db.namespace.isolation.value,
             "read_only": db.read_only,
             "counts": db.stats(),
@@ -934,7 +999,11 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
                 "Tables: memories, entities, episodes, edges_about (memory->entity), "
                 "edges_relates (entity->entity), edges_supersedes (new->old), anatid_audit, "
                 "anatid_meta, and the view relates_undirected. Current rows are "
-                "`valid_to IS NULL AND tx_to IS NULL`."
+                "`valid_to IS NULL AND tx_to IS NULL`. A cell whose integer is too large for "
+                "a JSON number to carry exactly (above 2**53, which every anatid id is) comes "
+                "back as a decimal string, so a memory_id you SELECT here is the same string "
+                "the memory verbs take and return; smaller integers such as counts stay "
+                "numbers."
             ),
         )
         @_guard
@@ -943,7 +1012,11 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             # and reaches the client as an isError result carrying the reason, so the model
             # can see why and rewrite the query. Nothing has run at that point.
             try:
-                return gateway.run(query, limit=limit)
+                # The columns of an arbitrary SELECT are not known here, so unlike the verb
+                # tools this cannot name its id fields: every integer too large for a JSON
+                # number becomes a decimal string instead, which is exactly the anatid ids
+                # and nothing else. The tool description says so.
+                return wire_unsafe_ints(gateway.run(query, limit=limit))
             except SqlTimeout as exc:
                 # Ran, cost too much, was interrupted, nothing committed. Same shape as a
                 # rejection so the model rewrites the query rather than retrying it verbatim.
