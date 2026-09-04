@@ -119,7 +119,7 @@ from .vector import VectorIndex, VectorSearch
 from .verbs import AsOfView, as_of
 from .visibility import Visibility, visible_at
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 __all__ = [
     "__version__",

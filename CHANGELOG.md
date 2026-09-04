@@ -44,6 +44,31 @@ All notable changes to anatid are recorded here. The format follows
   platform, and `LOCALHOST` on any platform whose resolver does not fold case. A host that is not
   loopback is still refused, including a name that also resolves off this machine.
 
+## [0.2.1] - 2026-09-04
+
+Identifiers now cross every external boundary as decimal strings. anatid identifiers are 64 bit and
+exceed what JavaScript integers carry safely: sent as a JSON number, 883768514279557120 comes back
+from Node as 883768514279557100. An agent calling supersede or provenance on a memory it had just
+stored could address a different row, and nothing would raise. Tools accept an identifier as a
+string or an integer, so clients written against 0.2.0 keep working, and the tool schemas declare
+string. Any client that parsed identifiers as numbers should now read them as strings.
+
+The text index documentation described 0.1 behaviour. It said writes stayed invisible until
+rebuild_fts_index() ran, which the derived index made false in 0.2, where the journal carries a
+write to the very next read. The Model Context Protocol instruction text mattered most, since
+agents are given it as guidance. Every stale claim now describes what happens, and says what
+rebuilding is still for.
+
+The dinner example corrected its sentence without correcting its graph, leaving Priya recorded as
+reacting to both pine nuts and prawns. Scenarios now carry removed_relations and apply supersede,
+unrelate and relate inside one transaction.
+
+Loopback detection in the Model Context Protocol server was case sensitive, so LOCALHOST was
+treated as a public interface. Hostnames are normalised, including the trailing dot and the
+bracketed IPv6 forms.
+
+The README was rewritten.
+
 ## [0.2.0] - 2026-09-03
 
 The derived-index release. Every retrieval structure anatid keeps beside the canonical tables is

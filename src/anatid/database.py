@@ -65,7 +65,7 @@ log = logging.getLogger("anatid")
 
 __all__ = ["Anatid", "DatabasePool", "PoolEvent", "connect"]
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 #: Substrings DuckDB uses for an MVCC abort.  Deliberately narrow, and it has to stay that way:
 #: :class:`~anatid.errors.ConflictError` promises the caller that retrying the unit of work is
