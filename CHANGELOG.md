@@ -5,6 +5,227 @@ All notable changes to anatid are recorded here. The format follows
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.3.0] - 2026-09-04
+
+The server release. anatid gains a second deployment profile, and the first one is unchanged.
+
+Embedded is still the default and still what most callers should use. `Anatid.open` is one process
+with as many writer threads as it likes, no daemon, no socket, no extra hop, and it is faster than
+anything that adds one. Nothing in this release changes its behaviour, its file format or its API.
+
+The server profile is for the case embedded cannot serve: two or more processes that must write the
+same memory. It exists because of a measurement, not a preference. DuckDB gives one process
+exclusive use of a database file, and on duckdb 1.5.5 a second process is refused even when it asks
+for read-only access, with `IO Error: Could not set lock on file`. So there is no arrangement where
+one process writes through a server and the others read the file directly. One process owns the
+files and everybody else asks it, over a Unix domain socket or over HTTP, for reads as well as
+writes. Switching is one line: `AnatidClient.connect(path, tenant=1)` in place of
+`Anatid.open(path, tenant=1)`, with every verb keeping its name, its parameters and its return type.
+
+The security model is stated rather than implied. A Unix socket is authenticated by the permissions
+on the socket and its 0700 directory, plus peer credentials where the platform reports them. An
+HTTP listener requires a bearer token and refuses to bind anything but loopback without one. A
+principal carries the tenants it may name, and the check happens before any file is opened, so a
+client authorised for one tenant cannot reach another and cannot learn from the error whether that
+tenant exists. Tenant isolation is still file per tenant; a single shared file gives namespaces,
+which is not a security boundary, and the server says so rather than papering over it.
+
+The honest limits, which have not moved:
+
+- One process still owns the files. The server is a single point of failure, not a cluster. There
+  is no replication, no sharding and no failover.
+- Isolation is DuckDB's optimistic snapshot isolation with write-write aborts. It is not
+  serializable, and funnelling writes through one process does not make it so. `ConflictError` is
+  still something a caller handles.
+- Reads cross the wire too. The exclusive lock rules out reading the file directly while the server
+  holds it. Measured on 3,000 memories at 384 dimensions, median: `recall()` costs 1.05x over the
+  socket, `get()` costs 2.18x, and writes run at about 0.71x embedded throughput with four
+  concurrent writers.
+- Backpressure is visible to callers. A tenant's queue is bounded, and a full one answers a
+  retryable `BusyError` carrying a wait hint (429 over HTTP) rather than blocking. The write was not
+  performed, which is what makes that answer safe to send again.
+
+### Added
+
+- `anatid.server`: `AnatidServer`, `AnatidClient`, the wire protocol, per-tenant write queues with
+  batching and idempotency keys, bearer-token and Unix-peer authentication, Prometheus metrics,
+  online per-tenant backup, and the `anatid-server` command (`start`, `stop`, `status`, `backup`,
+  `restore`, `doctor`, also reachable as `python -m anatid.server`). It needs no dependency beyond
+  `duckdb`, so it is in the base install and costs nothing to the callers who never import it.
+- Writes for one tenant that are queued at the same moment commit in one transaction. Measured
+  with 16 clients writing 100 memories each to one tenant, `--batch-max 32` turns 1,600
+  transactions into 200 and is worth between 1.13x and 1.30x depending on how loaded the machine
+  is. Verbs that must not share a transaction (`forget`, `prune`, `maintain_indexes`,
+  `rebuild_fts_index`, `recluster`) get one of their own.
+- Idempotency keys, on by default with a 24 hour lifetime. The key and the write it guards commit
+  in the same transaction, in a table in the tenant's own file, so a crash cannot separate them and
+  a retry after a restart still writes once.
+- Per-tenant fairness. A tenant is served, then goes to the back of the ring whether or not it
+  still has work, so a tenant with a thousand queued writes cannot starve one with five. Measured:
+  a quiet tenant kept 59% of its solo rate while four processes hammered another.
+- Health and readiness as separate questions. A busy server is healthy and not ready, which is what
+  keeps a supervisor from restarting it and a load balancer from sending it more.
+- `Anatid.checkpoint()`, which folds a file's write-ahead log in. It exists because
+  `db.execute("CHECKPOINT")` cannot do it: measured on duckdb 1.5.5, through a thread cursor the
+  statement succeeds on a handle for a file this process created and raises
+  `TransactionException: Cannot CHECKPOINT: there are other write transactions active` on a handle
+  for a file that already existed, from any thread, on a handle that has run nothing else, and
+  `FORCE CHECKPOINT`, which DuckDB's message suggests, does not raise and does not return. Issued
+  on the handle's root connection it works in both cases (measured: a 2,146,504 byte `.wal` folded
+  to 0). It does not force, so a thread with a write transaction genuinely open still raises.
+- `ServerConfig(create_tenants=False)` and `anatid-server start --no-create-tenants`. By default a
+  server opens a tenant's file the first time a request names it, which is what a service that
+  provisions tenants from its own traffic wants; it also lets a client that may name any tenant
+  turn a loop over `remember(tenant=i)` into a directory of files. That is not a tenant boundary
+  problem, because the caller was entitled to name them, and it is unbounded resource use. With
+  the flag the server serves the tenants it was configured with plus the files already on disk,
+  and refuses anything else without creating it.
+- `docs/server.md`, and `examples/server_demo.py`, which demonstrates the lock, the server and
+  several processes writing one memory in three acts.
+
+### Fixed
+
+- SIGTERM is now bounded by `--drain-timeout`. `shutdown()` waited on the listener before it
+  stopped the queue accepting or cancelled the connections, and that wait does not return while a
+  connection handler is running, so a single connected client held the process open indefinitely:
+  measured at over 25 seconds against a 5 second budget with one idle connection, and about 2,100
+  further writes accepted and committed after the signal with 64 writing clients. The queue now
+  stops accepting first, so a request already decoded gets `ShuttingDown` as documented, the
+  listener is waited on last and under a bound, and a second SIGTERM reaches the drain instead of
+  queueing behind it.
+- Ids no longer leave the server as JSON numbers. anatid ids are 63-bit and a JSON number is an
+  IEEE-754 double in every JavaScript client, so an id above 2^53 was rounded silently: 12 of 12
+  ids sent through a real Node process came back with different digits and none of them addressed a
+  row. The server protocol is a new external boundary and now applies the rule
+  `anatid.integrations.wire` already applies at the Model Context Protocol and Agents SDK
+  boundaries, from that module's single definition. An integer a JSON number cannot carry exactly
+  travels tagged, with its digits in a string, in both directions and in error details as well as
+  results; a Python client still sees `int` on both sides. Every reply of every verb is swept for
+  the shape, and the frames are round-tripped through a real Node process in the test suite.
+- The backup drain is per tenant. It waited on every tenant's queue, so backing up an untouched
+  tenant cost 0.16 seconds idle and 3.90 seconds while a different tenant was being written, which
+  is not the "only this tenant pauses" its docstring claimed. The drain's outcome is also reported
+  now rather than discarded: a copy taken with writes still queued is consistent, but it is not the
+  point where everything acknowledged so far had landed, and the command says which one you got.
+- The `busy` wait hint scales with the crowd. It was computed from queue depth alone, which is the
+  time until one more write fits and not the time until this caller's turn, so sixteen clients
+  refused at the same instant were each told the same few milliseconds, came back together, and
+  fifteen were refused again. The hint now scales with the number of writes that tenant has refused
+  since it was last under its high-water mark, and is jittered so a crowd does not return in step.
+- `GET /ready` no longer hands an anonymous caller the tenant list and the per-tenant schema
+  versions on a token-protected listener, and the `ready` verb no longer hands them to a principal
+  scoped to one tenant. The verdict a load balancer reads stays open, because it describes the
+  process and not a tenant; the detail is scoped to the tenants the caller may name, because a
+  principal must not be able to learn whether a tenant it may not name exists. `GET /health` is
+  unchanged and stays open: it carries a pid, an uptime and a version, and a supervisor has no
+  token.
+- An online backup holds a barrier rather than draining. `WriteQueue.drain_tenant` waits for a
+  tenant's queue to empty and then returns, stopping nothing, so a write submitted between the
+  drain returning and the copy starting committed into the copy: the boundary was the weaker
+  snapshot one however long the drain waited, and under continuous writes the drain could spend
+  its whole budget and still deliver only that. Both `AnatidServer.backup_tenant` and the
+  `anatid-server backup` verb now go through `BackupCoordinator`, which takes the tenant's single
+  serving slot for the length of the copy, so every write acknowledged before the call is in it
+  and nothing that committed after the barrier closed is. Measured on a 42.3 MiB file of 100,000
+  memories: 502 ms, 8.8 ms more than the same copy with nothing paused. No other tenant is ever
+  paused, and a barrier that cannot be taken inside the budget refuses the copy rather than
+  quietly downgrading it.
+- `DrainReport.drained` counts what that drain drained. It was the queue's lifetime
+  completed-plus-failed counter, so a server that had served two hundred writes and drained three
+  on the way out logged "shutdown drained 203 writes cleanly" and the command line printed the
+  same number. It is now a delta taken across the call, and it is read after the workers are
+  joined rather than a moment before the abandon, so `drained` and `abandoned` partition what was
+  outstanding instead of leaving a gap: a run that reported `drained=44` alongside 45 completed
+  futures and 355 abandoned ones now adds up.
+- A bearer token configured with leading or trailing whitespace is refused at construction. The
+  header value is stripped before it is compared, because a client library that appends a newline
+  is routine, so such a token could never match anything and the server started happily and
+  answered every request with "the bearer token was not accepted". A token containing whitespace
+  or a control character is refused for the same reason: a space ends the value in an
+  `Authorization` header and a newline ends the header.
+- Binding HTTP to a loopback address with an authenticator that requires no token now logs a
+  warning. It is correct on a single-user machine and wrong on a shared host, where `127.0.0.1`
+  is reachable by every local user and no filesystem permission stands between them and the port.
+  Only the operator knows which this is, so the library warns; `anatid-server` already refuses
+  `--http` without `--token-file` unless `--http-no-auth` says the choice was deliberate.
+- Two classes can no longer claim one wire tag. `anatid.types.PruneReport` (what `prune()`
+  removed from a tenant) and `anatid.server.backup.PruneReport` (what backup retention removed
+  from a directory) share a class name; the second registration silently replaced the first, and
+  the failure surfaced three modules away as `cannot rebuild PruneReport from the wire`. A second
+  claim on a tag now raises at import time and names both classes. The escape hatch it points at
+  also works now: `register_dataclass(cls, name)` set the decoder's key while the encoder still
+  tagged by `type(value).__name__`, so a type registered under another name was written under its
+  own and could not be read back at all.
+- `queue_stats` works on a server built through the library. The verb is in the public table, but
+  its return type was registered with the codec only in `anatid.server.cli`, so a server built with
+  `AnatidServer(pool=...)` ran the verb and then failed to encode the answer, with an error that
+  blamed a version difference that did not exist. The registration now lives next to the type.
+
+### Changed
+
+- The C++ CSR extension reports version 0.3.0, matching the package. The test suite compares the
+  two, and its feature gates now compare parsed versions rather than version-string prefixes, so a
+  release cannot silently turn every test behind a gate into a skip. Rebuilding it also exposed a
+  timing-dependent assertion: the extension refuses a sparse-id CSR build with one of two messages
+  depending on whether the ids landed more than `ANATID_MAX_TENANT_SPAN` apart, which for
+  time-ordered ids is a question about how long the test's twelve writes took. The test now asserts
+  what both refusals say.
+- `AnatidServer.backup_tenant` returns a `BackupReport` rather than a path, so a caller sees the
+  guarantee the copy has, its size, how long the tenant was paused and what schema version came
+  back. `anatid-server backup` prints the guarantee and its reply carries `guarantee`, `quiesced`,
+  `paused_s` and `waited_s`.
+- `DatabasePool.backup` refuses an existing destination with `BackupDestinationExists`, which is
+  both a `FileExistsError` and an `AnatidError`. The old bare `FileExistsError` is an `OSError`,
+  so a command line catching `OSError` reported "the arguments are wrong and nothing was written"
+  as a run-time failure, and an HTTP layer that recognises anatid's errors answered 500 where 400
+  was the honest answer. It also quotes its source catalog with the new `anatid.schema.quote_name`
+  instead of validating it with `quote_ident`, which refused the two pool templates the
+  documentation itself shows: `tenant-{tenant}.anatid` gives DuckDB the catalog `tenant-1` and
+  `{tenant}.anatid` gives `1`, and neither is a bare SQL identifier. The command line's fallback
+  copy for those templates is gone with the reason for it.
+- The backup module's types and errors cross the wire. `Guarantee`, `BackupReport`, `BackupInfo`,
+  `RestoreReport` and its `PruneReport` are registered with the codec, along with `BackupError`
+  and its four subclasses, so a client sees `QuiesceTimeout` rather than a generic `RemoteError`
+  that has lost the one thing it says: nothing was copied and nothing was paused, so the same
+  call can be made again. `QuiesceTimeout` and `QuiesceUnavailable` are marked retryable and
+  answer 503 over HTTP; `DestinationInUse` answers 409. `pathlib.Path` has a codec, because a
+  backup report names a file on the server's disk.
+- `anatid.server` re-exports the backup and client surfaces. `BackupCoordinator`, `Guarantee`,
+  `AnatidClient` and the rest were reachable only through their own modules, so
+  `from anatid.server import BackupCoordinator` raised `ImportError`. `inspect` and `prune` are
+  exported as `read_backup` and `prune_backups`, because at package level the first collides with
+  a standard library module and the second with a verb about memories rather than files.
+- `docs/roadmap.md` no longer says a server is not anatid's to invent. The principle it states now
+  is that there is no *mandatory* server: embedded by default, the server opt in for callers who
+  need several processes writing one file, and not a network database.
+
+## [0.2.1] - 2026-09-04
+
+Identifiers now cross every external boundary as decimal strings. anatid identifiers are 64 bit and
+exceed what JavaScript integers carry safely: sent as a JSON number, 883768514279557120 comes back
+from Node as 883768514279557100. An agent calling supersede or provenance on a memory it had just
+stored could address a different row, and nothing would raise. Tools accept an identifier as a
+string or an integer, so clients written against 0.2.0 keep working, and the tool schemas declare
+string. Any client that parsed identifiers as numbers should now read them as strings.
+
+The text index documentation described 0.1 behaviour. It said writes stayed invisible until
+rebuild_fts_index() ran, which the derived index made false in 0.2, where the journal carries a
+write to the very next read. The Model Context Protocol instruction text mattered most, since
+agents are given it as guidance. Every stale claim now describes what happens, and says what
+rebuilding is still for.
+
+The dinner example corrected its sentence without correcting its graph, leaving Priya recorded as
+reacting to both pine nuts and prawns. Scenarios now carry removed_relations and apply supersede,
+unrelate and relate inside one transaction.
+
+Loopback detection in the Model Context Protocol server was case sensitive, so LOCALHOST was
+treated as a public interface. Hostnames are normalised, including the trailing dot and the
+bracketed IPv6 forms.
+
+The README was rewritten.
+
 ### Changed
 
 - Every id crossing an integration boundary is now a decimal string. The MCP tools and the OpenAI
@@ -43,31 +264,6 @@ All notable changes to anatid are recorded here. The format follows
   an interface scope such as `::1%lo0`, and case. `127.0.0.1.` and `[::1].` were refused on every
   platform, and `LOCALHOST` on any platform whose resolver does not fold case. A host that is not
   loopback is still refused, including a name that also resolves off this machine.
-
-## [0.2.1] - 2026-09-04
-
-Identifiers now cross every external boundary as decimal strings. anatid identifiers are 64 bit and
-exceed what JavaScript integers carry safely: sent as a JSON number, 883768514279557120 comes back
-from Node as 883768514279557100. An agent calling supersede or provenance on a memory it had just
-stored could address a different row, and nothing would raise. Tools accept an identifier as a
-string or an integer, so clients written against 0.2.0 keep working, and the tool schemas declare
-string. Any client that parsed identifiers as numbers should now read them as strings.
-
-The text index documentation described 0.1 behaviour. It said writes stayed invisible until
-rebuild_fts_index() ran, which the derived index made false in 0.2, where the journal carries a
-write to the very next read. The Model Context Protocol instruction text mattered most, since
-agents are given it as guidance. Every stale claim now describes what happens, and says what
-rebuilding is still for.
-
-The dinner example corrected its sentence without correcting its graph, leaving Priya recorded as
-reacting to both pine nuts and prawns. Scenarios now carry removed_relations and apply supersede,
-unrelate and relate inside one transaction.
-
-Loopback detection in the Model Context Protocol server was case sensitive, so LOCALHOST was
-treated as a public interface. Hostnames are normalised, including the trailing dot and the
-bracketed IPv6 forms.
-
-The README was rewritten.
 
 ## [0.2.0] - 2026-09-03
 

@@ -3,7 +3,9 @@
 `anatid-mcp` serves an anatid database over the [Model Context Protocol](https://modelcontextprotocol.io).
 Claude Code, Claude Desktop, Cursor, and anything else that speaks MCP get a persistent,
 bitemporal, graph-shaped memory backed by one embedded DuckDB file. There is no server process to
-run, no container, and no API key.
+run, no container, and no API key. (anatid does have an optional server profile, in
+[`server.md`](server.md), for callers who need several processes writing one file. `anatid-mcp`
+does not need it and does not use it.)
 
 Built against mcp 2.x (`mcp.server.mcpserver.MCPServer`, the class mcp 1.x called `FastMCP`).
 

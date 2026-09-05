@@ -165,12 +165,22 @@ for predicate-level invariants, and by serialising the most sensitive operations
 writer service. `ConflictError` carries the resource, expected version, current version,
 retryability and attempt number.
 
-Single-process writing is a deployment profile rather than a defect. `EmbeddedDatabase` is one
-writer process with multiple writer threads. `AnatidServer` is one process owning the files and
-accepting writes over a Unix socket or HTTP, with batching, backpressure, authentication,
-idempotency keys, per-tenant queues, graceful draining, health endpoints and backup coordination.
-DuckDB's Quack remote protocol and DuckLake with a Postgres catalog are optional backends, not a
-silent change to the embedded model.
+Single-process writing is a deployment profile rather than a defect, and since 0.3.0 there are two
+of them. Embedded is the default: `Anatid` is one writer process with many writer threads, no
+daemon and no extra hop. The server profile is opt in, for the one case embedded cannot serve, and
+`AnatidServer` is one process owning the files and answering verbs over a Unix socket or HTTP, with
+batching, backpressure, authentication, idempotency keys, per-tenant queues, a bounded drain,
+health and readiness endpoints and backup coordination. Neither is a network database: there is no
+cluster, no replication and no sharding, and a server is not required to use anatid.
+
+The server exists because of the lock, not because a daemon is nicer. Measured on duckdb 1.5.5, a
+process holding a file read-write excludes every other process from it, read-only attempts
+included, so reads cross the wire along with writes and the "write through the server, read the
+file directly" arrangement does not exist. What the server changes is which process holds the file.
+It does not change the isolation level: DuckDB's optimistic snapshot isolation with write-write
+aborts is what a client gets either way, and funnelling writes through one process moves where a
+conflict can happen rather than removing it. DuckDB's Quack remote protocol and DuckLake with a
+Postgres catalog are optional backends, not a silent change to the embedded model.
 
 ## Tenant isolation
 

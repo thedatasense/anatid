@@ -6,7 +6,7 @@
 require anatid
 
 query I
-SELECT anatid_version() LIKE 'anatid 0.2.0 (DuckDB %)';
+SELECT anatid_version() LIKE 'anatid 0.3.0 (DuckDB %)';
 ----
 true
 

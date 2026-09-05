@@ -80,7 +80,11 @@ def workload(db, *, agent: str, writes: int = WRITES) -> dict:
     return {
         "agent": agent,
         "written": writes,
-        "mine": len(db.recall_2hop(agent, limit=1000)),
+        # What this agent wrote: the memories the agent entity is directly about.  NOT
+        # recall_2hop(agent), which is the point of the graph and would be the wrong number
+        # here: two hops from alpha reaches shared-topic and then everything beta wrote too.
+        "about_me": len(db.context(agent, limit=1000)),
+        "reachable": len(db.recall_2hop(agent, limit=1000)),
         "everyones": len(db.recall_2hop("shared-topic", limit=1000)),
         "corrected": db.get(corrected.memory_id).content,
         "access_count": db.get(corrected.memory_id).access_count,
@@ -102,7 +106,7 @@ def run_writer(socket_path: str, agent: str) -> int:
         elapsed = time.perf_counter() - started
     print(
         f"  writer {agent:<6} pid {os.getpid():<7} {result['written']} writes in "
-        f"{elapsed:.2f}s  mine={result['mine']:<3} everyones={result['everyones']:<3} "
+        f"{elapsed:.2f}s  about_me={result['about_me']:<3} reachable={result['reachable']:<3} "
         f"corrected={result['corrected']!r}"
     )
     return 0
@@ -193,9 +197,11 @@ class ServerThread:
     def stop(self) -> None:
         """Drain and release the files.
 
-        NOTE: ``AnatidServer.shutdown()`` waits for every open client connection to close first
-        (on Python 3.12 and later ``asyncio.Server.wait_closed()`` waits for its handlers), so
-        this is called only after every client in this demo has closed.
+        ``AnatidServer.shutdown()`` is bounded by ``ServerConfig.shutdown_timeout`` whether or
+        not a client is still connected: it stops the queue accepting, drains under that budget,
+        cancels the open connections and only then waits on the listener.  This demo calls it
+        after its clients have finished anyway, because it wants their writes, not because it
+        has to.
         """
         if self.server is not None:
             future = asyncio.run_coroutine_threadsafe(self.server.shutdown(), self.loop)
@@ -271,10 +277,16 @@ def act_two_many_processes_one_server(base: Path) -> Path:
                 f"  all three finished in {elapsed:.2f}s with {failed} failures; the tenant holds "
                 f"{stats['memories']} memories and {stats['entities']} entities"
             )
+            alpha = len(db.context("alpha", limit=1000))
+            beta = len(db.context("beta", limit=1000))
+            shared = len(db.recall_2hop("shared-topic", limit=1000))
             print(
-                f"  alpha wrote {len(db.recall_2hop('alpha', limit=1000))}, "
-                f"beta wrote {len(db.recall_2hop('beta', limit=1000))}, and both are reachable "
-                f"from shared-topic: {len(db.recall_2hop('shared-topic', limit=1000))}"
+                f"  alpha wrote {alpha} current memories, beta wrote {beta}, and shared-topic "
+                f"reaches all {shared} of them"
+            )
+            print(
+                f"  ({stats['memories']} rows against {alpha + beta} current: each agent "
+                f"superseded its first memory, and the closed version stays on disk)"
             )
             print(
                 f"  doctor: ok={report.ok} findings={len(report.findings)}   ready={queue_state.ready}"
@@ -300,8 +312,8 @@ def act_three_the_same_program_embedded(base: Path) -> None:
         result = workload(db, agent="alpha")
         elapsed = time.perf_counter() - started
     print(
-        f"  embedded alpha: {result['written']} writes in {elapsed:.2f}s  mine={result['mine']} "
-        f"corrected={result['corrected']!r} arms={result['arms']}"
+        f"  embedded alpha: {result['written']} writes in {elapsed:.2f}s  "
+        f"about_me={result['about_me']} corrected={result['corrected']!r} arms={result['arms']}"
     )
     print("  Same function, same keywords, same objects back. The handle is the only difference.\n")
 

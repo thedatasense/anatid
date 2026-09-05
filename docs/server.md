@@ -250,6 +250,7 @@ so they are not quiet.
 | `--pool TEMPLATE` | | one file per tenant. Must contain `{tenant}` or `{label}` |
 | `--db PATH` | | one shared file, tenants as namespaces. Exactly one of the two |
 | `--tenant N` | none | open at startup and hold readiness false until migrated. Repeatable |
+| `--no-create-tenants` | off | serve only `--tenant` plus the files that already exist |
 | `--max-queue N` | 256 | queued writes per tenant before the server answers busy |
 | `--batch-max N` | 32 | writes that may share one transaction |
 | `--workers N` | 4 | tenants written in parallel |
@@ -260,6 +261,15 @@ so they are not quiet.
 | `--backup-dir DIR` | none | where the online backup verb writes. Without it, backups are refused |
 | `--pid-file PATH` | none | written after the socket appears, removed after the drain |
 | `--allow-uid UID` | none | restrict the Unix socket to these uids. Repeatable |
+
+`--no-create-tenants` is worth a sentence. By default the server opens a tenant's file the first
+time a request names it, which is what a service that provisions tenants from its own traffic
+wants. It also means an authorised client that may name any tenant can turn a loop over
+`remember(tenant=i)` into a directory of database files. That is not a tenant boundary problem,
+because the caller was entitled to name them; it is unbounded resource use. `--no-create-tenants`
+confines the server to the tenants it was told about plus the files already on disk, so a tenant is
+created out of band or not at all. A request for anything else is refused with
+`TenantIsolationError` and nothing is created.
 
 Batching is worth setting deliberately. Measured with 16 clients writing 100 memories each to
 one tenant:
@@ -277,7 +287,16 @@ get one of their own.
 
 When a tenant's queue reaches `--max-queue`, the server answers `busy` with a `retry_after`
 rather than blocking. A client that retries on `busy` sees a slow server; a client that does not
-sees an error it must handle. Over HTTP, `busy` is status 429.
+sees an error it must handle. Over HTTP, `busy` is status 429. Nothing was written: a `busy`
+answer is safe to send again as it stands.
+
+`retry_after` is an upper bound to spread the crowd, not a reservation. It is computed from the
+rate the tenant is actually draining at, multiplied by the number of writes that tenant has
+refused since it was last under its high-water mark, and then jittered down by up to half. The
+multiplier is what makes it usable by more than one caller: the time to drain the overflow is the
+time until *one* more write fits, so sixteen clients told that number came back together and
+fifteen were refused again. The jitter is what keeps them from returning in step. A client under
+sustained overload should still back off further than the number it was handed.
 
 Idempotency keys are on by default with a 24 hour TTL. A client that sends the same key twice
 gets the first response back rather than a second write. The key and the write it guards commit
@@ -420,7 +439,7 @@ the last line:
 
 ```
 $ anatid-server status --socket /run/anatid/anatid.sock
-anatid 0.2.0  protocol 1  pid 57732
+anatid 0.3.0  protocol 1  pid 64968
 address        unix:/run/anatid/anatid.sock
 status         serving
 uptime         4.0s
@@ -435,6 +454,23 @@ batching       0.0 writes per transaction over 0 transactions
 
 `--json` prints the same three objects (`health`, `ready`, `queue`) for a monitor. Exit code 0
 when ready, 3 when not, 1 when the server could not be reached at all.
+
+### Which probes need a credential
+
+| route | without a token | with a token |
+| --- | --- | --- |
+| `GET /health` | the whole record. It names a pid, an uptime and a version and nothing about tenants, and a supervisor has no credential to present | the same |
+| `GET /ready` | the verdict, which is what a load balancer reads: `ready`, `accepting`, `queues_below_high_water` | the tenant list and the per-tenant schema versions, for the tenants this principal may name |
+| `GET /metrics` | the whole record on a listener with no token; 401 on one that has a token | series for the tenants this principal may name |
+| `POST /rpc` | 401 | the verbs this principal may call |
+
+On a listener with no token at all (a Unix-socket or loopback deployment) nothing is reduced,
+because there is no credential to present and nothing to hide behind one. On a token-protected
+listener the tenant list is scoped for the reason the tenant boundary exists: a principal must not
+be able to learn whether a tenant it may not name exists, and an anonymous caller may name none of
+them. The `ready` verb over `/rpc` and over the Unix socket is scoped the same way, so the probe
+is not a second door onto the question the boundary already answers. `Readiness.ready` itself is
+never withheld: it describes the process, not a tenant.
 
 ### HTTP status codes
 
@@ -467,11 +503,41 @@ anatid-server backup --socket /run/anatid/anatid.sock --tenant 1
 anatid-server: tenant 1 backed up to /var/lib/anatid/backups/tenant-1-20260904T192944Z.anatid (2895872 bytes), written by the server that holds the file.
 ```
 
-What happens: the server drains that tenant's queued writes, then runs DuckDB's
-`COPY FROM DATABASE` inside the handle that owns the file. The copy is a consistent snapshot of
-committed data, and it is a moment some client actually observed rather than a smear across
-writes in flight. Other tenants keep serving throughout; the one being copied pauses for as long
-as its queue takes to drain.
+What happens: the server puts a barrier on that tenant's write queue, and while the barrier holds
+the tenant's single serving slot it runs DuckDB's `COPY FROM DATABASE` inside the handle that owns
+the file. That gives the copy a boundary in the tenant's own write order: every write acknowledged
+before the call is in it, and no write that commits after the barrier closes is. The command prints
+which guarantee it got:
+
+```
+anatid-server: tenant 1 backed up to /var/lib/anatid/backups/tenant-1-20260904T192944Z.anatid (2895872 bytes), written by the server that holds the file.
+anatid-server: guarantee quiesced. Every write acknowledged before the call is in it and nothing that committed after is. Tenant 1 was paused 0.502s for it; no other tenant was.
+```
+
+Other tenants keep serving throughout and are never paused. Only the tenant named stops, and only
+for the length of its own copy: measured on a 42.3 MiB file with 100,000 memories, 502 ms, which is
+8.8 ms more than the same copy taken with nothing paused.
+
+This used to be a drain rather than a barrier, and the difference is the whole point.
+`WriteQueue.drain_tenant` waits for the tenant's queue to empty and then returns, stopping nothing,
+so a write submitted between the drain returning and the copy starting committed into the copy. The
+boundary that describes is the weaker `snapshot` one however long the drain waited, and under
+continuous writes the drain could spend its whole `--drain-timeout` budget and still deliver only
+that. A barrier holds.
+
+If the barrier cannot be taken inside `--drain-timeout` the copy is refused rather than downgraded,
+and nothing was paused and nothing was written. If it is taken but expires mid-copy (see
+`hold_timeout`, ten minutes by default), the tenant resumes and the report says `snapshot` rather
+than claiming a boundary it lost:
+
+```
+anatid-server: guarantee snapshot. The barrier could not be held, so this is a consistent copy of committed data rather than the point where everything acknowledged so far had landed. A write acknowledged during the copy may or may not be in it. Retry when the tenant is quieter, or raise --drain-timeout, which is the budget the barrier waits within.
+```
+
+The reply carries `guarantee`, `quiesced`, `paused_s` and `waited_s` for a monitor that wants to
+decide on the numbers. In the library the same thing is `AnatidServer.backup_tenant(tenant, dest)`,
+which returns a `BackupReport`, or `anatid.server.BackupCoordinator` for the fuller surface:
+several tenants, Parquet export, restore, retention and verification.
 
 Two restrictions, both because a backup writes a file:
 
@@ -495,6 +561,11 @@ anatid-server backup --pool '/var/lib/anatid/tenant-{tenant}.anatid' --tenant 1 
 Same mechanism, run by this process instead of the server. An existing destination is refused
 unless you pass `--overwrite`, because a backup that silently replaces the previous one is one
 crash away from leaving you with neither.
+
+The refusal is the same on all three paths and never writes anything. Offline it exits 2, an
+argument problem; online it exits 1, because the server is the one that refused; over HTTP it
+is a 400. Passing `--overwrite` lifts it in every case. Prefer the default timestamped name to
+`--name` plus `--overwrite`: a backup that replaces yesterday's is not a backup history.
 
 ### Restore
 
@@ -559,18 +630,36 @@ is queued.
 
 The order the server shuts down in is the guarantee:
 
-1. Listeners close, so nothing new arrives.
-2. The queue stops accepting, so a request already decoded gets `ShuttingDown` rather than a
-   hang.
-3. The queues drain under `--drain-timeout`.
-4. The read threads are joined, so nothing is still touching a file.
-5. Every open file is released, which folds its write-ahead log in and gives up the lock.
-6. The socket is unlinked.
+1. Listeners are told to close, so nothing new arrives.
+2. The queue stops accepting **immediately**, so a request already decoded gets `ShuttingDown`
+   rather than being committed by a server that has announced it is leaving.
+3. The queues drain under `--drain-timeout`. What is left when the budget runs out is completed
+   with `ShuttingDown` and named per tenant in the report.
+4. The open connections are cancelled.
+5. The listeners are waited on, under a bound of at most one second.
+6. The read threads are joined, so nothing is still touching a file.
+7. Every open file is released, which folds its write-ahead log in and gives up the lock.
+8. The socket is unlinked.
 
-Step 5 before step 6 is why `stop` can report "its files are released" honestly: a socket that is
+Steps 2 and 5 are in that order for a reason, and it is not the obvious one.
+`asyncio.Server.wait_closed()` does not return while a connection handler is still running, and a
+live deployment always has connections open, so a shutdown that waits on the listener first lasts
+as long as the last client chooses to stay connected. Measured on Python 3.12 with the wait in the
+wrong place: one idle client held a server past 25 seconds against a 5 second budget and it exited
+0.03 seconds after that socket closed, and 64 writing clients had about 2,100 further writes
+accepted and committed after the SIGTERM. Under a supervisor with a TERM-then-KILL policy that
+means the server is normally killed rather than drained. The exit is now bounded by
+`--drain-timeout` plus about a second, whether or not anyone is connected.
+
+Step 7 before step 8 is why `stop` can report "its files are released" honestly: a socket that is
 gone means the drain finished and the next process can open the files. That is the signal to
 wait on, not the pid, because a process that has exited but has not been reaped still answers
 `kill(pid, 0)`.
+
+A second SIGTERM reaches the drain rather than queueing behind it. The waiting happens on a
+worker thread whose deadline is already fixed, so the second signal tells the queue to give up:
+whatever is still queued is completed with `ShuttingDown` and counted in the report the server
+logs on the way out.
 
 If the drain does not finish inside `--timeout`, `stop` says so and exits 1 without killing
 anything. `--force` sends SIGKILL instead, and the queued writes are lost. Prefer raising the
@@ -612,13 +701,19 @@ Two writers touched the same rows and DuckDB aborted one. Retry the transaction.
 snapshot isolation working as designed and is not something the server can remove.
 
 **A checkpoint hangs, or raises "Cannot CHECKPOINT: there are other write transactions active"**
-Not the server, but worth knowing if you write your own tooling. On a handle opened against a
-file that already exists, `db.execute('CHECKPOINT')` raises that `TransactionException` from any
-thread even when the handle has run nothing else, and `FORCE CHECKPOINT` does not return. On a
-newly created file both work. The server sidesteps it by releasing the file instead of
-checkpointing it, which folds the write-ahead log in as a side effect and is better behaviour
-anyway. Do not build a checkpoint call into a maintenance script without testing it against a
-reopened file.
+Use `db.checkpoint()`, not `db.execute('CHECKPOINT')`. Measured on duckdb 1.5.5, the raw statement
+runs on this thread's cursor, where it succeeds on a handle for a file this process created and
+raises that `TransactionException` on a handle for a file that already existed, from any thread,
+on a handle that has run nothing else. `FORCE CHECKPOINT`, which DuckDB's message suggests, is
+worse: from a cursor it does not raise, it never returns. `Anatid.checkpoint()` issues it on the
+handle's root connection, where it works in both cases (measured: a 2,146,504 byte `.wal` folded
+to 0). It does not force, so another thread with a write transaction genuinely open still raises,
+which is the honest answer.
+
+The server does not call it on shutdown. It releases the files instead, which folds the log as a
+side effect and additionally gives up DuckDB's exclusive lock, so the replacement process can open
+the file at all. A server built on `--db` gets a checkpoint and nothing more, because that handle
+belongs to the caller.
 
 ## 12. Connections and concurrency, for client authors
 
@@ -631,6 +726,24 @@ JSON, one frame per message, 64 MiB maximum checked before allocation. `POST /rp
 same request object as a plain body with no length prefix. `deadline` is relative seconds
 measured by the server from the moment it decodes the request, not an absolute timestamp,
 because a client whose clock is a minute fast would otherwise expire every request on arrival.
+
+### Ids are not JSON numbers
+
+anatid mints 63-bit ids. A JSON number is a double in JavaScript, whose largest exact integer is
+`2**53 - 1`, so an id sent as a number comes back changed and nothing raises. Measured on this
+build, 1,984 of 2,000 freshly minted ids change value under a plain `JSON.parse`. So any integer
+this codec cannot fit in a JSON number travels tagged, with its digits in a string:
+
+```json
+{"memory_id": {"__anatid__": "id", "v": "883768514279557120"}}
+```
+
+The test is on magnitude, not on a field name, so a `count(*)` of 12 is still the number 12 and
+the id nobody thought of is still safe. It applies in both directions and to error details as
+well as results. `anatid.server.protocol.decode_value` turns the tag back into an integer, so a
+Python client sees `int` on both sides; a client in another language reads `v` and keeps the
+digits. This is the same rule `anatid.integrations.wire` applies at the MCP and Agents SDK
+boundaries, and it uses that module's definition rather than a second copy of it.
 
 `anatid.server.protocol` is the whole format and `anatid.server.client.AnatidClient` is a
 reference implementation of it.

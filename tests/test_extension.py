@@ -16,6 +16,7 @@ or point ``$ANATID_EXTENSION_PATH`` at a binary built somewhere else.
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 import pytest
@@ -27,13 +28,16 @@ SPIKE_SMALL = REPO_ROOT / "spike" / "data" / "small"
 #: Benchmark seeds compared on both paths.  The brief asks for at least 100.
 SEED_COUNT = 200
 
-#: Version banners with the 0.1 hardening: strict mode, the hop limit, the stats functions.  An
+#: The release that added the hardening: strict mode, the hop limit, the stats functions.  An
 #: older binary (the Phase 0 spike build) still passes the parity tests and has none of them.
-HARDENED_PREFIXES = ("anatid 0.1.", "anatid 0.2.")
+HARDENED_SINCE = (0, 1)
 
-#: Version banners with the 0.2 derived-index support: named snapshots, a generation-owned dense
+#: The release that added the derived-index support: named snapshots, a generation-owned dense
 #: vertex mapping (``labels``), the delta arrays and ``anatid_drop_csr``.
-FRAMEWORK_PREFIXES = ("anatid 0.2.",)
+FRAMEWORK_SINCE = (0, 2)
+
+#: The banner is ``anatid <version> (DuckDB v<version>)``.
+_BANNER_VERSION = re.compile(r"^anatid (\d+)\.(\d+)\.(\d+)")
 
 
 def _extension_path() -> Path | None:
@@ -91,26 +95,40 @@ def seeds(ext_db) -> list[tuple[int, int]]:
     return [(int(t), int(s)) for t, s in rows]
 
 
-def _banner(db, extension_path, prefixes: tuple[str, ...]) -> str:
+def _banner(db, extension_path, since: tuple[int, int]) -> str:
+    """The extension's version banner, skipping when the binary predates ``since``.
+
+    The comparison is on the parsed version and not on a prefix.  A prefix list has to be edited
+    in this file every time the package's version moves, and the failure when nobody remembers is
+    that every test behind the gate SKIPS: the suite stays green while it stops checking
+    anything.  That happened at 0.3.0.
+    """
     try:
         banner = db.connection.execute("SELECT anatid_version()").fetchone()[0]
     except Exception as exc:  # the spike build has no zero-argument overload
         pytest.skip(f"{extension_path} predates this extension feature: {exc}")
-    if not banner.startswith(prefixes):
-        pytest.skip(f"{extension_path} reports {banner!r}, not one of {prefixes}")
+    found = _BANNER_VERSION.match(banner)
+    if found is None:
+        pytest.skip(f"{extension_path} reports {banner!r}, which is not a version this can read")
+    version = tuple(int(part) for part in found.groups())
+    if version < since:
+        pytest.skip(
+            f"{extension_path} reports {banner!r}, older than the "
+            f"{'.'.join(str(n) for n in since)} this feature arrived in"
+        )
     return banner
 
 
 @pytest.fixture(scope="module")
 def hardened(ext_db, extension_path) -> str:
     """Skip the hardening tests when the binary under test predates them."""
-    return _banner(ext_db, extension_path, HARDENED_PREFIXES)
+    return _banner(ext_db, extension_path, HARDENED_SINCE)
 
 
 @pytest.fixture(scope="module")
 def framework(ext_db, extension_path) -> str:
     """Skip the derived-index tests when the binary under test predates 0.2."""
-    return _banner(ext_db, extension_path, FRAMEWORK_PREFIXES)
+    return _banner(ext_db, extension_path, FRAMEWORK_SINCE)
 
 
 def _frontier(db, tenant: int, seed: int, hops: int, *, backend) -> tuple[list[int], str]:
@@ -596,7 +614,17 @@ def test_anatid_sparse_ids_are_refused_by_a_raw_build_and_handled_by_the_index(e
 
         with pytest.raises(Exception) as excinfo:
             handle.build_csr()
-        assert "entity ids span" in str(excinfo.value)
+        message = str(excinfo.value)
+        # Two refusals, one reason, and which one fires is a stopwatch.  anatid ids are
+        # time-ordered at 2**22 ids per millisecond, so the twelve writes above land more than
+        # ANATID_MAX_TENANT_SPAN apart on a machine that takes over about half a second on them
+        # and inside it on a machine that does not.  Over the span, the extension refuses on the
+        # span; inside it, on the density.  Asserting one wording made this test a timing test,
+        # so what is asserted here is what both refusals have to say.
+        assert "anatid_build_csr" in message, message
+        assert ("spans entity ids" in message) or ("entity ids span" in message), message
+        assert str(min(ids)) in message and str(max(ids)) in message, message
+        assert "anatid.ids.set_allocator" in message, "the refusal has to name the way out"
 
         index = attach_csr_index(handle, strategy="extension")
         maintain(index, 1, MaintenancePolicy(rebuild_after_rows=1, rebuild_after_ratio=None,

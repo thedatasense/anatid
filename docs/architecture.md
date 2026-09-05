@@ -1,7 +1,9 @@
 # anatid architecture
 
-anatid is a Python library over one DuckDB database file. There is no server, no daemon, and no
-background thread. Every write verb (`remember`, `supersede`, `forget`, `relate`, `reinforce`,
+anatid is a Python library over one DuckDB database file. In the default embedded profile there is
+no server, no daemon, and no background thread; the optional server profile, which exists only for
+callers who need several processes writing one file, is described in
+[`server.md`](server.md) and changes none of what follows. Every write verb (`remember`, `supersede`, `forget`, `relate`, `reinforce`,
 `episode`, `entity_id`) is one DuckDB transaction issued from your process. `prune` is a query plus
 one transaction per memory it forgets, so a failure part-way leaves the earlier deletions
 committed; read `PruneReport.memory_ids` from a `dry_run` first. Read verbs (`recall`,
@@ -368,9 +370,14 @@ DuckDB's MVCC is optimistic and gives snapshot isolation rather than serializabi
   `ConflictError`, which carries `retryable=True` and the underlying cause. `supersede()` and
   `reinforce()` are the verbs that update rows. anatid does not retry, because whether the write
   should be re-derived from a fresh read depends on the caller.
-- One process holds the write lock on a file. Other processes can open it read-only. anatid is a
-  single-writer-process library; multi-process write coordination is not something it provides and
-  not something DuckDB provides for it.
+- One process holds a file, and it holds it against everybody. Measured on duckdb 1.5.5, a second
+  process is refused whether it asks read-write or read-only: `IO Error: Could not set lock on
+  file`. So there is no "one writer, many read-only readers" arrangement to build. Since 0.3.0
+  anatid ships the arrangement that does follow from the lock, as an opt-in second profile: one
+  process owns the files and the others reach it over a socket, for reads as well as writes
+  ([`server.md`](server.md)). It relocates the single writer process, it does not remove it, and
+  it changes nothing above: the isolation level is still DuckDB's snapshot isolation, and
+  `ConflictError` still means what it means here.
 
 ## 5. Time: two axes, filtered by generated SQL
 
@@ -556,7 +563,9 @@ your process
 
 Nothing runs on a schedule. There is no background thread, no maintenance daemon and no worker
 process: `maintain_indexes()` is a call you make after a batch of writes, on a timer of your own,
-or when `index_health()` reports a stale generation.
+or when `index_health()` reports a stale generation. The server profile adds a process, not a
+schedule: its write queue drains on worker threads inside that one process and it still rebuilds an
+index only when a caller asks.
 
 `Anatid.connection` returns the raw DuckDB cursor for this thread. Data in the file is queryable by
 anything that speaks SQL, joinable against Parquet and CSV in place, and readable by any DuckDB

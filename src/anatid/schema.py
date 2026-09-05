@@ -199,6 +199,7 @@ __all__ = [
     "register_migration",
     "temporal_predicate",
     "quote_ident",
+    "quote_name",
     "check_type",
     "MEMORY_COLUMNS_NO_EMBEDDING",
     "CATALOG_TABLES",
@@ -737,6 +738,28 @@ def quote_ident(name: str) -> str:
     if name.lower() in _RESERVED:
         raise ValueError(f"identifier is a reserved word: {name!r}")
     return f'"{name}"'
+
+
+def quote_name(name: str) -> str:
+    """Double-quote a name anatid did NOT choose, escaping rather than validating.
+
+    :func:`quote_ident` is the gate for identifiers anatid builds, and it is deliberately narrow:
+    only ``[A-Za-z_][A-Za-z0-9_]*``, so nothing can escape the quotes.  A catalog name is not one
+    of those.  DuckDB derives it from the stem of the file it opened, so the pool template
+    ``tenant-{tenant}.anatid`` gives the catalog ``tenant-1`` and ``{tenant}.anatid`` gives ``1``.
+    Both are legal DuckDB catalogs, both are ordinary ways to name a pool, and both are refused by
+    ``quote_ident``.  Verified on duckdb 1.5.5: ``COPY FROM DATABASE "tenant-1" TO "x"`` runs.
+
+    So this one quotes instead: a literal double quote is doubled, and a name that cannot be
+    quoted safely at all is refused.  Use it only for a name that came from a path or from
+    DuckDB's own catalog, never for a name a caller supplied as data.
+    """
+    if not isinstance(name, str) or not name:
+        raise ValueError("a name to quote must be a non-empty string")
+    if "\x00" in name:
+        raise ValueError(f"name {name!r} contains a NUL and cannot be quoted")
+    escaped = name.replace('"', '""')
+    return f'"{escaped}"'
 
 
 #: Characters a DuckDB type expression may contain.  Everything that could terminate the column

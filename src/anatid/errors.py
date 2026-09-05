@@ -14,6 +14,7 @@ __all__ = [
     "SchemaVersionError",
     "ConflictError",
     "TenantIsolationError",
+    "BackupDestinationExists",
     "ExtensionUnavailable",
     "NotFoundError",
     "ValidationError",
@@ -103,6 +104,23 @@ class TenantIsolationError(AnatidError):
     level check: a handle opened for one tenant file refuses to read or write another tenant's
     rows.  See :class:`anatid.database.Anatid` for the full isolation contract.
     """
+
+
+class BackupDestinationExists(AnatidError, FileExistsError):
+    """A backup was asked to write over a file that is already there, without ``overwrite``.
+
+    It is a ``FileExistsError`` so ordinary filesystem-shaped handling still catches it, and an
+    :class:`AnatidError` so a caller with its own vocabulary can tell it apart.  That second half
+    is the reason the class exists: a command line catching ``OSError`` reported this as a
+    run-time failure when it is a bad argument with nothing written, and an HTTP layer that
+    recognises anatid's errors answered 500 where 400 was the honest answer.
+
+    ``path`` is the destination that already exists.
+    """
+
+    def __init__(self, message: str, *, path: object = None) -> None:
+        super().__init__(message)
+        self.path = path
 
 
 class ExtensionUnavailable(AnatidError):

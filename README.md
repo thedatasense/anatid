@@ -1,7 +1,9 @@
 # anatid
 
 anatid is an embedded graph memory for AI agents, built on DuckDB and released under the MIT
-license. The database is a single file. There is no server to run and no daemon to supervise.
+license. The database is a single file, and the default way to use it has no server to run and no
+daemon to supervise. There is an optional server profile for the one case that needs it, described
+below.
 
 Install it and an agent gains a memory that stores entities, the edges between them, and facts
 attached to both. That memory records two kinds of time: what was true, and what the agent believed
@@ -125,6 +127,73 @@ deterministic. Function forms exist as well, through `from anatid.verbs import r
 `db.connection` hands you the raw DuckDB cursor whenever you want SQL. The memory is ordinary
 tables, joinable against your Parquet and CSV files in place.
 
+## Two deployment profiles
+
+Embedded is the default and nothing changes about it. One process opens the file and writes from as
+many threads as it likes. If your agent is one process, this is the whole answer, and it is faster
+than the alternative.
+
+The server profile exists for one case: two or more processes that must write the same memory.
+DuckDB gives one process exclusive use of a database file, and a second process is refused even
+when it asks for read-only access, measured on duckdb 1.5.5 as `IO Error: Could not set lock on
+file`. So one process owns the files and the others reach it over a Unix domain socket or over the
+Hypertext Transfer Protocol (HTTP). Reads cross the wire along with writes, because while the
+server holds a file nothing else can open it.
+
+| | embedded | server |
+|---|---|---|
+| When to use it | one process, any number of threads | several processes writing one memory |
+| How you open it | `Anatid.open(...)` | `AnatidClient.connect(...)` |
+| What runs | nothing extra | one server process you supervise |
+| Where the tenant boundary is | one file per tenant | the same, plus a principal checked before any file is opened |
+| Backpressure | none; a thread waits its turn | a typed `BusyError` with a wait hint, over HTTP a 429 |
+| Backups | copy the file while nothing holds it | the server takes them, because nothing else can open the file |
+
+Switching is one line. Every verb keeps its name, its parameters and its return type:
+
+```python
+from anatid import Anatid                                   # embedded
+from anatid.server.client import AnatidClient               # server
+
+with Anatid.open("agent.anatid", tenant=1) as memory:       # one process
+    memory.remember("the deploy at 14:05 rolled back cleanly")
+
+with AnatidClient.connect("/run/anatid/anatid.sock", tenant=1) as memory:   # many
+    memory.remember("the deploy at 14:05 rolled back cleanly")
+```
+
+The wire is not free, and the cost depends entirely on which call you make. Measured on one tenant
+of 3,000 memories with 384-dimension embeddings, 150 timed repetitions after warmup, median:
+
+| call | embedded | over the socket | ratio |
+|---|---:|---:|---:|
+| `get()` | 0.395 ms | 0.863 ms | 2.18x |
+| `recall()`, vector arm on | 18.011 ms | 18.966 ms | 1.05x |
+| `recall_2hop()` | 3.991 ms | 4.821 ms | 1.21x |
+| `stats()` | 1.725 ms | 1.996 ms | 1.16x |
+
+Read that plainly. For `recall`, the call this profile exists to serve, the wire is close to free.
+For `get`, the cheapest read anatid has, it is not: half a millisecond of fixed cost doubles the
+call, and the ratio flatters the server only because `recall` is slow. Writes cost more too, at
+roughly 0.71 times embedded throughput with four concurrent writers, 213 against 300 writes per
+second on this machine. Most of the fixed cost is the JavaScript Object Notation (JSON) codec
+rather than the socket, and `ServerConfig(embeddings="f32")` removes about a quarter of it on
+embedding-carrying replies.
+
+Running one is a command:
+
+```bash
+anatid-server start \
+  --socket /run/anatid/anatid.sock \
+  --pool '/var/lib/anatid/tenant-{tenant}.anatid' \
+  --tenant 1 --tenant 2
+```
+
+[`docs/server.md`](docs/server.md) covers the security model, the operator surface, systemd and
+launchd units, health and readiness, backup and restore, and what the shutdown guarantees.
+[`examples/server_demo.py`](examples/server_demo.py) demonstrates the lock, the server, and several
+processes writing one memory, in three acts and under a minute.
+
 ## Why DuckDB, with numbers
 
 Phase 0 was a benchmark, run before any of the library existed: 1,000,000 memories, 2.3M edges, ten
@@ -247,7 +316,7 @@ documentation and is absent from this list is a bug, and we would like the repor
 |---|---|
 | Vector search | Exact scan by default. An HNSW generation is opt-in |
 | Full-text | Journalled writes are searchable at once; rebuilds buy latency |
-| Concurrency | One writing process per file, many threads inside it |
+| Concurrency | One writing process per file, many threads inside it. Several processes need the server profile |
 | Isolation | Snapshot, with retryable conflicts. Not serializable |
 | Tenancy | One file per tenant is the real boundary |
 | Query language | The verbs above, plus SQL. No Cypher yet |
@@ -284,7 +353,10 @@ points at them, gets caught by `validate()` during a rebuild rather than by a re
 One writing process per file is DuckDB's model, and the engine enforces it. A second read-write
 process cannot even open the file, failing with `IO Error: Could not set lock on file`. Many
 threads inside that one process write concurrently, and appends never conflict, measured at zero
-errors across a 30-second six-thread benchmark with no retry logic.
+errors across a 30-second six-thread benchmark with no retry logic. When you need several
+processes, the server profile above puts one of them in charge of the files. That does not change
+the model, it relocates it: one process still owns each file, and it is a single point of failure
+rather than a cluster.
 
 Isolation is snapshot rather than serializable. Two concurrent updates to the same row abort the
 second with a retryable `ConflictError`. anatid does not retry on your behalf, because whether the
@@ -307,12 +379,13 @@ rows. The ratio trigger in `MaintenancePolicy` exists to prevent that. The in-me
 not evicted by DuckDB's object cache, so memory grows with the number of resident generations. The
 C++ extension remains optional; without it the merge runs in SQL and returns the same rows.
 
-This is v0.2. The API may still move, so pin the version.
+This is v0.3. The API may still move, so pin the version.
 
 ## Documentation
 
 | document | what it covers |
 |---|---|
+| [`docs/server.md`](docs/server.md) | the optional server profile: why it exists, what it costs, the security model, and how to operate it |
 | [`docs/architecture.md`](docs/architecture.md) | storage layout, the visibility predicate, the derived-index framework, graph paths, the isolation contract, the temporal model, the recall pipeline |
 | [`docs/design/derived-index-framework.md`](docs/design/derived-index-framework.md) | the design the accelerators are built to, and what shipped against what was deferred |
 | [`docs/benchmarks.md`](docs/benchmarks.md) | Phase 0 method, every result, and what the benchmark does not tell you |

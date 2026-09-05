@@ -48,7 +48,7 @@ No ANN index; the full-text index is not incremental; one writer process per fil
 cosine is comfortable to roughly 1e5 memories per tenant; DuckDB gives snapshot isolation rather
 than serializability. The first two are what v0.2 addressed.
 
-## v0.2: the derived-index framework (current)
+## v0.2: the derived-index framework (shipped)
 
 Exit criteria: every accelerator is derived from the canonical tables by one mechanism, a write is
 findable by the next read without a rebuild, and an index that is stale, damaged or absent costs
@@ -78,12 +78,43 @@ cross-process; the vector backend is opt in and has not been measured at 1M or 1
 a base that is structurally consistent but wrong is caught by `validate()` during a rebuild rather
 than by a read.
 
-## v0.3: framework drivers and a Cypher subset
+## v0.3: the server profile (shipped)
+
+Exit criteria: several processes can write one memory, without a second storage engine and without
+changing anything for the callers who do not need it.
+
+### Shipped
+
+- A second deployment profile, `anatid.server`. One process owns the files and answers verbs over a
+  Unix domain socket or HTTP; `AnatidClient.connect` takes the place of `Anatid.open` and every
+  verb keeps its signature. The embedded profile is unchanged and is still the default.
+- It exists because of a measurement rather than a preference. DuckDB gives one process exclusive
+  use of a file, and on duckdb 1.5.5 a second process is refused even when it asks for read-only
+  access, so "write through a server and read the file directly" is not an arrangement that exists.
+  Both directions cross the wire.
+- Per-tenant write queues with batching, bounded depth and a typed `BusyError` carrying a wait
+  hint; idempotency keys committed in the same transaction as the write they guard; per-tenant
+  fairness; a tenant boundary checked before any file is opened; bearer tokens for HTTP with a
+  refusal to bind anything but loopback without one; health and readiness as separate questions;
+  online per-tenant backup taken by the process that holds the file; and a drain on SIGTERM bounded
+  by `--drain-timeout`.
+- Measured cost, one tenant of 3,000 memories at 384 dimensions, p50: `recall()` 1.05x over the
+  socket, `get()` 2.18x (+0.47 ms), writes about 0.71x of embedded throughput at four concurrent
+  writers.
+
+### Limitations
+
+One process still owns the files, so the server is a single point of failure and not a cluster;
+isolation is still DuckDB's snapshot isolation with write-write aborts, not serializability; reads
+cross the wire too, which is what the exclusive lock forces; and a saturated queue is visible to
+callers as `BusyError` rather than hidden behind a block.
+
+## v0.4: framework drivers and a Cypher subset
 
 Graphiti deprecated its Kuzu driver, Mem0 removed open-source graph memory in v2.0.0, and Cognee is
 migrating away. Those projects' users need a graph backend that is maintained and MIT licensed.
-v0.2 is about being droppable into what they already run, and readable by people who already know
-Cypher.
+This milestone is about being droppable into what they already run, and readable by people who
+already know Cypher.
 
 Exit criteria: an existing Graphiti or Cognee deployment can switch its graph store to anatid by
 changing configuration, and its test suite passes.
@@ -116,9 +147,11 @@ modes are ones the docs already named.
   applies the journal on every read and keeps its own dense-id mapping, so the caller's 63-bit ids
   work and no write invalidates the structure. What is left is the build itself: a new generation
   reindexes the whole source, which is what bounds how large a journal is worth merging.
-- A multi-process story that is documented and tested. DuckDB allows one writing process per file.
-  v0.5 ships the pattern that follows from that: a writer process plus read-only readers, a
-  documented handoff, and a test that proves what happens on lock contention.
+- The multi-process story, continued. v0.3 shipped the part that DuckDB's lock forces: one process
+  owns the files and the others reach it over a socket. Read-only readers alongside a writer are
+  not a pattern that exists, because a process holding a file read-write excludes readers as well.
+  What is left for v0.5 is the failover question v0.3 does not answer: what a second process does
+  when the owner dies, and how a client is told which one to talk to.
 - Graph algorithms over the CSR: shortest path, k-hop with edge predicates, PageRank, and community
   detection for memory consolidation, which are the operations "which memories matter" needs.
 - Consolidation and forgetting policies. `prune` today takes age and access-count policies. v0.5
@@ -176,8 +209,13 @@ Everything in v0.2 and v0.5 is pure Python plus SQL and depends on none of it.
 
 ## Deliberately out of scope
 
-- A server. anatid is embedded. Callers who need a network service have DuckDB's own story for
-  that, and it is not anatid's to invent.
+- A *mandatory* server. anatid is embedded by default and will stay that way: `Anatid.open` needs
+  no daemon, no socket and no extra hop, and it is faster than anything that does. The server
+  profile shipped in v0.3 is opt in, for the one case the embedded profile cannot serve, which is
+  several processes writing one memory. It is not a network database: there is no cluster, no
+  replication, no sharding, no failover and no query language on the wire, and adding those would
+  be a different product. The protocol is documented so another language can write a client
+  (`docs/server.md`, section 12); documenting it is not a promise to become a database server.
 - Rebuilding the OpenAI Agents SDK's human-in-the-loop machinery. The SDK already has
   `needs_approval`, `RunResult.interruptions`, and serializable `RunState`. anatid supplies the
   approval-gated tools and the memory behind them; the approval flow itself belongs to the SDK.

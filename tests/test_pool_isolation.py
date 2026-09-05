@@ -22,6 +22,7 @@ from __future__ import annotations
 import datetime as _dt
 import os
 import stat
+from pathlib import Path
 
 import duckdb
 import pytest
@@ -36,6 +37,7 @@ from anatid import (
     TenantIsolationError,
 )
 from anatid.database import PoolEvent
+from anatid.errors import BackupDestinationExists
 
 from conftest import DIM, T0, vec
 
@@ -313,6 +315,72 @@ def test_a_backup_holds_one_tenant_and_nothing_else(pool, tmp_path):
     with pytest.raises(FileExistsError):
         pool.backup(1, dest)
     assert pool.backup(1, dest, overwrite=True) == dest
+
+
+@pytest.mark.parametrize("template", ["tenant-{tenant}.anatid", "{tenant}.anatid"])
+def test_a_backup_works_for_a_pool_template_whose_stem_is_not_an_identifier(tmp_path, template):
+    """DuckDB names the catalog after the file stem, and most stems are not SQL identifiers.
+
+    ``tenant-{tenant}.anatid`` gives the catalog ``tenant-1`` (a hyphen) and ``{tenant}.anatid``
+    gives ``1`` (a leading digit).  Both are ordinary ways to name a pool, both are shown in the
+    documentation, and both used to raise ``ValueError`` out of ``quote_ident`` because the
+    catalog was validated as an identifier anatid had chosen rather than quoted as a name it had
+    been handed.
+    """
+    with DatabasePool(str(tmp_path / "pool" / template), embedding_dim=DIM) as pool:
+        pool.get(1).remember("a memory in an awkwardly named file")
+        dest = pool.backup(1, tmp_path / "out.anatid")
+    con = duckdb.connect(str(dest), read_only=True)
+    try:
+        assert con.execute("SELECT count(*) FROM memories").fetchone()[0] == 1
+    finally:
+        con.close()
+
+
+def test_an_existing_backup_destination_raises_an_error_a_caller_can_classify(pool, tmp_path):
+    """It is a ``FileExistsError`` for old code and an ``AnatidError`` for code that maps errors.
+
+    A plain ``FileExistsError`` is an ``OSError``, so a command line catching ``OSError`` reported
+    "arguments are wrong, nothing was written" as a run-time failure, and an HTTP layer that
+    recognises anatid's own errors answered 500 where 400 was right.
+    """
+    dest = pool.backup(1, tmp_path / "first.anatid")
+    with pytest.raises(BackupDestinationExists) as excinfo:
+        pool.backup(1, dest)
+    assert isinstance(excinfo.value, FileExistsError), "old handling still catches it"
+    assert isinstance(excinfo.value, AnatidError), "new handling can tell it apart"
+    assert Path(str(excinfo.value.path)) == dest
+    assert pool.backup(1, dest, overwrite=True) == dest
+
+
+def test_checkpoint_folds_the_log_on_a_file_this_process_did_not_create(tmp_path):
+    """``db.execute("CHECKPOINT")`` cannot do this, and that is why the method exists.
+
+    Measured on duckdb 1.5.5: through a thread cursor the statement succeeds on a handle for a
+    file this process created and raises ``TransactionException: Cannot CHECKPOINT: there are
+    other write transactions active`` on a handle for a file that already existed, from any
+    thread, on a handle that has run nothing else.  ``Anatid.checkpoint`` issues it on the root
+    connection, where it works either way.
+    """
+    path = tmp_path / "reopened.anatid"
+    first = Anatid.open(path, tenant=1, embedding_dim=DIM)
+    for i in range(200):
+        first.remember(f"first pass {i}")
+    first.close()
+
+    again = Anatid.open(path, tenant=1, embedding_dim=DIM)
+    try:
+        for i in range(200):
+            again.remember(f"second pass {i}")
+        wal = Path(str(path) + ".wal")
+        assert wal.exists() and wal.stat().st_size > 0, "there is nothing to fold"
+        with pytest.raises(duckdb.Error):
+            again.execute("CHECKPOINT")  # the defect, still there, from a thread cursor
+        again.checkpoint()
+        assert not wal.exists() or wal.stat().st_size == 0
+        assert again.stats()["memories"] == 400, "folding the log did not lose anything"
+    finally:
+        again.close()
 
 
 def test_a_backup_is_a_committed_snapshot(pool, tmp_path):
