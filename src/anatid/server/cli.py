@@ -734,8 +734,15 @@ def _remove_pid_file(path: str | None) -> None:
 
 
 async def _serve(server: OperatorServer, args: argparse.Namespace) -> DrainReport:
-    await server.start()
+    # The pid file goes down before the socket comes up, so anything that can reach the socket
+    # can also read the pid.  Written the other way round, a client that connected the instant
+    # the listener appeared could find no pid file yet, which is what a slow CI runner did.
     _write_pid_file(args.pid_file)
+    try:
+        await server.start()
+    except BaseException:
+        _remove_pid_file(args.pid_file)
+        raise
     try:
         return await server.serve_forever()
     finally:
