@@ -734,11 +734,15 @@ def journal_latest_sql(index_name: str, tenant_id: int | None, generation: int) 
     if tenant_id is not None:
         where += " AND tenant_id = ?"
         params.append(int(tenant_id))
+    # DuckDB 1.5.0 misbinds columns inside a windowed subquery (doc_id comes back as the row
+    # number, or fails to bind as "inequal types"); 1.5.5 is fine.  A max(change_seq) join says
+    # the same thing, "the newest change per (tenant_id, doc_id)", without a window function, and
+    # binds on every supported release.
     sql = (
-        f"SELECT tenant_id, doc_id, op FROM {_JOURNAL} "
-        f"WHERE {where} AND (absorbed_by IS NULL OR absorbed_by > ?) "
-        f"QUALIFY row_number() OVER (PARTITION BY tenant_id, doc_id "
-        f"ORDER BY change_seq DESC) = 1"
+        f"SELECT j.tenant_id, j.doc_id, j.op FROM {_JOURNAL} j "
+        f"JOIN (SELECT tenant_id, doc_id, max(change_seq) AS change_seq FROM {_JOURNAL} "
+        f"WHERE {where} AND (absorbed_by IS NULL OR absorbed_by > ?) GROUP BY tenant_id, doc_id) n "
+        f"ON n.tenant_id = j.tenant_id AND n.doc_id = j.doc_id AND n.change_seq = j.change_seq"
     )
     return sql, params + [int(generation)]
 

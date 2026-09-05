@@ -756,3 +756,11 @@ reference implementation of it.
 - `docs/design/derived-index-framework.md`, section "Concurrency and isolation": the design this
   profile implements.
 - `anatid-server start --help`, and `--help` on each subcommand.
+
+## Windows
+
+The Unix domain socket transport does not exist on Windows, and the server raises
+`UnsupportedTransport` with the alternative if asked for one there. Use the HTTP transport bound to
+127.0.0.1 with a bearer token instead; the client connects to the same URL. Backup and the
+file-permission checks assume POSIX semantics and their tests skip on Windows, so treat the server
+profile on Windows as supported for HTTP only, and the embedded profile as the tested path.

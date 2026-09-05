@@ -20,9 +20,13 @@ import datetime as _dt
 import json
 
 import pytest
+import socket
 
 from anatid import AUTO_SEED, Anatid, CorrectionReceipt, HashEmbedder
 from anatid.errors import ValidationError
+
+pytest.importorskip("mcp.client", reason="the MCP server needs 'mcp>=2.1'")
+
 from anatid.integrations.mcp.backend import (
     BackendConfigError,
     check_backend_config,
@@ -42,12 +46,17 @@ from test_mcp_over_server import (
     tool_names,
 )
 
-pytest.importorskip("mcp.client", reason="the MCP server needs 'mcp>=2.1'")
 pytest.importorskip("agents", reason="the Agents SDK tools need 'openai-agents'")
 
 from agents.tool_context import ToolContext
 
 from anatid.integrations.openai_agents import create_memory_tools
+
+posix_only = pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"),
+    reason="needs Unix domain sockets or POSIX file semantics; not available on this platform",
+)
+
 
 MINUTE = _dt.timedelta(minutes=1)
 
@@ -123,6 +132,7 @@ def test_the_mcp_recall_tool_seeds_the_graph_arm_from_the_query(server, mcp_db):
     assert seeded["seeds"] == ["Ada"]
 
 
+@posix_only
 def test_recall_over_a_socket_seeds_the_graph_arm_and_carries_the_seeds(request):
     """The client's default, the protocol's ``seeds`` field, and the MCP tool on top of both."""
     sock, handle = request.getfixturevalue("shared")
@@ -244,6 +254,7 @@ def test_main_reports_a_bad_embedding_configuration_and_exits_2(
 # =========================================================================== G1 over the server
 
 
+@posix_only
 def test_correct_is_a_client_verb_and_an_mcp_tool_over_the_socket(request):
     sock, handle = request.getfixturevalue("shared")
     with open_backend(socket_config(sock)) as client:
@@ -289,6 +300,7 @@ def test_correct_is_a_client_verb_and_an_mcp_tool_over_the_socket(request):
         assert handle.recall_2hop("Cy") == []
 
 
+@posix_only
 def test_both_backends_list_the_same_tools(request, tmp_path):
     sock, _ = request.getfixturevalue("shared")
     with Anatid.open(tmp_path / "local.anatid", tenant=TENANT, embedding_dim=DIM) as local:

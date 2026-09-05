@@ -34,6 +34,7 @@ from pathlib import Path
 
 import duckdb
 import pytest
+import socket
 
 from anatid import Anatid, DatabasePool
 from anatid.schema import SCHEMA_VERSION
@@ -54,6 +55,12 @@ from anatid.server.backup import (
 )
 from anatid.server.server import AnatidServer, ServerConfig
 from anatid.types import Isolation
+
+posix_only = pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"),
+    reason="needs Unix domain sockets or POSIX file semantics; not available on this platform",
+)
+
 
 DIM = 8
 
@@ -708,6 +715,7 @@ def test_restore_into_a_directory_says_to_name_the_file(workspace):
     assert sorted(p.name for p in target.iterdir()) == ["t_1.anatid"], "nothing was written"
 
 
+@posix_only
 def test_restore_carries_the_write_ahead_log_with_the_file(workspace):
     """A copy of the database file alone loses every committed write DuckDB has not folded in.
 

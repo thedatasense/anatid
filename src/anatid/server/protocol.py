@@ -240,6 +240,10 @@ class BusyError(_errors.AnatidError):
         self.max_depth = max_depth
 
 
+class UnsupportedTransport(_errors.AnatidError):
+    """The requested transport does not exist on this platform (for example a Unix domain socket on Windows)."""
+
+
 class DeadlineExceeded(_errors.AnatidError):
     """The request's deadline passed before the server ran it.
 

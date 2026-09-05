@@ -34,6 +34,7 @@ import time
 from pathlib import Path
 
 import pytest
+import socket
 
 pytest.importorskip("mcp.client", reason="the MCP server needs 'mcp>=2.1'")
 
@@ -54,6 +55,12 @@ from anatid.integrations.mcp.server import ServerConfig, build_server, main
 from anatid.server import server as S
 from anatid.server.client import AnatidClient
 from anatid.server.server import connect_unix
+
+pytestmark = pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"),
+    reason="the server profile's Unix domain socket transport is not available on this platform; use the HTTP transport",
+)
+
 
 DIM = 8
 TENANT = 1

@@ -22,10 +22,17 @@ import time
 from pathlib import Path
 
 import pytest
+import socket
 
 from anatid import Anatid
 from anatid.server import auth, protocol
 from anatid.server import cli as C
+
+pytestmark = pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"),
+    reason="the server profile's Unix domain socket transport is not available on this platform; use the HTTP transport",
+)
+
 
 DIM = 8
 REPO_ROOT = Path(__file__).resolve().parent.parent

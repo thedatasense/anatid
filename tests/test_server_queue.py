@@ -33,6 +33,12 @@ import pytest
 from anatid import Anatid, DatabasePool
 from anatid.server import auth, protocol, queue as Q, server as S
 
+pytestmark = pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"),
+    reason="the server profile's Unix domain socket transport is not available on this platform; use the HTTP transport",
+)
+
+
 DIM = 8
 T0 = _dt.datetime(2026, 1, 1, 0, 0, 0)
 
@@ -1431,6 +1437,7 @@ sys.path.insert(0, {str(Path(__file__).resolve().parent.parent / "src")!r})
 from anatid import DatabasePool
 from anatid.server import AnatidServer, ServerConfig
 from anatid.server.protocol import Request
+
 
 
 async def main():

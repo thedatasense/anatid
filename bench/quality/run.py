@@ -273,7 +273,7 @@ def assemble_summary(
         "embed_model": llm.embed_model,
         "embed_dim": llm.embed_dim,
         "started_at": started_at,
-        "finished_at": _dt.datetime.now(_dt.UTC).isoformat(timespec="seconds"),
+        "finished_at": _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
         "wall_s": wall_s,
         "offline": offline,
         "limit": limit,
@@ -398,7 +398,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         f"run {run_id}: {len(notes)} notes, {len(questions)} questions, budget {args.budget}, "
         f"counter {llm.counter.name}, systems {family['family']} ({family['note']})"
     )
-    started_at = _dt.datetime.now(_dt.UTC).isoformat(timespec="seconds")
+    started_at = _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds")
     t0 = time.perf_counter()
     runs: list[SystemRun] = []
 

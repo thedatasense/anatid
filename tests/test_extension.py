@@ -19,6 +19,7 @@ import os
 import re
 from pathlib import Path
 
+import duckdb
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -383,6 +384,15 @@ def test_a_binary_that_cannot_report_its_edge_filter_is_refused(extension_path):
     from anatid import Anatid
     from anatid.csr import REQUIRED_EDGE_FILTER, extension_unsupported
     from anatid.errors import ExtensionUnavailable
+
+    # a binary built for another DuckDB release cannot be loaded at all, which is a different
+    # refusal from the one this test is about; skip rather than assert on the wrong message
+    try:
+        duckdb.connect(config={"allow_unsigned_extensions": "true"}).execute(f"LOAD '{extension_path}'")
+    except duckdb.Error as exc:
+        if "can only be loaded" in str(exc) or "DuckDB version" in str(exc):
+            pytest.skip(f"extension binary was built for another DuckDB release: {str(exc)[:120]}")
+        raise
 
     # the binary under test says what it filters on, and it is the right thing
     assert extension_unsupported(extension_path) is None

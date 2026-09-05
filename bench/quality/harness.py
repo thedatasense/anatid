@@ -191,9 +191,9 @@ class Note:
     def when(self) -> _dt.datetime:
         """The instant anatid stamps this note with: 09:00 UTC on its date plus ``seq``
         minutes, so two notes on one day keep their arrival order (as ``gen_corpus`` does)."""
-        return _dt.datetime.combine(self.date, _dt.time(9, 0, tzinfo=_dt.UTC)) + _dt.timedelta(
-            minutes=self.seq
-        )
+        return _dt.datetime.combine(
+            self.date, _dt.time(9, 0, tzinfo=_dt.timezone.utc)
+        ) + _dt.timedelta(minutes=self.seq)
 
     def to_dict(self) -> dict[str, Any]:
         row = dict(self.raw)

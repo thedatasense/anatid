@@ -26,6 +26,7 @@ from pathlib import Path
 
 import duckdb
 import pytest
+import socket
 
 from anatid import (
     Anatid,
@@ -40,6 +41,12 @@ from anatid.database import PoolEvent
 from anatid.errors import BackupDestinationExists
 
 from conftest import DIM, T0, vec
+
+posix_only = pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"),
+    reason="needs Unix domain sockets or POSIX file semantics; not available on this platform",
+)
+
 
 #: The two tenants write the same content except for this word.
 MARK = {1: "alpha", 2: "beta"}
@@ -299,6 +306,7 @@ def test_the_doctor_of_a_pooled_file_sees_one_tenant(pool):
         assert [f for f in report.findings if f.severity.value == "error"] == []
 
 
+@posix_only
 def test_a_backup_holds_one_tenant_and_nothing_else(pool, tmp_path):
     dest = pool.backup(1, tmp_path / "backups" / "one.anatid")
     assert dest.is_file()
@@ -536,6 +544,7 @@ def test_the_pool_root_is_the_fixed_prefix_of_the_template(tmp_path):
 # ============================================================================ permissions
 
 
+@posix_only
 def test_files_and_directories_the_pool_creates_are_private(tmp_path):
     root = tmp_path / "private"
     with DatabasePool(str(root / "t_{tenant}.anatid"), embedding_dim=DIM) as pool:

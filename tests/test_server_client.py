@@ -49,6 +49,12 @@ from anatid.server.protocol import (
     ShuttingDown,
 )
 
+pytestmark = pytest.mark.skipif(
+    not hasattr(_socket, "AF_UNIX"),
+    reason="the server profile's Unix domain socket transport is not available on this platform; use the HTTP transport",
+)
+
+
 DIM = 8
 
 #: A Unix socket path is a fixed-size field in ``sockaddr_un`` (104 bytes on macOS, 108 on
@@ -898,6 +904,7 @@ import sys
 
 sys.path.insert(0, {src!r})
 from anatid.server.client import AnatidClient
+
 
 label = sys.argv[1]
 with AnatidClient.connect({str(sock_path)!r}, tenant=1) as db:

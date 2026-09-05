@@ -103,6 +103,7 @@ from .protocol import (
     Response,
     ShuttingDown,
     Status,
+    UnsupportedTransport,
 )
 from .queue import (
     DEFAULT_BATCH_MAX,
@@ -933,6 +934,12 @@ class AnatidServer:
 
     async def _start_unix(self) -> asyncio.AbstractServer:
         path = self._prepare_socket_path()
+        if not hasattr(socket, "AF_UNIX"):
+            raise UnsupportedTransport(
+                "Unix domain sockets are not available on this platform. Start the server with an HTTP "
+                'listener on the loopback interface instead, ServerConfig(http_host="127.0.0.1", '
+                "http_port=8787) with a bearer token, and point clients at http://127.0.0.1:8787."
+            )
         server = await asyncio.start_unix_server(self._connection_handler("unix"), path=path)
         with contextlib.suppress(OSError):
             os.chmod(path, self.config.socket_mode)

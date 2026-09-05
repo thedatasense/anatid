@@ -1409,9 +1409,9 @@ def verify(
     by_note = {n.note_id: n for n in notes}
     with Anatid.open(":memory:", tenant=1, embedding_dim=8) as db:
         for note in notes:
-            when = _dt.datetime.combine(note.date, _dt.time(9, 0, tzinfo=_dt.UTC)) + _dt.timedelta(
-                minutes=note.seq
-            )
+            when = _dt.datetime.combine(
+                note.date, _dt.time(9, 0, tzinfo=_dt.timezone.utc)
+            ) + _dt.timedelta(minutes=note.seq)
             receipt = ingest(
                 db,
                 note.rendered,
@@ -1484,7 +1484,7 @@ def verify(
             if q["category"] != "temporal" or not q.get("as_of"):
                 continue
             d = _dt.date.fromisoformat(q["as_of"])
-            at = _dt.datetime.combine(d, _dt.time(23, 59, tzinfo=_dt.UTC))
+            at = _dt.datetime.combine(d, _dt.time(23, 59, tzinfo=_dt.timezone.utc))
             if q["subtype"] == "owner_at":
                 name = next(s for s in world.services if world.svc(s).display in q["question"])
                 facts = [c for c in current_about(name, at) if " owns " in c]

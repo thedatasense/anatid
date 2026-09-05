@@ -36,6 +36,12 @@ import pytest
 from anatid import DatabasePool
 from anatid.server import auth, metrics as M, protocol, queue as Q, server as S
 
+posix_only = pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"),
+    reason="needs Unix domain sockets or POSIX file semantics; not available on this platform",
+)
+
+
 DIM = 8
 T0 = _dt.datetime(2026, 1, 1, 0, 0, 0)
 
@@ -1204,6 +1210,7 @@ def test_arms_can_be_skipped(pool, sock_dir):
 # --------------------------------------------------------------------------- end to end
 
 
+@posix_only
 def test_metrics_survive_a_real_socket_round_trip(pool, sock_dir):
     sock_path = sock_dir / "run" / "metered.sock"
     seen: dict[str, object] = {}
@@ -1366,6 +1373,7 @@ def test_the_write_http_wrapper_leaves_every_other_route_alone(pool):
     assert seen["metrics"][0] == 404, "an unattached server has no /metrics"
 
 
+@posix_only
 def test_connect_unix_is_still_the_documented_client(sock_dir):
     """Guards the import used above: a socket helper that moved would fail here, not in a loop."""
     assert callable(S.connect_unix)

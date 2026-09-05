@@ -21,10 +21,14 @@ import datetime as _dt
 import json
 
 import pytest
+import socket
 
 from anatid import Anatid, utcnow
 from anatid.ids import new_id
 from anatid.ingest import MemoryPatch, ScriptedExtractor
+
+pytest.importorskip("mcp.client", reason="the MCP server needs 'mcp>=2.1'")
+
 from anatid.integrations.mcp.backend import BackendConfigError, open_backend
 from anatid.integrations.mcp.ingest import (
     ExtractorConfigError,
@@ -46,7 +50,6 @@ from test_mcp_over_server import (
 )
 from test_wire_ids import NODE, assert_wire_safe, through_node
 
-pytest.importorskip("mcp.client", reason="the MCP server needs 'mcp>=2.1'")
 pytest.importorskip("agents", reason="the Agents SDK tools need 'openai-agents'")
 
 from agents.tool_context import ToolContext
@@ -59,6 +62,12 @@ from anatid.integrations.openai_agents import (
     approve_low_risk,
     create_memory_tools,
 )
+
+posix_only = pytest.mark.skipif(
+    not hasattr(socket, "AF_UNIX"),
+    reason="needs Unix domain sockets or POSIX file semantics; not available on this platform",
+)
+
 
 requires_node = pytest.mark.skipif(NODE is None, reason="node is not on PATH")
 
@@ -327,6 +336,7 @@ def test_a_read_only_server_registers_no_ingest_tools(tmp_path):
         assert not {"ingest", "apply_patch", "remember"} & tool_names(server)
 
 
+@posix_only
 def test_ingest_over_a_socket_is_refused(request):
     sock, _ = request.getfixturevalue("shared")
     with open_backend(socket_config(sock)) as client:
