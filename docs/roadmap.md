@@ -109,7 +109,36 @@ isolation is still DuckDB's snapshot isolation with write-write aborts, not seri
 cross the wire too, which is what the exclusive lock forces; and a saturated queue is visible to
 callers as `BusyError` rather than hidden behind a block.
 
-## v0.4: framework drivers and a Cypher subset
+## v0.4: the review release (shipped)
+
+Exit criteria: the four gaps a product review found once the tools were used the way an agent uses
+them are closed, without changing the embedded or server profiles.
+
+### Shipped
+
+- Agents maintain the graph through the tools. `anatid_relate`, `anatid_unrelate` and
+  `anatid_correct` in the Agents SDK; `unrelate` and `correct` over MCP; one core verb,
+  `Anatid.correct`, that supersedes a memory and closes and opens its edges in one transaction, on
+  the handle, on `AnatidClient` and in the server's verb table.
+- Recall runs the graph arm by default. `recall(query)` seeds the graph arm from the entity names
+  in the query (`seed_entity="auto"`), reports them in `RecallHits.seeds`, and `seed_entity=None`
+  turns it off. Embeddings are a protocol: `Anatid.open(embedder=...)` makes every write and
+  every query embed itself, and `anatid-mcp` builds the embedder from `ANATID_EMBED_*`.
+- Text goes in. `anatid.ingest` turns a note into a reviewed `MemoryPatch` applied in one
+  transaction with the note stored as evidence; `anatid_ingest` in the Agents SDK and
+  `ingest`/`apply_patch` over MCP expose it, both with the review step kept.
+- `anatid-mcp --socket` talks to a running `anatid-server`, so several MCP clients share one
+  memory, and a held file exits with the two commands to run instead of a traceback.
+
+### Limitations
+
+Automatic seeding matches lowercased entity names and costs about 1.9 ms at 100,000 entities in a
+tenant, because `entity_key` is a generated column DuckDB's index does not serve. The ingest
+pipeline needs the embedded handle: a patch is several verbs in one transaction, which does not
+cross the wire, so `anatid-mcp` over a socket refuses the extraction settings. The extractor
+proposes and a person or a hook decides; nothing in the pipeline judges what is true.
+
+## v0.5: framework drivers and a Cypher subset
 
 Graphiti deprecated its Kuzu driver, Mem0 removed open-source graph memory in v2.0.0, and Cognee is
 migrating away. Those projects' users need a graph backend that is maintained and MIT licensed.
@@ -134,14 +163,14 @@ changing configuration, and its test suite passes.
 - Benchmarks against the frameworks' own workloads as well as anatid's, published the same way,
   with the losses included.
 
-## v0.5: run it in production without surprises
+## v0.6: run it in production without surprises
 
 Exit criteria: a team can operate anatid for a year without reading the source, and the failure
 modes are ones the docs already named.
 
 - A background maintenance worker. v0.2 closed the staleness window and made a generation
   rebuildable without interrupting reads, but choosing when to rebuild is still a call the caller
-  makes. v0.5 adds an optional in-process worker driving `MaintenancePolicy`, with the same
+  makes. v0.6 adds an optional in-process worker driving `MaintenancePolicy`, with the same
   receipts and the same explicit alternative.
 - Generations built incrementally rather than in full. v0.2 stores the CSR's base in the file,
   applies the journal on every read and keeps its own dense-id mapping, so the caller's 63-bit ids
@@ -150,11 +179,11 @@ modes are ones the docs already named.
 - The multi-process story, continued. v0.3 shipped the part that DuckDB's lock forces: one process
   owns the files and the others reach it over a socket. Read-only readers alongside a writer are
   not a pattern that exists, because a process holding a file read-write excludes readers as well.
-  What is left for v0.5 is the failover question v0.3 does not answer: what a second process does
+  What is left for v0.6 is the failover question v0.3 does not answer: what a second process does
   when the owner dies, and how a client is told which one to talk to.
 - Graph algorithms over the CSR: shortest path, k-hop with edge predicates, PageRank, and community
   detection for memory consolidation, which are the operations "which memories matter" needs.
-- Consolidation and forgetting policies. `prune` today takes age and access-count policies. v0.5
+- Consolidation and forgetting policies. `prune` today takes age and access-count policies. v0.6
   adds decay curves, duplicate detection via the vector arm, and summarization hooks, all producing
   receipts and audit rows so a deletion is always explainable.
 - Schema migrations with a real `MIGRATIONS` chain, forward-tested against files written by every
@@ -177,7 +206,7 @@ Exit criteria: stable on-disk format, semver guarantees on the public API, and t
   ignores nodes created by `INSERT`/`CREATE` statements while its text index does not
   (`spike/results/grafeo.full.json`, `notes[2]` item f). Recall@k against brute-force truth gets
   published alongside latency.
-- CSR persistence and default-on graph acceleration, building on v0.5.
+- CSR persistence and default-on graph acceleration, building on v0.6.
 - duckdb-wasm, putting anatid in the browser and at the edge. DuckDB already compiles to
   WebAssembly; the work is the anatid extension and a Python-free surface. The target is a
   local-first agent whose memory stays on the user's device.
@@ -205,7 +234,7 @@ anatid v1.0 therefore targets DuckDB 2.0. If DuckDB 2.0 slips, the ANN index and
 slip with it, or ship first on 1.x with a rebuild-per-version distribution matrix, which is the
 fallback anatid would rather not choose. What anatid needs from 2.0 is a stable extension ABI and a
 format commitment. That is an expectation of another project's roadmap, not a promise from it.
-Everything in v0.2 and v0.5 is pure Python plus SQL and depends on none of it.
+Everything in v0.2 and v0.6 is pure Python plus SQL and depends on none of it.
 
 ## Deliberately out of scope
 

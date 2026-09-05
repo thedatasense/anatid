@@ -256,6 +256,7 @@ VERBS: dict[str, VerbSpec] = dict(
         # -- writes ------------------------------------------------------------------------
         _spec("remember", write=True, summary="write a memory"),
         _spec("supersede", write=True, summary="correct a memory with a newer one"),
+        _spec("correct", write=True, summary="supersede a memory and move its edges, as one"),
         _spec("reinforce", write=True, summary="record an access, adjust confidence"),
         _spec("update", write=True, summary="correct a memory at an expected version"),
         _spec("relate", write=True, summary="an edge between two entities"),

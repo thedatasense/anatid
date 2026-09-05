@@ -1112,6 +1112,14 @@ def every_reply(sock_path):
             episode_id=episode.episode_id,
         )
         second = send("supersede", old_id=first.memory_id, content="Ada prefers coffee")
+        moved = send(
+            "correct",
+            old_id=second.memory_id,
+            content="Ada prefers coffee, Grace prefers tea",
+            add_relations=[["Ada", "coffee", "drinks"]],
+            remove_relations=[["Ada", "Grace"]],
+        )
+        second = moved.new
         send("update", memory_id=second.memory_id, content="Ada prefers cocoa")
         send("reinforce", memory_id=second.memory_id, amount=2)
         send("get", memory_id=second.memory_id)

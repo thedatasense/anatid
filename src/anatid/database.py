@@ -33,10 +33,12 @@ from .derived import (
     MaintenancePolicy,
     MaintenanceReport,
 )
+from .embed import Embedder
 from .errors import (
     AnatidError,
     BackupDestinationExists,
     ConflictError,
+    EmbeddingDimensionError,
     ExtensionUnavailable,
     IntegrityError,
     NotFoundError,
@@ -66,7 +68,7 @@ log = logging.getLogger("anatid")
 
 __all__ = ["Anatid", "DatabasePool", "PoolEvent", "connect"]
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 #: Substrings DuckDB uses for an MVCC abort.  Deliberately narrow, and it has to stay that way:
 #: :class:`~anatid.errors.ConflictError` promises the caller that retrying the unit of work is
@@ -254,6 +256,10 @@ class Anatid(MemoryVerbs):
         self._lock = threading.RLock()
         self._attached: dict[str, str] = {}
         self.erasure_hooks: list[Any] = []
+        #: The embedding model :meth:`open` was given, or None (:mod:`anatid.embed`).  With one
+        #: set, ``remember`` and ``supersede`` embed content they were not handed an embedding
+        #: for, and ``recall`` embeds the query so the vector arm runs.  Nothing here calls it.
+        self.embedder: Embedder | None = None
         #: The derived indexes (:mod:`anatid.derived`).  The DEFINITIONS live in the file, so
         #: the verbs journal every write for every index the file defines whether or not this
         #: handle holds that accelerator's code; this object holds the implementations this
@@ -282,6 +288,7 @@ class Anatid(MemoryVerbs):
         fts: bool = True,
         accelerators: bool = True,
         vector_backend: str = "exact",
+        embedder: Embedder | None = None,
     ) -> "Anatid":
         """Open (and by default create) an anatid database.
 
@@ -319,6 +326,15 @@ class Anatid(MemoryVerbs):
             accelerator (:mod:`anatid.vector`).  It is opt in because DuckDB documents HNSW
             persistence as experimental, and because it only pays above roughly 15,000 rows per
             tenant; below that the scan is faster.  Build it with ``maintain_indexes()``.
+        ``embedder``
+            An :class:`~anatid.embed.Embedder` (``embed(texts)``, ``embed_one(text)``, ``dim``).
+            Stored on the handle as :attr:`embedder`.  With one set, ``remember()`` and
+            ``supersede()`` embed content they were not given an embedding for and ``recall()``
+            embeds the query, so the vector arm runs without the caller producing vectors.  An
+            embedding passed explicitly always wins.  Its ``dim`` must equal the database's
+            ``embedding_dim``; a mismatch raises :class:`~anatid.errors.EmbeddingDimensionError`
+            here rather than at the first write.  Without one nothing changes: anatid never calls
+            a model on its own.
         """
         p = ":memory:" if str(path) == ":memory:" else str(Path(path).expanduser())
         ns = Namespace.coerce(tenant)
@@ -367,7 +383,19 @@ class Anatid(MemoryVerbs):
         idx = tuple(indexes) if indexes is not None else tuple(_schema.DEFAULT_INDEXES)
         cfg = SchemaConfig(embedding_dim=embedding_dim, indexes=idx)
 
+        if embedder is not None:
+            edim = getattr(embedder, "dim", None)
+            if edim is not None and int(edim) != int(embedding_dim):
+                con.close()
+                raise EmbeddingDimensionError(
+                    f"embedder {embedder!r} produces {int(edim)}-dimensional vectors, database "
+                    f"{p!r} is FLOAT[{int(embedding_dim)}]",
+                    expected=int(embedding_dim),
+                    got=int(edim),
+                )
+
         db = cls(con, path=p, namespace=ns, config=cfg, backend=backend, read_only=read_only)
+        db.embedder = embedder
         if ensure and not read_only:
             db.ensure_schema()
         db._attach_accelerators(

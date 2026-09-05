@@ -264,6 +264,17 @@ def every_mcp_response(server) -> list[tuple[str, str, object]]:
     calls = [
         ("remember", "remember", {"content": "a second fact", "entities": [entity_id]}),
         ("relate", "relate", {"src": "Ada Lovelace", "dst": entity_id, "rel_kind": "built"}),
+        ("unrelate", "unrelate", {"src": "Ada Lovelace", "dst": entity_id, "rel_kind": "built"}),
+        (
+            "correct",
+            "correct",
+            {
+                "old_id": new_memory_id,
+                "content": "note G, corrected",
+                "add_relations": [{"src": "Ada Lovelace", "dst": entity_id, "rel_kind": "wrote"}],
+                "remove_relations": [{"src": "Ada Lovelace", "dst": entity_id}],
+            },
+        ),
         ("supersede", "supersede", {"old_id": new_memory_id, "content": "note G, again"}),
         ("reinforce", "reinforce", {"memory_id": memory_id}),
         ("forget", "forget", {"memory_id": doomed, "reason": "test"}),
@@ -281,6 +292,7 @@ def every_mcp_response(server) -> list[tuple[str, str, object]]:
         ("reinforce_missing", "reinforce", {"memory_id": str(new_id())}),
         ("provenance_missing", "provenance", {"memory_id": str(new_id())}),
         ("forget_missing", "forget", {"memory_id": str(new_id())}),
+        ("correct_missing", "correct", {"old_id": str(new_id()), "content": "nothing"}),
         ("get_not_an_id", "get", {"memory_id": "not-an-id"}),
     ]
     responses = [
@@ -373,6 +385,7 @@ def test_an_mcp_id_argument_that_is_not_an_id_is_a_readable_error(server):
 
 ID_ARGUMENTS = [
     ("supersede", "old_id"),
+    ("correct", "old_id"),
     ("reinforce", "memory_id"),
     ("forget", "memory_id"),
     ("get", "memory_id"),
@@ -381,6 +394,8 @@ ID_ARGUMENTS = [
 ENTITY_ARGUMENTS = [
     ("relate", "src"),
     ("relate", "dst"),
+    ("unrelate", "src"),
+    ("unrelate", "dst"),
     ("context", "entity"),
     ("recall", "seed_entity"),
 ]
@@ -459,10 +474,37 @@ def every_agents_response(db) -> list[tuple[str, str, dict]]:
         kind=None,
     )
     doomed = invoke(tools["anatid_remember"], content="to be forgotten", entities=None, kind=None)
+    related = invoke(tools["anatid_relate"], src="Ada", dst="DuckDB", rel_kind="prefers")
+    moved = invoke(
+        tools["anatid_correct"],
+        memory_id=corrected["memory_id"],
+        content="Ada prefers DuckDB over SQLite and MotherDuck",
+        entities=None,
+        kind=None,
+        add_relations=[{"src": "Ada", "dst": "MotherDuck", "rel_kind": "prefers"}],
+        remove_relations=[{"src": "Ada", "dst": "DuckDB", "rel_kind": None}],
+    )
+    unrelated = invoke(tools["anatid_unrelate"], src="Ada", dst="MotherDuck", rel_kind=None)
 
     return [
         ("remember", "anatid_remember", saved),
         ("supersede", "anatid_supersede", corrected),
+        ("relate", "anatid_relate", related),
+        ("correct", "anatid_correct", moved),
+        ("unrelate", "anatid_unrelate", unrelated),
+        (
+            "correct(missing)",
+            "anatid_correct",
+            invoke(
+                tools["anatid_correct"],
+                memory_id=str(new_id()),
+                content="nothing",
+                entities=None,
+                kind=None,
+                add_relations=None,
+                remove_relations=None,
+            ),
+        ),
         (
             "recall",
             "anatid_recall",
@@ -476,7 +518,7 @@ def every_agents_response(db) -> list[tuple[str, str, dict]]:
         (
             "provenance",
             "anatid_provenance",
-            invoke(tools["anatid_provenance"], memory_id=corrected["memory_id"]),
+            invoke(tools["anatid_provenance"], memory_id=moved["memory_id"]),
         ),
         (
             "forget",
@@ -558,7 +600,7 @@ def test_agents_id_arguments_take_a_string_or_an_int(agents_db):
 @requires_agents
 def test_agents_tool_schemas_declare_ids_as_strings_and_say_why(agents_db):
     tools = {t.name: t for t in create_memory_tools(agents_db)}
-    for name in ("anatid_supersede", "anatid_forget", "anatid_provenance"):
+    for name in ("anatid_supersede", "anatid_correct", "anatid_forget", "anatid_provenance"):
         prop = tools[name].params_json_schema["properties"]["memory_id"]
         assert prop["type"] == "string", f"{name}.memory_id is declared {prop}"
         assert "2**53" in prop["description"], f"{name}.memory_id does not say why"

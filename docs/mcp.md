@@ -2,10 +2,11 @@
 
 `anatid-mcp` serves an anatid database over the [Model Context Protocol](https://modelcontextprotocol.io).
 Claude Code, Claude Desktop, Cursor, and anything else that speaks MCP get a persistent,
-bitemporal, graph-shaped memory backed by one embedded DuckDB file. There is no server process to
-run, no container, and no API key. (anatid does have an optional server profile, in
-[`server.md`](server.md), for callers who need several processes writing one file. `anatid-mcp`
-does not need it and does not use it.)
+bitemporal, graph-shaped memory backed by one embedded DuckDB file. By default there is no server
+process to run, no container, and no API key: `anatid-mcp` opens the file itself. That default
+serves one client at a time, because DuckDB gives one process exclusive use of a file. When two
+clients need the same memory at once, `anatid-mcp --socket` talks to a running `anatid-server`
+instead of opening the file; see [Sharing one memory between clients](#sharing-one-memory-between-clients).
 
 Built against mcp 2.x (`mcp.server.mcpserver.MCPServer`, the class mcp 1.x called `FastMCP`).
 
@@ -85,12 +86,19 @@ matching command-line flag for running the server by hand.
 
 | Env | Flag | Default | Meaning |
 | --- | --- | --- | --- |
-| `ANATID_DB` | `--db` | `~/.anatid/memory.anatid` | Database file, or `:memory:`. Parent directories are created. |
+| `ANATID_DB` | `--db` | `~/.anatid/memory.anatid` | Database file, or `:memory:`. Parent directories are created. Opened in this process. |
+| `ANATID_SOCKET` | `--socket` | unset | A running `anatid-server`'s Unix socket. The tools talk to that server instead of opening a file. Refused together with `--db` or `--enable-sql`. |
+| `ANATID_HTTP_URL` | `--http-url` | unset | A running `anatid-server`'s HTTP listener, for a server on another host. Needs a token. |
+| `ANATID_TOKEN` / `ANATID_TOKEN_FILE` | `--token` / `--token-file` | unset | Bearer token for `ANATID_HTTP_URL`, or a file whose first token is used. An `anatid-server` token file works as is. |
 | `ANATID_TENANT` | `--tenant` | `0` | Tenant id. Every tool is pinned to it. |
-| `ANATID_EMBEDDING_DIM` | `--embedding-dim` | `1536` | `N` in `FLOAT[N]`. Only used when creating a new file; an existing file keeps its own. |
-| `ANATID_READ_ONLY` | `--read-only` | off | Open the database read-only. No write tools are registered at all. |
+| `ANATID_EMBEDDING_DIM` | `--embedding-dim` | `1536` | `N` in `FLOAT[N]`. Only used when creating a new file; an existing file keeps its own. Over a socket the server's file decides. |
+| `ANATID_EMBED_BASE_URL` / `ANATID_EMBED_MODEL` / `ANATID_EMBED_API_KEY` | none | unset | An OpenAI-compatible `/embeddings` endpoint. With both URL and model set, every `remember` stores a vector and every `recall` runs the vector arm; the key is optional for a local endpoint. Environment only, because a key belongs out of `ps`. Refused with `--socket`: the embedder belongs to the process that holds the file. |
+| `ANATID_EMBED_HASH` | `--embed-hash` | off | Embed with the deterministic offline stand-in instead of an endpoint (similarity means shared words). For demos and tests. Refused together with an endpoint, and with `--socket`. |
+| `ANATID_EXTRACT_BASE_URL` / `ANATID_EXTRACT_MODEL` / `ANATID_EXTRACT_API_KEY` | none | unset | An OpenAI-compatible chat endpoint. With both URL and model set, the `ingest` and `apply_patch` tools are registered. Environment only. Refused with `--socket`: the pipeline runs on the file's own connection. |
+| `ANATID_EXTRACT_REASONING` | none | off | `1` sends `{"reasoning": {"enabled": true}}` with every extraction request, which OpenRouter's GLM models take. |
+| `ANATID_READ_ONLY` | `--read-only` | off | Open the database read-only. No write tools are registered at all. Over a socket this restricts this MCP server alone; the server keeps its own policy. |
 | `ANATID_ENABLE_SQL` | `--enable-sql` | off | The read-only SQL escape hatch is off unless this is set. |
-| `ANATID_SQL_TOOL` | `--no-sql-tool` | on | Legacy switch, kept for older configs. `off` removes the tool entirely. |
+| `ANATID_SQL_TOOL` | `--no-sql-tool` | unset | Legacy switch, kept for older configs. `on` enables the tool the way `ANATID_ENABLE_SQL` does; `off` forces it off even when `ANATID_ENABLE_SQL` is set. |
 | `ANATID_MAX_ROWS` | `--max-rows` | `200` | Row cap for the SQL tool. |
 | `ANATID_MCP_TRANSPORT` | `--transport` | `stdio` | `stdio`, `streamable-http`, or `sse`. |
 | `ANATID_MCP_HOST` / `ANATID_MCP_PORT` | `--host` / `--port` | `127.0.0.1:8765` | Bind address for the HTTP transports. |
@@ -103,28 +111,194 @@ anatid-mcp --transport streamable-http --port 8765
 
 then point the client at `http://127.0.0.1:8765/mcp`.
 
+## Sharing one memory between clients
+
+`anatid-mcp --db` opens the file in its own process, and DuckDB gives one process exclusive use
+of a database file. Measured on duckdb 1.5.5 ([`server.md`](server.md), section 1):
+
+| first process holds | second process wants | result |
+| --- | --- | --- |
+| read-write | read-write | `IO Error: Could not set lock on file` |
+| read-write | read-only | `IO Error: Could not set lock on file` |
+
+So Claude Desktop and Claude Code pointed at the same `ANATID_DB` cannot both be running. The
+second one to start is refused, and `anatid-mcp` now says so on stderr, in one paragraph, followed
+by the two commands below. A read-only open does not get around it; the second row is
+the reason.
+
+The way to share one memory is anatid's server profile: one `anatid-server` process holds the
+file, and every `anatid-mcp` talks to it over a Unix socket, reads and writes alike. Two commands.
+
+```sh
+# 1. once, the process that holds the file
+anatid-server start --socket /tmp/anatid/anatid.sock --db ~/.anatid/memory.anatid --tenant 0
+
+# 2. in every client, the socket in place of the file
+anatid-mcp --socket /tmp/anatid/anatid.sock --tenant 0
+```
+
+`anatid-server` is in the base install, so nothing extra is installed. Use a short socket path:
+`sockaddr_un` holds 104 bytes on macOS, and `/tmp/anatid/anatid.sock` is writable without root,
+which `/run/anatid` is not. To keep the server running across logins, [`server.md`](server.md)
+section 6 has the launchd and systemd units.
+
+Every tool is the same over the socket as over the file: the same names, arguments, results and
+id spelling, because `AnatidClient` answers every verb `Anatid` does with the same types.
+`tests/test_mcp_over_server.py` runs every tool against both and compares the answers. Five
+things differ, and each is stated rather than hidden:
+
+- `stats.path` reports `unix:/tmp/anatid/anatid.sock` instead of a file path. The file is the
+  server's.
+- `--enable-sql` is refused with `--socket`. The escape hatch runs statements on the file's own
+  DuckDB connection, and over a socket the only such connection is in the server process.
+- `--db` is refused with `--socket`. A socket client opens no file, so a config block naming both
+  is a mistake, and the message says which one to drop.
+- `ANATID_EMBED_*` and `--embed-hash` are refused with `--socket`. Embedding happens in the
+  process that holds the file, and a socket client forwards verbs without embedding.
+- `ANATID_EXTRACT_*` is refused with `--socket`. The ingest pipeline applies a whole patch in one
+  transaction on the file's own connection, which only the server process has.
+
+### Claude Desktop
+
+```json
+{
+  "mcpServers": {
+    "anatid": {
+      "command": "/ABSOLUTE/PATH/TO/anatid-mcp",
+      "args": ["--socket", "/tmp/anatid/anatid.sock", "--tenant", "0"]
+    }
+  }
+}
+```
+
+### Claude Code
+
+`.mcp.json` in the project root, or `~/.claude.json` under `"mcpServers"`:
+
+```json
+{
+  "mcpServers": {
+    "anatid": {
+      "command": "/ABSOLUTE/PATH/TO/anatid-mcp",
+      "args": ["--socket", "/tmp/anatid/anatid.sock", "--tenant", "0"]
+    }
+  }
+}
+```
+
+or, without editing a file:
+
+```sh
+claude mcp add anatid -- "$(which anatid-mcp)" --socket /tmp/anatid/anatid.sock --tenant 0
+```
+
+`ANATID_SOCKET` in the block's `env` does the same as `--socket`, for a client that can only set
+environment variables. With both clients pointed at the socket, a fact remembered in a Claude
+Desktop conversation is in the next Claude Code `recall`, and the two can run at the same time.
+
+### The security model, in two sentences
+
+The Unix socket is created mode 0600 in a directory the server sets to 0700, so the user the
+server runs as is the only user who can connect, and the kernel enforces it with no token to leak
+or rotate; `--allow-uid` on the server narrows that further by peer credentials. A server on
+another host is reached with `--http-url` plus `--token`, and `anatid-server` refuses to serve
+HTTP without a token, so `anatid-mcp --http-url` without one is refused too.
+
+### From Python
+
+```python
+from anatid.integrations.mcp import ServerConfig, build_server, open_backend
+
+db = open_backend(ServerConfig(socket="/tmp/anatid/anatid.sock", tenant=0))
+build_server(db).run("stdio")
+```
+
+`open_backend` returns an `Anatid` for a file and an `AnatidClient` for a socket or URL; the
+tools do not branch on which. Close it yourself.
+
 ## Tools
 
 | Tool | Annotation | What it does |
 | --- | --- | --- |
 | `remember` | write | Write one memory plus the ABOUT edges to the entities it concerns. Entities are given by name and created on demand. `episode` records the raw source text first, as provenance. |
 | `relate` | write | A RELATES_TO edge between two entities. Traversed undirected. This is what lets recall reach past one hop. |
+| `unrelate` | destructive | Close the RELATES_TO edges between two entities, or only those with a given `rel_kind`. Closing writes a new edge version; `as_of` before the close still walks it. |
 | `supersede` | write | Replace a memory with a corrected version. The old row survives, closed, with a SUPERSEDES edge. |
+| `correct` | destructive | `supersede` plus the edges named in `remove_relations` closed and those in `add_relations` opened, in one transaction. For a correction that changes who is connected to what. |
 | `reinforce` | write | Bump `access_count` / `last_access_at`, optionally set confidence. |
 | `forget` | destructive | `hard=false` (default) closes validity and keeps the history; `hard=true` is a right-to-erasure purge. |
 | `prune` | destructive | Forget by age and/or usage. `dry_run=true` by default. Needs at least one policy argument. |
 | `rebuild_fts_index` | write | Fold the journal into a new BM25 generation. See "Text search" below. |
-| `recall` | read-only | Hybrid retrieval: BM25 + graph expansion + optional cosine, fused with RRF. |
+| `ingest` | read-only | With an extractor configured: propose a memory patch from text, returning `patch_id`, `diff` and `patch`. Writes nothing. Sends the text to the extraction model. |
+| `apply_patch` | destructive | Commit a proposed patch, unchanged or edited, in one transaction with the note stored as the episode. Destructive when the patch corrects a memory or removes a relation. |
+| `recall` | read-only | Hybrid retrieval: BM25 + graph expansion + cosine when an embedding or an embedder is at hand, fused with RRF. With a query and no `seed_entity` the graph arm seeds itself from the entity names in the query, and `seeds` in the result says which. |
 | `context` | read-only | Everything about one entity. `hops=0` direct, `1` neighbors, `2` two hops. |
 | `get` | read-only | One memory by id, with its entities. |
 | `provenance` | read-only | Walk the SUPERSEDES chain back to the original assertion and its source text. |
 | `stats` | read-only | Row counts, schema metadata, BM25 staleness, the graph-expansion path in use. |
 | `sql` | read-only | Read-only SQL escape hatch, described below. |
 
-`forget` and `prune` carry `destructiveHint: true` in their MCP tool annotations, so a client can
-prompt before running them. MCP annotations apply to a whole tool rather than to individual
-arguments, so both are marked even though only `forget(hard=true)` and `prune(dry_run=false)`
-actually remove anything.
+`forget`, `prune`, `unrelate`, `correct` and `apply_patch` carry `destructiveHint: true` in their
+MCP tool annotations, so a client can prompt before running them. MCP annotations apply to a
+whole tool rather than to individual arguments, so all five are marked even though only
+`forget(hard=true)` and `prune(dry_run=false)` remove anything: `unrelate`, `correct` and
+`apply_patch` close edge or memory versions that a read with `as_of` before the close still sees.
+The graph stops saying something it said, and that is what the hint is for.
+
+## Recall without a seed
+
+`recall(query)` used to run the text arm alone unless the client named a `seed_entity`, so the
+graph helped only a caller who already knew which entity to ask about. Since 0.4.0 the graph arm
+seeds itself: the query's words are matched against this tenant's entity names, case-insensitive,
+longest name first, at most three, and the graph arm expands two hops from each match. The
+result's `seeds` lists the names it used and `arms` the arms that ran. Three facts stored by name
+alone, "Ada leads Kestrel", "Kestrel owns the ingest service" and "Bo maintains the ingest
+service", answer `recall("who maintains the ingest service")` with `arms: ["text", "graph"]` and
+`seeds: ["ingest service"]`. Naming a `seed_entity` expands from exactly that one, as before.
+Through the library, `seed_entity=None` switches the graph arm off.
+
+The match costs about 1.9 ms with 100,000 entities in the tenant on a laptop, and less than a
+millisecond below 10,000. It compares lowercased names, so a stored name with irregular internal
+whitespace is matched only when the query repeats it.
+
+## Embeddings
+
+The server embeds nothing by default and the vector arm runs only when a client passes an
+`embedding`. Set `ANATID_EMBED_BASE_URL` and `ANATID_EMBED_MODEL` (plus `ANATID_EMBED_API_KEY`
+when the endpoint needs one) and the handle embeds every `remember` and every `recall` query
+itself, with `stats.embedder` reporting the model and dimension and never the key. The endpoint
+has to return vectors of the file's `embedding_dim`, or the server refuses to start with
+`EmbeddingDimensionError`. `ANATID_EMBED_HASH=1` (or `--embed-hash`) substitutes a deterministic
+offline embedder whose similarity means shared words; it exists for demos and tests. Nothing about
+the tools changes either way: `recall` reports `"vector"` in `arms` when the arm ran.
+
+## Ingesting text
+
+With `ANATID_EXTRACT_BASE_URL` and `ANATID_EXTRACT_MODEL` set, two tools take a note instead of
+one fact at a time. `ingest(text, source?, writer?)` hands the text and the current facts about
+the entities it names to the model, which proposes a patch: facts to add, facts to correct by
+memory id, edges to open and close, and names that mean an existing entity. The proposal is
+resolved against the database (aliases rewritten, a correction whose target is gone downgraded to
+a fact, facts and edges already held dropped, each with a note) and returned with a `patch_id`,
+a `diff` for a person to read and the `patch` as JSON. Nothing is written.
+
+```
+memory patch: 1 fact, 1 correction, 2 relation(s) added, 1 relation(s) removed
+  + fact        "Bo works in the platform group"  about: Bo, platform group
+  ~ correction  memory 883936403329363968 "Bo maintains the ingest service"
+                -> "Cy maintains the ingest service"  about: Cy, ingest service
+  - relation    Bo -maintains-> ingest service
+  + relation    Cy -maintains-> ingest service
+  + relation    Bo -member_of-> platform group
+```
+
+`apply_patch(patch_id, patch?, writer?)` commits it in one transaction: the note is stored
+first as an episode, then aliases, new facts, corrections, edges closed and edges opened, every
+row citing that episode. Pass an edited `patch` to change the proposal first; memory ids in it
+stay decimal strings. If any step fails nothing lands and the proposal stays pending. Declining
+is not calling `apply_patch`. Proposals live in the server's memory, at most 64 at a time, and
+are gone when the process exits. [`ingest.md`](ingest.md) describes the pipeline and the patch
+schema.
 
 Every read takes `as_of` (an ISO-8601 timestamp) to ask what the database believed at that time.
 Time travel is anatid's own filter over the valid-time and transaction-time columns. DuckDB has no
@@ -226,8 +400,10 @@ entry per tenant:
 }
 ```
 
-One DuckDB file cannot be held open read-write by two processes at once, so give each server its
-own `ANATID_DB`. A second client trying to open the same file gets a DuckDB file-lock error.
+One DuckDB file cannot be held open by two processes at once, so give each server its own
+`ANATID_DB`, or let one `anatid-server` hold the file and point every `anatid-mcp` at its socket
+(see [Sharing one memory between clients](#sharing-one-memory-between-clients)). A second
+`anatid-mcp --db` on a file another process holds is refused with that recipe.
 
 ## Text search, and what `rebuild_fts_index` is for
 
@@ -279,8 +455,12 @@ PATH. Check the client's MCP log; on macOS Claude Desktop writes to
 
 ### `IO Error: Could not set lock on file`
 
-Another process holds that database read-write. Close the other client, or give this one its own
-`ANATID_DB`.
+Another process holds that database, and DuckDB refuses a second opener even for reading.
+`anatid-mcp --db` on such a file exits 2 and prints the explanation with the `anatid-server start`
+and `anatid-mcp --socket` commands to run instead. Three ways out: close the other client, give
+this one its own `ANATID_DB`, or share the file through a server as
+[Sharing one memory between clients](#sharing-one-memory-between-clients) describes. If the
+process holding the file is already an `anatid-server`, point this client at its socket.
 
 ### Tools appear but every call errors
 
@@ -310,4 +490,8 @@ def standup() -> str:
 server.run("stdio")
 ```
 
-The server does not take ownership of `db`; close it yourself.
+The server does not take ownership of `db`; close it yourself. `db` can also be an
+`AnatidClient` connected to a running `anatid-server`, which is what `open_backend` returns for a
+`ServerConfig` with `socket=` set; the tools are the same either way. `build_server(db,
+extractor=...)` registers the `ingest` and `apply_patch` tools with an `anatid.ingest.Extractor`
+of your own, which needs the embedded handle.

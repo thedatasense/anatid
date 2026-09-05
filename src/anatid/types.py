@@ -55,6 +55,7 @@ __all__ = [
     "Provenance",
     "ForgetReceipt",
     "PruneReport",
+    "CorrectionReceipt",
     "FtsStatus",
     "EdgeType",
     "SchemaInfo",
@@ -460,9 +461,14 @@ class RecallHits(list):
         the rows it cannot see.
     ``arms``
         The arms that actually ran, e.g. ``("vector", "text", "graph")``.
+    ``seeds``
+        The entity names the graph arm expanded from, in the order they ran: the entities
+        found in the query under ``seed_entity="auto"``, or the one the caller named.  Empty
+        when the graph arm did not run.
     """
 
-    __slots__ = ("bm25_available", "bm25_stale", "pending_fts_rows", "arms", "as_of", "notes")
+    __slots__ = ("bm25_available", "bm25_stale", "pending_fts_rows", "arms", "as_of", "notes",
+                 "seeds")
 
     def __init__(
         self,
@@ -474,6 +480,7 @@ class RecallHits(list):
         arms: tuple[str, ...] = (),
         as_of: AsOf = CURRENT,
         notes: tuple[str, ...] = (),
+        seeds: tuple[str, ...] = (),
     ) -> None:
         super().__init__(hits)
         self.bm25_available = bm25_available
@@ -482,6 +489,7 @@ class RecallHits(list):
         self.arms = arms
         self.as_of = as_of
         self.notes = notes
+        self.seeds = seeds
 
     @property
     def memory_ids(self) -> list[int]:
@@ -620,6 +628,29 @@ class PruneReport:
     @property
     def count(self) -> int:
         return len(self.memory_ids)
+
+
+@dataclass(frozen=True, slots=True)
+class CorrectionReceipt:
+    """What :meth:`anatid.Anatid.correct` did, all of it in one transaction.
+
+    A correction is a :meth:`~anatid.Anatid.supersede` plus the ``RELATES_TO`` edges the
+    change closes and opens.  ``old`` is the superseded memory's live version as the
+    correction left it: ``is_current`` is False and ``valid_to`` is :attr:`at`.  ``new`` is
+    the replacement.  ``opened`` holds one :class:`Edge` per entry of ``add_relations``, in
+    order.  ``closed`` holds the entries of ``remove_relations`` that closed at least one
+    current edge, normalised to ``(src, dst, rel_kind)`` with the endpoints as they were
+    passed; an entry that matched no current edge is left out, so the receipt records what
+    the database did rather than what was asked.  :attr:`edges_closed` counts the edge
+    versions closed in total, across every entry.
+    """
+
+    old: Memory
+    new: Memory
+    at: _dt.datetime
+    opened: tuple[Edge, ...] = ()
+    closed: tuple[tuple[Any, Any, str | None], ...] = ()
+    edges_closed: int = 0
 
 
 @dataclass(frozen=True, slots=True)

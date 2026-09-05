@@ -691,6 +691,7 @@ for _dc in (
     _types.Provenance,
     _types.ForgetReceipt,
     _types.PruneReport,
+    _types.CorrectionReceipt,
     _types.FtsStatus,
     _types.SchemaInfo,
     _types.DoctorFinding,
@@ -713,6 +714,7 @@ def _encode_recall_hits(value: _types.RecallHits, opts: _EncodeOptions) -> Any:
         "arms": list(value.arms),
         "as_of": _encode(value.as_of, opts),
         "notes": list(value.notes),
+        "seeds": list(value.seeds),
     }
 
 
@@ -727,6 +729,8 @@ def _decode_recall_hits(raw: Any) -> _types.RecallHits:
         arms=tuple(raw.get("arms", ())),
         as_of=decode_value(raw.get("as_of")) or _types.CURRENT,
         notes=tuple(raw.get("notes", ())),
+        # A 0.3.0 server sends no seeds; the attribute defaults to () on the embedded handle too.
+        seeds=tuple(raw.get("seeds", ())),
     )
 
 

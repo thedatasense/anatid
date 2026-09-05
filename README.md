@@ -1,5 +1,135 @@
 # anatid
 
+Local memory for AI agents, with evidence, corrections and history. One DuckDB file.
+
+anatid is for developers building assistants that have to remember decisions, ownership and
+changing constraints: who owns a service, what was decided and when, which rule still holds. Every
+fact is filed under the entities it names, linked to the raw text it came from, and kept when it
+is corrected rather than overwritten. Retrieval runs three ways at once, through text scoring,
+graph traversal and, with an embedder configured, vector similarity. Nothing runs but your
+process, and the memory is a single file you can copy, back up and query with SQL. MIT licensed.
+
+## The demo
+
+Three project notes, six months apart, go in as prose. What follows is the real output of
+[`examples/ingest_notes.py`](examples/ingest_notes.py), trimmed only for width. It runs offline,
+without a key, in about a second.
+
+The first note says who owns what. A model reads it and proposes a patch; the pipeline shows the
+patch as a diff before anything is written, then applies it in one transaction with the note
+stored as evidence.
+
+```
+2026-03-02  notes/2026-03-02.md
+  > Ada leads the Kestrel team. Kestrel owns the ingest service, and Bo maintains it day to day.
+
+  memory patch: 3 facts, 3 relation(s) added
+    + fact        "Ada leads Kestrel"  about: Ada, Kestrel
+    + fact        "Kestrel owns the ingest service"  about: Kestrel, ingest service
+    + fact        "Bo maintains the ingest service"  about: Bo, ingest service
+    + relation    Ada -leads-> Kestrel
+    + relation    Kestrel -owns-> ingest service
+    + relation    Bo -maintains-> ingest service
+  applied: episode 883936403279032320 stored; 3 memories created; 3 relations opened.
+```
+
+Then the owner changes. The second note does not repeat the old fact; the patch corrects it, and
+the edge from Bo to the service closes in the same transaction that opens the edge from Cy.
+
+```
+2026-06-15  notes/2026-06-15.md
+  > Bo moved to the platform group. Cy took over the ingest service from Bo this week.
+
+  memory patch: 1 fact, 1 correction, 2 relation(s) added, 1 relation(s) removed
+    + fact        "Bo works in the platform group"  about: Bo, platform group
+    ~ correction  memory 883936403329363968 "Bo maintains the ingest service"
+                  -> "Cy maintains the ingest service"  about: Cy, ingest service
+    - relation    Bo -maintains-> ingest service
+    + relation    Cy -maintains-> ingest service
+    + relation    Bo -member_of-> platform group
+  applied: episode 883936403509719040 stored; 2 memories created; 1 superseded; 2 relations opened; 1 relations closed.
+```
+
+Ask who maintains the ingest service now, and the assistant answers with the new owner. Ask why,
+and the chain of evidence runs back through both notes.
+
+```
+3. Who maintains the ingest service now, and why
+  now:     Cy maintains the ingest service
+  before:  Bo maintains the ingest service  (valid until 2026-06-15)
+  chain of evidence, newest first:
+    2026-06-15  notes/2026-06-15.md
+      > Bo moved to the platform group. Cy took over the ingest service from Bo this week.
+    2026-03-02  notes/2026-03-02.md
+      > Ada leads the Kestrel team. Kestrel owns the ingest service, and Bo maintains it day to day.
+  writers: notes-bot
+```
+
+Ask what was true in April, and the previous owner comes back, because the correction closed the
+old fact instead of deleting it.
+
+```
+4. as_of(2026-04-01): what the database believed about the ingest service in April
+    2026-03-02  Bo maintains the ingest service
+    2026-03-02  Kestrel owns the ingest service
+
+5. The same read today
+    2026-08-20  The ingest service must stay on Python 3.10 until the Kestrel migration finishes [constraint]
+    2026-06-15  Cy maintains the ingest service
+    2026-03-02  Kestrel owns the ingest service
+```
+
+A question about Ada reaches the ingest service too, though no fact about the service mentions
+her: Ada leads Kestrel, Kestrel owns the service, and the graph walk covers the two hops. Run the
+script with `--live` and GLM 5.3 Flash through OpenRouter proposes the patches instead of the
+scripted extractor; the output above is the offline run.
+
+## Five minutes to a working memory
+
+Install it.
+
+```bash
+pip install anatid                    # the library and the anatid-server command
+pip install "anatid[mcp]"             # + the Model Context Protocol server
+pip install "anatid[agents]"          # + the OpenAI Agents Software Development Kit (SDK) tools
+```
+
+Give it to an assistant over the Model Context Protocol (MCP). Claude Desktop, Claude Code and
+Cursor all take this block, with the path `which anatid-mcp` prints; [`docs/mcp.md`](docs/mcp.md)
+says where each client keeps it.
+
+```json
+{
+  "mcpServers": {
+    "anatid": {
+      "command": "/ABSOLUTE/PATH/TO/anatid-mcp",
+      "env": { "ANATID_DB": "/Users/you/.anatid/memory.anatid" }
+    }
+  }
+}
+```
+
+Or use it from Python. Three statements: open a file, remember a fact with its evidence, ask.
+
+```python
+from anatid import Anatid
+db = Anatid.open("team.anatid", tenant=1)
+db.remember("Cy maintains the ingest service", entities=["Cy", "ingest service"],
+            episode="Handover note, 2026-06-15: Cy took the ingest service over from Bo.")
+print(db.recall("who maintains the ingest service")[0].content)
+```
+
+```
+Cy maintains the ingest service
+```
+
+That `recall` ran the text arm and the graph arm: the query names the ingest service, so the walk
+started there without anyone naming a seed. `db.provenance(memory_id).source_text` returns the
+handover note. To have text go in as in the demo rather than one fact at a time, see
+[`docs/ingest.md`](docs/ingest.md).
+
+## What anatid is
+
 anatid is an embedded graph memory for AI agents, built on DuckDB and released under the MIT
 license. The database is a single file, and the default way to use it has no server to run and no
 daemon to supervise. There is an optional server profile for the one case that needs it, described
@@ -9,8 +139,8 @@ Install it and an agent gains a memory that stores entities, the edges between t
 attached to both. That memory records two kinds of time: what was true, and what the agent believed
 at any past instant. Queries run three ways at once, through vector similarity, Best Match 25
 (BM25) text scoring, and graph traversal, fused into a single ranked list. Writes can be routed
-through the human-in-the-loop approval flow in the OpenAI Agents Software Development Kit (SDK), so
-an agent proposes a change to its own memory and a person decides whether it lands.
+through the human-in-the-loop approval flow in the OpenAI Agents SDK, so an agent proposes a
+change to its own memory and a person decides whether it lands.
 
 Every retrieval structure in anatid is derived rather than canonical. The full-text index, the
 graph adjacency structure, and the optional vector index are built the same way: a versioned base
@@ -88,7 +218,7 @@ index, and `db.index_health()` reports whether that is due, and why.
 
 A longer commented walkthrough covering `recall_2hop`, `forget(hard=True)` and `stats()` lives in
 [`examples/quickstart.py`](examples/quickstart.py). It needs no API key and finishes in under a
-second.
+second. [`examples/README.md`](examples/README.md) lists every example and which ones need a key.
 
 For something closer to how memory tends to fail in practice, run
 [`examples/dinner_party.py`](examples/dinner_party.py). Six months of ordinary household facts, a
@@ -101,9 +231,10 @@ dish. Word search alone returns the recipe cards and stops.
 | verb | what it does |
 |---|---|
 | `remember(content, entities=[...])` | write a fact and the ABOUT edges that make it reachable |
-| `recall(query, embedding=, seed_entity=)` | hybrid retrieval: cosine, BM25 and 2-hop graph, fused with reciprocal rank fusion |
+| `recall(query, embedding=, seed_entity="auto")` | hybrid retrieval: cosine, BM25 and 2-hop graph, fused with reciprocal rank fusion; the graph arm seeds itself from the entity names in the query |
 | `recall_2hop(seed)` / `context(entity)` | pure graph recall; `context` defaults to 0 hops |
 | `supersede(old_id, content)` | replace a belief, keeping the old one closed and linked |
+| `correct(old_id, content, add_relations=, remove_relations=)` | supersede a belief and move the edges that change with it, in one transaction |
 | `unrelate(a, b)` | close an edge that stopped being true |
 | `reinforce(id)` / `prune(...)` | strengthen what gets used, drop what does not |
 | `forget(id, hard=False)` | stop believing, with the audit trail kept, or erase completely |
@@ -122,10 +253,44 @@ the call in `db.transaction()` when you need a single snapshot.
 `prune` behaves differently: a query, then one transaction per memory it forgets. A failure part-way
 leaves earlier deletions committed. Taking its `dry_run` list first shows what it will touch.
 
+`recall(query)` runs the text arm and the graph arm by default. The graph arm's seeds are the
+entity names that occur in the query, matched case-insensitively, longest name first, at most
+three; `hits.seeds` lists them and `hits.arms` says which arms ran. Pass `seed_entity="Ada"` to
+expand from exactly that entity, or `seed_entity=None` to run without the graph arm. The vector arm
+runs when you pass an `embedding`, or when the handle was opened with an embedder:
+`Anatid.open(path, embedder=OpenAICompatibleEmbedder(base_url, api_key, model, dim))` embeds
+every `remember` and every query it is not given a vector for, so all three arms run with no
+application code. `HashEmbedder(dim)` is an offline stand-in for demos and tests.
+
 Write verbs accept `now=` and the temporal read verbs accept `as_of=`, which keeps tests
 deterministic. Function forms exist as well, through `from anatid.verbs import remember`. And
 `db.connection` hands you the raw DuckDB cursor whenever you want SQL. The memory is ordinary
 tables, joinable against your Parquet and CSV files in place.
+
+## Text in, a reviewed patch out
+
+The verbs take facts one at a time. `anatid.ingest` takes text. An extractor, any object with
+`extract(text, existing) -> MemoryPatch`, proposes what a note changes: facts to add, facts to
+correct by id, edges to open and close, and names that mean an existing entity. The pipeline
+resolves the proposal against what the graph already holds and writes a note for everything it
+changed: a duplicate dropped, an alias rewritten, a correction whose target is gone downgraded to
+a fact. A review hook may edit or decline the patch. `MemoryPatch.apply` then commits the whole
+patch in one transaction, with the raw text stored first as the episode every new row cites.
+
+```python
+from anatid.ingest import OpenAICompatibleExtractor, ingest
+
+extractor = OpenAICompatibleExtractor(model="z-ai/glm-5.3-flash",
+                                      base_url="https://openrouter.ai/api/v1", api_key=key)
+receipt = ingest(db, note, extractor=extractor, writer="notes-bot", source="notes/2026-06-15.md",
+                 review=lambda patch: patch if input(patch.describe() + "\napply? ") == "y" else None)
+```
+
+`OpenAICompatibleExtractor` talks to any OpenAI-compatible chat endpoint; `ScriptedExtractor`
+returns prepared patches for tests and the offline example. The same pipeline is behind the
+`anatid_ingest` tool in the Agents SDK integration and the `ingest` and `apply_patch` tools in the
+MCP server, described below. [`docs/ingest.md`](docs/ingest.md) has the patch schema and the apply
+order.
 
 ## Two deployment profiles
 
@@ -247,7 +412,7 @@ from anatid.integrations.openai_agents import AnatidSession, create_memory_tools
 
 db = Anatid.open("agent.anatid", tenant=1)
 session = AnatidSession("conv-1", db)                # conversation history, same file as the graph
-tools = create_memory_tools(db, session=session)     # 3 read tools, 3 write tools
+tools = create_memory_tools(db, session=session)     # 3 read tools, 6 write tools
 
 agent = Agent(name="assistant", tools=tools)
 result = await Runner.run(agent, "Ada switched to decaf, remember that", session=session)
@@ -260,14 +425,26 @@ while result.interruptions:                          # writes stop here; reads n
     result = await Runner.run(agent, state, session=session)
 ```
 
-Writes are gated and reads run straight through. The tools `anatid_remember`, `anatid_supersede`
-and `anatid_forget` carry `needs_approval`, while `anatid_recall`, `anatid_context` and
-`anatid_provenance` do not. Nothing reaches the database until somebody approves.
+Writes are gated and reads run straight through. Six tools carry `needs_approval`:
+`anatid_remember`, `anatid_relate`, `anatid_supersede`, `anatid_correct`, `anatid_unrelate` and
+`anatid_forget`. Three do not: `anatid_recall`, `anatid_context` and `anatid_provenance`. Nothing
+reaches the database until somebody approves. The three graph tools exist because memories are
+filed under the entities they name and nothing links those entities until an edge does. Three facts
+stored as "Ada leads Kestrel", "Kestrel owns the ingest service" and "Bo maintains the ingest
+service" are three islands until `anatid_relate` connects them, and when the maintainer changes,
+`anatid_correct` supersedes the fact and moves the edge in one transaction, so the graph never says
+two things at once.
+
+A tenth tool, `anatid_ingest`, appears when `create_memory_tools` is given an
+`extractor`. It takes a note, proposes a patch of facts and edges through the ingestion pipeline,
+and applies it as one gated write. `dry_run=True` returns the diff without writing and never waits
+for approval, and the `patch_json` a dry run returns can be handed back, edited or not, to apply
+exactly that patch.
 
 The approval policy is a callable, so you can shape it. `approve_low_risk()` waves through small
-ordinary writes and still stops for hard deletes. Unless you opt out explicitly,
-`anatid_forget(hard=True)` always requires approval, since a hard forget removes the row, its edges,
-its embedding and its provenance together.
+ordinary writes and still stops for hard deletes, edge changes and ingestion. Unless you opt out
+explicitly, `anatid_forget(hard=True)` always requires approval, since a hard forget removes the
+row, its edges, its embedding and its provenance together.
 
 Approval can also happen later, and somewhere else entirely. `RunStateStore(db)` parks the SDK's
 serialized `RunState` in the same anatid file, so an interrupted run can be reviewed and resumed
@@ -286,11 +463,20 @@ pip install "anatid[mcp]"
 anatid-mcp --db memory.anatid        # stdio; point Claude Desktop, Claude Code or Cursor at it
 ```
 
-That exposes the memory verbs over the Model Context Protocol (MCP), so any MCP client gains
-persistent, bitemporal, graph-shaped memory. The write side offers `remember`, `relate`,
-`supersede`, `reinforce`, `forget`, `prune` and `rebuild_fts_index`. The read side offers `recall`,
-`context`, `get`, `provenance` and `stats`. Those are MCP tool names; the `anatid_`-prefixed names
-belong to the Agents SDK integration above. Passing `--read-only` registers the read tools alone.
+That exposes the memory verbs over MCP, so any MCP client gains persistent, bitemporal,
+graph-shaped memory. The write side offers `remember`, `relate`, `unrelate`, `supersede`,
+`correct`, `reinforce`, `forget`, `prune` and `rebuild_fts_index`. The read side offers `recall`,
+`context`, `get`, `provenance` and `stats`. With `ANATID_EXTRACT_BASE_URL` and
+`ANATID_EXTRACT_MODEL` set, `ingest` proposes a patch from text and returns its diff with a
+`patch_id`, and `apply_patch` commits it. With `ANATID_EMBED_BASE_URL` and `ANATID_EMBED_MODEL`
+set, the server embeds every write and every query and `recall` runs the vector arm too. Those are
+MCP tool names; the `anatid_`-prefixed names belong to the Agents SDK integration above. Passing
+`--read-only` registers the read tools alone.
+
+Two MCP clients cannot both open one file, because DuckDB gives one process exclusive use of it.
+`anatid-mcp --socket /tmp/anatid/anatid.sock` talks to a running `anatid-server` instead, so
+Claude Desktop and Claude Code share one memory with the same tools; a second `anatid-mcp --db` on a
+held file exits with the two commands to run instead of a traceback.
 
 Identifiers cross that boundary as decimal strings, never as JSON numbers. anatid identifiers
 exceed what JavaScript integers carry safely, and a client that parsed them as numbers would
@@ -306,6 +492,8 @@ into an ordinary SELECT. Execution then happens inside `BEGIN TRANSACTION READ O
 cursor that is always rolled back.
 
 `from anatid.integrations.mcp import build_server` embeds the server in your own process.
+[`docs/mcp.md`](docs/mcp.md) has the config blocks, every environment variable, and the sharing
+recipe.
 
 ## Limitations
 
@@ -321,6 +509,7 @@ documentation and is absent from this list is a bug, and we would like the repor
 | Tenancy | One file per tenant is the real boundary |
 | Query language | The verbs above, plus SQL. No Cypher yet |
 | Maintenance | A call you make, not a background thread |
+| Ingestion | The extractor proposes and a person or a hook decides; the pipeline never decides what is true |
 
 Several of those deserve more than a row.
 
@@ -334,7 +523,8 @@ loses its `ef_search` setting across a reopen, which anatid works around by reis
 per connection. And below roughly 15,000 rows per tenant, the exact scan tends to be faster anyway.
 The 1M and 10M measurements named in the promotion criterion have not been taken. Since 0.1.1,
 `recall(embedding=...)` raises `BruteForceCeilingError` when an exact scan would cover more than
-`BRUTE_FORCE_CEILING = 100_000` rows, unless you pass `allow_slow=True`.
+`BRUTE_FORCE_CEILING = 100_000` rows, unless you pass `allow_slow=True`; an embedding the handle's
+own embedder produced skips the arm and says so in `hits.notes` instead.
 
 DuckDB's own full-text index does not update incrementally, and anatid builds incremental behaviour
 above it rather than exposing that limitation. A write is journalled in its own transaction and
@@ -379,15 +569,24 @@ rows. The ratio trigger in `MaintenancePolicy` exists to prevent that. The in-me
 not evicted by DuckDB's object cache, so memory grows with the number of resident generations. The
 C++ extension remains optional; without it the merge runs in SQL and returns the same rows.
 
-This is v0.3. The API may still move, so pin the version.
+Automatic seeding matches lowercased entity names against the words of the query, so a stored name
+with irregular internal whitespace is matched only when the query repeats it, and a query that
+names no entity runs the text arm alone as before. The match costs about 1.9 ms with 100,000
+entities in a tenant on a laptop, because `entity_key` is a generated column DuckDB's index does not
+serve; below 10,000 entities it is under a millisecond.
+
+This is v0.4. The API may still move, so pin the version.
 
 ## Documentation
 
 | document | what it covers |
 |---|---|
+| [`docs/mcp.md`](docs/mcp.md) | the MCP server: config blocks for each client, every variable, sharing one memory between clients, embeddings, ingestion, the SQL escape hatch |
+| [`docs/ingest.md`](docs/ingest.md) | text in, a reviewed patch out: the pipeline, the patch schema, apply order, the review hook, the extractors |
 | [`docs/server.md`](docs/server.md) | the optional server profile: why it exists, what it costs, the security model, and how to operate it |
 | [`docs/architecture.md`](docs/architecture.md) | storage layout, the visibility predicate, the derived-index framework, graph paths, the isolation contract, the temporal model, the recall pipeline |
 | [`docs/design/derived-index-framework.md`](docs/design/derived-index-framework.md) | the design the accelerators are built to, and what shipped against what was deferred |
+| [`docs/extension.md`](docs/extension.md) | the optional C++ extension: what it accelerates and how to build it |
 | [`docs/benchmarks.md`](docs/benchmarks.md) | Phase 0 method, every result, and what the benchmark does not tell you |
 | [`docs/roadmap.md`](docs/roadmap.md) | what comes next, and what is deliberately out of scope |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | how to build it, what we care about in a change, third-party notices |

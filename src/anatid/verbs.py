@@ -1,7 +1,9 @@
 """The memory verbs.
 
 Each **write** verb (``remember``, ``supersede``, ``forget``, ``relate``, ``unrelate``,
-``reinforce``, ``episode``, ``entity_id``) is one transaction.  ``prune`` is not -- it is a query
+``reinforce``, ``episode``, ``entity_id``) is one transaction, and so is ``correct``, which runs
+``supersede``, ``unrelate`` and ``relate`` inside one so a memory and its edges change together.
+``prune`` is not -- it is a query
 plus one transaction per memory, and says so.  **Read** verbs (``recall``, ``recall_2hop``,
 ``context``, ``get``, ``versions``, ``provenance``, ``stats``) open no transaction: ``recall``
 runs its staleness probe, its arms, its hydration and its ABOUT lookup as separate statements,
@@ -80,6 +82,7 @@ from .types import (
     RELATES_TO,
     SUPERSEDES,
     AsOf,
+    CorrectionReceipt,
     Edge,
     Entity,
     Episode,
@@ -106,6 +109,7 @@ __all__ = [
     "recall_2hop",
     "context",
     "supersede",
+    "correct",
     "reinforce",
     "forget",
     "unrelate",
@@ -310,6 +314,27 @@ def _check_row_id(field: str, value: Any) -> int:
             f"{field} must be a positive integer, got {out}", field=field, value=out, low=1
         )
     return out
+
+
+def _relation(field: str, value: Any) -> tuple[Any, Any, str | None]:
+    """Normalise one entry of :meth:`MemoryVerbs.correct`'s relation lists.
+
+    An entry is ``(src, dst)`` or ``(src, dst, rel_kind)``; each endpoint is whatever
+    :meth:`MemoryVerbs.entity_id` takes.  Anything else is a caller error, reported before
+    the transaction opens.
+    """
+    if isinstance(value, (str, bytes)) or not isinstance(value, Sequence):
+        raise ValidationError(
+            f"{field} entries must be (src, dst) or (src, dst, rel_kind); got {value!r}"
+        )
+    items = tuple(value)
+    if len(items) == 2:
+        return items[0], items[1], None
+    if len(items) == 3:
+        return items[0], items[1], None if items[2] is None else str(items[2])
+    raise ValidationError(
+        f"{field} entries must be (src, dst) or (src, dst, rel_kind); got {len(items)} items"
+    )
 
 
 def _check_closes_after_open(
@@ -785,6 +810,11 @@ class MemoryVerbs(VerbHostMixin):
             raise TypeError(
                 f"entity reference must be int | str | Entity, got {type(value).__name__}"
             )
+        if not value.strip():
+            # An empty name has an empty entity_key, so every blank spelling would resolve to
+            # one nameless entity that nothing can address by name afterwards.  A model that
+            # sends dst="" through a tool gets this sentence instead of an edge to nowhere.
+            raise ValidationError("entity name must not be empty or whitespace")
         row = self.execute(_ENTITY_BY_KEY_SQL, [ns.tenant_id, value]).fetchone()
         if row is not None:
             return int(row[0])
@@ -1068,6 +1098,12 @@ class MemoryVerbs(VerbHostMixin):
         finite and in ``[0, 1]``, every embedding value must be finite and the vector must have
         the database's dimension, and an explicit ``memory_id`` must not already exist in this
         tenant.  Each raises a subclass of :class:`~anatid.errors.ValidationError`.
+
+        ``embedding``
+            The memory's vector.  When it is omitted and the handle was opened with an
+            ``embedder`` (:meth:`anatid.Anatid.open`), the content is embedded with it before
+            the transaction opens; without an embedder the row is written with no vector, as
+            before.  An embedding passed here is stored as given either way.
         """
         ns = self.resolve_tenant(tenant)
         at = to_utc_naive(now) or utcnow()
@@ -1075,6 +1111,10 @@ class MemoryVerbs(VerbHostMixin):
         ca = to_utc_naive(created_at) or at
         confidence = _check_unit("confidence", confidence)
         weight = _check_unit("weight", weight)
+        if embedding is None and self.embedder is not None:
+            # The handle's embedder fills the gap, outside the transaction and outside the
+            # entity-race retry, so a re-run never embeds twice.  An explicit embedding wins.
+            embedding = self.embedder.embed_one(content)
         emb = self._check_embedding(embedding)
         explicit_id = memory_id is not None
         mid = _check_row_id("memory_id", memory_id) if explicit_id else new_id()
@@ -1309,7 +1349,7 @@ class MemoryVerbs(VerbHostMixin):
         tenant: int | Namespace | None = None,
         k: int = 10,
         embedding: Sequence[float] | None = None,
-        seed_entity: "int | str | Entity | None" = None,
+        seed_entity: "int | str | Entity | None" = _recall.AUTO_SEED,
         hops: int = 2,
         as_of: AsOf | _dt.datetime | None = None,
         kinds: Sequence[str] | None = None,
@@ -1323,8 +1363,21 @@ class MemoryVerbs(VerbHostMixin):
         """Hybrid retrieval: cosine + BM25 + graph expansion, fused with RRF (k=60).
 
         Arms run when their input exists -- ``embedding`` for the vector arm, ``query`` plus an
-        fts index for BM25, ``seed_entity`` for the graph arm -- and are fused by Reciprocal Rank
-        Fusion.  The result is a ``list[RecallHit]`` that also reports how it was answered:
+        fts index for BM25, a seed for the graph arm -- and are fused by Reciprocal Rank
+        Fusion.  Two of those inputs can come from the handle rather than from the call:
+
+        * ``seed_entity="auto"`` (the default) finds the graph arm's seeds in the query: the
+          tenant's entity names that appear in it, case-insensitive, longest first, up to
+          :data:`anatid.AUTO_SEED_LIMIT` of them (:func:`anatid.recall.auto_seeds`).  Name an
+          entity to expand from exactly that one, as before; pass ``None`` to run without the
+          graph arm.  An entity literally named ``auto`` is reachable by id or as an
+          :class:`~anatid.types.Entity`.
+        * When the handle was opened with an ``embedder`` and ``embedding`` is omitted, the
+          query is embedded with it and the vector arm runs.  An embedding passed here is used
+          as given.  Should that implicit embedding exceed :data:`anatid.BRUTE_FORCE_CEILING`,
+          the vector arm is skipped and ``hits.notes`` says so, rather than raising.
+
+        The result is a ``list[RecallHit]`` that also reports how it was answered:
 
         * ``hits.bm25_stale`` -- the text arm could not answer exactly.  On the derived text
           index that ``Anatid.open()`` attaches by default this is rare, because a write is
@@ -1338,6 +1391,7 @@ class MemoryVerbs(VerbHostMixin):
           because the journal had touched them since the last build.  Every one of them was
           searched.  On the 0.1.1 half it is how many rows the arm cannot see.
         * ``hits.arms`` -- which arms actually ran.
+        * ``hits.seeds`` -- the entity names the graph arm expanded from, found or given.
 
         Nothing is rebuilt implicitly and nothing needs to be: a rebuild compacts the journal
         into a new generation, which is a read-latency and storage decision.
@@ -1356,13 +1410,22 @@ class MemoryVerbs(VerbHostMixin):
         candidates = _check_positive("candidates", candidates)
         rrf_k = _check_positive("rrf_k", rrf_k)
         hops = _check_non_negative("hops", hops)
-        seed = None
-        if seed_entity is not None:
-            seed = (
-                int(seed_entity)
-                if isinstance(seed_entity, int) and not isinstance(seed_entity, bool)
-                else self.entity_id(seed_entity, tenant=ns, create=False)
-            )
+        seed: int | str | None
+        if seed_entity is None or (
+            isinstance(seed_entity, str) and seed_entity == _recall.AUTO_SEED
+        ):
+            seed = seed_entity
+        elif isinstance(seed_entity, int) and not isinstance(seed_entity, bool):
+            seed = int(seed_entity)
+        else:
+            seed = self.entity_id(seed_entity, tenant=ns, create=False)
+        on_ceiling = "error"
+        if embedding is None and query and self.embedder is not None:
+            # The handle's embedder supplies the vector arm's input.  Past the brute-force
+            # ceiling that arm is skipped with a note instead of raising: configuring an
+            # embedder must not turn a recall that used to answer into one that fails.
+            embedding = self.embedder.embed_one(query)
+            on_ceiling = "skip"
         if embedding is not None:
             self._check_embedding(embedding)
         return _recall.hybrid_recall(
@@ -1383,6 +1446,7 @@ class MemoryVerbs(VerbHostMixin):
             include_about=include_about,
             on_stale_fts=on_stale_fts,
             allow_slow=allow_slow,
+            on_ceiling=on_ceiling,
         )
 
     def as_of(
@@ -1470,6 +1534,10 @@ class MemoryVerbs(VerbHostMixin):
         if entities is None:
             entities = [e.entity_id for e in self.entities_of(int(old_id), tenant=ns)]
         confidence = _check_unit("confidence", confidence)
+        if embedding is None and self.embedder is not None:
+            # Same rule as remember(): the handle's embedder fills the gap, before the
+            # transaction, so the corrected fact is reachable by the vector arm too.
+            embedding = self.embedder.embed_one(content)
         emb = self._check_embedding(embedding)
         explicit_id = memory_id is not None
         new_mid = _check_row_id("memory_id", memory_id) if explicit_id else new_id()
@@ -1946,6 +2014,94 @@ class MemoryVerbs(VerbHostMixin):
             self.csr.note_edge_write()
         return len(closed)
 
+    def correct(
+        self,
+        old_id: int,
+        content: str,
+        *,
+        entities: Sequence["int | str | Entity"] | None = None,
+        add_relations: Sequence[Sequence[Any]] = (),
+        remove_relations: Sequence[Sequence[Any]] = (),
+        kind: str | None = None,
+        embedding: Sequence[float] | None = None,
+        writer: str | None = None,
+        episode: str | None = None,
+        now: _dt.datetime | None = None,
+        tenant: int | Namespace | None = None,
+    ) -> CorrectionReceipt:
+        """Correct a memory and the edges that change with it, in one transaction.
+
+        :meth:`supersede` corrects a sentence.  A correction is rarely only a sentence: when
+        the maintainer of a service changes from Bo to Cy, the ``maintains`` edge has to move
+        too, because ``RELATES_TO`` edges are what :meth:`recall_2hop` walks, and a graph that
+        keeps the old edge next to the new sentence says two things at once.  This verb runs
+        :meth:`supersede` on ``old_id``, then :meth:`unrelate` for each entry of
+        ``remove_relations``, then :meth:`relate` for each entry of ``add_relations``, inside
+        one transaction: the memory and its edges change together or not at all, and every
+        row written carries the same ``now``, so ``db.as_of(t)`` before it sees none of the
+        correction and at or after it sees all of it.
+
+        A relation is ``(src, dst)`` or ``(src, dst, rel_kind)``; each endpoint is an entity
+        name, id or :class:`~anatid.types.Entity`.  Opening an edge creates a missing entity,
+        as :meth:`relate` does.  Closing one closes every current edge between the two, in
+        either direction, or only those with ``rel_kind`` when it is given, as
+        :meth:`unrelate` does; a name that matches no entity raises
+        :class:`~anatid.errors.NotFoundError` and rolls the whole correction back.
+        ``entities``, ``kind``, ``embedding``, ``writer`` and ``episode`` go to
+        :meth:`supersede` unchanged, so ``entities=None`` inherits the old memory's.  For
+        :meth:`supersede`'s other options (``episode_source``, ``confidence``, ``memory_id``,
+        ``allow_fork``) call the three verbs yourself inside ``with db.transaction():``.
+
+        Raises what the verbs it runs raise: :class:`~anatid.errors.NotFoundError` for an
+        unknown ``old_id``, :class:`~anatid.errors.ConflictError` when another transaction
+        superseded the memory first, :class:`~anatid.errors.RangeError` for a ``now`` before
+        something the correction would close, :class:`~anatid.errors.ValidationError` for a
+        malformed relation.  A lost entity-creation race re-runs the whole correction, as in
+        :meth:`remember`.  Returns a :class:`~anatid.types.CorrectionReceipt`.
+        """
+        ns = self.resolve_tenant(tenant)
+        at = to_utc_naive(now) or utcnow()
+        additions = [_relation("add_relations", r) for r in add_relations]
+        removals = [_relation("remove_relations", r) for r in remove_relations]
+
+        def _work() -> CorrectionReceipt:
+            with self.transaction():
+                new = self.supersede(
+                    int(old_id),
+                    content,
+                    entities=entities,
+                    kind=kind,
+                    embedding=embedding,
+                    writer=writer,
+                    episode=episode,
+                    now=at,
+                    tenant=ns,
+                )
+                closed: list[tuple[Any, Any, str | None]] = []
+                edges_closed = 0
+                for src, dst, rel_kind in removals:
+                    count = self.unrelate(src, dst, rel_kind=rel_kind, tenant=ns, now=at)
+                    if count:
+                        closed.append((src, dst, rel_kind))
+                        edges_closed += count
+                opened = tuple(
+                    self.relate(src, dst, rel_kind=rel_kind, tenant=ns, writer=writer, now=at)
+                    for src, dst, rel_kind in additions
+                )
+                old = self.get(int(old_id), tenant=ns, with_embedding=False)
+            if old is None:  # pragma: no cover - supersede has just closed this row
+                raise NotFoundError(f"memory {old_id} not found in tenant {ns.tenant_id}")
+            return CorrectionReceipt(
+                old=old,
+                new=new,
+                at=at,
+                opened=opened,
+                closed=tuple(closed),
+                edges_closed=edges_closed,
+            )
+
+        return self._atomic(_work)
+
     def prune(
         self,
         *,
@@ -2174,6 +2330,11 @@ def context(db: MemoryVerbs, entity, **kw) -> list[Memory]:
 def supersede(db: MemoryVerbs, old_id: int, content: str, **kw) -> Memory:
     """Function form of :meth:`MemoryVerbs.supersede`."""
     return db.supersede(old_id, content, **kw)
+
+
+def correct(db: MemoryVerbs, old_id: int, content: str, **kw) -> CorrectionReceipt:
+    """Function form of :meth:`MemoryVerbs.correct`."""
+    return db.correct(old_id, content, **kw)
 
 
 def reinforce(db: MemoryVerbs, memory_id: int, **kw) -> Memory:

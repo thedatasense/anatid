@@ -395,6 +395,17 @@ def _prune_report():
     )
 
 
+def _correction_receipt():
+    return anatid_types.CorrectionReceipt(
+        old=_memory(version=2),
+        new=_memory(memory_id=8),
+        at=T0,
+        opened=(_edge(),),
+        closed=(("Bo", "ingest service", "maintains"), (5, 6, None)),
+        edges_closed=2,
+    )
+
+
 def _fts_status():
     return anatid_types.FtsStatus(
         available=True,
@@ -471,6 +482,7 @@ VALUE_TYPES = {
     "Provenance": _provenance,
     "ForgetReceipt": _forget_receipt,
     "PruneReport": _prune_report,
+    "CorrectionReceipt": _correction_receipt,
     "FtsStatus": _fts_status,
     "SchemaInfo": _schema_info,
     "DoctorFinding": _doctor_finding,
@@ -563,6 +575,7 @@ def test_recall_hits_carries_its_extra_attributes_across_the_wire():
         arms=("vector", "text", "graph"),
         as_of=_as_of(),
         notes=("fts index is stale",),
+        seeds=("Ada", "ingest service"),
     )
     back = P.loads(P.dumps(hits))
     assert isinstance(back, anatid_types.RecallHits)
@@ -573,7 +586,18 @@ def test_recall_hits_carries_its_extra_attributes_across_the_wire():
     assert back.arms == ("vector", "text", "graph")
     assert back.as_of == _as_of()
     assert back.notes == ("fts index is stale",)
+    assert back.seeds == ("Ada", "ingest service")
     assert back.memory_ids == hits.memory_ids
+
+
+def test_recall_hits_from_a_server_that_sends_no_seeds_decodes_with_none():
+    """A 0.3.0 server has no ``seeds``; the attribute comes back as the embedded default."""
+    raw = P.loads(P.dumps(anatid_types.RecallHits(arms=("text",))))
+    encoded = P.encode_value(anatid_types.RecallHits(arms=("text",)))
+    del encoded["v"]["seeds"]
+    back = P.decode_value(encoded)
+    assert back.seeds == () == raw.seeds
+    assert back.arms == ("text",)
 
 
 def test_an_empty_recall_hits_round_trips():

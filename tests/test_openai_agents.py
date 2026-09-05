@@ -635,9 +635,11 @@ def test_session_can_own_its_own_database(tmp_path):
 
 def test_writes_are_approval_gated_and_reads_are_not(db):
     tools = {t.name: t for t in create_memory_tools(db)}
-    assert set(tools) == {"anatid_remember", "anatid_recall", "anatid_context",
-                          "anatid_supersede", "anatid_forget", "anatid_provenance"}
-    for name in ("anatid_remember", "anatid_supersede", "anatid_forget"):
+    assert set(tools) == {"anatid_remember", "anatid_relate", "anatid_recall", "anatid_context",
+                          "anatid_supersede", "anatid_correct", "anatid_unrelate",
+                          "anatid_forget", "anatid_provenance"}
+    for name in ("anatid_remember", "anatid_relate", "anatid_supersede", "anatid_correct",
+                 "anatid_unrelate", "anatid_forget"):
         assert callable(tools[name].needs_approval), f"{name} must be approval-gated"
     for name in ("anatid_recall", "anatid_context", "anatid_provenance"):
         assert tools[name].needs_approval is False, f"{name} must not be gated"
@@ -666,7 +668,8 @@ def test_the_approval_policy_is_consulted_with_the_call(db):
 
 def test_default_policy_requires_approval_for_every_write(db):
     tools = {t.name: t for t in create_memory_tools(db)}
-    for name in ("anatid_remember", "anatid_supersede", "anatid_forget"):
+    for name in ("anatid_remember", "anatid_relate", "anatid_supersede", "anatid_correct",
+                 "anatid_unrelate", "anatid_forget"):
         assert run(tools[name].needs_approval(None, {}, "id")) is True
     assert always_require_approval(ApprovalRequest("anatid_remember", {}, "id")) is True
 

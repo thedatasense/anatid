@@ -81,8 +81,9 @@ from .errors import (
     TenantIsolationError,
     ValidationError,
 )
+from .embed import Embedder, EmbedderError, HashEmbedder, OpenAICompatibleEmbedder
 from .ids import new_id
-from .recall import BRUTE_FORCE_CEILING, FTS_STALENESS_POLICY, RRF_K
+from .recall import AUTO_SEED, AUTO_SEED_LIMIT, BRUTE_FORCE_CEILING, FTS_STALENESS_POLICY, RRF_K
 from .schema import (
     CONTRACT_NOTES,
     DEFAULT_EMBEDDING_DIM,
@@ -95,6 +96,7 @@ from .types import (
     RELATES_TO,
     SUPERSEDES,
     AsOf,
+    CorrectionReceipt,
     DoctorFinding,
     DoctorReport,
     Edge,
@@ -119,7 +121,7 @@ from .vector import VectorIndex, VectorSearch
 from .verbs import AsOfView, as_of
 from .visibility import Visibility, visible_at
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 __all__ = [
     "__version__",
@@ -139,6 +141,7 @@ __all__ = [
     "Provenance",
     "ForgetReceipt",
     "PruneReport",
+    "CorrectionReceipt",
     "FtsStatus",
     "SchemaInfo",
     "DoctorReport",
@@ -195,10 +198,17 @@ __all__ = [
     "atomic",
     "Attempt",
     "AtomicOutcome",
+    # embeddings
+    "Embedder",
+    "EmbedderError",
+    "HashEmbedder",
+    "OpenAICompatibleEmbedder",
     # constants
     "RRF_K",
     "BRUTE_FORCE_CEILING",
     "FTS_STALENESS_POLICY",
+    "AUTO_SEED",
+    "AUTO_SEED_LIMIT",
     # errors
     "AnatidError",
     "SchemaVersionError",

@@ -18,6 +18,24 @@ shapes that mattered are preserved:
 * The arms are fused with Reciprocal Rank Fusion, ``score = sum 1 / (k + rank)``, k = 60,
   1-based ranks, ties broken by ``memory_id ASC``.
 
+Where the graph arm's seeds come from
+------------------------------------
+The graph arm needs an entity to expand from.  :func:`hybrid_recall` finds one when the
+caller gives none: ``seed_entity="auto"`` (the default of :meth:`anatid.Anatid.recall`)
+matches the query's words against the tenant's entity names, case-insensitively, longest name
+first, and expands from up to :data:`AUTO_SEED_LIMIT` of them; ``seed_entity=None`` switches
+that off and an explicit entity is used as it always was.  The result reports what happened in
+``RecallHits.arms`` and ``RecallHits.seeds``.  The match is one statement (:func:`auto_seeds`):
+the query's word n-grams travel as one bound parameter, are split and lower-cased in SQL and
+hash-joined against ``lower(name)``, so its cost is the scan of the tenant's names and does
+not grow with the number of candidates.  Measured on this machine (duckdb 1.5.5, 10 threads):
+0.46 ms p50 at 1,000 entities in the tenant, 0.70 ms at 10,000, 1.90 ms at 100,000 (200,000 in
+the file), for 5-word and 72-word queries alike.  It compares ``lower(name)`` rather than the
+canonical ``entity_key`` because that column is a virtual generated one: filtering on it
+evaluates its ``regexp_replace`` per row (36 ms at 100k entities) and DuckDB 1.5.5 uses the ART
+index for neither, so a name stored with irregular internal whitespace is matched only when the
+query repeats it.
+
 Two limits this module states rather than hides
 ----------------------------------------------
 **The text arm lives in :mod:`anatid.fts`.**  Since 0.2 it is a derived index: a published base
@@ -74,6 +92,8 @@ from __future__ import annotations
 
 import datetime as _dt
 import logging
+import re
+import string
 from typing import Iterable, Sequence
 
 from . import fts as _fts
@@ -89,19 +109,26 @@ from .types import (
     RecallHit,
     RecallHits,
 )
-from .visibility import Visibility
+from .visibility import Visibility, tenant_sql
 
 log = logging.getLogger("anatid.recall")
 
 __all__ = [
     "RRF_K",
     "DEFAULT_CANDIDATES",
+    "AUTO_SEED",
+    "AUTO_SEED_LIMIT",
+    "AUTO_SEED_MAX_WORDS",
+    "AUTO_SEED_QUERY_WORDS",
     "BM25_K1",
     "BM25_B",
     "BRUTE_FORCE_CEILING",
     "FTS_STALENESS_POLICY",
     "recall_2hop_ids",
     "graph_arm",
+    "seed_candidates",
+    "auto_seeds",
+    "entity_name",
     "vector_arm",
     "vector_scan_rows",
     "bm25_arm",
@@ -117,6 +144,19 @@ __all__ = [
 
 RRF_K = 60
 DEFAULT_CANDIDATES = 50          # size of each arm's candidate list (spike R2_TOPN)
+
+#: ``seed_entity="auto"``: find the graph arm's seeds in the query (:func:`auto_seeds`).  It is
+#: the default of :meth:`anatid.Anatid.recall`; ``None`` disables the graph arm when no entity
+#: is named.  An entity whose name is literally ``auto`` is still reachable by id or as an
+#: :class:`~anatid.types.Entity`.
+AUTO_SEED = "auto"
+#: How many auto-detected seeds the graph arm expands from, longest name first.
+AUTO_SEED_LIMIT = 3
+#: The longest entity name, in words, the matcher looks for in the query.
+AUTO_SEED_MAX_WORDS = 5
+#: Only the first this many words of the query are matched; a question is short and a pasted
+#: document is not a question.
+AUTO_SEED_QUERY_WORDS = 40
 
 #: Above this many visible memories in one tenant, the brute-force cosine scan stops being
 #: cheap -- measured 8.6-11.4 ms p50 *at* this number, 23.3 ms at 1M (64 dims, this machine).
@@ -248,6 +288,167 @@ def graph_arm(
     rows = recall_2hop_ids(con, tenant_id=tenant_id, seed_entity_id=seed_entity_id,
                            limit=topn, hops=hops, as_of=as_of, backend=backend, kinds=kinds)
     return [(mid, float(len(rows) - i)) for i, (mid, _ts) in enumerate(rows)]
+
+
+def _graph_candidates(
+    con,
+    *,
+    tenant_id: int,
+    seed_entity_ids: Sequence[int],
+    hops: int,
+    topn: int,
+    as_of: AsOf = CURRENT,
+    backend: CsrBackend | None = None,
+    kinds: Sequence[str] | None = None,
+) -> list[tuple[int, float]]:
+    """:func:`graph_arm` from several seeds, merged into one newest-first list of ``topn``.
+
+    One frontier per seed (the benchmarked statement, unchanged), then a merge on
+    ``(created_at DESC, memory_id DESC)``, the order the single-seed statement returns.  A
+    memory reachable from two seeds appears once.  With one seed this is :func:`graph_arm`.
+    """
+    if len(seed_entity_ids) == 1:
+        return graph_arm(con, tenant_id=tenant_id, seed_entity_id=int(seed_entity_ids[0]),
+                         hops=hops, topn=topn, as_of=as_of, backend=backend, kinds=kinds)
+    merged: dict[int, _dt.datetime] = {}
+    for sid in seed_entity_ids:
+        for mid, ts in recall_2hop_ids(con, tenant_id=tenant_id, seed_entity_id=int(sid),
+                                       limit=topn, hops=hops, as_of=as_of, backend=backend,
+                                       kinds=kinds):
+            if mid not in merged or ts > merged[mid]:
+                merged[mid] = ts
+    rows = sorted(merged.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)[:topn]
+    return [(mid, float(len(rows) - i)) for i, (mid, _ts) in enumerate(rows)]
+
+
+# --------------------------------------------------------------------------- auto seeds
+#
+# ``seed_entity="auto"``: the query names the entities to expand from.  The matcher is
+# deliberately simple: whole words of the query against whole entity names, case-insensitive,
+# longest name first.  Anything cleverer belongs to the caller, who knows the domain, and the
+# match has to cost less than the graph query it feeds.  See the module docstring for
+# the measurement.
+
+#: Separates the candidate n-grams inside the one bound parameter.  A word containing it is
+#: dropped from matching rather than escaped: it does not occur in text.
+_CANDIDATE_SEP = "\x1f"
+_TRIM_CHARS = string.punctuation + "\u201c\u201d\u2018\u2019\u00ab\u00bb\u2026"
+_POSSESSIVE = ("'s", "\u2019s")
+_WORD_SPLIT = re.compile(r"[-_]")
+
+#: The one statement behind :func:`auto_seeds`.  The candidates arrive as one VARCHAR, are
+#: split and lower-cased inside DuckDB, and are hash-joined against ``lower(name)``: the cost is
+#: the scan of the tenant's names and does not grow with the candidates (binding a Python list
+#: costs about 65 us per element in duckdb-python 1.5.5, which is why it is a string).  ``raw``
+#: comes back so the match can be tied to the span of the query it came from without comparing
+#: Python's ``lower()`` with DuckDB's.
+_SEED_MATCH_SQL = (
+    "SELECT e.entity_id, e.name, c.raw FROM entities e "
+    "JOIN (SELECT raw, lower(raw) AS key FROM "
+    "      (SELECT unnest(string_split(?, chr(31))) AS raw)) c ON lower(e.name) = c.key "
+    f"WHERE {tenant_sql('e')}"
+)
+
+
+def _query_words(query: str) -> list[str]:
+    """The query as matchable words: punctuation trimmed, possessives dropped, hyphenated and
+    underscored compounds split so ``ingest-service`` and ``ingest service`` are the same words.
+    Capped at :data:`AUTO_SEED_QUERY_WORDS`."""
+    words: list[str] = []
+    for token in query.split():
+        token = token.strip(_TRIM_CHARS)
+        low = token.lower()
+        for suffix in _POSSESSIVE:
+            if low.endswith(suffix) and len(token) > len(suffix):
+                token = token[: -len(suffix)]
+                break
+        for part in _WORD_SPLIT.split(token):
+            part = part.strip(_TRIM_CHARS)
+            if part and _CANDIDATE_SEP not in part:
+                words.append(part)
+                if len(words) >= AUTO_SEED_QUERY_WORDS:
+                    return words
+    return words
+
+
+def seed_candidates(
+    query: str, *, max_words: int = AUTO_SEED_MAX_WORDS
+) -> dict[str, tuple[int, int]]:
+    """Every entity name the query could contain, as ``{candidate: (start, end)}`` word spans.
+
+    Candidates are the word n-grams of :func:`_query_words` for ``n`` from ``max_words`` down to
+    1, each multi-word n-gram in three spellings (space-, hyphen- and underscore-joined) so a
+    name stored as ``ingest-service`` is found by a question that says ``ingest service``.
+    Insertion order is longest first, then left to right; a candidate that occurs twice keeps
+    its first span.  Case is preserved: the SQL side lower-cases both sides.
+    """
+    words = _query_words(query)
+    out: dict[str, tuple[int, int]] = {}
+    for n in range(min(max_words, len(words)), 0, -1):
+        for i in range(len(words) - n + 1):
+            segment = words[i:i + n]
+            forms = [" ".join(segment)]
+            if n > 1:
+                forms.append("-".join(segment))
+                forms.append("_".join(segment))
+            for form in forms:
+                out.setdefault(form, (i, i + n))
+    return out
+
+
+def auto_seeds(
+    con,
+    *,
+    tenant_id: int,
+    query: str,
+    limit: int = AUTO_SEED_LIMIT,
+) -> list[tuple[int, str]]:
+    """Entities named in ``query``, as ``[(entity_id, name)]``, longest name first, at most
+    ``limit`` of them.
+
+    Matching is whole words against whole names, case-insensitive (``lower()`` on both sides,
+    evaluated by DuckDB), over the tenant's ``entities`` table with no time filter, exactly as
+    an explicit ``seed_entity="Ada"`` resolves.  Overlapping matches are settled longest first
+    and then left to right: a query that says ``Project Kestrel`` seeds from that entity and
+    not additionally from one named ``Kestrel``.  One statement, one bound parameter; the
+    module docstring has the measured cost.
+    """
+    candidates = seed_candidates(query)
+    if not candidates or limit <= 0:
+        return []
+    rows = con.execute(
+        _SEED_MATCH_SQL, [_CANDIDATE_SEP.join(candidates), int(tenant_id)]
+    ).fetchall()
+    matches: list[tuple[int, int, int, str, int, int]] = []
+    for eid, name, raw in rows:
+        span = candidates.get(raw)
+        if span is None:  # pragma: no cover - raw round-trips through DuckDB unchanged
+            continue
+        start, end = span
+        matches.append((-(end - start), start, int(eid), str(name), start, end))
+    matches.sort()
+    chosen: list[tuple[int, str]] = []
+    taken: list[tuple[int, int]] = []
+    seen: set[int] = set()
+    for _length, _pos, eid, name, start, end in matches:
+        if eid in seen or any(start < t_end and t_start < end for t_start, t_end in taken):
+            continue
+        chosen.append((eid, name))
+        taken.append((start, end))
+        seen.add(eid)
+        if len(chosen) >= limit:
+            break
+    return chosen
+
+
+def entity_name(con, *, tenant_id: int, entity_id: int) -> str | None:
+    """The stored name of one entity in one tenant, or None.  Used to report an explicit seed
+    in ``RecallHits.seeds`` the same way an auto-detected one is reported."""
+    row = con.execute(
+        f"SELECT name FROM entities e WHERE e.entity_id = ? AND {tenant_sql('e')}",
+        [int(entity_id), int(tenant_id)],
+    ).fetchone()
+    return None if row is None or row[0] is None else str(row[0])
 
 
 # --------------------------------------------------------------------------- vector arm
@@ -520,7 +721,7 @@ def hybrid_recall(
     embedding: Sequence[float] | None = None,
     dim: int,
     k: int = 10,
-    seed_entity: int | None = None,
+    seed_entity: int | Sequence[int] | str | None = AUTO_SEED,
     hops: int = 2,
     as_of: AsOf = CURRENT,
     kinds: Sequence[str] | None = None,
@@ -532,12 +733,24 @@ def hybrid_recall(
     on_stale_fts: str = "report",
     allow_slow: bool = False,
     vector_index=None,
+    on_ceiling: str = "error",
 ) -> RecallHits:
     """Hybrid retrieval: cosine top-N + BM25 top-N + optional k-hop graph expansion, fused by RRF.
 
     Arms run only when their input is present: the vector arm needs ``embedding``, the BM25 arm
-    needs ``query`` **and** an fts index, the graph arm needs ``seed_entity``.  With no usable arm
-    the result is empty rather than a silent full-table scan.
+    needs ``query`` **and** an fts index, the graph arm needs a seed.  With no usable arm the
+    result is empty rather than a silent full-table scan.
+
+    ``seed_entity`` is where the graph arm starts:
+
+    * :data:`AUTO_SEED` (``"auto"``, the default): the seeds are the entities the query names
+      (:func:`auto_seeds`), up to :data:`AUTO_SEED_LIMIT` of them, longest name first.  With no
+      query, or a query that names no entity, the graph arm does not run.
+    * an ``int`` entity id, or a sequence of them: expand from exactly those.
+    * ``None``: no graph arm.
+
+    The result says what happened: ``RecallHits.arms`` lists the arms that ran and
+    ``RecallHits.seeds`` the entity names the graph arm expanded from, in the order they ran.
 
     ``vector_index`` is this handle's :class:`anatid.vector.VectorIndex` when it holds one.  It
     is optional: the vector backend is recorded in the FILE, so the arm finds the published
@@ -552,11 +765,17 @@ def hybrid_recall(
     The brute-force cosine ceiling is enforced here: when ``embedding`` is given and the rows the
     vector arm would scan (:func:`vector_scan_rows`) exceed :data:`BRUTE_FORCE_CEILING`, this
     raises :class:`~anatid.errors.BruteForceCeilingError` before running any arm, unless
-    ``allow_slow=True``.  The other two arms are unaffected by the tenant's size; leave
-    ``embedding`` out to use them alone.  See the module docstring for the measured costs.
+    ``allow_slow=True``.  ``on_ceiling="skip"`` drops the vector arm instead and says so in
+    ``notes``; :meth:`anatid.Anatid.recall` passes that when the embedding came from the
+    handle's own embedder rather than from the caller, so configuring an embedder never turns
+    a recall that used to answer into one that raises.  The other two arms are unaffected by
+    the tenant's size; leave ``embedding`` out to use them alone.  See the module docstring
+    for the measured costs.
     """
     arms: dict[str, list[tuple[int, float]]] = {}
     notes: list[str] = []
+    if on_ceiling not in ("error", "skip"):
+        raise ValueError(f"on_ceiling must be 'error' or 'skip', got {on_ceiling!r}")
 
     if embedding is not None:
         # Resolved once and handed to both calls: the ceiling check and the arm must agree on
@@ -566,7 +785,15 @@ def hybrid_recall(
             ceiling = int(BRUTE_FORCE_CEILING)
             rows_to_scan = vector_scan_rows(con, tenant_id=tenant_id, as_of=as_of, kinds=kinds,
                                             plan=plan)
-            if rows_to_scan > ceiling:
+            if rows_to_scan > ceiling and on_ceiling == "skip":
+                notes.append(
+                    f"vector arm skipped: it would brute-force scan {rows_to_scan} embeddings "
+                    f"in tenant {int(tenant_id)}, above BRUTE_FORCE_CEILING={ceiling}, and this "
+                    f"database has no usable ANN generation ({plan.reason.value}: "
+                    f"{plan.detail}); pass embedding= and allow_slow=True to run it anyway, "
+                    f"or attach the duckdb_vss backend (anatid.vector.attach)")
+                embedding = None
+            elif rows_to_scan > ceiling:
                 raise BruteForceCeilingError(
                     f"the vector arm would brute-force scan {rows_to_scan} embeddings in tenant "
                     f"{int(tenant_id)}, above BRUTE_FORCE_CEILING={ceiling}; this database has "
@@ -576,8 +803,9 @@ def hybrid_recall(
                     f"the duckdb_vss backend (anatid.vector.attach), or shard the tenant into "
                     f"its own file (anatid.DatabasePool).",
                     tenant_id=int(tenant_id), rows=rows_to_scan, ceiling=ceiling)
-        arms["vector"] = vector_arm(con, tenant_id=tenant_id, embedding=embedding, dim=dim,
-                                    topn=candidates, as_of=as_of, kinds=kinds, plan=plan)
+        if embedding is not None:
+            arms["vector"] = vector_arm(con, tenant_id=tenant_id, embedding=embedding, dim=dim,
+                                        topn=candidates, as_of=as_of, kinds=kinds, plan=plan)
 
     # Staleness is asked for per tenant: a rebuild is file-wide, but since schema v3 another
     # tenant's rows can change neither this tenant's BM25 hits nor its scores, so counting them
@@ -598,10 +826,33 @@ def hybrid_recall(
         status = FtsStatus(available=False, stale=False, indexed_rows=None, current_rows=0,
                            pending_rows=0, indexed_at=None, policy=FTS_STALENESS_POLICY)
 
-    if seed_entity is not None:
-        arms["graph"] = graph_arm(con, tenant_id=tenant_id, seed_entity_id=int(seed_entity),
-                                  hops=hops, topn=candidates, as_of=as_of, backend=backend,
-                                  kinds=kinds)
+    # The graph arm's seeds: named by the caller, or found in the query.
+    seeds: list[tuple[int, str]] = []
+    if isinstance(seed_entity, str):
+        if seed_entity != AUTO_SEED:
+            raise TypeError(
+                f"hybrid_recall takes seed_entity as an entity id, a sequence of ids, "
+                f"{AUTO_SEED!r} or None, not the name {seed_entity!r}; resolve names with "
+                f"Anatid.entity_id() or call Anatid.recall()")
+        if query:
+            seeds = auto_seeds(con, tenant_id=tenant_id, query=query)
+    elif isinstance(seed_entity, bool):
+        raise TypeError("seed_entity must be an entity id, a sequence of ids, 'auto' or None, "
+                        "not a bool")
+    elif isinstance(seed_entity, int):
+        sid = int(seed_entity)
+        seeds = [(sid, entity_name(con, tenant_id=tenant_id, entity_id=sid) or str(sid))]
+    elif seed_entity is not None:
+        for sid in seed_entity:
+            sid = int(sid)
+            if all(sid != s for s, _n in seeds):
+                seeds.append((sid, entity_name(con, tenant_id=tenant_id, entity_id=sid)
+                              or str(sid)))
+    if seeds:
+        arms["graph"] = _graph_candidates(con, tenant_id=tenant_id,
+                                          seed_entity_ids=[sid for sid, _n in seeds],
+                                          hops=hops, topn=candidates, as_of=as_of,
+                                          backend=backend, kinds=kinds)
 
     if query and status.stale:
         # What "stale" MEANS depends on which half of anatid.fts answered, so the sentence comes
@@ -640,4 +891,5 @@ def hybrid_recall(
         arms=tuple(arms),
         as_of=as_of,
         notes=tuple(notes),
+        seeds=tuple(name for _sid, name in seeds),
     )

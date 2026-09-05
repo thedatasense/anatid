@@ -106,13 +106,14 @@ def server(mcp_db):
 
 
 MEMORY_TOOLS = {
-    "remember", "relate", "supersede", "reinforce", "forget", "prune", "rebuild_fts_index",
-    "recall", "context", "get", "provenance", "stats",
+    "remember", "relate", "unrelate", "supersede", "correct", "reinforce", "forget", "prune",
+    "rebuild_fts_index", "recall", "context", "get", "provenance", "stats",
 }
 #: What a server with the escape hatch opted in exposes.
 EXPECTED_TOOLS = MEMORY_TOOLS | {"sql"}
 READ_ONLY_TOOLS = {"recall", "context", "get", "provenance", "stats", "sql"}
-DESTRUCTIVE_TOOLS = {"forget", "prune"}
+#: `unrelate` and `correct` close edges; the server module's docstring says why that is marked.
+DESTRUCTIVE_TOOLS = {"forget", "prune", "unrelate", "correct"}
 
 
 def test_lists_tools_with_schemas_and_annotations(server):

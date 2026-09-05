@@ -10,8 +10,19 @@ Configuration is environment-first, because that is what a client's JSON config 
 
 ===============================  =========================================================
 ``ANATID_DB``                    database file, or ``:memory:``.  Default ``~/.anatid/memory.anatid``
+``ANATID_SOCKET``                a running ``anatid-server``'s Unix socket, instead of a file
+``ANATID_HTTP_URL``              a running ``anatid-server``'s HTTP listener, instead of a file
+``ANATID_TOKEN`` / ``_FILE``     bearer token for ``ANATID_HTTP_URL``, or a file holding one
 ``ANATID_TENANT``                tenant id (int).  Default ``0``
 ``ANATID_EMBEDDING_DIM``         ``N`` in ``FLOAT[N]``, only when creating a new file.  Default 1536
+``ANATID_EMBED_BASE_URL``        an OpenAI-compatible ``/embeddings`` endpoint; turns the vector arm on
+``ANATID_EMBED_MODEL``           the embedding model at that endpoint
+``ANATID_EMBED_API_KEY``         its key, optional for a local endpoint
+``ANATID_EMBED_HASH``            ``1`` embeds with the offline hash stand-in instead (demos, tests)
+``ANATID_EXTRACT_BASE_URL``      an OpenAI-compatible chat endpoint; registers ``ingest`` and ``apply_patch``
+``ANATID_EXTRACT_MODEL``         the chat model that proposes memory patches from text
+``ANATID_EXTRACT_API_KEY``       its key, optional for a local endpoint
+``ANATID_EXTRACT_REASONING``     ``1`` sends ``{"reasoning": {"enabled": true}}`` with every request
 ``ANATID_READ_ONLY``             ``1`` opens the database read-only; write tools are not registered
 ``ANATID_ENABLE_SQL``            ``1`` registers the raw-SQL escape hatch.  **Default off**
 ``ANATID_SQL_TOOL``              legacy name; ``off`` still forces the escape hatch off
@@ -22,6 +33,12 @@ Configuration is environment-first, because that is what a client's JSON config 
 ``ANATID_MCP_HOST`` / ``_PORT``  bind address for the HTTP transports.  Default ``127.0.0.1:8765``
 ``ANATID_MCP_AUTH``              declares that an authenticating proxy fronts an HTTP transport
 ===============================  =========================================================
+
+Backends.  A file is opened in this process (the embedded profile: one MCP server per file,
+because DuckDB gives one process exclusive use of a database file).  A socket or URL connects to
+a running ``anatid-server`` that holds the file, so any number of MCP clients share one memory.
+:func:`anatid.integrations.mcp.backend.open_backend` makes that choice; the tools do not branch
+on it.  See ``docs/mcp.md``, "Sharing one memory between clients".
 
 The SQL escape hatch is **opt-in**.  ``sql`` runs arbitrary read-only SQL, and a default-on
 arbitrary-SQL primitive is exactly what a prompt-injected model wants; it is registered only when
@@ -41,12 +58,41 @@ not isolation: DuckDB has no row-level security, so anything that reaches raw SQ
 file.  Real isolation is one file per tenant (:class:`anatid.DatabasePool`), which for MCP means
 one server process per tenant, each with its own ``ANATID_DB``.
 
-Destructive tools.  ``forget`` and ``prune`` carry ``ToolAnnotations(destructiveHint=True)`` so a
-client can prompt before running them.  Annotations are per *tool*, not per *argument*, so both
-are marked even though only ``forget(hard=true)`` and ``prune(dry_run=false)`` actually remove
-anything -- marking the tool is the conservative reading, and the descriptions say which argument
-makes it bite.  Every other write tool is ``destructiveHint=False``; every read tool is
-``readOnlyHint=True``.
+Destructive tools.  ``forget``, ``prune``, ``unrelate`` and ``correct`` carry
+``ToolAnnotations(destructiveHint=True)`` so a client can prompt before running them.
+Annotations are per *tool*, not per *argument*, so all four are marked even though only
+``forget(hard=true)`` and ``prune(dry_run=false)`` actually remove anything, and ``correct``
+closes edges only when ``remove_relations`` names some.  Marking the tool is the conservative
+reading, and the descriptions say which argument makes it bite.  ``unrelate`` and ``correct``
+delete nothing: they close edge versions, which a read with ``as_of`` before the close still
+traverses.  The graph stops saying something it said, and that is what the hint is for.
+Every other write tool is ``destructiveHint=False``; every read tool is ``readOnlyHint=True``.
+
+Graph maintenance.  ``relate``, ``unrelate`` and ``correct`` are the tools an agent maintains the
+graph with.  Memories are filed under the entities they name and nothing links those entities
+until an edge does: "Ada leads Kestrel", "Kestrel owns the ingest service" and "Bo maintains the
+ingest service", remembered by name alone, leave ``recall(seed_entity="Ada")`` with the first
+fact only, until ``relate(Ada, Kestrel)`` and ``relate(Kestrel, ingest service)`` bring the other
+two within two hops.  ``correct`` is :meth:`anatid.Anatid.correct`: one ``supersede`` plus the
+edges the correction closes and opens, in one transaction.  It is registered when the backend
+has the verb, which both the embedded handle and ``AnatidClient`` do since 0.4.0.
+
+Recall by default.  ``recall(query)`` with no ``seed_entity`` runs the text arm and the graph
+arm: the query's words are matched against this tenant's entity names (longest name first, at
+most three) and the graph arm expands from each match.  The result's ``seeds`` lists the names
+it used and ``arms`` the arms that ran.  With ``ANATID_EMBED_*`` set the handle embeds every
+``remember`` and every query, so the vector arm runs too and nothing about the tools changes.
+The embedder belongs to the process that holds the file, so it is configured on an
+``anatid-mcp`` that opens the file itself and refused, with the reason, on one that talks to a
+server over a socket.
+
+Ingestion.  With ``ANATID_EXTRACT_*`` set, ``ingest(text)`` hands the note and the facts the
+graph already holds about the entities it names to the configured model, which proposes a
+:class:`~anatid.ingest.MemoryPatch`; the tool returns the patch, its diff and a ``patch_id`` and
+writes nothing.  ``apply_patch(patch_id)`` commits that patch, unchanged or edited, in one
+transaction with the note stored first as the episode every row cites.  Declining is not calling
+``apply_patch``.  The pipeline runs on the file's own connection, so like the SQL escape hatch
+it is refused for a socket backend.
 """
 
 from __future__ import annotations
@@ -58,8 +104,9 @@ import ipaddress
 import os
 import socket
 import sys
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence
 
 import duckdb
 from mcp.server.mcpserver import MCPServer
@@ -89,6 +136,25 @@ from ..wire import (
     wire_ids,
     wire_unsafe_ints,
 )
+from anatid.ingest import Extractor, MemoryPatch
+from anatid.ingest import propose as propose_patch
+
+from .backend import (
+    BackendConfigError,
+    BackendError,
+    check_ingest_backend,
+    check_sql_backend,
+    open_backend,
+    start_hint,
+)
+from .embedding import add_cli_arguments as add_embedding_arguments
+from .embedding import describe_embedder
+from .ingest import (
+    ExtractorConfigError,
+    PendingPatches,
+    describe_extractor,
+    extractor_from_config,
+)
 from .sqlgate import (
     DEFAULT_MEMORY_LIMIT,
     DEFAULT_TIMEOUT_SECONDS,
@@ -97,6 +163,9 @@ from .sqlgate import (
     SqlNotAllowed,
     SqlTimeout,
 )
+
+if TYPE_CHECKING:  # pragma: no cover - typing only
+    from anatid.server.client import AnatidClient
 
 __all__ = [
     "build_server",
@@ -120,9 +189,21 @@ anatid is a bitemporal graph memory for agents, stored in one embedded DuckDB fi
 
 Write with `remember` (facts, with the entities they are about) and `relate` (entity->entity
 edges, which is what makes graph recall reach further than one hop). Read with `recall`
-(hybrid: BM25 text + graph expansion, fused with RRF) and `context` (everything about one
-entity). Correct a memory with `supersede`, which keeps the old version and the audit trail;
-`provenance` walks that chain back to the raw source text.
+(hybrid: BM25 text + graph expansion, plus cosine when the server has an embedder, fused with
+RRF) and `context` (everything about one entity). A `recall` with a query and no seed_entity
+finds its own seeds: entity names that occur in the query, longest first, at most three, and the
+graph arm expands from each; the result's `seeds` says which, and `arms` says which arms ran.
+Name a seed_entity to expand from exactly that one. Correct a memory with `supersede`, which
+keeps the old version and the audit trail; `provenance` walks that chain back to the raw source
+text.
+
+Memories are filed under the entities they name, and nothing links those entities to each other
+until you `relate` them. Add an edge when two entities are connected in the world (a person and
+their team, a team and the service it owns) so that a `recall` seeded on either one reaches the
+facts about the other; traversal is undirected and goes up to two hops. Retire an edge with
+`unrelate` when the relationship itself has ended. When a correction changes who is connected
+to what, use `correct` instead of `supersede`: it supersedes the memory and closes and opens the
+edges you name, in one transaction, so the graph never says two things at once.
 
 Nothing is ever silently overwritten. `forget` closes a memory's validity by default and only
 erases when you pass hard=true; `prune` is a dry run unless you pass dry_run=false.
@@ -145,6 +226,18 @@ where the text arm could not answer exactly, which takes a database with no gene
 built and more than 100,000 memories in this tenant. Graph and vector arms are always current
 too.\
 """
+
+#: Appended to :data:`INSTRUCTIONS` only when an extractor is configured, for the same reason as
+#: :data:`SQL_INSTRUCTIONS`: a model is told about a tool exactly when it is there.
+INGEST_INSTRUCTIONS = """
+
+To store a note, a message or a document rather than one fact at a time, call `ingest(text)`.
+It proposes a memory patch (facts to add, facts to correct, edges to open and close, names
+that mean an existing entity) resolved against what the graph already holds, and returns the
+patch, its diff and a patch_id without writing anything. Show the diff to the person you are
+working for. `apply_patch(patch_id)` commits it in one transaction, with the note stored as the
+episode every new row cites; pass an edited `patch` to change it first. To decline, do not
+call apply_patch."""
 
 #: Appended to :data:`INSTRUCTIONS` only when the operator opted the escape hatch in, so a model
 #: talking to a default server is never told about a tool that is not there.
@@ -256,6 +349,7 @@ def _hits(hits: RecallHits) -> dict[str, Any]:
         "hits": [_hit(h) for h in hits],
         "count": len(hits),
         "arms": list(hits.arms),
+        "seeds": list(hits.seeds),
         "bm25_available": hits.bm25_available,
         "bm25_stale": hits.bm25_stale,
         "pending_fts_rows": hits.pending_fts_rows,
@@ -367,6 +461,28 @@ def _entity_ref(value: str) -> int | str:
     return value
 
 
+@dataclass
+class Relation:
+    """One RELATES_TO edge as the ``correct`` tool takes it: ``{src, dst, rel_kind?}``.
+
+    ``src`` and ``dst`` are :class:`~anatid.integrations.wire.WireEntityRef`, so each is an
+    entity name or a decimal entity_id string, with an integer id still accepted.  The server
+    builds this into the tool's input schema and hands the tool body instances of this class.
+    """
+
+    src: WireEntityRef
+    dst: WireEntityRef
+    rel_kind: str | None = None
+
+
+def _relation_tuple(value: Any) -> tuple[int | str, int | str, str | None]:
+    """A :class:`Relation`, or the mapping a client sent for one, resolved for the verb."""
+    if isinstance(value, dict):
+        return (_entity_ref(str(value["src"])), _entity_ref(str(value["dst"])),
+                value.get("rel_kind"))
+    return (_entity_ref(str(value.src)), _entity_ref(str(value.dst)), value.rel_kind)
+
+
 def _guard(fn: Callable[..., Any]) -> Callable[..., Any]:
     """Turn anatid's own failures into MCP tool errors the model can read and act on.
 
@@ -425,8 +541,13 @@ class ServerConfig:
         self,
         *,
         db: str | None = None,
+        socket: str | None = None,
+        http_url: str | None = None,
+        token: str | None = None,
+        token_file: str | None = None,
         tenant: int | None = None,
         embedding_dim: int | None = None,
+        embed_hash: bool | None = None,
         read_only: bool | None = None,
         sql_tool: bool | None = None,
         max_rows: int | None = None,
@@ -439,7 +560,28 @@ class ServerConfig:
         env: dict[str, str] | None = None,
     ) -> None:
         e = os.environ if env is None else env
+        #: The mapping this configuration was read from.  The embedding and extraction
+        #: settings (``ANATID_EMBED_*``, ``ANATID_EXTRACT_*``) are read from it by
+        #: :func:`~anatid.integrations.mcp.backend.open_backend` and :func:`build_server`
+        #: rather than copied here, so their parsing lives next to the objects they build.
+        self.env: Mapping[str, str] = e
+        #: ``--embed-hash``: True selects the offline hash embedder, None lets ``ANATID_EMBED_HASH``
+        #: decide.  The endpoint settings have no flag, because a key belongs in the
+        #: environment rather than in ``ps`` output.
+        self.embed_hash = embed_hash
         self.db = db if db is not None else e.get("ANATID_DB", DEFAULT_DB_PATH)
+        #: Whether a file was NAMED, by flag or by environment, as opposed to defaulted.  A
+        #: socket client opens no file, so a named file next to a socket is refused rather
+        #: than ignored; the default path next to a socket is simply unused.
+        self.db_explicit = db is not None or "ANATID_DB" in e
+        # The server profile.  An empty string means unset, so a config block that clears
+        # ANATID_SOCKET="" falls back to the file the way an absent variable would.
+        self.socket = (socket if socket is not None else e.get("ANATID_SOCKET", "")) or None
+        self.http_url = (http_url if http_url is not None else e.get("ANATID_HTTP_URL", "")) or None
+        self.token = (token if token is not None else e.get("ANATID_TOKEN", "")) or None
+        self.token_file = (
+            token_file if token_file is not None else e.get("ANATID_TOKEN_FILE", "")
+        ) or None
         self.tenant = tenant if tenant is not None else int(e.get("ANATID_TENANT", "0"))
         self.embedding_dim = (
             embedding_dim if embedding_dim is not None
@@ -488,6 +630,20 @@ class ServerConfig:
         """
         return self.auth is not None
 
+    @property
+    def remote(self) -> bool:
+        """Whether the tools talk to a running ``anatid-server`` rather than open a file."""
+        return self.socket is not None or self.http_url is not None
+
+    @property
+    def target(self) -> str:
+        """What this server opens or connects to, for messages: the socket, the URL or the file."""
+        if self.socket is not None:
+            return self.socket
+        if self.http_url is not None:
+            return self.http_url
+        return self.db
+
     def resolved_db(self) -> str:
         """Expand ``~`` and create the parent directory for a file-backed database."""
         if self.db == ":memory:":
@@ -498,7 +654,8 @@ class ServerConfig:
         return str(p)
 
     def __repr__(self) -> str:                                        # pragma: no cover
-        return (f"<ServerConfig db={self.db!r} tenant={self.tenant} read_only={self.read_only} "
+        return (f"<ServerConfig db={self.db!r} socket={self.socket!r} "
+                f"http_url={self.http_url!r} tenant={self.tenant} read_only={self.read_only} "
                 f"sql_tool={self.sql_tool} transport={self.transport!r} host={self.host!r} "
                 f"authenticated={self.authenticated}>")
 
@@ -607,27 +764,52 @@ def check_transport_security(cfg: ServerConfig) -> None:
 # --------------------------------------------------------------------------- the server
 
 
-def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
+def build_server(
+    db: Anatid | AnatidClient,
+    config: ServerConfig | None = None,
+    *,
+    extractor: Extractor | None = None,
+) -> MCPServer:
     """Register anatid's verbs as MCP tools on a new :class:`~mcp.server.mcpserver.MCPServer`.
 
-    ``db`` is an already-open :class:`anatid.Anatid`.  The server does **not** take ownership of
-    it -- :func:`main` opens and closes it; a test can pass an in-memory handle and close it
-    itself.  Every tool is pinned to ``db.namespace``; see the module docstring on tenancy.
+    ``db`` is an already-open :class:`anatid.Anatid`, or an
+    :class:`~anatid.server.client.AnatidClient` connected to a running ``anatid-server``
+    (:func:`~anatid.integrations.mcp.backend.open_backend` returns whichever the configuration
+    names).  The two answer the same verbs, so no tool below asks which it has.  The server does
+    **not** take ownership of ``db`` -- :func:`main` opens and closes it; a test can pass an
+    in-memory handle and close it itself.  Every tool is pinned to ``db.namespace``; see the
+    module docstring on tenancy.
 
     Raises :class:`InsecureTransport` when ``config`` asks for an HTTP transport on a
     non-loopback interface with no authentication declared -- here as well as in :func:`main`,
     so a program that builds the server itself and calls ``server.run(...)`` cannot skip the
     check.  Registering the ``sql`` tool additionally hardens ``db``'s DuckDB instance; see
     :class:`~anatid.integrations.mcp.sqlgate.SqlGateway`.
+
+    ``extractor`` is an :class:`~anatid.ingest.Extractor`; given one, or with
+    ``ANATID_EXTRACT_*`` set in ``config.env``, the ``ingest`` and ``apply_patch`` tools are
+    registered.  They need the embedded handle (the pipeline runs on the file's own connection),
+    so an extractor with an ``AnatidClient`` is refused here the way the SQL tool is.
     """
     cfg = config or ServerConfig()
     check_transport_security(cfg)
+    check_sql_backend(db, cfg)
+    if extractor is None and not db.read_only:
+        extractor = extractor_from_config(env=cfg.env)
+    if extractor is not None:
+        check_ingest_backend(db, cfg)
     tenant_id = db.namespace.tenant_id
     server = MCPServer(
         "anatid",
         title="anatid graph memory",
         version=anatid.__version__,
-        instructions=INSTRUCTIONS + (SQL_INSTRUCTIONS if cfg.sql_tool else ""),
+        instructions=INSTRUCTIONS
+        + (INGEST_INSTRUCTIONS if extractor is not None and not db.read_only else "")
+        + (SQL_INSTRUCTIONS if cfg.sql_tool else ""),
+    )
+    #: Proposed patches waiting for ``apply_patch``; exists only with an extractor.
+    pending: PendingPatches | None = (
+        PendingPatches() if extractor is not None and not db.read_only else None
     )
 
     # Built before any tool is registered so `stats` can report the hardening that building it
@@ -648,6 +830,9 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
                                  idempotent_hint=False, open_world_hint=False)
     destructive_tool = ToolAnnotations(read_only_hint=False, destructive_hint=True,
                                        idempotent_hint=False, open_world_hint=False)
+    # `ingest` changes nothing in the database and sends the note to an external model.
+    propose_tool = ToolAnnotations(read_only_hint=True, destructive_hint=False,
+                                   idempotent_hint=False, open_world_hint=True)
 
     # ------------------------------------------------------------------ writes
 
@@ -743,6 +928,85 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             return {"memory": _memory(m), "superseded": wire_id(int(old_id))}
 
         @server.tool(
+            title="Unrelate two entities",
+            annotations=destructive_tool,
+            description=(
+                "DESTRUCTIVE for what the graph says; it deletes nothing. Retire the "
+                "RELATES_TO edges between two entities, given by name or as decimal entity_id "
+                "strings. Use it when the relationship itself has ended in the world (Bo no "
+                "longer maintains the ingest service). A fact that changed while the two stay "
+                "connected calls for `supersede` or `correct` instead. Every current edge "
+                "between the two, in either direction, is closed, or only those with `rel_kind` "
+                "when it is given. Closing writes a new edge version and deletes nothing: "
+                "`recall` and `context` stop walking the edge from now on, and a read with "
+                "`as_of` before now still does. An unknown entity name is an error. Returns "
+                "how many edge versions closed; 0 means nothing was current between the two."
+            ),
+        )
+        @_guard
+        def unrelate(
+            src: WireEntityRef,
+            dst: WireEntityRef,
+            rel_kind: str | None = None,
+        ) -> dict[str, Any]:
+            closed = db.unrelate(_entity_ref(src), _entity_ref(dst), rel_kind=rel_kind)
+            return {"src": src, "dst": dst, "rel_kind": rel_kind, "edges_closed": closed}
+
+        if hasattr(db, "correct"):
+
+            @server.tool(
+                title="Correct a memory and its edges",
+                annotations=destructive_tool,
+                description=(
+                    "Replace a memory with a corrected version and move the RELATES_TO edges "
+                    "that change with it, in one transaction: `supersede` on old_id, then close "
+                    "every edge named in remove_relations, then open every edge named in "
+                    "add_relations. If any step fails nothing lands, so the graph never says "
+                    "two things at once. Use it instead of `supersede` when a correction "
+                    "changes who is connected to what (a maintainer changes, an allergy moves "
+                    "from one ingredient to another); use `supersede` when only the wording or "
+                    "a detail changes. Each relation is {src, dst, rel_kind?}, entities by name "
+                    "(created on demand when opening, must exist when closing) or as decimal "
+                    "entity_id strings; a remove entry closes every current edge between its "
+                    "two entities, or only those with its rel_kind when given. Leave `entities` "
+                    "unset to inherit the old memory's ABOUT set. remove_relations is what "
+                    "makes this tool destructive: it closes edges the way `unrelate` does, "
+                    "deleting nothing. The result lists the edges opened, the relations that "
+                    "closed at least one edge, and `edges_closed`, the number of edge versions "
+                    "closed in total."
+                ),
+            )
+            @_guard
+            def correct(
+                old_id: WireId,
+                content: str,
+                entities: list[WireEntityRef] | None = None,
+                kind: str | None = None,
+                writer: str | None = None,
+                episode: str | None = None,
+                add_relations: list[Relation] | None = None,
+                remove_relations: list[Relation] | None = None,
+            ) -> dict[str, Any]:
+                receipt = db.correct(
+                    int(old_id), content,
+                    entities=None if entities is None else [_entity_ref(x) for x in entities],
+                    kind=kind, writer=writer, episode=episode,
+                    add_relations=[_relation_tuple(r) for r in add_relations or ()],
+                    remove_relations=[_relation_tuple(r) for r in remove_relations or ()],
+                )
+                return {
+                    "memory": _memory(receipt.new),
+                    "superseded": wire_id(int(old_id)),
+                    "old": _memory(receipt.old),
+                    "opened": [_edge(e) for e in receipt.opened],
+                    "closed": [
+                        {"src": str(src), "dst": str(dst), "rel_kind": rel_kind}
+                        for src, dst, rel_kind in receipt.closed
+                    ],
+                    "edges_closed": receipt.edges_closed,
+                }
+
+        @server.tool(
             title="Reinforce a memory",
             annotations=write_tool,
             description=(
@@ -827,6 +1091,103 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
         def rebuild_fts_index() -> dict[str, Any]:
             return {"fts": _fts(db.rebuild_fts_index())}
 
+        # -------------------------------------------------------------- ingestion
+
+        if extractor is not None and pending is not None:
+            assert isinstance(db, Anatid)          # check_ingest_backend ran above
+            handle: Anatid = db
+            model_extractor: Extractor = extractor
+            pending_patches: PendingPatches = pending
+
+            @server.tool(
+                title="Propose memory changes from text",
+                annotations=propose_tool,
+                description=(
+                    "Turn a note, a message or a document into a proposed memory patch, "
+                    "WITHOUT writing anything. The text and the current facts about the "
+                    "entities it names go to the configured extraction model, which proposes "
+                    "facts to add, facts to correct (by memory_id), RELATES_TO edges to open and "
+                    "close, and names that mean an existing entity. The proposal is then "
+                    "resolved against the database: aliases are rewritten, a correction whose "
+                    "target is gone becomes a new fact, and facts and edges the graph already "
+                    "holds are dropped, each with a note saying so. The result carries "
+                    "`patch_id`, `diff` (one line per operation, for a person to review) and "
+                    "`patch` (the same as JSON, ids as decimal strings). Show the diff, then "
+                    "call `apply_patch(patch_id)` to commit it, with an edited `patch` to "
+                    "change it first; to decline, call nothing. A proposal lives in this "
+                    "server's memory until it is applied or the process exits."
+                ),
+            )
+            @_guard
+            def ingest(
+                text: str,
+                source: str | None = None,
+                writer: str | None = None,
+            ) -> dict[str, Any]:
+                if not text or not text.strip():
+                    raise ToolError("ingest needs text: a note, a message or a document")
+                patch = propose_patch(handle, text, extractor=model_extractor)
+                entry = pending_patches.put(patch, text=text, source=source, writer=writer)
+                return {
+                    "patch_id": wire_id(entry.patch_id),
+                    "applied": False,
+                    "operations": patch.operations,
+                    "is_empty": patch.is_empty,
+                    "diff": patch.describe(),
+                    "patch": patch.to_dict(),
+                    "notes": list(patch.notes),
+                    "next": (
+                        "review the diff; apply_patch(patch_id) commits it, apply_patch("
+                        "patch_id, patch=<edited>) commits a changed version, and not calling "
+                        "apply_patch declines it"
+                    ),
+                }
+
+            @server.tool(
+                title="Apply a proposed memory patch",
+                annotations=destructive_tool,
+                description=(
+                    "Commit a patch that `ingest` proposed, in one transaction: the note is "
+                    "stored first as an episode, then aliases, new facts, corrections "
+                    "(supersede), edges closed and edges opened, every row citing that episode. "
+                    "If any step fails nothing lands and the proposal stays pending, so it can "
+                    "be edited and applied again. Pass `patch` to apply an edited version of "
+                    "the proposal (the `patch` object `ingest` returned, changed as needed; "
+                    "memory ids stay decimal strings). DESTRUCTIVE for what the graph says "
+                    "when the patch corrects a memory or removes a relation: those close the "
+                    "old version, the way `supersede` and `unrelate` do, and delete nothing. "
+                    "The result is the receipt: every id created or closed, as decimal strings, "
+                    "and `summary` in one sentence. An unknown or already applied patch_id is "
+                    "an error; call `ingest` again to propose afresh."
+                ),
+            )
+            @_guard
+            def apply_patch(
+                patch_id: WireId,
+                patch: dict[str, Any] | None = None,
+                writer: str | None = None,
+            ) -> dict[str, Any]:
+                entry = pending_patches.get(int(patch_id))
+                to_apply = (
+                    entry.patch if patch is None
+                    else MemoryPatch.from_dict(patch, source_text=entry.text)
+                )
+                receipt = to_apply.apply(
+                    handle,
+                    writer=writer or entry.writer or "anatid-mcp",
+                    episode=entry.text,
+                    source=entry.source,
+                )
+                pending_patches.discard(entry.patch_id)
+                return {
+                    "applied": True,
+                    "patch_id": wire_id(entry.patch_id),
+                    "summary": receipt.describe(),
+                    "diff": to_apply.describe(),
+                    "changes": receipt.changes,
+                    **receipt.to_dict(),
+                }
+
     # ------------------------------------------------------------------ reads
 
     @server.tool(
@@ -834,8 +1195,11 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
         annotations=read_only_tool,
         description=(
             "Hybrid retrieval over this tenant's memories: BM25 over the text, graph expansion "
-            "from seed_entity (up to `hops`), and cosine over `embedding` if you supply one -- "
-            "whichever arms have input, fused with Reciprocal Rank Fusion. Pass `as_of` "
+            "(up to `hops`) from seed_entity, and cosine over `embedding` if you supply one or "
+            "the server has an embedder -- whichever arms have input, fused with Reciprocal Rank "
+            "Fusion. With a query and no seed_entity the graph arm seeds itself: entity names "
+            "that occur in the query, longest first, at most three, and `seeds` in the result "
+            "says which; name a seed_entity to expand from exactly that one. Pass `as_of` "
             "(ISO-8601) to ask what the database believed at that time. The result reports which "
             "arms ran. A memory written a moment ago is already findable by the text arm: "
             "`pending_fts_rows` counts documents that arm re-read from the memories themselves "
@@ -857,7 +1221,7 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
         hits = db.recall(
             query,
             k=int(k),
-            seed_entity=None if seed_entity is None else _entity_ref(seed_entity),
+            seed_entity=anatid.AUTO_SEED if seed_entity is None else _entity_ref(seed_entity),
             hops=int(hops),
             kinds=kinds or None,
             as_of=_parse_ts(as_of, field="as_of"),
@@ -957,6 +1321,9 @@ def build_server(db: Anatid, config: ServerConfig | None = None) -> MCPServer:
             "embedding_dim": info.embedding_dim,
             "anatid_version": info.anatid_version,
             "duckdb_version": info.duckdb_version,
+            "embedder": describe_embedder(getattr(db, "embedder", None)),
+            "extractor": describe_extractor(extractor),
+            "pending_patches": 0 if pending is None else len(pending),
             "sql_tool": sql_policy,
         }
 
@@ -1038,14 +1405,32 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         prog="anatid-mcp",
         description="Serve an anatid graph-memory database over the Model Context Protocol.",
         epilog="Every option also reads an environment variable, which is what MCP client "
-               "config blocks can set: ANATID_DB, ANATID_TENANT, ANATID_EMBEDDING_DIM, "
+               "config blocks can set: ANATID_DB, ANATID_SOCKET, ANATID_HTTP_URL, ANATID_TOKEN, "
+               "ANATID_TOKEN_FILE, ANATID_TENANT, ANATID_EMBEDDING_DIM, ANATID_EMBED_HASH, "
                "ANATID_READ_ONLY, ANATID_ENABLE_SQL, ANATID_SQL_TOOL, ANATID_MAX_ROWS, "
                "ANATID_SQL_TIMEOUT, ANATID_SQL_MEMORY_LIMIT, ANATID_MCP_TRANSPORT, "
-               "ANATID_MCP_HOST, ANATID_MCP_PORT, ANATID_MCP_AUTH.",
+               "ANATID_MCP_HOST, ANATID_MCP_PORT, ANATID_MCP_AUTH. Environment only, because "
+               "they carry keys: ANATID_EMBED_BASE_URL, ANATID_EMBED_MODEL, ANATID_EMBED_API_KEY "
+               "(the vector arm) and ANATID_EXTRACT_BASE_URL, ANATID_EXTRACT_MODEL, "
+               "ANATID_EXTRACT_API_KEY, ANATID_EXTRACT_REASONING (the ingest tools).",
     )
     p.add_argument("--db", help=f"database file or ':memory:' (env ANATID_DB, default {DEFAULT_DB_PATH})")
+    p.add_argument("--socket", metavar="PATH",
+                   help="talk to the anatid-server listening on this Unix socket instead of "
+                        "opening a file, so several MCP clients share one memory (env "
+                        "ANATID_SOCKET). Not combinable with --db or --enable-sql")
+    p.add_argument("--http-url", metavar="URL",
+                   help="talk to the anatid-server listening on this HTTP address, for a server "
+                        "on another host (env ANATID_HTTP_URL). Needs --token or --token-file")
+    p.add_argument("--token", metavar="TOKEN",
+                   help="bearer token for --http-url (env ANATID_TOKEN). It is visible in the "
+                        "process list; --token-file is not")
+    p.add_argument("--token-file", metavar="PATH",
+                   help="read the bearer token for --http-url from the first token in this "
+                        "file (env ANATID_TOKEN_FILE); an anatid-server token file works as is")
     p.add_argument("--tenant", type=int, help="tenant id (env ANATID_TENANT, default 0)")
     p.add_argument("--embedding-dim", type=int, help="FLOAT[N] width for a NEW database file")
+    add_embedding_arguments(p)
     p.add_argument("--read-only", action="store_true", default=None,
                    help="open the database read-only; no write tools are registered")
     p.add_argument("--enable-sql", action="store_true", default=None,
@@ -1076,8 +1461,8 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
 def main(argv: Sequence[str] | None = None) -> int:
     """Console-script entry point (``anatid-mcp``); also usable as ``python -m`` glue.
 
-    Opens the configured database, registers the tools, and serves until the transport closes.
-    Returns a process exit code.
+    Opens the configured database, or connects to the configured ``anatid-server``, registers
+    the tools, and serves until the transport closes.  Returns a process exit code.
     """
     args = _parse_args(argv)
     if args.no_sql_tool:
@@ -1088,8 +1473,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         sql_tool = None                            # environment decides; the default is off
     cfg = ServerConfig(
         db=args.db,
+        socket=args.socket,
+        http_url=args.http_url,
+        token=args.token,
+        token_file=args.token_file,
         tenant=args.tenant,
         embedding_dim=args.embedding_dim,
+        embed_hash=args.embed_hash,
         read_only=args.read_only,
         sql_tool=sql_tool,
         max_rows=args.max_rows,
@@ -1109,20 +1499,33 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"anatid-mcp: {exc}", file=sys.stderr)
         return 2
 
+    # One decision: a file is opened here (embedded), a socket or URL is a client of the
+    # anatid-server that holds the file.  Either way `db` answers the same verbs below.
     try:
-        db = Anatid.open(
-            cfg.resolved_db(),
-            tenant=cfg.tenant,
-            embedding_dim=cfg.embedding_dim,
-            read_only=cfg.read_only,
-        )
-    except (AnatidError, OSError) as exc:
+        db = open_backend(cfg)
+    except BackendError as exc:
+        # Two backends named, the SQL tool asked of a socket, or a file another process holds:
+        # each message says what to run instead, and nothing was opened.
+        print(f"anatid-mcp: {exc}", file=sys.stderr)
+        return 2
+    except (AnatidError, OSError, duckdb.Error) as exc:
         # stdout is the JSON-RPC channel on the stdio transport; diagnostics go to stderr.
-        print(f"anatid-mcp: cannot open {cfg.db!r}: {exc}", file=sys.stderr)
+        # AnatidError covers ServerUnavailable, the client's "no socket at ..." with the
+        # start command in it; duckdb.Error covers every other reason DuckDB refuses a file.
+        print(f"anatid-mcp: cannot open {cfg.target!r}: {exc}", file=sys.stderr)
+        hint = start_hint(cfg)
+        if hint is not None:
+            print(f"anatid-mcp: {hint}", file=sys.stderr)
         return 2
 
     try:
-        server = build_server(db, cfg)
+        try:
+            server = build_server(db, cfg)
+        except (BackendConfigError, ExtractorConfigError) as exc:
+            # Half an extraction endpoint, or one asked of a socket backend: say so and stop,
+            # before a tool that would fail on first use is offered to a model.
+            print(f"anatid-mcp: {exc}", file=sys.stderr)
+            return 2
         if cfg.transport == "stdio":
             server.run("stdio")
         elif cfg.transport == "streamable-http":

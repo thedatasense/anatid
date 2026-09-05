@@ -671,6 +671,11 @@ def apply_supersede(db: Any, scenario: Scenario) -> Correction:
     the graph saying two contradictory things at once, so if any step raises, the old
     memory is still current and every edge is where it was.
 
+    ``Anatid.correct`` is the verb for exactly this: one supersede plus the edges it closes
+    and opens, in one transaction. The entities the change introduces are written with
+    their kinds first, inside the same transaction, because ``correct`` creates a missing
+    entity without a kind.
+
     Returns a :class:`Correction`. The old memory is still readable afterwards and reports
     is_current False.
     """
@@ -680,29 +685,23 @@ def apply_supersede(db: Any, scenario: Scenario) -> Correction:
     old = find_fact(db, scenario)
 
     with db.transaction():
-        replacement = db.supersede(
+        for name, kind in change.extra_entities:
+            db.upsert_entity(name, kind=kind, **stamp)
+        receipt = db.correct(
             old.memory_id,
             change.new_content,
             entities=list(change.entities),
+            add_relations=change.extra_relations,
+            remove_relations=change.removed_relations,
             writer=change.writer,
             episode=change.episode,
             **stamp,
         )
-        for name, kind in change.extra_entities:
-            db.upsert_entity(name, kind=kind, **stamp)
-        # unrelate returns how many edge versions it closed, so what is recorded here is
-        # what the database did rather than what the scenario asked for; an edge that was
-        # already closed returns zero and is left out.
-        closed = tuple(
-            (src, dst, rel_kind)
-            for src, dst, rel_kind in change.removed_relations
-            if db.unrelate(src, dst, rel_kind=rel_kind, **stamp)
-        )
-        for src, dst, rel_kind in change.extra_relations:
-            db.relate(src, dst, rel_kind=rel_kind, **stamp)
 
     db.rebuild_fts_index()
-    return Correction(old, replacement, closed, tuple(change.extra_relations))
+    # receipt.closed holds the relations that closed at least one edge version, so what is
+    # recorded here is what the database did rather than what the scenario asked for.
+    return Correction(receipt.old, receipt.new, receipt.closed, tuple(change.extra_relations))
 
 
 def entity_kinds(scenario: Scenario) -> dict[str, str]:

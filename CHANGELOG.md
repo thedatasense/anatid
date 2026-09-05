@@ -7,6 +7,94 @@ All notable changes to anatid are recorded here. The format follows
 
 Nothing yet.
 
+## [0.4.0] - 2026-09-05
+
+The release that closes the four gaps a product review found once the tools were used the way an
+agent uses them. The embedded and server profiles are unchanged: the file format, the schema
+(v4), the verbs 0.3.0 shipped and their signatures all stand, and every id at an external
+boundary is still a decimal string.
+
+The first gap: agents could not maintain the graph through the tools. The Agents SDK had no
+`relate` and neither integration had `unrelate`, so three connected facts stored by entity name
+alone ("Ada leads Kestrel", "Kestrel owns the ingest service", "Bo maintains the ingest service")
+left `recall_2hop("Ada")` with one hit, and nothing let an agent correct a fact together with its
+edges. The Agents SDK now has nine tools, with `anatid_relate`, `anatid_unrelate` and
+`anatid_correct` gated like the other writes; MCP gains `unrelate` and `correct`. Underneath them
+is one new core verb, `Anatid.correct(old_id, content, add_relations=, remove_relations=)`, which
+runs `supersede`, the closes and the opens in one transaction and returns a `CorrectionReceipt`.
+The verb is also on `AnatidClient` and in the server's verb table, so the client is a drop-in for
+the handle again and `anatid-mcp` lists the same tools over a socket as over a file.
+
+The second gap: the default recall ran the text arm alone. `recall(query)` with no seed and no
+embedding is now text plus graph: the query's words are matched against the tenant's entity
+names, longest name first, at most three, and the graph arm expands from each; `RecallHits.seeds`
+names them and `RecallHits.arms` still reports which arms ran. Pass `seed_entity=None` to run
+without the graph arm, or name an entity to expand from exactly that one; `seed_entity="auto"` is
+the default everywhere, on the handle, on `AnatidClient`, and in both integrations' recall tools.
+Embeddings became a protocol: `Anatid.open(embedder=...)` takes any object with `dim` and
+`embed(texts)`, `OpenAICompatibleEmbedder` speaks to any `/embeddings` endpoint over the standard
+library, `HashEmbedder` is an offline stand-in for demos and tests, and a handle with an embedder
+embeds every `remember`, `supersede` and `recall` it is not given a vector for, so the vector arm
+runs with no application code. `anatid-mcp` builds the embedder from `ANATID_EMBED_BASE_URL`,
+`ANATID_EMBED_MODEL`, `ANATID_EMBED_API_KEY` or `ANATID_EMBED_HASH` (`--embed-hash`), and
+`stats.embedder` reports which one, never the key.
+
+The third gap: getting real information in took too much application code. `anatid.ingest` takes
+text. An extractor (`OpenAICompatibleExtractor` for any chat endpoint, `ScriptedExtractor` for
+tests) proposes a `MemoryPatch` of facts to add, facts to correct, edges to open and close and
+names that mean an existing entity; the pipeline resolves it against what the graph holds and
+writes a note for everything it changed; a review hook may edit or decline it; `MemoryPatch.apply`
+commits the whole patch in one transaction with the raw text stored first as the episode every
+row cites. The Agents SDK gets `anatid_ingest` when `create_memory_tools` is given an
+`extractor`, approval-gated, with `dry_run=true` returning the diff and `patch=` applying a
+reviewed patch as is. MCP gets `ingest`, which proposes and returns a `patch_id` with the diff,
+and `apply_patch`, which commits it, from `ANATID_EXTRACT_BASE_URL` and `ANATID_EXTRACT_MODEL`.
+`examples/ingest_notes.py` runs three notes through it offline and shows the owner change, the
+evidence behind it and what was believed before.
+
+The fourth gap: `anatid-mcp` opened the file directly, so two MCP clients on one writable file
+hit DuckDB's exclusive lock with a raw traceback. `anatid-mcp --socket` (or `ANATID_SOCKET`) now
+talks to a running `anatid-server` instead, and any number of clients share one memory with the
+same tools, arguments, results and id spelling. A held file exits 2 with a one-paragraph
+explanation and the two commands to run instead. `--enable-sql`, the embedder and the extractor
+are refused with a socket, each with the reason: all three need the file's own connection.
+
+### Added
+
+- `Anatid.correct` and `CorrectionReceipt`; the function form `anatid.verbs.correct`; `correct`
+  on `AnatidClient` and in the server's verb table, with the receipt registered in the wire codec.
+- Agents SDK tools `anatid_relate`, `anatid_unrelate`, `anatid_correct` and, with an extractor,
+  `anatid_ingest`. `approve_low_risk` gained `relate=` and `ingest=`, both False by default.
+  `Relation` is the element type of the correction tool's relation lists.
+- MCP tools `unrelate`, `correct`, `ingest` and `apply_patch`. `unrelate`, `correct` and
+  `apply_patch` carry `destructiveHint: true` because they close versions.
+- `seed_entity="auto"` and `RecallHits.seeds`; `anatid.recall.auto_seeds`; the constants
+  `AUTO_SEED`, `AUTO_SEED_LIMIT`.
+- `anatid.embed`: the `Embedder` protocol, `OpenAICompatibleEmbedder`, `HashEmbedder`,
+  `EmbedderError`; `Anatid.open(embedder=)` and `db.embedder`.
+- `anatid.ingest`: `MemoryPatch`, `PatchReceipt`, `AddFact`, `Correction`, `Relation`, `Alias`,
+  `Span`, `Extractor`, `OpenAICompatibleExtractor`, `ScriptedExtractor`, `existing_context`,
+  `prepare`, `propose`, `ingest`, `PATCH_JSON_SCHEMA`.
+- `anatid.integrations.mcp.backend` (`open_backend`, `ServerHandle`, `DatabaseLocked`),
+  `anatid.integrations.mcp.embedding` and `anatid.integrations.mcp.ingest`; `anatid-mcp --socket`,
+  `--http-url`, `--token`, `--token-file`, `--embed-hash`, and the `ANATID_SOCKET`,
+  `ANATID_HTTP_URL`, `ANATID_TOKEN`, `ANATID_TOKEN_FILE`, `ANATID_EMBED_*` and `ANATID_EXTRACT_*`
+  variables. `stats` reports `seeds`-aware recall, the embedder, the extractor and the pending
+  patch count.
+- `examples/ingest_notes.py` and `docs/ingest.md`; `examples/README.md` lists every example.
+
+### Changed
+
+- `recall(query)` defaults to `seed_entity="auto"` on `Anatid`, `AnatidClient` and in both
+  integrations. The old behaviour is `seed_entity=None`. A query that names no entity runs as
+  before.
+- An empty or whitespace-only entity name raises `ValidationError` from `entity_id`,
+  `upsert_entity`, `relate`, `remember` and `correct`, and the write that carried it is rolled
+  back. Before, it created an entity named "" that nothing could address by name.
+- The Agents SDK recall tool falls back to the query's own seeds when a `seed_entity` it was given
+  does not exist, and says so in `notes`, rather than running text only.
+- The extension reports version 0.4.0. Its surface is unchanged.
+
 ## [0.3.0] - 2026-09-04
 
 The server release. anatid gains a second deployment profile, and the first one is unchanged.

@@ -101,6 +101,7 @@ from ..errors import AnatidError
 from ..types import (
     AsOf,
     DoctorReport,
+    CorrectionReceipt,
     Edge,
     Entity,
     Episode,
@@ -927,7 +928,7 @@ class AnatidClient:
         tenant: int | Namespace | None = None,
         k: int = 10,
         embedding: Sequence[float] | None = None,
-        seed_entity: int | str | Entity | None = None,
+        seed_entity: int | str | Entity | None = "auto",
         hops: int = 2,
         as_of: AsOf | _dt.datetime | None = None,
         kinds: Sequence[str] | None = None,
@@ -1228,6 +1229,47 @@ class AnatidClient:
                 "memory_id": memory_id,
                 "close_about_edges": close_about_edges,
                 "allow_fork": allow_fork,
+            },
+            tenant=tenant,
+            idempotency_key=idempotency_key,
+        )
+
+    def correct(
+        self,
+        old_id: int,
+        content: str,
+        *,
+        entities: Sequence[int | str | Entity] | None = None,
+        add_relations: Sequence[Sequence[Any]] = (),
+        remove_relations: Sequence[Sequence[Any]] = (),
+        kind: str | None = None,
+        embedding: Sequence[float] | None = None,
+        writer: str | None = None,
+        episode: str | None = None,
+        now: _dt.datetime | None = None,
+        tenant: int | Namespace | None = None,
+        idempotency_key: str | None = None,
+    ) -> CorrectionReceipt:
+        """Supersede a memory and close and open the edges that change with it, as one write.
+
+        :meth:`anatid.Anatid.correct` over the wire: the supersede, every ``remove_relations``
+        close and every ``add_relations`` open run in one transaction in the server process, so
+        the graph never says two things at once.  A relation is ``(src, dst)`` or
+        ``(src, dst, rel_kind)`` with names, ids or :class:`~anatid.types.Entity` endpoints.
+        """
+        return self._invoke(
+            "correct",
+            {
+                "old_id": old_id,
+                "content": content,
+                "entities": None if entities is None else list(entities),
+                "add_relations": [list(r) for r in add_relations],
+                "remove_relations": [list(r) for r in remove_relations],
+                "kind": kind,
+                "embedding": embedding,
+                "writer": writer,
+                "episode": episode,
+                "now": now,
             },
             tenant=tenant,
             idempotency_key=idempotency_key,

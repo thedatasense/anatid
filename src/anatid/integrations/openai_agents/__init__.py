@@ -9,9 +9,14 @@ Three pieces, each usable on its own:
     SQLite session cannot express.  See :mod:`~anatid.integrations.openai_agents.session`.
 
 ``create_memory_tools``
-    Six function tools -- ``anatid_remember``, ``anatid_recall``, ``anatid_context``,
-    ``anatid_supersede``, ``anatid_forget``, ``anatid_provenance``.  Reads run freely; the three
-    writes carry ``needs_approval``, driven by a policy you choose.  See
+    Nine function tools -- ``anatid_remember``, ``anatid_relate``, ``anatid_recall``,
+    ``anatid_context``, ``anatid_supersede``, ``anatid_correct``, ``anatid_unrelate``,
+    ``anatid_forget``, ``anatid_provenance`` -- and a tenth, ``anatid_ingest``, when an
+    extractor is given.  Reads run freely; the writes carry ``needs_approval``, driven by a
+    policy you choose.  The three graph tools let an agent maintain the edges recall walks:
+    connect two entities, retire a connection, and correct a memory together with the edges
+    that change with it, in one transaction.  ``anatid_ingest`` takes a note and applies the
+    patch of facts and edges a model proposes from it, as one reviewed transaction.  See
     :mod:`~anatid.integrations.openai_agents.tools`.
 
 ``RunStateStore``
@@ -40,11 +45,13 @@ from __future__ import annotations
 from .approvals import RUN_STATE_COLUMNS, RunStateStore, StoredRun
 from .session import MESSAGE_COLUMNS, AnatidSession, classify_item
 from .tools import (
+    INGEST_TOOL,
     READ_TOOLS,
     TOOL_NAMES,
     WRITE_TOOLS,
     ApprovalPolicy,
     ApprovalRequest,
+    Relation,
     always_require_approval,
     approve_low_risk,
     create_memory_tools,
@@ -56,6 +63,7 @@ __all__ = [
     "MESSAGE_COLUMNS",
     "classify_item",
     "create_memory_tools",
+    "Relation",
     "ApprovalRequest",
     "ApprovalPolicy",
     "always_require_approval",
@@ -64,6 +72,7 @@ __all__ = [
     "READ_TOOLS",
     "WRITE_TOOLS",
     "TOOL_NAMES",
+    "INGEST_TOOL",
     "RunStateStore",
     "StoredRun",
     "RUN_STATE_COLUMNS",

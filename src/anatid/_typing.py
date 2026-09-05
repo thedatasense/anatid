@@ -48,6 +48,7 @@ if TYPE_CHECKING:
     import duckdb
 
     from .csr import CsrBackend
+    from .embed import Embedder
     from .schema import SchemaConfig
     from .types import Namespace
 
@@ -79,6 +80,10 @@ class VerbHost(Protocol):
     config: SchemaConfig
     #: Graph-expansion backend: the C++ extension when it loaded, otherwise recursive SQL.
     csr: CsrBackend
+    #: The embedding model ``Anatid.open(embedder=...)`` stored, or None.  With one set, the
+    #: write verbs embed content they were not given an embedding for and ``recall`` embeds
+    #: the query.
+    embedder: Embedder | None
 
     @property
     def connection(self) -> duckdb.DuckDBPyConnection:
