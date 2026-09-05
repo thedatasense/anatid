@@ -142,6 +142,9 @@ exclude = ["/ext", "/spike", "/dist"]
 # ------------------------------------------------------------------------------- pytest
 
 [tool.pytest.ini_options]
+# the benchmark package lives at the repository root (bench/), outside the src layout, so plain
+# `pytest` needs the root on sys.path; `python -m pytest` adds it implicitly and hid this locally.
+pythonpath = ["."]
 testpaths = ["tests"]
 # NB: `-q` is already here, so `pytest -q` on the command line runs at -qq and prints no
 # "N passed" summary line.  Use `pytest -o addopts=""` when the count matters.
