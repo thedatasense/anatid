@@ -3,7 +3,7 @@
 All notable changes to anatid are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); anatid uses semantic versioning.
 
-## [Unreleased]
+## [0.4.1] - 2026-09-05
 
 Nothing yet.
 

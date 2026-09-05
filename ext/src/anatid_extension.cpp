@@ -92,7 +92,7 @@ static constexpr int64_t ANATID_MAX_MAX_SPAN_FACTOR = 1000000;
 //! ... but always allow a small span, so a 1-edge tenant with ids 0..999 is not refused.
 static constexpr uint64_t ANATID_MIN_SPAN_ALLOWANCE = 4096;
 
-static const char *const ANATID_EXT_VERSION = "0.4.0";
+static const char *const ANATID_EXT_VERSION = "0.4.1";
 
 //===--------------------------------------------------------------------===//
 // anatid_version

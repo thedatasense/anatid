@@ -7,12 +7,12 @@
     "url": "https://github.com/thedatasense/anatid",
     "source": "github"
   },
-  "version": "0.4.0",
+  "version": "0.4.1",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "anatid",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "transport": {
         "type": "stdio"
       },

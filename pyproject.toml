@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "anatid"
-version = "0.4.0"
+version = "0.4.1"
 # Keep in lockstep with src/anatid/__init__.py::__version__ (owned by another module).  The
 # `lint` job in .github/workflows/ci.yml fails the build when the two drift.
 description = "Embedded bitemporal graph memory for AI agents, built on DuckDB. Pure-Python wheel."
