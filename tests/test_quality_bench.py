@@ -582,14 +582,15 @@ def test_the_judge_never_sees_the_system(tmp_path):
 
 
 def test_the_judge_reply_is_parsed_tolerantly(tmp_path):
-    for reply, expected in (
-        ('{"correct": false, "reason": "stale"}', False),
-        ('```json\n{"correct": true, "reason": "ok"}\n```', True),
-        ('Sure: {"correct": "yes", "reason": "ok"} done', True),
-    ):
-        llm = make_llm(
-            tmp_path / reply[:8].replace("`", "x").replace("/", "x"), FakeTransport(reply=reply)
+    for case, (reply, expected) in enumerate(
+        (
+            ('{"correct": false, "reason": "stale"}', False),
+            ('```json\n{"correct": true, "reason": "ok"}\n```', True),
+            ('Sure: {"correct": "yes", "reason": "ok"} done', True),
         )
+    ):
+        # a directory named from the reply text carried quotes and colons, which Windows rejects
+        llm = make_llm(tmp_path / f"case{case}", FakeTransport(reply=reply))
         q = question("q9", "single_fact", "Q?", "A")
         verdict = J.llm_judge(llm, q, "A")
         assert verdict.parsed and verdict.correct is expected
