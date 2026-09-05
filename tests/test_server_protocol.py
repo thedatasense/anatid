@@ -1046,7 +1046,11 @@ def test_an_anatid_id_is_bigger_than_a_json_number_can_hold():
 def test_node_rounds_a_bare_63_bit_json_number():
     """The negative control.  Without it the round trips below could pass because node is
     lenient rather than because this codec is right."""
-    memory_id = new_id()
+    # An odd integer above 2**53 is never representable as a float64, so node must round it.  A
+    # freshly minted id is not a safe choice here: its low bits are a per-process counter, and
+    # an id whose low bits happen to be zero survives the round trip exactly, which made this
+    # control flaky on one CI runner in ten.
+    memory_id = (1 << 62) + 1
     as_number = through_node(json.dumps({"memory_id": memory_id}))
     assert str(memory_id) not in as_number, "node kept the digits; the premise has changed"
     assert json.loads(as_number)["memory_id"] != memory_id
