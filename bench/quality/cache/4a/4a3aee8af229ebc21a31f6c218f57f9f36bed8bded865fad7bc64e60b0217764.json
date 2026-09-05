@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: webhook dispatcher, billing-api, notifier, resizer, scheduler, search-indexer"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616530-i9Eu3fWV8bhFADgBWb96",
+  "object": "chat.completion",
+  "created": 1788616530,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer lists 'resizer' and 'webhook dispatcher' instead of the gold items 'image-resizer' and 'webhooks', and since no alternative phrasings are accepted, the items are not named as required.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks (6 services).\n\nThe answer to grade: webhook dispatcher, billing-api, notifier, resizer, scheduler, search-indexer (6 items).\n\nLet me check each item:\n- billing-api ✓\n- notifier ✓\n- search-indexer ✓\n- image-resizer → \"resizer\" — is \"resizer\" an acceptable match for \"image-resizer\"? The gold says \"image-resizer\". The accepted alternatives are none. The rule says every item must be named and no extra item. \"resizer\" vs \"image-resizer\" — it's a shortened form. Is that the same name? The rule says apply literally. \"resizer\" doesn't name \"image-resizer\" exactly, but could be considered the same service? Hmm. This is a judgment call. The rule says \"names the gold\". \"resizer\" is arguably a shortened version of \"image-resizer\". Similarly \"webhook dispatcher\" vs \"webhooks\" — is \"webhook dispatcher\" the same as \"webhooks\"? Hmm.\n\nLet me think. The gold has 6 services: billing-api, notifier, search-indexer, image-resizer, scheduler, webhooks.\n\nAnswer: webhook dispatcher, billing-api, notifier, resizer, scheduler, search-indexer.\n\n- billing-api: match\n- notifier: match\n- search-indexer: match\n- scheduler: match\n- image-resizer vs \"resizer\": partial match — \"resizer\" could be seen as naming the image-resizer service but the name differs. \n- webhooks vs \"webhook dispatcher\": \"webhook dispatcher\" is a different name than \"webhooks\". Could be the same service though.\n\nThe rule says apply literally: \"every item must be named and no extra item\". The question is whether \"resizer\" and \"webhook dispatcher\" count as naming \"image-resizer\" and \"webhooks\". There are no accepted alternative phrasings given (none). So strictly, the names should match. \"resizer\" is not \"image-resizer\" exactly, but it's a common shorthand. \"webhook dispatcher\" is not \"webhooks\" — a dispatcher is a different concept.\n\nHmm. In typical grading for these tasks, I think slight name variations that clearly refer to the same service are usually accepted, but \"webhook dispatcher\" vs \"webhooks\" — a dispatcher might be considered a distinct thing. But in the context of a list of services Dune owns, \"webhook dispatcher\" likely refers to the webhooks service. Similarly \"resizer\" refers to \"image-resizer\".\n\nGiven the rule says \"Apply the rule literally\" and accepted alternatives are \"(none)\", the safest strict interpretation: the names must match. \"resizer\" ≠ \"image-resizer\" and \"webhook dispatcher\" ≠ \"webhooks\". But would a strict grader mark it wrong? The instruction \"Apply the rule literally\" suggests strictness. The rule says \"every item must be named\". Does \"resizer\" name \"image-resizer\"? It's ambiguous.\n\nI think the intent of \"apply literally\" is to avoid being lenient. Since the accepted alternatives list is empty, any deviation should be marked incorrect. \"webhook dispatcher\" adds a word not in the gold; \"resizer\" omits \"image-\". \n\nHmm, but consider: the gold \"webhooks\" is a plural noun; the answer \"webhook dispatcher\" is a service that dispatches webhooks. These are different names. If we accept that, we'd be adding alternative phrasings, which are explicitly \"(none)\".\n\nI'll mark it incorrect: the answer names \"resizer\" and \"webhook dispatcher\" instead of \"image-resizer\" and \"webhooks\", which differ from the gold, and no alternative phrasings are accepted.\n\nActually, let me reconsider. The rule's emphasis: \"the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item.\" The answer has exactly 6 items and each corresponds to one gold item. The question is about name matching tolerance. \"Also accepted: (none)\" means no alternative phrasings were pre-approved. So strict matching of names. \"resizer\" and \"webhook dispatcher\" are not the gold names nor approved alternatives. So incorrect.\n\nI'll go with incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks (6 services).\n\nThe answer to grade: webhook dispatcher, billing-api, notifier, resizer, scheduler, search-indexer (6 items).\n\nLet me check each item:\n- billing-api ✓\n- notifier ✓\n- search-indexer ✓\n- image-resizer → \"resizer\" — is \"resizer\" an acceptable match for \"image-resizer\"? The gold says \"image-resizer\". The accepted alternatives are none. The rule says every item must be named and no extra item. \"resizer\" vs \"image-resizer\" — it's a shortened form. Is that the same name? The rule says apply literally. \"resizer\" doesn't name \"image-resizer\" exactly, but could be considered the same service? Hmm. This is a judgment call. The rule says \"names the gold\". \"resizer\" is arguably a shortened version of \"image-resizer\". Similarly \"webhook dispatcher\" vs \"webhooks\" — is \"webhook dispatcher\" the same as \"webhooks\"? Hmm.\n\nLet me think. The gold has 6 services: billing-api, notifier, search-indexer, image-resizer, scheduler, webhooks.\n\nAnswer: webhook dispatcher, billing-api, notifier, resizer, scheduler, search-indexer.\n\n- billing-api: match\n- notifier: match\n- search-indexer: match\n- scheduler: match\n- image-resizer vs \"resizer\": partial match — \"resizer\" could be seen as naming the image-resizer service but the name differs. \n- webhooks vs \"webhook dispatcher\": \"webhook dispatcher\" is a different name than \"webhooks\". Could be the same service though.\n\nThe rule says apply literally: \"every item must be named and no extra item\". The question is whether \"resizer\" and \"webhook dispatcher\" count as naming \"image-resizer\" and \"webhooks\". There are no accepted alternative phrasings given (none). So strictly, the names should match. \"resizer\" is not \"image-resizer\" exactly, but it's a common shorthand. \"webhook dispatcher\" is not \"webhooks\" — a dispatcher is a different concept.\n\nHmm. In typical grading for these tasks, I think slight name variations that clearly refer to the same service are usually accepted, but \"webhook dispatcher\" vs \"webhooks\" — a dispatcher might be considered a distinct thing. But in the context of a list of services Dune owns, \"webhook dispatcher\" likely refers to the webhooks service. Similarly \"resizer\" refers to \"image-resizer\".\n\nGiven the rule says \"Apply the rule literally\" and accepted alternatives are \"(none)\", the safest strict interpretation: the names must match. \"resizer\" ≠ \"image-resizer\" and \"webhook dispatcher\" ≠ \"webhooks\". But would a strict grader mark it wrong? The instruction \"Apply the rule literally\" suggests strictness. The rule says \"every item must be named\". Does \"resizer\" name \"image-resizer\"? It's ambiguous.\n\nI think the intent of \"apply literally\" is to avoid being lenient. Since the accepted alternatives list is empty, any deviation should be marked incorrect. \"webhook dispatcher\" adds a word not in the gold; \"resizer\" omits \"image-\". \n\nHmm, but consider: the gold \"webhooks\" is a plural noun; the answer \"webhook dispatcher\" is a service that dispatches webhooks. These are different names. If we accept that, we'd be adding alternative phrasings, which are explicitly \"(none)\".\n\nI'll mark it incorrect: the answer names \"resizer\" and \"webhook dispatcher\" instead of \"image-resizer\" and \"webhooks\", which differ from the gold, and no alternative phrasings are accepted.\n\nActually, let me reconsider. The rule's emphasis: \"the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item.\" The answer has exactly 6 items and each corresponds to one gold item. The question is about name matching tolerance. \"Also accepted: (none)\" means no alternative phrasings were pre-approved. So strict matching of names. \"resizer\" and \"webhook dispatcher\" are not the gold names nor approved alternatives. So incorrect.\n\nI'll go with incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 267,
+   "completion_tokens": 975,
+   "total_tokens": 1242,
+   "cost": 0.000263775,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000263775,
+    "upstream_inference_prompt_cost": 2.0025e-05,
+    "upstream_inference_completions_cost": 0.00024375
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 917,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 27.46079516701866,
+ "fetched_at": "2026-09-05T13:55:58Z"
+}

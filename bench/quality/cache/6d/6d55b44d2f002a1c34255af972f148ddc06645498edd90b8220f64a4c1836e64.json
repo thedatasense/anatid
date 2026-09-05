@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What did reporting depend on before it switched to the event-bus?\nGold answer: ledger\nAlso accepted: the ledger; the ledger service; Ledger\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: The ledger."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616522-Iquo6goDPbWNdohk3FLw",
+  "object": "chat.completion",
+  "created": 1788616522,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'The ledger' exactly matches the gold and accepted phrasings for what reporting depended on before the event-bus switch.\"}",
+     "refusal": null,
+     "reasoning": "The question asks what reporting depended on before switching to the event-bus. Gold answer: \"ledger\" (also accepted: \"the ledger\"). The answer to grade: \"The ledger.\" That matches an accepted alternative. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks what reporting depended on before switching to the event-bus. Gold answer: \"ledger\" (also accepted: \"the ledger\"). The answer to grade: \"The ledger.\" That matches an accepted alternative. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 249,
+   "completion_tokens": 85,
+   "total_tokens": 334,
+   "cost": 3.2245e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.2245e-05,
+    "upstream_inference_prompt_cost": 1.0995e-05,
+    "upstream_inference_completions_cost": 2.125e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 46,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8121350840083323,
+ "fetched_at": "2026-09-05T13:55:23Z"
+}

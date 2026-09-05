@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which team owns the service that the notifier depends on?\nGold answer: Atlas\nAlso accepted: the Atlas team; team Atlas\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong.\n\nAnswer to grade: Boreal"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788621533-oxIy9MD4bzMjNQiXQYXJ",
+  "object": "chat.completion",
+  "created": 1788621533,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names 'Boreal' instead of the gold 'Atlas', so it does not match.\"}",
+     "refusal": null,
+     "reasoning": "The question asks which team owns the service that the notifier depends on. The gold answer is Atlas. The answer to grade is \"Boreal\" - which is not Atlas. So it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owns the service that the notifier depends on. The gold answer is Atlas. The answer to grade is \"Boreal\" - which is not Atlas. So it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 245,
+   "completion_tokens": 72,
+   "total_tokens": 317,
+   "cost": 3.2535e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.2535e-05,
+    "upstream_inference_prompt_cost": 1.4535e-05,
+    "upstream_inference_completions_cost": 1.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 40,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7130319580319338,
+ "fetched_at": "2026-09-05T15:18:56Z"
+}

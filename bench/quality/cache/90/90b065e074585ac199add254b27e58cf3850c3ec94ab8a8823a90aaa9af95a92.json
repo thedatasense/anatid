@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.\n- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.\n- [2025-07-04] handover/2025-07-04-webhooks-correction: Fixing an error in the 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-04-29] handover/2025-04-29-image-resizer: The Ember team is taking over the image resizer from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2025-10-22] standup/dune/2025-10-22: We agreed today that webhooks will sign payloads with rotating keys. The reason is that a partner asked for key rotation in their security review.\n- [2026-03-10] standup/dune/2026-03-10-2: Observation from team Dune: after Tuesday's deploy, the reporting service's p99 latency doubled. The webhook dispatcher deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-10-31] standup/boreal/2025-10-31: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2025-08-29] standup/cinder/2025-08-29: Diego has the Cinder pager this cycle, taking over from Yuki.\n- [2025-01-13] standup/boreal/2025-01-13: Lena takes the first Boreal on-call shift of the year.\n- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2026-02-19] standup/boreal/2026-02-19-2: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2025-01-14] standup/cinder/2025-01-14: Yuki takes the first team Cinder on-call shift of the year.\n- [2025-02-25] standup/boreal/2025-02-25: Webhooks still relies on the bus; keep that in mind for the maintenance.\n- [2026-01-22] incident-review/INC-2026-003: Incident review INC-2026-003. Webhooks delivered some events twice on 2026-01-17. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-11-20] handover/2025-11-20-event-bus: Boreal is taking over the bus from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-03-17] standup/boreal/2025-03-17: Reminder that webhooks only ships on Mondays between 10:00 and 12:00 UTC.\n- [2025-05-23] standup/ember/2025-05-23: The Ember team saw that the webhooks service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-03-31] standup/ember/2026-03-31: Diego Alvarez has the Ember pager this cycle, taking over from Oskar. Ember saw that the feature flag service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-01-17] standup/boreal/2025-01-17: The notification service depends on the bus for delivery events. If the event bus is down, the webhook dispatcher is down: it relies on it for outbound events.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2025-01-20] standup/dune/2025-01-20: The resizer lives with Dune.\n- [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.\n- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.\n- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.\n- [2025-10-27] standup/dune/2025-10-27: Reminder from Dune: page Tomasz for anything this cycle, not Farah.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2026-06-08] standup/dune/2026-06-08: Rotation day for Dune: Tomasz hands the pager to Farah.\n- [2025-12-15] standup/dune/2025-12-15: Rotation day for Dune: Tomasz hands the pager to Farah.\n- [2025-05-09] standup/dune/2025-05-09-2: The Dune team has switched to a monthly game day.\n- [2025-01-09] standup/dune/2025-01-09: Farah runs team Dune solo until the next hire lands.\n\nQuestion: When did Dune take over webhooks?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788607735-K5dd0Jt1nw3CikcNPmxY",
+  "object": "chat.completion",
+  "created": 1788607735,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-06-20",
+     "refusal": null,
+     "reasoning": "The question asks when Dune took over webhooks.\n\nLet me trace the webhooks ownership history:\n- 2025-01-09: webhooks lives with Boreal\n- 2025-03-28: pager for webhooks rings Atlas team, ownership transferred (to Atlas)\n- 2025-06-20: Webhooks has a new home: Ember. Atlas kept it until today.\n- 2025-07-04: Correction to 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n\nSo the correction says Ember never held it, and the new owner is Dune. The 2025-06-20 handover said Atlas kept it until that day (2025-06-20), and the correction on 2025-07-04 fixes the recipient to Dune. So effectively Dune took over webhooks on 2025-06-20 (the date the handover was effective), with the correction on 2025-07-04 fixing who took it.\n\nHmm, but when did Dune take over? The handover entry says effective 2025-06-20 (Atlas kept it until today = 2025-06-20). The correction says the new owner is Dune, not Ember. So the takeover date is 2025-06-20.\n\nBut wait — is the question about \"when\" = date? The answer should be a date: 2025-06-20.\n\nActually, one could argue the correction was recorded 2025-07-04, so maybe Dune took over on 2025-07-04? But the handover itself was effective 2025-06-20 — the correction only fixed the name (Ember → Dune). So Dune took over on 2025-06-20.\n\nThe rule says \"When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now.\" The question asks when Dune took over webhooks — that's a historical event. The answer: 2025-06-20.\n\nReply in one short line with just the value: 2025-06-20.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Dune took over webhooks.\n\nLet me trace the webhooks ownership history:\n- 2025-01-09: webhooks lives with Boreal\n- 2025-03-28: pager for webhooks rings Atlas team, ownership transferred (to Atlas)\n- 2025-06-20: Webhooks has a new home: Ember. Atlas kept it until today.\n- 2025-07-04: Correction to 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n\nSo the correction says Ember never held it, and the new owner is Dune. The 2025-06-20 handover said Atlas kept it until that day (2025-06-20), and the correction on 2025-07-04 fixes the recipient to Dune. So effectively Dune took over webhooks on 2025-06-20 (the date the handover was effective), with the correction on 2025-07-04 fixing who took it.\n\nHmm, but when did Dune take over? The handover entry says effective 2025-06-20 (Atlas kept it until today = 2025-06-20). The correction says the new owner is Dune, not Ember. So the takeover date is 2025-06-20.\n\nBut wait — is the question about \"when\" = date? The answer should be a date: 2025-06-20.\n\nActually, one could argue the correction was recorded 2025-07-04, so maybe Dune took over on 2025-07-04? But the handover itself was effective 2025-06-20 — the correction only fixed the name (Ember → Dune). So Dune took over on 2025-06-20.\n\nThe rule says \"When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now.\" The question asks when Dune took over webhooks — that's a historical event. The answer: 2025-06-20.\n\nReply in one short line with just the value: 2025-06-20.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1703,
+   "completion_tokens": 476,
+   "total_tokens": 2179,
+   "cost": 0.000246725,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000246725,
+    "upstream_inference_prompt_cost": 0.000127725,
+    "upstream_inference_completions_cost": 0.000119
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 468,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 14.272060208022594,
+ "fetched_at": "2026-09-05T11:29:09Z"
+}

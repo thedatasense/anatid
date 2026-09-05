@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-07-29] standup/ember/2025-07-29: Policy: every auth-gateway change requires two reviewer approvals and a security sign-off.\n- [2025-02-18] standup/ember/2025-02-18: Per the change policy, auth-gateway deploys on Mondays between 10:00 and 12:00 UTC.\n- [2025-09-16] handover/2025-09-16-auth-gateway: The Ember team handed the authentication gateway to Cinder today; Oskar Lind wrote up the handover doc for Diego.\n- [2025-08-07] incident-review/INC-2025-017: INC-2025-017 review. What happened: auth-gateway rejected every login for 12 minutes on 2025-08-02. Why: an expired intermediate certificate. Follow-up decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\n- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2026-05-22] standup/dune/2026-05-22-2: The Dune team noticed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2026-01-30] standup/cinder/2026-01-30: We agreed today that auth-gateway tokens will expire after 15 minutes instead of an hour. The reason is that the security audit flagged long-lived tokens.\n- [2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2025-12-29] standup/cinder/2025-12-29: Reminder: auth-gateway deploys only on Mondays between 10:00 and 12:00 UTC.\n- [2025-04-02] standup/ember/2025-04-02: Changes to the billing API need a rollback plan attached to the pull request.\n- [2026-03-03] standup/cinder/2026-03-03: The auth gateway deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-09-03] standup/cinder/2025-09-03-2: Heads-up from the Cinder team: the auth gateway's cold start time tripled after the runtime upgrade.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-09-30] standup/atlas/2025-09-30: Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. The billing API now depends on the feature flag service. The Atlas team planning meeting is every Tuesday.\n- [2025-07-03] handover/2025-07-03-billing-api-correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it.\n- [2025-05-30] incident-review/INC-2025-011: Review of INC-2025-011 (Ledger, 2025-05-24). The root cause was an index missing after the schema migration. We decided that ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-03-03] handover/2025-03-03-webhooks: From today the pager for webhooks rings the Ember team, not team Boreal. Ownership transferred.\n- [2025-11-03] standup/boreal/2025-11-03: Decided in today's standup: webhooks will sign payloads with rotating keys, since a partner asked for key rotation in their security review.\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2025-03-07] handover/2025-03-07-billing-api: Billing-api has a new home: the Ember team. Team Atlas kept it until today.\n- [2025-02-06] standup/ember/2025-02-06-2: Team Ember now does pairing on every production change.\n- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-11-24] handover/2025-11-24-event-bus: Atlas is taking over the event bus from Boreal, effective today. Dashboards and alerts are being repointed.\n- [2025-11-26] handover/2025-11-26-image-resizer: The Atlas team is taking over the image resizer from the Ember team, effective today. Dashboards and alerts are being repointed.\n- [2026-01-12] handover/2026-01-12-billing-api: Quick one: billing-api belongs to the Ember team starting today. Thanks to the Atlas team for running it until now.\n- [2025-01-09] standup/atlas/2025-01-09-2: Dependency map update: billing-api needs Ledger (invoice postings).\n- [2026-02-26] incident-review/INC-2026-003: INC-2026-003 review. What happened: the webhooks service delivered some events twice on 2026-02-20. Why: a retry loop that ignored idempotency keys. Follow-up decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n\nQuestion: What does a change to auth-gateway need before it can merge?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788592261-jd8USD8NQOpKAAk3Eqce",
+  "object": "chat.completion",
+  "created": 1788592261,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Morph",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Two reviewer approvals and a security sign-off.",
+     "refusal": null,
+     "reasoning": "The question asks: What does a change to auth-gateway need before it can merge?\n\nLooking at memory:\n- [2025-07-29] standup/ember/2025-07-29: Policy: every auth-gateway change requires two reviewer approvals and a security sign-off.\n\nThat's the relevant entry. The answer: two reviewer approvals and a security sign-off.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: What does a change to auth-gateway need before it can merge?\n\nLooking at memory:\n- [2025-07-29] standup/ember/2025-07-29: Policy: every auth-gateway change requires two reviewer approvals and a security sign-off.\n\nThat's the relevant entry. The answer: two reviewer approvals and a security sign-off.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1565,
+   "completion_tokens": 89,
+   "total_tokens": 1654,
+   "cost": 0.0001820205,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001820205,
+    "upstream_inference_prompt_cost": 0.000151805,
+    "upstream_inference_completions_cost": 3.02155e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 80,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.1033298749825917,
+ "fetched_at": "2026-09-05T07:11:02Z"
+}

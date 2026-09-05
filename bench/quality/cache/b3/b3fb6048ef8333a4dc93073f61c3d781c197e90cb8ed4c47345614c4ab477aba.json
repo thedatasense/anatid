@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-12-08] handover/2025-12-08-search-indexer: From today the pager for the indexer rings Dune, not the Cinder team. Ownership transferred.\n- [2026-02-12] standup/ember/2026-02-12: Ember on-call swapped this morning. Oskar carries the phone until the next rotation. Heads-up from team Ember: the search indexer's p99 latency doubled after Tuesday's deploy.\n- [2025-11-06] standup/dune/2025-11-06: Heads-up from the Dune team: search-indexer's queue depth hit 50,000 after the marketing send.\n- [2026-01-01] standup/cinder/2026-01-01: The Cinder team noticed that the search indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2025-12-17] standup/dune/2025-12-17: Decided in today's standup: search-indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes.\n- [2025-10-13] standup/cinder/2025-10-13: The monthly cost review is run by Yuki. Reminder that the search indexer depends on the catalog.\n- [2025-02-28] standup/cinder/2025-02-28: Dependency map update: search-indexer needs the product catalog (product documents). Cinder holds planning on Mondays.\n- [2025-08-27] standup/cinder/2025-08-27: The search indexer is pinned to OpenSearch 2.11; the pin lifts when the full reindex completes. Cinder sits on the third floor.\n- [2025-10-16] incident-review/INC-2025-023: Review of INC-2025-023 (search-indexer, 2025-10-13). The root cause was a reindex job that failed silently on a full disk. We decided that reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2025-01-20] standup/ember/2025-01-20: For the record, scheduler is owned by the Ember team.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-01-17] standup/cinder/2025-01-17-2: The indexer lives with the Cinder team.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2025-01-14] standup/ember/2025-01-14: Oskar Lind is on call for the Ember team to start the year.\n- [2025-01-14] standup/cinder/2025-01-14: Yuki takes the first team Cinder on-call shift of the year.\n- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.\n- [2025-04-08] standup/cinder/2025-04-08: Reminder that the indexer depends on the catalog.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.\n- [2025-06-05] standup/boreal/2025-06-05: On-call rotation: Marcus Oyelaran is primary for team Boreal starting today; Lena is off rotation.\n- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.\n- [2025-04-09] standup/cinder/2025-04-09: On-call rotation: Yuki Tanaka is primary for the Cinder team starting today; Diego Alvarez is off rotation.\n\nQuestion: Who is on call for the team that owns search-indexer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788607910-u5q6JPPVVZZrhVC6wW41",
+  "object": "chat.completion",
+  "created": 1788607910,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tomasz Nowak",
+     "refusal": null,
+     "reasoning": "The question asks: Who is on call for the team that owns search-indexer?\n\nFirst, determine which team owns search-indexer. Memory entries:\n- [2025-01-17] standup/cinder/2025-01-17-2: The indexer lives with the Cinder team.\n- [2025-12-08] handover/2025-12-08-search-indexer: From today the pager for the indexer rings Dune, not the Cinder team. Ownership transferred.\n\nSo as of 2025-12-08, search-indexer is owned by Dune team. Today is 2026-06-30, so the current owner is Dune.\n\nNow, who is on call for Dune? The most recent Dune on-call entry:\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2026-02-04] standup/dune/2026-02-04-2: webhooks owned by Dune (not on-call).\n\nLater entries about Dune on-call? [2025-09-22] older. So the latest is Tomasz Nowak (2026-02-04). No later rotation noted. So answer: Tomasz Nowak.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Who is on call for the team that owns search-indexer?\n\nFirst, determine which team owns search-indexer. Memory entries:\n- [2025-01-17] standup/cinder/2025-01-17-2: The indexer lives with the Cinder team.\n- [2025-12-08] handover/2025-12-08-search-indexer: From today the pager for the indexer rings Dune, not the Cinder team. Ownership transferred.\n\nSo as of 2025-12-08, search-indexer is owned by Dune team. Today is 2026-06-30, so the current owner is Dune.\n\nNow, who is on call for Dune? The most recent Dune on-call entry:\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2026-02-04] standup/dune/2026-02-04-2: webhooks owned by Dune (not on-call).\n\nLater entries about Dune on-call? [2025-09-22] older. So the latest is Tomasz Nowak (2026-02-04). No later rotation noted. So answer: Tomasz Nowak.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1617,
+   "completion_tokens": 290,
+   "total_tokens": 1907,
+   "cost": 0.000186095,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000186095,
+    "upstream_inference_prompt_cost": 0.000113595,
+    "upstream_inference_completions_cost": 7.25e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 283,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.502419958997052,
+ "fetched_at": "2026-09-05T11:31:55Z"
+}

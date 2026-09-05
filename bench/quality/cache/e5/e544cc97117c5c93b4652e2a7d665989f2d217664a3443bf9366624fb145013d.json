@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: On what date was the review of INC-2026-003 written?\nGold answer: 2026-01-22\nAlso accepted: 22 January 2026; January 22, 2026\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: I don't know"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616392-q02gUyjGa0RkGnGVFboF",
+  "object": "chat.completion",
+  "created": 1788616392,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer 'I don't know' provides no date or note identification, so it fails to match the gold answer of 2026-01-22.\"}",
+     "refusal": null,
+     "reasoning": "The question asks about the review date of INC-2026-003. The gold answer is 2026-01-22. The answer to grade is \"I don't know\" — which does not identify the date or the note. So it's incorrect.\n\nOutput JSON: {\"correct\": false, \"reason\": \"...\"}",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the review date of INC-2026-003. The gold answer is 2026-01-22. The answer to grade is \"I don't know\" — which does not identify the date or the note. So it's incorrect.\n\nOutput JSON: {\"correct\": false, \"reason\": \"...\"}",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 257,
+   "completion_tokens": 112,
+   "total_tokens": 369,
+   "cost": 4.7275e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.7275e-05,
+    "upstream_inference_prompt_cost": 1.9275e-05,
+    "upstream_inference_completions_cost": 2.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 68,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.3459610419813544,
+ "fetched_at": "2026-09-05T13:53:15Z"
+}

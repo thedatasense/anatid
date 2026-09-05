@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Atlas own now?\nGold answer: catalog, image-resizer, event-bus and feature-flags\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 4 services.\n\nAnswer to grade: Product catalog, event bus, feature-flags, image resizer"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788605619-iMDChYJHdtDE8Kco7Iwf",
+  "object": "chat.completion",
+  "created": 1788605619,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names all four gold services (catalog as 'Product catalog', event-bus, feature-flags, image-resizer) with no extra items.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is: catalog, image-resizer, event-bus and feature-flags.\n\nThe answer to grade: Product catalog, event bus, feature-flags, image resizer.\n\nLet me match:\n- Product catalog → catalog ✓\n- event bus → event-bus ✓\n- feature-flags → feature-flags ✓\n- image resizer → image-resizer ✓\n\nAll 4 items named, no extras. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is: catalog, image-resizer, event-bus and feature-flags.\n\nThe answer to grade: Product catalog, event bus, feature-flags, image resizer.\n\nLet me match:\n- Product catalog → catalog ✓\n- event bus → event-bus ✓\n- feature-flags → feature-flags ✓\n- image resizer → image-resizer ✓\n\nAll 4 items named, no extras. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 267,
+   "completion_tokens": 132,
+   "total_tokens": 399,
+   "cost": 4.5345e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.5345e-05,
+    "upstream_inference_prompt_cost": 1.2345e-05,
+    "upstream_inference_completions_cost": 3.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 89,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.349349958996754,
+ "fetched_at": "2026-09-05T10:53:41Z"
+}

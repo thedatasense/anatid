@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-10-13, the ledger service is owned by the Cinder team. [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n    earlier: The ledger service is owned by the Atlas team. [valid 2025-01-08 to 2025-10-13; recorded by standup/atlas/2025-01-08]\n- On 2025-09-16, the Ember team handed the authentication gateway over to the Cinder team. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager; on 2026-04-14 Tomasz handed the pager back to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is the primary on-call for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- From 2025-10-13, the pager for the ledger service rings the Cinder team instead of the Atlas team. [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- As of 2025-11-27, Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-09-05 to 2025-10-24; recorded by standup/cinder/2025-09-05]\n    earlier: Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-07-17 to 2025-09-05; recorded by standup/cinder/2025-07-17]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-06-06 to 2025-07-17; recorded by standup/cinder/2025-06-06]\n    earlier: Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-04-24 to 2025-06-06; recorded by standup/cinder/2025-04-24]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-02-27 to 2025-04-24; recorded by standup/cinder/2025-02-27]\n    earlier: Diego is on call for the Cinder team to start the year. [decision; valid 2025-01-09 to 2025-02-27; recorded by standup/cinder/2025-01-09]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager; on 2026-04-14 he handed the pager to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Tomasz is off the on-call rotation for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- Boreal noticed the ledger service's memory use growth after the cache change and pinged the ledger service's owners. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- Yuki Tanaka is on the Cinder team. [valid 2025-01-08 to now; recorded by standup/cinder/2025-01-08]\n- The Cinder team adopted trunk-based development. [decision; valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14-2]\n- INC-2025-011 was a ledger service incident on 2025-05-24. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- Until 2025-09-23, the reporting service depended on the ledger service for the nightly balance export; it no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- The Cinder team runs its planning on Mondays. [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- The ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n\nQuestion: When did Cinder take over the ledger?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596115-kkZPnX2sIGP8LDu2fjAP",
+  "object": "chat.completion",
+  "created": 1788596115,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-10-13",
+     "refusal": null,
+     "reasoning": "The question asks when Cinder took over the ledger. The memory says: \"As of 2025-10-13, the ledger service is owned by the Cinder team\" and \"From 2025-10-13, the pager for the ledger service rings the Cinder team instead of the Atlas team.\"\n\nSo the answer is 2025-10-13.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Cinder took over the ledger. The memory says: \"As of 2025-10-13, the ledger service is owned by the Cinder team\" and \"From 2025-10-13, the pager for the ledger service rings the Cinder team instead of the Atlas team.\"\n\nSo the answer is 2025-10-13.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1716,
+   "completion_tokens": 82,
+   "total_tokens": 1798,
+   "cost": 0.0002984,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002984,
+    "upstream_inference_prompt_cost": 0.0002574,
+    "upstream_inference_completions_cost": 4.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 74,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.8622687500319444,
+ "fetched_at": "2026-09-05T08:15:19Z"
+}

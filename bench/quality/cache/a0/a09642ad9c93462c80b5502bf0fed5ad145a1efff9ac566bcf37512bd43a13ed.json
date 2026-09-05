@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-20] standup/dune/2025-01-20: The Dune team owns the image resizer.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-11-26] handover/2025-11-26-image-resizer: The Atlas team is taking over the image resizer from the Ember team, effective today. Dashboards and alerts are being repointed.\n- [2025-08-19] standup/dune/2025-08-19-2: Observation from the Dune team: after the runtime upgrade, the resizer's cold start time tripled.\n- [2025-10-15] standup/atlas/2025-10-15: Team Atlas noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2026-03-17] standup/atlas/2026-03-17: Decided in today's standup: image-resizer will keep original uploads for 90 days only, since storage for originals doubled in six months. For anything Atlas-related, page Priya.\n- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2026-02-16] standup/dune/2026-02-16: The Dune team noticed that the product catalog's request volume halved after the client rollout and pinged the owners.\n- [2025-04-21] standup/dune/2025-04-21: The Dune team adopted a monthly game day.\n- [2025-07-24] standup/dune/2025-07-24: The Dune team sits on the fourth floor.\n- [2026-06-09] standup/dune/2026-06-09: Observation from team Dune: after the retention change, search-indexer's disk usage jumped 30 percent.\n- [2025-12-29] standup/dune/2025-12-29: Observation from team Dune: after the client rollout, the event-bus' request volume halved.\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n- [2026-05-22] standup/dune/2026-05-22-4: The Dune team planning meeting is every Wednesday.\n- [2026-05-22] standup/dune/2026-05-22-2: The Dune team noticed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2025-09-23] standup/dune/2025-09-23-2: Team Dune noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2026-04-14] standup/dune/2026-04-14-2: The Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.\n- [2026-05-22] standup/dune/2026-05-22-3: Heads-up from the Dune team: the scheduler's error rate crept up to 2 percent after the dependency bump.\n- [2026-04-14] standup/dune/2026-04-14: Rotation day for the Dune team: Tomasz hands the pager to Farah.\n- [2025-01-09] standup/dune/2025-01-09: Farah runs team Dune solo until the next hire lands.\n- [2025-04-17] standup/cinder/2025-04-17: Decision: the catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time.\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2026-01-16] standup/dune/2026-01-16: On-call rotation: Farah Haddad is primary for team Dune starting today; Tomasz is off rotation.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-11-17] standup/dune/2025-11-17: Farah still has the Dune pager.\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n- [2025-03-26] standup/dune/2025-03-26: Reminder that the reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. Observation from team Dune: after the cache change, the notification service's memory use grew steadily for a week.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n\nQuestion: Which team owned image-resizer before Dune?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620743-3WrU4aHHOkOOGJfcValL",
+  "object": "chat.completion",
+  "created": 1788620743,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which team owned image-resizer before Dune. Memory says Dune team owned the image resizer as of 2025-01-20, then handover to Ember 2025-03-20, then Atlas 2025-11-26. But was there an owner before Dune? The memory only shows Dune as the earliest owner of image resizer. There's no entry showing a team before Dune owned image-resizer. The first mention is 2025-01-20 \"The Dune team owns the image resizer.\" No prior ownership recorded.\n\nSo answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owned image-resizer before Dune. Memory says Dune team owned the image resizer as of 2025-01-20, then handover to Ember 2025-03-20, then Atlas 2025-11-26. But was there an owner before Dune? The memory only shows Dune as the earliest owner of image resizer. There's no entry showing a team before Dune owned image-resizer. The first mention is 2025-01-20 \"The Dune team owns the image resizer.\" No prior ownership recorded.\n\nSo answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1678,
+   "completion_tokens": 136,
+   "total_tokens": 1814,
+   "cost": 0.00015217,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015217,
+    "upstream_inference_prompt_cost": 0.00011817,
+    "upstream_inference_completions_cost": 3.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 130,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.676724832970649,
+ "fetched_at": "2026-09-05T15:05:46Z"
+}

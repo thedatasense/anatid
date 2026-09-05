@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The notifier's flat one-second retry was hammering the push provider during its outages. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- The notifier relies on the bus for delivery events, so if the bus is down the notifier is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- As of 2025-04-07, the Ember team reported that the notifier's request volume halved after the client rollout. [valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- During incident INC-2025-004, the notifier missed alerts for 40 minutes on 2025-02-01. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- As of 2025-12-29, the auth gateway deploys only on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-12-29 to now; recorded by standup/cinder/2025-12-29]\n- As of 2026-02-03, the Atlas team has a no-deploy Friday. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. [constraint; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- As of 2025-08-19, deploys to the job scheduler happen on Tuesdays and Fridays between 09:00 and 10:30 UTC; the previous Tuesdays 13:00-15:00 UTC slot is retired. [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time. [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, having moved from the Boreal team. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- Following the INC-2025-017 review, certificate expiry will alert 30 days ahead. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- As of 2025-11-11, the billing API has a deploy freeze from 2025-11-24 to 2025-12-02 for the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-18 to now; recorded by standup/ember/2025-02-18]\n- As of 2026-03-11, the ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n- As of 2026-05-19, the job scheduler's leader lease will be shortened to ten seconds. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- On 2025-03-26 the Dune team observed that the notification service's memory use grew steadily for a week after the cache change. [valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays; the previous Mon-Thu 09:00-17:00 UTC window no longer applies. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n\nQuestion: What is the deploy window for the notifier?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604644-2vR5zQIt0M2Lm04QF9VT",
+  "object": "chat.completion",
+  "created": 1788604644,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks about the deploy window for the notifier. Let me scan the memory for any deploy window entries related to the notifier.\n\nMemory entries:\n- Notifier retry behavior (flat one-second retry hammering push provider)\n- Bus deploy window: Thursdays 07:00-09:00 UTC (that's the bus, not the notifier)\n- Notifier relies on the bus\n- Ember team noted request volume halved\n- INC-2025-004: notifier missed alerts 40 min\n- Notifier retry: three times with exponential backoff\n- Auth gateway deploy window\n- Atlas no-deploy Friday\n- Webhook dispatcher deploy window\n- Job scheduler deploy window\n- Notifier ownership: Dune team\n- Certificate expiry alert\n- Billing API deploy freeze\n- Authentication gateway deploy window\n- Ledger deploy freeze\n- Ledger deploy window\n- Job scheduler leader lease\n- Dune memory use observation\n- Reporting service p99\n- Product catalog release window\n\nThere is no entry about the notifier's deploy window. The bus deploys Thursdays, but that's the bus, not the notifier. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the deploy window for the notifier. Let me scan the memory for any deploy window entries related to the notifier.\n\nMemory entries:\n- Notifier retry behavior (flat one-second retry hammering push provider)\n- Bus deploy window: Thursdays 07:00-09:00 UTC (that's the bus, not the notifier)\n- Notifier relies on the bus\n- Ember team noted request volume halved\n- INC-2025-004: notifier missed alerts 40 min\n- Notifier retry: three times with exponential backoff\n- Auth gateway deploy window\n- Atlas no-deploy Friday\n- Webhook dispatcher deploy window\n- Job scheduler deploy window\n- Notifier ownership: Dune team\n- Certificate expiry alert\n- Billing API deploy freeze\n- Authentication gateway deploy window\n- Ledger deploy freeze\n- Ledger deploy window\n- Job scheduler leader lease\n- Dune memory use observation\n- Reporting service p99\n- Product catalog release window\n\nThere is no entry about the notifier's deploy window. The bus deploys Thursdays, but that's the bus, not the notifier. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1585,
+   "completion_tokens": 246,
+   "total_tokens": 1831,
+   "cost": 0.000172695,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000172695,
+    "upstream_inference_prompt_cost": 0.000111195,
+    "upstream_inference_completions_cost": 6.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 240,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.48952470801305,
+ "fetched_at": "2026-09-05T10:37:29Z"
+}

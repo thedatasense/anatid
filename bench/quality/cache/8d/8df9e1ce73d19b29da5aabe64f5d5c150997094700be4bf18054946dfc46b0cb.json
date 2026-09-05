@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\n- [2025-06-19] standup/boreal/2025-06-19: As before, webhooks needs the event-bus to work.\n- [2025-11-24] handover/2025-11-24-event-bus: Atlas is taking over the event bus from Boreal, effective today. Dashboards and alerts are being repointed.\n- [2025-02-11] standup/boreal/2025-02-11: If the event bus is down, the notification service is down: it relies on it for delivery events.\n- [2025-02-11] standup/boreal/2025-02-11-2: If the bus is down, the webhooks service is down: it relies on it for outbound events.\n- [2025-12-29] standup/dune/2025-12-29: Observation from team Dune: after the client rollout, the event-bus' request volume halved.\n- [2026-05-27] standup/atlas/2026-05-27: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. The Atlas team noticed that search-indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. The catalog still relies on the resizer; keep that in mind for the maintenance.\n- [2025-01-09] standup/boreal/2025-01-09: Boreal looks after the bus.\n- [2025-09-24] standup/atlas/2025-09-24: Ledger deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2025-02-06] standup/ember/2025-02-06: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time.\n- [2025-09-23] standup/dune/2025-09-23-2: Team Dune noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2025-02-18] standup/ember/2025-02-18: Per the change policy, auth-gateway deploys on Mondays between 10:00 and 12:00 UTC.\n- [2026-03-03] standup/cinder/2026-03-03: The auth gateway deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-12-29] standup/cinder/2025-12-29: Reminder: auth-gateway deploys only on Mondays between 10:00 and 12:00 UTC.\n- [2026-06-01] standup/ember/2026-06-01: For newcomers: the deploy window for the reporting service is still on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-04-07] standup/ember/2025-04-07: Per the change policy, the webhooks service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. Heads-up from the Ember team: the notifier's request volume halved after the client rollout.\n- [2026-02-03] standup/atlas/2026-02-03: The Atlas team now does a no-deploy Friday.\n- [2025-08-25] standup/atlas/2025-08-25: New deploy window for Ledger: on Wednesdays between 09:00 and 11:00 UTC. Forget the previous weekday mornings before 11:00 UTC slot.\n- [2025-11-11] standup/atlas/2025-11-11: Deploy freeze for the billing API: 2025-11-24 to 2025-12-02 (the peak season).\n- [2025-08-19] standup/dune/2025-08-19: The job scheduler's deploy window changes today: it is now on Tuesdays and Fridays between 09:00 and 10:30 UTC. The old slot (Tuesdays 13:00-15:00 UTC) is retired.\n- [2026-01-22] standup/atlas/2026-01-22: The product catalog deploy window (unchanged): on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2026-02-26] incident-review/INC-2026-003: INC-2026-003 review. What happened: the webhooks service delivered some events twice on 2026-02-20. Why: a retry loop that ignored idempotency keys. Follow-up decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-09-03] standup/cinder/2025-09-03: New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Mon-Thu 09:00-17:00 UTC slot.\n- [2026-03-11] standup/cinder/2026-03-11: No deploys to Ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2026-05-28] standup/ember/2026-05-28: Ember noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.\n- [2026-04-14] standup/dune/2026-04-14-2: The Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n\nQuestion: When can the event-bus be deployed?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620026-DZhBJwckQM94AvDfEuPk",
+  "object": "chat.completion",
+  "created": 1788620026,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Thursdays between 07:00 and 09:00 UTC.",
+     "refusal": null,
+     "reasoning": "The question asks when the event-bus can be deployed. Memory says:\n\n- [2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\n\nNo later entry supersedes this regarding the deploy window. The handover to Atlas was about ownership, not the deploy window. So the answer: Thursdays between 07:00 and 09:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when the event-bus can be deployed. Memory says:\n\n- [2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\n\nNo later entry supersedes this regarding the deploy window. The handover to Atlas was about ownership, not the deploy window. So the answer: Thursdays between 07:00 and 09:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1718,
+   "completion_tokens": 124,
+   "total_tokens": 1842,
+   "cost": 0.00015985,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015985,
+    "upstream_inference_prompt_cost": 0.00012885,
+    "upstream_inference_completions_cost": 3.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 107,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4109791250084527,
+ "fetched_at": "2026-09-05T14:53:48Z"
+}

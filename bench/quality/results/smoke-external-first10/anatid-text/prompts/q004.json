@@ -1,0 +1,43 @@
+{
+ "qid": "q004",
+ "system": "anatid-text",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- [decision] Reindex jobs will page on failure. (since 2025-10-07; source incident-review/INC-2025-023)\n- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. (since 2026-05-19; source incident-review/INC-2026-009)\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. (since 2025-10-07; source incident-review/INC-2025-023)\n- [decision] For anything related to the Ember team, page Oskar. (since 2025-03-31; source standup/ember/2025-03-31)\n- [preference] As of 2026-04-08, for anything Atlas team-related this cycle, page Marcus, not Priya Raman. (since 2026-04-08; source standup/atlas/2026-04-08)\n  - earlier: [preference] For anything Atlas team-related, page Priya Raman. (held 2026-03-17 to 2026-04-08; source standup/atlas/2026-03-17)\n- [constraint] The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. (since 2025-04-22; source standup/cinder/2025-04-22)\n- [decision] Marcus took over the Boreal team on-call shift from Lena on 2025-05-07. (since 2025-05-07; source standup/boreal/2025-05-07)\n- [constraint] The product catalog deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. (since 2025-09-03; source standup/cinder/2025-09-03)\n  - earlier: [constraint] The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. (held 2025-03-17 to 2025-09-03; source standup/cinder/2025-03-17)\n- As of 2026-03-11, Tomasz is back on the on-call rotation for team Dune. (since 2026-03-11; source standup/dune/2026-03-11)\n  - earlier: As of 2026-01-16, Tomasz is off the on-call rotation for team Dune. (held 2026-01-16 to 2026-03-11; source standup/dune/2026-01-16)\n- Yuki Tanaka is on the Cinder team. (since 2025-01-08; source standup/cinder/2025-01-08)\n- INC-2025-011 was a ledger service incident on 2025-05-24. (since 2025-05-30; source incident-review/INC-2025-011)\n- Team Dune sits on the fourth floor. (since 2025-07-24; source standup/dune/2025-07-24)\n- The Ember team runs its planning on Fridays. (since 2025-07-21; source standup/ember/2025-07-21)\n- As of 2025-11-27, Diego is on the Ember team. (since 2025-11-27; source standup/cinder/2025-11-27)\n  - earlier: Diego is on the Cinder team. (held 2025-01-08 to 2025-11-27; source standup/cinder/2025-01-08)\n- The Boreal team runs its planning on Thursdays. (since 2026-03-20; source standup/boreal/2026-03-20-2)\n- The Cinder team runs its planning on Mondays. (since 2026-04-03; source standup/cinder/2026-04-03)\n- [decision] As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. (since 2025-07-30; source standup/atlas/2025-07-30)\n  - earlier: [decision] As of 2025-06-19, Tomasz is the primary on-call for the Atlas team and Priya Raman is no longer the primary on-call. (held 2025-06-19 to 2025-07-30; source standup/atlas/2025-06-19)\n- Until 2025-09-23, the reporting service depended on the ledger service for the nightly balance export; it no longer depends on the ledger service. (since 2025-09-23; source standup/dune/2025-09-23)\n- The notifier missed alerts for 40 minutes on 2025-02-01 during INC-2025-004. (since 2025-02-05; source incident-review/INC-2025-004)\n- [decision] The Ember team does pairing on every production change. (since 2025-02-06; source standup/ember/2025-02-06-2)\n\nQuestion: Why do reindex jobs page on failure?"
+  }
+ ],
+ "contexts": [
+  "Memory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.",
+  "- [decision] Reindex jobs will page on failure. (since 2025-10-07; source incident-review/INC-2025-023)",
+  "- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. (since 2026-05-19; source incident-review/INC-2026-009)",
+  "- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. (since 2025-10-07; source incident-review/INC-2025-023)",
+  "- [decision] For anything related to the Ember team, page Oskar. (since 2025-03-31; source standup/ember/2025-03-31)",
+  "- [preference] As of 2026-04-08, for anything Atlas team-related this cycle, page Marcus, not Priya Raman. (since 2026-04-08; source standup/atlas/2026-04-08)",
+  "  - earlier: [preference] For anything Atlas team-related, page Priya Raman. (held 2026-03-17 to 2026-04-08; source standup/atlas/2026-03-17)",
+  "- [constraint] The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. (since 2025-04-22; source standup/cinder/2025-04-22)",
+  "- [decision] Marcus took over the Boreal team on-call shift from Lena on 2025-05-07. (since 2025-05-07; source standup/boreal/2025-05-07)",
+  "- [constraint] The product catalog deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. (since 2025-09-03; source standup/cinder/2025-09-03)",
+  "  - earlier: [constraint] The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. (held 2025-03-17 to 2025-09-03; source standup/cinder/2025-03-17)",
+  "- As of 2026-03-11, Tomasz is back on the on-call rotation for team Dune. (since 2026-03-11; source standup/dune/2026-03-11)",
+  "  - earlier: As of 2026-01-16, Tomasz is off the on-call rotation for team Dune. (held 2026-01-16 to 2026-03-11; source standup/dune/2026-01-16)",
+  "- Yuki Tanaka is on the Cinder team. (since 2025-01-08; source standup/cinder/2025-01-08)",
+  "- INC-2025-011 was a ledger service incident on 2025-05-24. (since 2025-05-30; source incident-review/INC-2025-011)",
+  "- Team Dune sits on the fourth floor. (since 2025-07-24; source standup/dune/2025-07-24)",
+  "- The Ember team runs its planning on Fridays. (since 2025-07-21; source standup/ember/2025-07-21)",
+  "- As of 2025-11-27, Diego is on the Ember team. (since 2025-11-27; source standup/cinder/2025-11-27)",
+  "  - earlier: Diego is on the Cinder team. (held 2025-01-08 to 2025-11-27; source standup/cinder/2025-01-08)",
+  "- The Boreal team runs its planning on Thursdays. (since 2026-03-20; source standup/boreal/2026-03-20-2)",
+  "- The Cinder team runs its planning on Mondays. (since 2026-04-03; source standup/cinder/2026-04-03)",
+  "- [decision] As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. (since 2025-07-30; source standup/atlas/2025-07-30)",
+  "  - earlier: [decision] As of 2025-06-19, Tomasz is the primary on-call for the Atlas team and Priya Raman is no longer the primary on-call. (held 2025-06-19 to 2025-07-30; source standup/atlas/2025-06-19)",
+  "- Until 2025-09-23, the reporting service depended on the ledger service for the nightly balance export; it no longer depends on the ledger service. (since 2025-09-23; source standup/dune/2025-09-23)",
+  "- The notifier missed alerts for 40 minutes on 2025-02-01 during INC-2025-004. (since 2025-02-05; source incident-review/INC-2025-004)",
+  "- [decision] The Ember team does pairing on every production change. (since 2025-02-06; source standup/ember/2025-02-06-2)"
+ ],
+ "answer": "Because INC-2025-023's root cause was a reindex job that failed silently on a full disk."
+}

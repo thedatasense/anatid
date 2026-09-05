@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- As of 2025-10-27, Yuki is the primary on-call for Team Cinder, having taken over from Diego. [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n    earlier: As of 2025-08-29, Diego is the primary on-call for Team Cinder, having taken over from Yuki. [valid 2025-08-29 to 2025-10-27; recorded by standup/cinder/2025-08-29]\n    earlier: As of 2025-07-10, Yuki is the primary on-call for Team Cinder until the next rotation. [valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: As of 2025-05-19, Diego is the primary on-call for Team Cinder. [valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-09, Yuki is the primary on-call for Team Cinder. [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n- As of 2026-05-25, Marcus is the primary on-call for Team Atlas, having taken over from Priya. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, Priya is the primary on-call for Team Atlas, having taken over from Marcus. [valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Marcus Oyelaran is the primary on-call for Team Atlas. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- As of 2025-05-09, Tomasz Nowak is the Team Atlas on-call contact for this cycle instead of Priya. [valid 2025-05-09 to now; recorded by standup/atlas/2025-05-09]\n    earlier: As of 2025-04-07, Priya carries the Team Atlas on-call phone until the next rotation. [valid 2025-04-07 to 2025-05-09; recorded by standup/atlas/2025-04-07]\n- As of 2026-06-08, Farah is the primary on-call for Team Dune, having taken the pager from Tomasz Nowak. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Tomasz Nowak is the primary on-call for Team Dune. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, Tomasz Nowak is off the Team Dune on-call rotation. [valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n- As of 2026-06-08, Farah is on the Team Dune on-call rotation. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Farah is off the Team Dune on-call rotation. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, Farah is the primary on-call for Team Dune. [valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n- On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- As of 2025-08-01, Lena is back on the Team Boreal on-call rotation. [valid 2025-08-01 to now; recorded by standup/boreal/2025-08-01]\n    earlier: As of 2025-06-05, Lena is off the Team Boreal on-call rotation. [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n- As of 2026-04-23, Priya is back on the Team Atlas on-call rotation. [valid 2026-04-23 to now; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Priya is off the Team Atlas on-call rotation. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- As of 2025-04-09, Diego is off the Team Cinder on-call rotation. [valid 2025-04-09 to now; recorded by standup/cinder/2025-04-09]\n- Farah takes the first on-call rotation for Team Dune. [valid 2025-01-16 to now; recorded by standup/dune/2025-01-16]\n- On 2025-10-22, Team Dune decided that the webhooks service will sign payloads with rotating keys. [decision; valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n\nQuestion: Who is on call for the team that owns webhooks?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614693-sCq4T1VAREzvjelpthNZ",
+  "object": "chat.completion",
+  "created": 1788614693,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Farah",
+     "refusal": null,
+     "reasoning": "The question asks: Who is on call for the team that owns webhooks?\n\nLooking at memory: \"On 2025-10-22, Team Dune decided that the webhooks service will sign payloads with rotating keys.\" This indicates Team Dune owns webhooks (Team Dune decided about webhooks service). Also \"On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily...\" Hmm, Team Atlas reported on webhooks service memory use — that's ambiguous.\n\nBut the ownership question: \"Team Dune decided that the webhooks service will sign payloads with rotating keys\" — a decision about webhooks suggests Team Dune owns webhooks. Also Team Dune on-call entries: primary on-call for Team Dune is Farah as of 2026-06-08 (valid to now).\n\nTeam Atlas reported webhooks memory issue — reporting an issue doesn't imply ownership. The decision by Team Dune about webhooks service is stronger for ownership.\n\nSo answer: Farah.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Who is on call for the team that owns webhooks?\n\nLooking at memory: \"On 2025-10-22, Team Dune decided that the webhooks service will sign payloads with rotating keys.\" This indicates Team Dune owns webhooks (Team Dune decided about webhooks service). Also \"On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily...\" Hmm, Team Atlas reported on webhooks service memory use — that's ambiguous.\n\nBut the ownership question: \"Team Dune decided that the webhooks service will sign payloads with rotating keys\" — a decision about webhooks suggests Team Dune owns webhooks. Also Team Dune on-call entries: primary on-call for Team Dune is Farah as of 2026-06-08 (valid to now).\n\nTeam Atlas reported webhooks memory issue — reporting an issue doesn't imply ownership. The decision by Team Dune about webhooks service is stronger for ownership.\n\nSo answer: Farah.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1611,
+   "completion_tokens": 214,
+   "total_tokens": 1825,
+   "cost": 0.000162805,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000162805,
+    "upstream_inference_prompt_cost": 0.000109305,
+    "upstream_inference_completions_cost": 5.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 210,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.3249927080469206,
+ "fetched_at": "2026-09-05T13:24:56Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-01, ownership of the indexer transferred from the Atlas team to the Boreal team. [valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- Until 2025-11-24, the Boreal team looked after the bus; ownership then moved to the Atlas team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- On 2025-02-21 the Boreal team pinged the owners of the ledger service about the memory growth. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- The Boreal team consists of Lena and Marcus. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- On 2025-11-03 the Boreal team noticed that the notification service's CPU sat at 90 percent after the traffic shift. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- On 2026-06-04 the Boreal team noticed that the product catalog's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: As of 2025-08-15, the Boreal team still owns the bus. [valid 2025-08-15 to 2025-11-24; recorded by standup/boreal/2025-08-15-2]\n- The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- As of 2025-12-18, the Boreal team has adopted a weekly dependency update day. [decision; valid 2025-12-18 to now; recorded by standup/boreal/2025-12-18]\n- As of 2025-11-24, the Atlas team is taking over the event bus from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- As of 2026-02-10, page Marcus for anything Boreal-related, not Lena. [constraint; valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, page Lena for anything Boreal-related, not Marcus. [constraint; valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: As of 2025-11-06, page Marcus for anything Boreal-related this cycle, not Lena. [constraint; valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: As of 2025-09-23, page Lena for anything Boreal-related this cycle, not Marcus. [constraint; valid 2025-09-23 to 2025-11-06; recorded by standup/boreal/2025-09-23]\n    earlier: As of 2025-08-15, page Marcus for anything Boreal-related this cycle, not Lena. [constraint; valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n    earlier: As of 2025-06-27, page Lena for anything Boreal-related. [constraint; valid 2025-06-27 to 2025-08-15; recorded by standup/boreal/2025-06-27]\n    earlier: As of 2025-05-29, page Marcus for anything Boreal-related. [constraint; valid 2025-05-29 to 2025-06-27; recorded by standup/boreal/2025-05-29]\n- The webhook dispatcher is owned by the Boreal team as of 2025-05-15, having moved from the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team as of 2025-03-03. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- On 2026-03-20 the Boreal team noticed that the product catalog's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- On 2025-12-01 the Boreal team flagged the job scheduler's cold start regression because the job scheduler is not their service. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n\nQuestion: Which services does Boreal own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604489-JF4HEpBAijSAmscvI0Oc",
+  "object": "chat.completion",
+  "created": 1788604489,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Indexer, webhook dispatcher",
+     "refusal": null,
+     "reasoning": "The question asks which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the memory entries about ownership:\n\n1. Indexer: transferred from Atlas to Boreal on 2026-04-01, valid to now. So Boreal owns the indexer now.\n2. Bus (event bus): moved from Boreal to Atlas on 2025-11-24, so Atlas owns the bus now, not Boreal.\n3. Webhook dispatcher: Boreal owns it as of 2025-05-15, valid to now. So Boreal owns the webhook dispatcher now.\n4. Ledger service: Boreal pinged the owners — so not theirs.\n5. Notification service: noticed CPU issue — ownership not stated.\n6. Product catalog: noticed memory use and pinged owners — not theirs.\n7. Job scheduler: \"not their service.\"\n\nSo Boreal owns now: the indexer and the webhook dispatcher.\n\nAnswer should be one short line: \"Indexer, webhook dispatcher\" or similar.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the memory entries about ownership:\n\n1. Indexer: transferred from Atlas to Boreal on 2026-04-01, valid to now. So Boreal owns the indexer now.\n2. Bus (event bus): moved from Boreal to Atlas on 2025-11-24, so Atlas owns the bus now, not Boreal.\n3. Webhook dispatcher: Boreal owns it as of 2025-05-15, valid to now. So Boreal owns the webhook dispatcher now.\n4. Ledger service: Boreal pinged the owners — so not theirs.\n5. Notification service: noticed CPU issue — ownership not stated.\n6. Product catalog: noticed memory use and pinged owners — not theirs.\n7. Job scheduler: \"not their service.\"\n\nSo Boreal owns now: the indexer and the webhook dispatcher.\n\nAnswer should be one short line: \"Indexer, webhook dispatcher\" or similar.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1715,
+   "completion_tokens": 220,
+   "total_tokens": 1935,
+   "cost": 0.000175945,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000175945,
+    "upstream_inference_prompt_cost": 0.000120945,
+    "upstream_inference_completions_cost": 5.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 213,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.5391323340008967,
+ "fetched_at": "2026-09-05T10:34:53Z"
+}

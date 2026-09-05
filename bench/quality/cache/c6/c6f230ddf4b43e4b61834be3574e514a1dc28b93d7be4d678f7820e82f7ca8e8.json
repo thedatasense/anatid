@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-04-08] standup/cinder/2025-04-08: Reminder that the indexer depends on the catalog.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2025-03-20] handover/2025-03-20-catalog: From today the pager for the catalog service rings Dune, not the Cinder team. Ownership transferred.\n- [2025-10-13] standup/cinder/2025-10-13: The monthly cost review is run by Yuki. Reminder that the search indexer depends on the catalog.\n- [2025-02-28] standup/cinder/2025-02-28: Dependency map update: search-indexer needs the product catalog (product documents). Cinder holds planning on Mondays.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-04-09] standup/cinder/2025-04-09: On-call rotation: Yuki Tanaka is primary for the Cinder team starting today; Diego Alvarez is off rotation.\n- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.\n- [2025-04-18] standup/atlas/2025-04-18-2: Heads-up from the Atlas team: the catalog service's disk usage jumped 30 percent after the retention change.\n- [2025-02-21] standup/cinder/2025-02-21: Rotation day for team Cinder: Yuki Tanaka hands the pager to Diego Alvarez. Team Cinder saw that the auth gateway's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-01-17] standup/cinder/2025-01-17-2: The indexer lives with the Cinder team.\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2026-02-12] standup/ember/2026-02-12: Ember on-call swapped this morning. Oskar carries the phone until the next rotation. Heads-up from team Ember: the search indexer's p99 latency doubled after Tuesday's deploy.\n- [2025-01-14] standup/cinder/2025-01-14: Yuki takes the first team Cinder on-call shift of the year.\n- [2026-01-01] standup/cinder/2026-01-01: The Cinder team noticed that the search indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2025-05-05] standup/dune/2025-05-05: For newcomers: the deploy window for the catalog is still on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2025-08-29] standup/atlas/2025-08-29: Observation from Atlas: after the client rollout, the product catalog's request volume halved.\n- [2025-10-27] standup/cinder/2025-10-27: Rotation day for the Cinder team: Diego hands the pager to Yuki.\n- [2025-06-23] standup/atlas/2025-06-23: The quarterly capacity review is run by Priya.\n- [2025-12-08] handover/2025-12-08-search-indexer: From today the pager for the indexer rings Dune, not the Cinder team. Ownership transferred.\n\nQuestion: Who is on call for the team that owns the service the catalog depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618900-3tPFa7w8r7ti7fcnK1jE",
+  "object": "chat.completion",
+  "created": 1788618900,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nFirst, find what service the catalog depends on. Memory entries mention dependencies: search-indexer needs the product catalog; indexer depends on the catalog. That's dependencies of indexer on catalog, not catalog on something else. Is there any mention of the catalog depending on something? Let me scan.\n\nEntries:\n- standup/cinder/2025-04-08: indexer depends on the catalog.\n- standup/cinder/2025-02-28: search-indexer needs the product catalog.\n- standup/cinder/2025-10-13: search indexer depends on the catalog.\n\nAll dependencies say the indexer depends on the catalog, not the other way. There's no entry saying the catalog depends on anything. So the memory doesn't contain a service the catalog depends on.\n\nHmm, but the question might intend \"the service that the catalog's dependent...\" Actually the phrasing: \"the team that owns the service the catalog depends on\" — the catalog depends on service X; who owns X? There is no X in memory. So answer: I don't know.\n\nBut wait — maybe the question intends the reverse: the service that depends on the catalog (the indexer). Common trick questions. The rules say answer only from memory; if not present, I don't know. The memory states the indexer depends on the catalog. It does not state what the catalog depends on. So strictly, I don't know.\n\nHowever, consider: maybe the questioner is loosely phrasing \"the service the catalog depends on\" as in \"the service depending on the catalog\"? That would be the indexer. The indexer lives with the Cinder team (2025-01-17-2), but 2025-12-08: pager for indexer rings Dune, ownership transferred. So team owning indexer = Dune. On-call for Dune: Tomasz Nowak carries the phone since 2026-02-04. Today is 2026-06-30, no later Dune update. So answer would be Tomasz Nowak.\n\nWhich interpretation? The question as written: \"the service the catalog depends on\" = catalog depends on X. Memory doesn't say catalog depends on anything. Rules say do not guess. But test setters often intend the reversed dependency check — whether you notice direction. The correct careful answer: memory only says the indexer depends on the catalog, not what the catalog depends on → I don't know.\n\nGiven the rules explicitly: \"If the memory does not contain the answer, reply exactly: I don't know.\" The memory does not contain the catalog's dependencies. So answer \"I don't know\".\n\nI'll go with I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nFirst, find what service the catalog depends on. Memory entries mention dependencies: search-indexer needs the product catalog; indexer depends on the catalog. That's dependencies of indexer on catalog, not catalog on something else. Is there any mention of the catalog depending on something? Let me scan.\n\nEntries:\n- standup/cinder/2025-04-08: indexer depends on the catalog.\n- standup/cinder/2025-02-28: search-indexer needs the product catalog.\n- standup/cinder/2025-10-13: search indexer depends on the catalog.\n\nAll dependencies say the indexer depends on the catalog, not the other way. There's no entry saying the catalog depends on anything. So the memory doesn't contain a service the catalog depends on.\n\nHmm, but the question might intend \"the service that the catalog's dependent...\" Actually the phrasing: \"the team that owns the service the catalog depends on\" — the catalog depends on service X; who owns X? There is no X in memory. So answer: I don't know.\n\nBut wait — maybe the question intends the reverse: the service that depends on the catalog (the indexer). Common trick questions. The rules say answer only from memory; if not present, I don't know. The memory states the indexer depends on the catalog. It does not state what the catalog depends on. So strictly, I don't know.\n\nHowever, consider: maybe the questioner is loosely phrasing \"the service the catalog depends on\" as in \"the service depending on the catalog\"? That would be the indexer. The indexer lives with the Cinder team (2025-01-17-2), but 2025-12-08: pager for indexer rings Dune, ownership transferred. So team owning indexer = Dune. On-call for Dune: Tomasz Nowak carries the phone since 2026-02-04. Today is 2026-06-30, no later Dune update. So answer would be Tomasz Nowak.\n\nWhich interpretation? The question as written: \"the service the catalog depends on\" = catalog depends on X. Memory doesn't say catalog depends on anything. Rules say do not guess. But test setters often intend the reversed dependency check — whether you notice direction. The correct careful answer: memory only says the indexer depends on the catalog, not what the catalog depends on → I don't know.\n\nGiven the rules explicitly: \"If the memory does not contain the answer, reply exactly: I don't know.\" The memory does not contain the catalog's dependencies. So answer \"I don't know\".\n\nI'll go with I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1389,
+   "completion_tokens": 571,
+   "total_tokens": 1960,
+   "cost": 0.000239245,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000239245,
+    "upstream_inference_prompt_cost": 9.6495e-05,
+    "upstream_inference_completions_cost": 0.00014275
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 565,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.496641041012481,
+ "fetched_at": "2026-09-05T14:35:07Z"
+}

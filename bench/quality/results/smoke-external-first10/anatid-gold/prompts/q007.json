@@ -1,0 +1,47 @@
+{
+ "qid": "q007",
+ "system": "anatid-gold",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- Dune owns the notifier (since 2025-06-27; source handover/2025-06-27-notifier-correction)\n  - earlier: Cinder owns the notifier (held 2025-06-11 to 2025-06-27; source handover/2025-06-11-notifier)\n  - earlier: Boreal owns the notifier (held 2025-01-09 to 2025-06-11; source standup/boreal/2025-01-09-2)\n- [observation] Boreal noticed that the notifier's CPU sat at 90 percent after the traffic shift (since 2025-11-03; source standup/boreal/2025-11-03-2)\n- [observation] Ember noticed that the notifier's request volume halved after the client rollout (since 2025-04-07; source standup/ember/2025-04-07)\n- The handover note of 2025-06-11 wrongly recorded Cinder as the owner of the notifier (since 2025-06-27; source handover/2025-06-27-notifier-correction)\n- [observation] Dune noticed that the notifier's memory use grew steadily for a week after the cache change (since 2025-03-26; source standup/dune/2025-03-26)\n- Reporting depends on the event-bus (since 2025-09-23; source standup/dune/2025-09-23)\n  - earlier: Reporting depends on the ledger (held 2025-01-21 to 2025-09-23; source standup/dune/2025-01-21)\n- [decision] Decision: the notifier will retry failed pushes three times with exponential backoff, because the flat one-second retry was hammering the push provider during its outages (since 2025-02-21; source standup/boreal/2025-02-21)\n- Webhooks depends on the event-bus (since 2025-02-11; source standup/boreal/2025-02-11-2)\n- [decision] Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one (since 2026-02-26; source incident-review/INC-2026-003)\n- [constraint] The event-bus deploys only on Thursdays between 07:00 and 09:00 UTC (since 2025-04-18; source standup/boreal/2025-04-18)\n- INC-2026-003: webhooks delivered some events twice on 2026-02-20; the root cause was a retry loop that ignored idempotency keys (since 2026-02-26; source incident-review/INC-2026-003)\n- The notifier depends on the event-bus (since 2025-02-11; source standup/boreal/2025-02-11)\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-01; the root cause was a consumer offset stuck after a broker restart (since 2025-02-05; source incident-review/INC-2025-004)\n- [constraint] Reporting deploys only on Tuesdays and Thursdays between 10:00 and 12:00 UTC (since 2025-03-26; source standup/dune/2025-03-26)\n- [decision] Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 (since 2025-02-05; source incident-review/INC-2025-004)\n- [constraint] Webhooks deploys only on Mondays and Wednesdays between 14:00 and 16:00 UTC (since 2025-04-07; source standup/ember/2025-04-07)\n- [observation] Dune noticed that the scheduler's error rate crept up to 2 percent after the dependency bump (since 2026-05-22; source standup/dune/2026-05-22-3)\n- Billing-api depends on the ledger (since 2025-01-09; source standup/atlas/2025-01-09-2)\n- The scheduler depends on feature-flags (since 2025-02-07; source standup/ember/2025-02-07)\n- Priya is on call for Atlas (since 2026-06-04; source standup/atlas/2026-06-04)\n  - earlier: Marcus is on call for Atlas (held 2026-04-08 to 2026-06-04; source standup/atlas/2026-04-08)\n  - earlier: Priya is on call for Atlas (held 2025-07-30 to 2026-04-08; source standup/atlas/2025-07-30)\n  - earlier: Tomasz is on call for Atlas (held 2025-06-19 to 2025-07-30; source standup/atlas/2025-06-19)\n  - earlier: Priya is on call for Atlas (held 2025-05-13 to 2025-06-19; source standup/atlas/2025-05-13)\n  - earlier: Tomasz is on call for Atlas (held 2025-04-03 to 2025-05-13; source standup/atlas/2025-04-03)\n  - earlier: Priya is on call for Atlas (held 2025-02-12 to 2025-04-03; source standup/atlas/2025-02-12)\n\nQuestion: Which service does the notifier depend on?"
+  }
+ ],
+ "contexts": [
+  "Memory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.",
+  "- Dune owns the notifier (since 2025-06-27; source handover/2025-06-27-notifier-correction)",
+  "  - earlier: Cinder owns the notifier (held 2025-06-11 to 2025-06-27; source handover/2025-06-11-notifier)",
+  "  - earlier: Boreal owns the notifier (held 2025-01-09 to 2025-06-11; source standup/boreal/2025-01-09-2)",
+  "- [observation] Boreal noticed that the notifier's CPU sat at 90 percent after the traffic shift (since 2025-11-03; source standup/boreal/2025-11-03-2)",
+  "- [observation] Ember noticed that the notifier's request volume halved after the client rollout (since 2025-04-07; source standup/ember/2025-04-07)",
+  "- The handover note of 2025-06-11 wrongly recorded Cinder as the owner of the notifier (since 2025-06-27; source handover/2025-06-27-notifier-correction)",
+  "- [observation] Dune noticed that the notifier's memory use grew steadily for a week after the cache change (since 2025-03-26; source standup/dune/2025-03-26)",
+  "- Reporting depends on the event-bus (since 2025-09-23; source standup/dune/2025-09-23)",
+  "  - earlier: Reporting depends on the ledger (held 2025-01-21 to 2025-09-23; source standup/dune/2025-01-21)",
+  "- [decision] Decision: the notifier will retry failed pushes three times with exponential backoff, because the flat one-second retry was hammering the push provider during its outages (since 2025-02-21; source standup/boreal/2025-02-21)",
+  "- Webhooks depends on the event-bus (since 2025-02-11; source standup/boreal/2025-02-11-2)",
+  "- [decision] Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one (since 2026-02-26; source incident-review/INC-2026-003)",
+  "- [constraint] The event-bus deploys only on Thursdays between 07:00 and 09:00 UTC (since 2025-04-18; source standup/boreal/2025-04-18)",
+  "- INC-2026-003: webhooks delivered some events twice on 2026-02-20; the root cause was a retry loop that ignored idempotency keys (since 2026-02-26; source incident-review/INC-2026-003)",
+  "- The notifier depends on the event-bus (since 2025-02-11; source standup/boreal/2025-02-11)",
+  "- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-01; the root cause was a consumer offset stuck after a broker restart (since 2025-02-05; source incident-review/INC-2025-004)",
+  "- [constraint] Reporting deploys only on Tuesdays and Thursdays between 10:00 and 12:00 UTC (since 2025-03-26; source standup/dune/2025-03-26)",
+  "- [decision] Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 (since 2025-02-05; source incident-review/INC-2025-004)",
+  "- [constraint] Webhooks deploys only on Mondays and Wednesdays between 14:00 and 16:00 UTC (since 2025-04-07; source standup/ember/2025-04-07)",
+  "- [observation] Dune noticed that the scheduler's error rate crept up to 2 percent after the dependency bump (since 2026-05-22; source standup/dune/2026-05-22-3)",
+  "- Billing-api depends on the ledger (since 2025-01-09; source standup/atlas/2025-01-09-2)",
+  "- The scheduler depends on feature-flags (since 2025-02-07; source standup/ember/2025-02-07)",
+  "- Priya is on call for Atlas (since 2026-06-04; source standup/atlas/2026-06-04)",
+  "  - earlier: Marcus is on call for Atlas (held 2026-04-08 to 2026-06-04; source standup/atlas/2026-04-08)",
+  "  - earlier: Priya is on call for Atlas (held 2025-07-30 to 2026-04-08; source standup/atlas/2025-07-30)",
+  "  - earlier: Tomasz is on call for Atlas (held 2025-06-19 to 2025-07-30; source standup/atlas/2025-06-19)",
+  "  - earlier: Priya is on call for Atlas (held 2025-05-13 to 2025-06-19; source standup/atlas/2025-05-13)",
+  "  - earlier: Tomasz is on call for Atlas (held 2025-04-03 to 2025-05-13; source standup/atlas/2025-04-03)",
+  "  - earlier: Priya is on call for Atlas (held 2025-02-12 to 2025-04-03; source standup/atlas/2025-02-12)"
+ ],
+ "answer": "event-bus"
+}

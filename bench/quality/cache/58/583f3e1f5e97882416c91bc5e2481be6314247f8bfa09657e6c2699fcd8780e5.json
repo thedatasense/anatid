@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- As of 2025-06-16, Team Boreal owns the catalog service, having taken it over from Team Dune. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: As of 2025-03-20, Team Dune owns the catalog service. [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Team Cinder owns the catalog service. [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n- The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- As of 2026-03-16, the catalog service deploys on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16]\n    earlier: The catalog service only ships on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n- On 2025-05-08, Team Boreal flagged that the catalog service's memory use grew steadily for a week following the cache change, noting the catalog service is not their service. [valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- As of 2025-06-16, dashboards and alerts for the catalog service are being repointed. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n- As of 2025-04-04, the catalog service will keep image metadata in a separate table. [decision; valid 2025-04-04 to now; recorded by standup/dune/2025-04-04]\n- As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder. [valid 2025-03-20 to now; recorded by handover/2025-03-20-catalog]\n- The catalog service's joined writes were locking product updates for seconds at a time. [valid 2025-04-04 to now; recorded by standup/dune/2025-04-04]\n- On 2025-08-29, Team Atlas observed that the catalog service's request volume halved after the client rollout. [valid 2025-08-29 to now; recorded by standup/atlas/2025-08-29]\n- Team Atlas flagged on 2025-04-18 that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2025-04-18 to now; recorded by standup/atlas/2025-04-18-2]\n- On 2025-12-17, Team Dune decided that the indexer will rebuild the index nightly instead of on every catalog write. [decision; valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- The Ember team never owned the webhooks service. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- On 2026-03-19, the Ember team noticed that the scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- On 2026-05-18, the Ember team noticed that the auth gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n\nQuestion: Who owns the catalog today?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614522-nutBFG9xrs0pRoEaNbhx",
+  "object": "chat.completion",
+  "created": 1788614522,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Boreal",
+     "refusal": null,
+     "reasoning": "The memory says Team Boreal owns the catalog service as of 2026-05-04, valid to now. Today is 2026-06-30. So the answer is Team Boreal.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says Team Boreal owns the catalog service as of 2026-05-04, valid to now. Today is 2026-06-30. So the answer is Team Boreal.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1438,
+   "completion_tokens": 47,
+   "total_tokens": 1485,
+   "cost": 0.00010808,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00010808,
+    "upstream_inference_prompt_cost": 9.633e-05,
+    "upstream_inference_completions_cost": 1.175e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 42,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.384486667055171,
+ "fetched_at": "2026-09-05T13:22:03Z"
+}

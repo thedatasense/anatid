@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Atlas own now?\nGold answer: catalog, image-resizer, event-bus and feature-flags\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 4 services.\n\nAnswer to grade: Product catalog, the bus, feature-flags, image resizer."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788598050-jjyqbP62QnH9QpdIxZw1",
+  "object": "chat.completion",
+  "created": 1788598050,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names all four gold services—'Product catalog' for catalog, 'the bus' for event-bus, 'feature-flags', and 'image resizer' for image-resizer—with no extra items.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer: catalog, event-bus, image-resizer, feature-flags. The answer to grade: \"Product catalog, the bus, feature-flags, image resizer.\"\n\n- \"Product catalog\" = catalog (product catalog is the catalog service, acceptable phrasing? The rule says every item must be named. \"Product catalog\" names catalog — likely acceptable).\n- \"the bus\" = event-bus? The gold says event-bus. \"the bus\" is a plausible reference to event-bus, but is it naming it? The rule: \"Where the gold is a list, every item must be named and no extra item.\" \"The bus\" — ambiguous. It could be event-bus. Hmm. The rule applies literally: \"the bus\" doesn't name \"event-bus\" precisely, but it's a common paraphrase. Given the question is about services Atlas owns, \"the bus\" likely refers to event-bus. But strictly, is \"the bus\" naming event-bus? It could be a paraphrase. The grading says intermediate hops need not be stated; final answer must name the gold. \"The bus\" is arguably a shorthand for event-bus. I'd lean toward correct? Or incorrect because it's ambiguous?\n\nIn these grading tasks, paraphrases that clearly refer to the same entity are accepted. \"The bus\" as a service name — event-bus is the only bus in the gold. I think it's acceptable. All four items named, no extras. So correct: true.\n\nBut let me consider strictness. \"no extra item\" — none extra. \"every item must be named\" — catalog ✓ (product catalog), event-bus — \"the bus\" — plausible. image-resizer ✓, feature-flags ✓.\n\nI'll say correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer: catalog, event-bus, image-resizer, feature-flags. The answer to grade: \"Product catalog, the bus, feature-flags, image resizer.\"\n\n- \"Product catalog\" = catalog (product catalog is the catalog service, acceptable phrasing? The rule says every item must be named. \"Product catalog\" names catalog — likely acceptable).\n- \"the bus\" = event-bus? The gold says event-bus. \"the bus\" is a plausible reference to event-bus, but is it naming it? The rule: \"Where the gold is a list, every item must be named and no extra item.\" \"The bus\" — ambiguous. It could be event-bus. Hmm. The rule applies literally: \"the bus\" doesn't name \"event-bus\" precisely, but it's a common paraphrase. Given the question is about services Atlas owns, \"the bus\" likely refers to event-bus. But strictly, is \"the bus\" naming event-bus? It could be a paraphrase. The grading says intermediate hops need not be stated; final answer must name the gold. \"The bus\" is arguably a shorthand for event-bus. I'd lean toward correct? Or incorrect because it's ambiguous?\n\nIn these grading tasks, paraphrases that clearly refer to the same entity are accepted. \"The bus\" as a service name — event-bus is the only bus in the gold. I think it's acceptable. All four items named, no extras. So correct: true.\n\nBut let me consider strictness. \"no extra item\" — none extra. \"every item must be named\" — catalog ✓ (product catalog), event-bus — \"the bus\" — plausible. image-resizer ✓, feature-flags ✓.\n\nI'll say correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 260,
+   "completion_tokens": 429,
+   "total_tokens": 689,
+   "cost": 0.0002535,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002535,
+    "upstream_inference_prompt_cost": 3.9e-05,
+    "upstream_inference_completions_cost": 0.0002145
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 373,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 10.31138395902235,
+ "fetched_at": "2026-09-05T08:47:41Z"
+}

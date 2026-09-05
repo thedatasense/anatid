@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Who was responsible for the scheduler on 2025-09-29?\nGold answer: Atlas\nAlso accepted: the Atlas team; team Atlas\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: Team Atlas"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616523-Tapr5PM49b7gA5TKs4B0",
+  "object": "chat.completion",
+  "created": 1788616523,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'Team Atlas' matches the accepted alternative phrasing 'team Atlas' for the gold answer Atlas.\"}",
+     "refusal": null,
+     "reasoning": "The question asks who was responsible for the scheduler on 2025-09-29. Gold answer: Atlas. Accepted: the Atlas team; team Atlas. Answer to grade: \"Team Atlas\" — matches \"team Atlas\" (case insensitive presumably). Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was responsible for the scheduler on 2025-09-29. Gold answer: Atlas. Accepted: the Atlas team; team Atlas. Answer to grade: \"Team Atlas\" — matches \"team Atlas\" (case insensitive presumably). Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 247,
+   "completion_tokens": 87,
+   "total_tokens": 334,
+   "cost": 2.8755e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.8755e-05,
+    "upstream_inference_prompt_cost": 7.005e-06,
+    "upstream_inference_completions_cost": 2.175e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 53,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.664582333993167,
+ "fetched_at": "2026-09-05T13:55:28Z"
+}

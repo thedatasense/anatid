@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-12-08, the indexer is owned by Team Dune, which took it over from Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- On 2026-01-01, Team Cinder noticed that the indexer's disk usage jumped 30 percent after the retention change and pinged the owners. [valid 2026-01-01 to now; recorded by standup/cinder/2026-01-01]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- As of 2025-06-16, Team Boreal owns the catalog service, having taken it over from Team Dune. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: As of 2025-03-20, Team Dune owns the catalog service. [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Team Cinder owns the catalog service. [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n- As of 2025-12-08, the pager for the indexer rings Team Dune instead of Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n- On 2025-12-17, Team Dune decided that the indexer will rebuild the index nightly instead of on every catalog write. [decision; valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Atlas, which took it over from the Ember team. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder, which took it over from the Ember team. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- On 2025-05-08, Team Boreal flagged that the catalog service's memory use grew steadily for a week following the cache change, noting the catalog service is not their service. [valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- On 2025-11-06, Team Dune reported that the indexer's queue depth hit 50,000 after the marketing send. [valid 2025-11-06 to now; recorded by standup/dune/2025-11-06]\n- On 2026-02-12, the Ember team reported that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas, which took it over from Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- As of 2026-02-10, the reports pipeline is owned by Team Cinder, which took it over from the Ember team. [decision; valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder. [valid 2025-03-20 to now; recorded by handover/2025-03-20-catalog]\n- The indexer's incremental updates left stale entries behind after failed writes. [valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n\nQuestion: Which team owns the service that search-indexer depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615246-GPLYXVs49VRycMtIRtyL",
+  "object": "chat.completion",
+  "created": 1788615246,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Boreal",
+     "refusal": null,
+     "reasoning": "The indexer depends on the catalog service. The catalog service is owned by Team Boreal (as of 2025-06-16, still as of 2026-05-04).\n\nAnswer: Team Boreal.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The indexer depends on the catalog service. The catalog service is owned by Team Boreal (as of 2025-06-16, still as of 2026-05-04).\n\nAnswer: Team Boreal.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1656,
+   "completion_tokens": 50,
+   "total_tokens": 1706,
+   "cost": 0.00012902,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012902,
+    "upstream_inference_prompt_cost": 0.00011652,
+    "upstream_inference_completions_cost": 1.25e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 45,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.5104451249935664,
+ "fetched_at": "2026-09-05T13:34:08Z"
+}

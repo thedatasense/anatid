@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Ember team decided that the job scheduler will use leader election instead of a single fixed node. [decision; valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\n- The job scheduler's single fixed node turned every restart into a missed run. [valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\n- The job scheduler leader lease will be shortened to ten seconds, a decision from the INC-2026-009 review. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The billing API gates the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- Changes to the billing API need a rollback plan attached to the pull request. [constraint; valid 2025-04-02 to now; recorded by standup/ember/2025-04-02]\n- As of 2025-07-30, Priya Raman holds the Atlas team pager instead of Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: As of 2025-06-19, Tomasz holds the Atlas team pager instead of Priya Raman. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: As of 2025-05-13, Priya Raman holds the Atlas team pager instead of Tomasz. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: As of 2025-04-03, Tomasz holds the Atlas team pager instead of Priya Raman. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: As of 2025-03-28, Priya Raman still holds the Atlas team pager. [valid 2025-03-28 to 2025-04-03; recorded by standup/atlas/2025-03-28]\n- As of 2025-08-19, deploys to the job scheduler happen only on Tuesdays and Fridays between 09:00 and 10:30 UTC; the old Tuesday 13:00-15:00 UTC window is retired. [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: Deploys to the job scheduler happen only on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, covering the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- On 2026-05-22, team Dune reported that the job scheduler's error rate crept up to 2 percent after the dependency bump. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- From 2025-10-13, the pager for the ledger service rings the Cinder team instead of the Atlas team. [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- As of 2025-06-25, the job scheduler is owned by team Dune. [decision; valid 2025-06-25 to now; recorded by handover/2025-06-25-scheduler]\n    earlier: The job scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- As of 2025-09-23, the pager for the job scheduler rings the Cinder team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service, because the nightly ledger scans were blocking billing runs. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- As of 2025-12-18, the indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes. [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- As of 2026-01-30, the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- The root cause of INC-2025-004 was a notifier consumer offset stuck after a broker restart. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- As of 2025-09-23, the Cinder team owns the job scheduler, which team Dune owned until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- As of 2025-09-23, the Cinder team owns the job scheduler; team Dune owned it until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, team Dune still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n\nQuestion: Why did the scheduler switch to leader election instead of a single fixed node?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595970-gLI7WhtIVpoZVlU5jW8n",
+  "object": "chat.completion",
+  "created": 1788595970,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Because the single fixed node turned every restart into a missed run.",
+     "refusal": null,
+     "reasoning": "The question asks why the scheduler switched to leader election instead of a single fixed node. The memory says: \"The job scheduler's single fixed node turned every restart into a missed run.\" That's the reason.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks why the scheduler switched to leader election instead of a single fixed node. The memory says: \"The job scheduler's single fixed node turned every restart into a missed run.\" That's the reason.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1687,
+   "completion_tokens": 57,
+   "total_tokens": 1744,
+   "cost": 0.000133095,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000133095,
+    "upstream_inference_prompt_cost": 0.000118845,
+    "upstream_inference_completions_cost": 1.425e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 42,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.5926879580365494,
+ "fetched_at": "2026-09-05T08:12:52Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-08-01, Lena is back on the Team Boreal on-call rotation. [valid 2025-08-01 to now; recorded by standup/boreal/2025-08-01]\n    earlier: As of 2025-06-05, Lena is off the Team Boreal on-call rotation. [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n- Lena takes the first Boreal on-call shift of the year. [valid 2025-01-13 to now; recorded by standup/boreal/2025-01-13]\n- As of 2026-02-19, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: As of 2025-12-26, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: As of 2025-10-31, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n    earlier: As of 2025-09-08, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-09-08 to 2025-10-31; recorded by standup/boreal/2025-09-08]\n    earlier: As of 2025-08-01, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2025-08-01 to 2025-09-08; recorded by standup/boreal/2025-08-01]\n    earlier: As of 2025-06-05, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n    earlier: As of the 2025-04-16 rotation, Lena carries the Team Boreal on-call pager. [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: As of the 2025-02-27 on-call swap, Marcus carries the Team Boreal on-call phone until the next rotation. [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n- As of 2026-03-12, for anything Boreal-related, page Lena. [preference; valid 2026-03-12 to now; recorded by standup/boreal/2026-03-12]\n- For the Atlas on-call cycle starting 2025-02-19, page Tomasz Nowak instead of Priya for anything. [preference; valid 2025-02-19 to now; recorded by standup/atlas/2025-02-19]\n- Team Boreal holds its planning meeting on Thursdays. [valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n- As of 2025-12-23, the pager for the auth gateway rings Team Atlas instead of Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n- As of 2025-03-28, the pager for the webhooks service rings Team Atlas instead of Team Boreal. [valid 2025-03-28 to now; recorded by handover/2025-03-28-webhooks]\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- As of 2025-05-09, Tomasz Nowak is the Team Atlas on-call contact for this cycle instead of Priya. [valid 2025-05-09 to now; recorded by standup/atlas/2025-05-09]\n    earlier: As of 2025-04-07, Priya carries the Team Atlas on-call phone until the next rotation. [valid 2025-04-07 to 2025-05-09; recorded by standup/atlas/2025-04-07]\n- On 2025-05-08, Team Boreal flagged that the catalog service's memory use grew steadily for a week following the cache change, noting the catalog service is not their service. [valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- As of January 2025, the Boreal team consists of Lena and Marcus. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- On 2025-09-08, Team Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n\nQuestion: Who was on call for Boreal on 2025-05-23?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788613836-auOe9B6xXioObXD3DNgJ",
+  "object": "chat.completion",
+  "created": 1788613836,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Lena",
+     "refusal": null,
+     "reasoning": "The question asks who was on call for Boreal on 2025-05-23.\n\nLooking at the memory entries for Boreal on-call primary:\n- As of 2025-06-05, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-06-05 to 2025-08-01]\n- As of the 2025-04-16 rotation, Lena carries the Team Boreal on-call pager. [valid 2025-04-16 to 2025-06-05]\n\n2025-05-23 falls between 2025-04-16 and 2025-06-05, so Lena carries the pager. Answer: Lena.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was on call for Boreal on 2025-05-23.\n\nLooking at the memory entries for Boreal on-call primary:\n- As of 2025-06-05, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-06-05 to 2025-08-01]\n- As of the 2025-04-16 rotation, Lena carries the Team Boreal on-call pager. [valid 2025-04-16 to 2025-06-05]\n\n2025-05-23 falls between 2025-04-16 and 2025-06-05, so Lena carries the pager. Answer: Lena.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1479,
+   "completion_tokens": 152,
+   "total_tokens": 1631,
+   "cost": 0.000148925,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000148925,
+    "upstream_inference_prompt_cost": 0.000110925,
+    "upstream_inference_completions_cost": 3.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 148,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.6355147499707527,
+ "fetched_at": "2026-09-05T13:10:39Z"
+}

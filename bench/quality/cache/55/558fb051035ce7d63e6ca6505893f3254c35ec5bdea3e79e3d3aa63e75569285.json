@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- feature-flags' p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- As of 2025-09-02, clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- On 2026-02-11, Oskar wrote the feature-flags handover document for Farah. [valid 2026-02-11 to now; recorded by handover/2026-02-11-feature-flags]\n- The job scheduler depends on feature-flags for per-job kill switches. [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- feature-flags saw 40,000 requests per second at peak, and most of them were identical. [valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- As of 2026-02-11, feature-flags is owned by the Atlas team, which the Ember team owned until then. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, feature-flags is owned by team Dune, which the Ember team owned until then. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, feature-flags is owned by the Ember team, which the Atlas team owned until then. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: feature-flags is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- The billing API gates the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- On 2025-12-31, the Atlas team saw that feature-flags' queue depth hit 50,000 following the marketing send and flagged it as not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- The job scheduler leader lease will be shortened to ten seconds, a decision from the INC-2026-009 review. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager; on 2026-04-14 he handed the pager to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Tomasz is off the on-call rotation for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager; on 2026-04-14 Tomasz handed the pager back to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is the primary on-call for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n\nQuestion: When can feature-flags be deployed?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596405-EwGXdDaRJfx9ouXl0yq2",
+  "object": "chat.completion",
+  "created": 1788596405,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks \"When can feature-flags be deployed?\" Let me look through the memory for any information about deployment windows or when feature-flags can be deployed.\n\nMemory entries:\n- p99 latency doubled after Tuesday's deploy — not about when it can be deployed.\n- Clients cache evaluations for 30 seconds — not about deployment.\n- Handover document — no.\n- Job scheduler depends on feature-flags — no.\n- 40,000 rps at peak — no.\n- Ownership — no.\n- Billing API gates invoice flow — no.\n- Queue depth — no.\n- Job scheduler leader lease — no.\n- Ownership correction — no.\n- Indexer pinned to OpenSearch 2.11, pin lifts when full reindex completes — that's about the indexer, not feature-flags.\n- On-call stuff — no.\n\nNothing in memory answers when feature-flags can be deployed. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks \"When can feature-flags be deployed?\" Let me look through the memory for any information about deployment windows or when feature-flags can be deployed.\n\nMemory entries:\n- p99 latency doubled after Tuesday's deploy — not about when it can be deployed.\n- Clients cache evaluations for 30 seconds — not about deployment.\n- Handover document — no.\n- Job scheduler depends on feature-flags — no.\n- 40,000 rps at peak — no.\n- Ownership — no.\n- Billing API gates invoice flow — no.\n- Queue depth — no.\n- Job scheduler leader lease — no.\n- Ownership correction — no.\n- Indexer pinned to OpenSearch 2.11, pin lifts when full reindex completes — that's about the indexer, not feature-flags.\n- On-call stuff — no.\n\nNothing in memory answers when feature-flags can be deployed. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1366,
+   "completion_tokens": 197,
+   "total_tokens": 1563,
+   "cost": 0.00014402,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014402,
+    "upstream_inference_prompt_cost": 9.477e-05,
+    "upstream_inference_completions_cost": 4.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 191,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.278814750025049,
+ "fetched_at": "2026-09-05T08:20:08Z"
+}

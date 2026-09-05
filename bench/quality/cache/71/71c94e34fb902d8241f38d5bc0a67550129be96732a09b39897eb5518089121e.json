@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The job scheduler leader lease will be shortened to ten seconds, a decision from the INC-2026-009 review. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The Ember team decided that the job scheduler will use leader election instead of a single fixed node. [decision; valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\n- As of 2025-09-23, the Cinder team owns the job scheduler; team Dune owned it until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, team Dune still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2025-08-19, deploys to the job scheduler happen only on Tuesdays and Fridays between 09:00 and 10:30 UTC; the old Tuesday 13:00-15:00 UTC window is retired. [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: Deploys to the job scheduler happen only on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- As of 2025-09-23, the Cinder team owns the job scheduler, which team Dune owned until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- On 2026-05-22, team Dune reported that the job scheduler's error rate crept up to 2 percent after the dependency bump. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- As of 2025-09-02, clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- As of 2025-06-25, the job scheduler is owned by team Dune. [decision; valid 2025-06-25 to now; recorded by handover/2025-06-25-scheduler]\n    earlier: The job scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- Notifier consumers will commit offsets every five seconds. [decision; valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- On 2025-12-01, the Boreal team observed that the job scheduler's cold start time tripled following the runtime upgrade. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n- As of 2026-01-30, the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- As of 2025-09-23, the pager for the job scheduler rings the Cinder team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- On 2026-05-28, the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- INC-2025-011 was a ledger service incident on 2025-05-24. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- On 2026-04-14, team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it as not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- As of 2025-06-11, team Dune owns the notifier, which the Boreal team owned until then. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: As of 2025-06-11, the Cinder team owns the notifier, which the Boreal team owned until then. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- In the product catalog, joined writes were locking product updates for seconds at a time. [valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n\nQuestion: Which note records the decision that the scheduler leader lease will be shortened to ten seconds, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595838-TeuDtOtpg72rxFm9DBI7",
+  "object": "chat.completion",
+  "created": 1788595838,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Together",
+  "system_fingerprint": "default",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "incident-review/INC-2026-009, 2026-05-19",
+     "refusal": null,
+     "reasoning": "The question asks: which note records the decision that the scheduler leader lease will be shortened to ten seconds, and when was it written?\n\nFrom memory: \"The job scheduler leader lease will be shortened to ten seconds, a decision from the INC-2026-009 review. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\"\n\nSo the note is incident-review/INC-2026-009, recorded... the date? The entry says valid 2026-05-19 to now. The recorded by is incident-review/INC-2026-009. The date it was written — the memory entry carries the date it was recorded. The valid-from date is 2026-05-19. Hmm, the \"recorded by\" is the note label. The date recorded — we only have \"valid 2026-05-19 to now\". The question asks \"when was it written?\" The memory entry carries the date it was recorded; the only date we have is 2026-05-19. So answer: incident-review/INC-2026-009, 2026-05-19.\n\nOne short line with just the value asked for.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note records the decision that the scheduler leader lease will be shortened to ten seconds, and when was it written?\n\nFrom memory: \"The job scheduler leader lease will be shortened to ten seconds, a decision from the INC-2026-009 review. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\"\n\nSo the note is incident-review/INC-2026-009, recorded... the date? The entry says valid 2026-05-19 to now. The recorded by is incident-review/INC-2026-009. The date it was written — the memory entry carries the date it was recorded. The valid-from date is 2026-05-19. Hmm, the \"recorded by\" is the note label. The date recorded — we only have \"valid 2026-05-19 to now\". The question asks \"when was it written?\" The memory entry carries the date it was recorded; the only date we have is 2026-05-19. So answer: incident-review/INC-2026-009, 2026-05-19.\n\nOne short line with just the value asked for.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1568,
+   "completion_tokens": 279,
+   "total_tokens": 1847,
+   "cost": 0.0003747,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003747,
+    "upstream_inference_prompt_cost": 0.0002352,
+    "upstream_inference_completions_cost": 0.0001395
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 259,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.9938869170146063,
+ "fetched_at": "2026-09-05T08:10:42Z"
+}

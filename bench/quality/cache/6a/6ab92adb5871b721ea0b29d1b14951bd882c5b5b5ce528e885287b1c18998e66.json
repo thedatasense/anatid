@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: Webhook dispatcher, billing-api, resizer, notifier"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788619232-qOhh8rIeIhtTUvoK1nmk",
+  "object": "chat.completion",
+  "created": 1788619232,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names only four of the six required services (billing-api, notifier, and arguably webhooks/image-resizer under different names) and omits search-indexer and scheduler.\"}\n",
+     "refusal": null,
+     "reasoning": "The gold answer lists 6 services: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks.\n\nThe answer to grade lists: Webhook dispatcher, billing-api, resizer, notifier\n\nLet me check each:\n- \"Webhook dispatcher\" - possibly corresponds to \"webhooks\"? But it's a different name. The rule says \"Where the gold is a list, every item must be named and no extra item.\"\n- \"billing-api\" - matches billing-api\n- \"resizer\" - possibly \"image-resizer\"? Different name.\n- \"notifier\" - matches notifier\n\nMissing: search-indexer, scheduler.\n\nEven if we accept \"Webhook dispatcher\" ~ webhooks and \"resizer\" ~ image-resizer, the answer is missing search-indexer and scheduler. So only 4 of 6 are named. Therefore incorrect.\n\nAlso the names differ. Regardless, missing items means incorrect.\n\nAnswer: {\"correct\": false, \"reason\": \"...\"}\n\nMust use code block with ``` at end. The instruction says 'Ensure to always use \"```\"End the code block to indicate the end of the JSON object.' So output JSON in a code block ending with ```.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer lists 6 services: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks.\n\nThe answer to grade lists: Webhook dispatcher, billing-api, resizer, notifier\n\nLet me check each:\n- \"Webhook dispatcher\" - possibly corresponds to \"webhooks\"? But it's a different name. The rule says \"Where the gold is a list, every item must be named and no extra item.\"\n- \"billing-api\" - matches billing-api\n- \"resizer\" - possibly \"image-resizer\"? Different name.\n- \"notifier\" - matches notifier\n\nMissing: search-indexer, scheduler.\n\nEven if we accept \"Webhook dispatcher\" ~ webhooks and \"resizer\" ~ image-resizer, the answer is missing search-indexer and scheduler. So only 4 of 6 are named. Therefore incorrect.\n\nAlso the names differ. Regardless, missing items means incorrect.\n\nAnswer: {\"correct\": false, \"reason\": \"...\"}\n\nMust use code block with ``` at end. The instruction says 'Ensure to always use \"```\"End the code block to indicate the end of the JSON object.' So output JSON in a code block ending with ```.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 270,
+   "completion_tokens": 299,
+   "total_tokens": 569,
+   "cost": 8.732e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 8.732e-05,
+    "upstream_inference_prompt_cost": 1.257e-05,
+    "upstream_inference_completions_cost": 7.475e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 247,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.825320166011807,
+ "fetched_at": "2026-09-05T14:40:37Z"
+}

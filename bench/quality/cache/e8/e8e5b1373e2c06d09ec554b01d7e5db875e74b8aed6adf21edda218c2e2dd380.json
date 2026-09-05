@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-05-27 the Atlas team decided that the bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-04-08 the Atlas team noticed that webhooks' request volume halved following the client rollout and flagged it because it is not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- Webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- The duplicate deliveries in INC-2026-003 were caused by a retry loop that ignored idempotency keys. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- During incident INC-2026-003, the webhooks service delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- On 2025-12-29 the Dune team observed that the event bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- Until 2025-11-24, the Boreal team looked after the bus; ownership then moved to the Atlas team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: As of 2025-08-15, the Boreal team still owns the bus. [valid 2025-08-15 to 2025-11-24; recorded by standup/boreal/2025-08-15-2]\n- Dashboards and alerts for the event bus are being repointed as of the 2025-11-24 handover. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- As of 2025-11-24, the Atlas team is taking over the event bus from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- On 2025-11-03 the Boreal team decided that webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- On 2025-09-23 the Dune team noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus because nightly ledger scans were blocking billing runs. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- The webhook dispatcher is owned by the Boreal team as of 2025-05-15, having moved from the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team as of 2025-03-03. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- On 2025-05-15 Oskar walked Lena through the webhook dispatcher runbook. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n- On 2025-05-14 the Cinder team observed that webhooks' memory use grew steadily for a week after the cache change. [valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. [constraint; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- As of 2025-03-03, the pager for the webhook dispatcher rings the Ember team instead of the Boreal team. [valid 2025-03-03 to now; recorded by handover/2025-03-03-webhooks]\n- The webhook dispatcher relies on the bus for outbound events, so if the bus is down the webhook dispatcher is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n\nQuestion: What was the root cause of INC-2026-003?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604778-4atkH1RMk3UJZ6NxS2l1",
+  "object": "chat.completion",
+  "created": 1788604778,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "A retry loop that ignored idempotency keys",
+     "refusal": null,
+     "reasoning": "The question asks for the root cause of INC-2026-003. Memory says: \"The duplicate deliveries in INC-2026-003 were caused by a retry loop that ignored idempotency keys.\" So the root cause is a retry loop that ignored idempotency keys.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks for the root cause of INC-2026-003. Memory says: \"The duplicate deliveries in INC-2026-003 were caused by a retry loop that ignored idempotency keys.\" So the root cause is a retry loop that ignored idempotency keys.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1523,
+   "completion_tokens": 73,
+   "total_tokens": 1596,
+   "cost": 0.000124795,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000124795,
+    "upstream_inference_prompt_cost": 0.000106545,
+    "upstream_inference_completions_cost": 1.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 61,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.536816917010583,
+ "fetched_at": "2026-09-05T10:39:40Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The reporting service is owned by team Dune. [valid 2025-01-20 to now; recorded by standup/dune/2025-01-20-2]\n- As of 2025-12-05, the Ember team owns reporting, which team Dune owned until then. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- As of 2025-06-11, team Dune owns the notifier, which the Boreal team owned until then. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: As of 2025-06-11, the Cinder team owns the notifier, which the Boreal team owned until then. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- As of 2025-09-23, the Cinder team owns the job scheduler, which team Dune owned until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- As of 2025-09-23, the Cinder team owns the job scheduler; team Dune owned it until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, team Dune still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2025-06-25, the job scheduler is owned by team Dune. [decision; valid 2025-06-25 to now; recorded by handover/2025-06-25-scheduler]\n    earlier: The job scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- On 2026-04-14, team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- The team Dune planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- As of 2026-04-14, Farah holds the Dune on-call shift for team Dune, taking over from Tomasz; Tomasz held it as of 2026-03-11, and Farah held it as of 2026-01-16. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah; as of 2026-01-16 Farah held it. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad holds the Dune on-call shift for team Dune; Tomasz is off rotation. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz holds the Dune on-call shift for team Dune, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n    earlier: As of 2025-10-15, Farah holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-10-15 to 2025-11-17; recorded by standup/dune/2025-10-15]\n    earlier: As of 2025-09-04, Tomasz holds the Dune on-call shift, having picked it up from Farah. [valid 2025-09-04 to 2025-10-15; recorded by standup/dune/2025-09-04]\n- Farah runs team Dune solo until the next hire lands. [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- As of 2026-05-22, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah. [decision; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- Team Dune adopted a monthly game day. [valid 2025-04-21 to now; recorded by standup/dune/2025-04-21]\n- Farah takes the first on-call rotation for team Dune. [decision; valid 2025-01-13 to now; recorded by standup/dune/2025-01-13]\n- Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager; on 2026-04-14 Tomasz handed the pager back to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is the primary on-call for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n\nQuestion: Which team owned reporting before Dune?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596869-OHlRmQB1qpv2x7ockd9L",
+  "object": "chat.completion",
+  "created": 1788596869,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Modal",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which team owned reporting before Dune?\"\n\nMemory entries about reporting:\n- The reporting service is owned by team Dune. [valid 2025-01-20 to now]\n- As of 2025-12-05, the Ember team owns reporting, which team Dune owned until then. [valid 2025-12-05 to now]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now]\n\nSo Dune owned reporting until 2025-12-05, when Ember took over. Before Dune... the memory says \"the Ember team owns reporting, which team Dune owned until then\" — that tells us Dune owned it before Ember, but who owned it before Dune? The memory doesn't say who owned reporting before Dune. The first entry says Dune owned it from 2025-01-20, but there's no entry about who owned it before that.\n\nHmm, but the question could be interpreted as \"before Dune, who owned it?\" — the memory doesn't contain that. The memory only shows Dune owned it starting 2025-01-20 with no prior owner mentioned. So the answer is \"I don't know\".\n\nWait — could the question be a trick where the answer is Ember? No, Ember took over FROM Dune, so Ember owned it after Dune, not before. The memory doesn't state who owned reporting before Dune. So answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which team owned reporting before Dune?\"\n\nMemory entries about reporting:\n- The reporting service is owned by team Dune. [valid 2025-01-20 to now]\n- As of 2025-12-05, the Ember team owns reporting, which team Dune owned until then. [valid 2025-12-05 to now]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now]\n\nSo Dune owned reporting until 2025-12-05, when Ember took over. Before Dune... the memory says \"the Ember team owns reporting, which team Dune owned until then\" — that tells us Dune owned it before Ember, but who owned it before Dune? The memory doesn't say who owned reporting before Dune. The first entry says Dune owned it from 2025-01-20, but there's no entry about who owned it before that.\n\nHmm, but the question could be interpreted as \"before Dune, who owned it?\" — the memory doesn't contain that. The memory only shows Dune owned it starting 2025-01-20 with no prior owner mentioned. So the answer is \"I don't know\".\n\nWait — could the question be a trick where the answer is Ember? No, Ember took over FROM Dune, so Ember owned it after Dune, not before. The memory doesn't state who owned reporting before Dune. So answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1808,
+   "completion_tokens": 329,
+   "total_tokens": 2137,
+   "cost": 0.00043565643,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00043565643,
+    "upstream_inference_prompt_cost": 0.00027117288,
+    "upstream_inference_completions_cost": 0.00016448355
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 311,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.037507000030018,
+ "fetched_at": "2026-09-05T08:27:58Z"
+}

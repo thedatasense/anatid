@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note recorded the handover of search-indexer to Boreal, and on what date?\nGold answer: handover/2026-04-01-search-indexer (2026-04-01)\nAlso accepted: handover/2026-04-01-search-indexer; 2026-04-01; 1 April 2026; April 1, 2026; the handover message of 2026-04-01; the handover message of 1 April 2026; the handover message of April 1, 2026\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: handover/2026-04-01 — 2026-04-01"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788597913-uhR5rIBSplnna2ejN6oC",
+  "object": "chat.completion",
+  "created": 1788597913,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the note kind (handover) together with the gold date 2026-04-01, which the rule explicitly accepts even without the full '-search-indexer' label suffix.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"handover/2026-04-01-search-indexer (2026-04-01)\". The answer to grade is \"handover/2026-04-01 — 2026-04-01\".\n\nThe grading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nThe answer \"handover/2026-04-01\" — is this the source label? The gold label is \"handover/2026-04-01-search-indexer\". The answer says \"handover/2026-04-01\" which is close but missing \"-search-indexer\". However, the rule says \"identifies the source label of the gold note, or its kind together with the gold date\". The kind here is \"handover\" note, and the date is 2026-04-01, which matches the gold date. So the answer identifies the kind (handover note) together with the gold date (2026-04-01). That should be acceptable per \"The date alone with the right kind of note is acceptable\".\n\nSo the answer \"handover/2026-04-01\" indicates a handover note dated 2026-04-01, which is the right kind with the gold date. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"handover/2026-04-01-search-indexer (2026-04-01)\". The answer to grade is \"handover/2026-04-01 — 2026-04-01\".\n\nThe grading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nThe answer \"handover/2026-04-01\" — is this the source label? The gold label is \"handover/2026-04-01-search-indexer\". The answer says \"handover/2026-04-01\" which is close but missing \"-search-indexer\". However, the rule says \"identifies the source label of the gold note, or its kind together with the gold date\". The kind here is \"handover\" note, and the date is 2026-04-01, which matches the gold date. So the answer identifies the kind (handover note) together with the gold date (2026-04-01). That should be acceptable per \"The date alone with the right kind of note is acceptable\".\n\nSo the answer \"handover/2026-04-01\" indicates a handover note dated 2026-04-01, which is the right kind with the gold date. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 352,
+   "completion_tokens": 347,
+   "total_tokens": 699,
+   "cost": 9.395e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.395e-05,
+    "upstream_inference_prompt_cost": 7.2e-06,
+    "upstream_inference_completions_cost": 8.675e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 295,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.8363344999961555,
+ "fetched_at": "2026-09-05T08:45:19Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz Nowak.\n- [2025-01-14] standup/atlas/2025-01-14: Atlas pager: Priya has it first.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2025-06-23] standup/atlas/2025-06-23: The quarterly capacity review is run by Priya.\n- [2025-01-14] standup/ember/2025-01-14: Oskar Lind is on call for the Ember team to start the year.\n- [2025-01-14] standup/cinder/2025-01-14: Yuki takes the first team Cinder on-call shift of the year.\n- [2025-05-09] standup/atlas/2025-05-09: Reminder from Atlas: page Tomasz for anything this cycle, not Priya.\n- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2025-07-03] standup/atlas/2025-07-03: Reminder from Atlas: page Priya for anything this cycle, not Tomasz Nowak.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2025-02-19] standup/atlas/2025-02-19: Reminder from Atlas: page Tomasz Nowak for anything this cycle, not Priya Raman.\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2025-06-05] standup/boreal/2025-06-05: On-call rotation: Marcus Oyelaran is primary for team Boreal starting today; Lena is off rotation.\n- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.\n- [2025-04-09] standup/cinder/2025-04-09: On-call rotation: Yuki Tanaka is primary for the Cinder team starting today; Diego Alvarez is off rotation.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-02-12] standup/ember/2026-02-12: Ember on-call swapped this morning. Oskar carries the phone until the next rotation. Heads-up from team Ember: the search indexer's p99 latency doubled after Tuesday's deploy.\n- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.\n- [2025-01-13] standup/boreal/2025-01-13: Lena takes the first Boreal on-call shift of the year.\n- [2026-05-18] standup/ember/2026-05-18: Oskar Lind picked up the Ember on-call shift from Diego today.\n- [2026-04-13] standup/dune/2026-04-13: On-call rotation: Tomasz is primary for Dune starting today; Farah is off rotation.\n- [2026-03-10] standup/dune/2026-03-10: On-call rotation: Farah is primary for Dune starting today; Tomasz Nowak is off rotation.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2026-02-19] standup/boreal/2026-02-19: As of today Marcus Oyelaran is on the Atlas team; team Boreal loses a pair of hands.\n- [2025-12-05] standup/cinder/2025-12-05: Team change: Diego Alvarez leaves team Cinder and joins Ember, effective today.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2026-02-24] handover/2026-02-24-feature-flags: Quick one: the flags service belongs to the Cinder team starting today. Thanks to the Boreal team for running it until now.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n\nQuestion: Who is on call for Priya's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788607929-SXeTaXUCMxzyHf2KC5fl",
+  "object": "chat.completion",
+  "created": 1788607929,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Marcus Oyelaran",
+     "refusal": null,
+     "reasoning": "The question asks: Who is on call for Priya's team right now (today is 2026-06-30)?\n\nFirst, I need to figure out Priya's team. Priya is mentioned as part of Team Atlas. Memory entries:\n- 2025-01-06: Team Atlas this year is Priya and Tomasz Nowak.\n- Various Atlas on-call entries mention Priya.\n- 2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n\nIs there any entry saying Priya left Atlas or joined another team? Let me check team changes:\n- 2026-02-19: Marcus Oyelaran joins Atlas (from Boreal).\n- 2025-12-05: Diego Alvarez leaves Cinder and joins Ember.\n\nNo entry about Priya leaving Atlas. So Priya's team is Atlas.\n\nNow, who is on call for Atlas right now (2026-06-30)? Atlas on-call timeline:\n- 2026-03-09: Marcus primary for Atlas.\n- 2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- 2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n\nThe latest entry about Atlas on-call is 2026-05-25: Marcus picked up the shift from Priya. So right now (2026-06-30), Marcus Oyelaran is on call for Atlas.\n\nAnswer: Marcus Oyelaran.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Who is on call for Priya's team right now (today is 2026-06-30)?\n\nFirst, I need to figure out Priya's team. Priya is mentioned as part of Team Atlas. Memory entries:\n- 2025-01-06: Team Atlas this year is Priya and Tomasz Nowak.\n- Various Atlas on-call entries mention Priya.\n- 2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n\nIs there any entry saying Priya left Atlas or joined another team? Let me check team changes:\n- 2026-02-19: Marcus Oyelaran joins Atlas (from Boreal).\n- 2025-12-05: Diego Alvarez leaves Cinder and joins Ember.\n\nNo entry about Priya leaving Atlas. So Priya's team is Atlas.\n\nNow, who is on call for Atlas right now (2026-06-30)? Atlas on-call timeline:\n- 2026-03-09: Marcus primary for Atlas.\n- 2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- 2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n\nThe latest entry about Atlas on-call is 2026-05-25: Marcus picked up the shift from Priya. So right now (2026-06-30), Marcus Oyelaran is on call for Atlas.\n\nAnswer: Marcus Oyelaran.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1691,
+   "completion_tokens": 324,
+   "total_tokens": 2015,
+   "cost": 0.000200145,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000200145,
+    "upstream_inference_prompt_cost": 0.000119145,
+    "upstream_inference_completions_cost": 8.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 318,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.904027207987383,
+ "fetched_at": "2026-09-05T11:32:14Z"
+}

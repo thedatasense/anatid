@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Ember own now?\nGold answer: ledger\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 1 services.\n\nAnswer to grade: The ledger and the reporting service."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616504-cesTwCVeCiKjJIq22fXh",
+  "object": "chat.completion",
+  "created": 1788616504,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names an extra service (the reporting service) beyond the gold answer of only 'ledger'.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"ledger\". The answer to grade says \"The ledger and the reporting service.\" That includes an extra item (\"the reporting service\"). The grading rule says: \"Where the gold is a list, every item must be named and no extra item.\" The gold has 1 services. So the answer names an extra item, which makes it wrong.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"ledger\". The answer to grade says \"The ledger and the reporting service.\" That includes an extra item (\"the reporting service\"). The grading rule says: \"Where the gold is a list, every item must be named and no extra item.\" The gold has 1 services. So the answer names an extra item, which makes it wrong.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 249,
+   "completion_tokens": 106,
+   "total_tokens": 355,
+   "cost": 3.3655e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.3655e-05,
+    "upstream_inference_prompt_cost": 7.155e-06,
+    "upstream_inference_completions_cost": 2.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 73,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2387146669789217,
+ "fetched_at": "2026-09-05T13:55:07Z"
+}

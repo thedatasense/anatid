@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-11-06] handover/2025-11-06-feature-flags: Quick one: feature-flags belongs to team Ember starting today. Thanks to team Atlas for running it until now.\n- [2025-07-03] handover/2025-07-03-billing-api-correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2026-02-11] handover/2026-02-11-feature-flags: The Ember team handed the flags service to the Dune team today; Oskar wrote up the handover doc for Farah.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-10-13] handover/2025-10-13-ledger: From today the pager for the ledger rings Cinder, not team Atlas. Ownership transferred.\n- [2025-09-30] standup/atlas/2025-09-30: Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. The billing API now depends on the feature flag service. The Atlas team planning meeting is every Tuesday.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-12-31] standup/atlas/2025-12-31: Atlas saw that the feature flag service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it.\n- [2026-04-16] standup/atlas/2026-04-16: The Atlas team saw that the ledger service's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2026-04-01] handover/2026-04-01-search-indexer: From today the pager for the search indexer rings the Boreal team, not team Atlas. Ownership transferred.\n- [2025-03-03] handover/2025-03-03-webhooks: From today the pager for webhooks rings the Ember team, not team Boreal. Ownership transferred.\n- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-09-02] standup/atlas/2025-09-02: Decided in today's standup: clients will cache feature-flags evaluations for 30 seconds, since feature-flags saw 40,000 requests per second at peak and most of them were identical.\n- [2026-04-14] standup/dune/2026-04-14-2: The Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-03-07] handover/2025-03-07-billing-api: Billing-api has a new home: the Ember team. Team Atlas kept it until today.\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2026-05-22] standup/dune/2026-05-22-2: The Dune team noticed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2026-05-28] standup/ember/2026-05-28: Ember noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-04-29] standup/ember/2025-04-29: The scheduler still relies on the feature flag service; keep that in mind for the maintenance.\n- [2025-12-25] standup/atlas/2025-12-25: Atlas saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it. Atlas has moved to the second floor.\n\nQuestion: Which team was wrongly recorded as the owner of feature-flags before the record was corrected?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620862-LWfJ9qjPa5wEN0FHiqd1",
+  "object": "chat.completion",
+  "created": 1788620862,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Dune",
+     "refusal": null,
+     "reasoning": "The question asks: Which team was wrongly recorded as the owner of feature-flags before the record was corrected?\n\nLooking at the memory:\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n\nSo the correction on 2026-03-09 corrects the 2026-02-11 note which said feature-flags went to Dune. The wrongly recorded owner was team Dune.\n\nThe answer: Dune.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which team was wrongly recorded as the owner of feature-flags before the record was corrected?\n\nLooking at the memory:\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n\nSo the correction on 2026-03-09 corrects the 2026-02-11 note which said feature-flags went to Dune. The wrongly recorded owner was team Dune.\n\nThe answer: Dune.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1569,
+   "completion_tokens": 144,
+   "total_tokens": 1713,
+   "cost": 0.000153675,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000153675,
+    "upstream_inference_prompt_cost": 0.000117675,
+    "upstream_inference_completions_cost": 3.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 140,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.486499082995579,
+ "fetched_at": "2026-09-05T15:07:47Z"
+}

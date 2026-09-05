@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz Nowak.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.\n- [2025-10-31] standup/atlas/2025-10-31: Team Atlas runs its planning on Tuesdays.\n- [2025-03-10] standup/atlas/2025-03-10-2: The Atlas team sits on the second floor.\n- [2025-02-21] standup/cinder/2025-02-21: Rotation day for team Cinder: Yuki Tanaka hands the pager to Diego Alvarez. Team Cinder saw that the auth gateway's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-06-23] standup/atlas/2025-06-23: The quarterly capacity review is run by Priya.\n- [2025-06-05] standup/boreal/2025-06-05: On-call rotation: Marcus Oyelaran is primary for team Boreal starting today; Lena is off rotation.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-07-02] standup/atlas/2025-07-02: Tomasz has transferred to Dune. Team Atlas continues without them.\n- [2025-07-03] standup/atlas/2025-07-03: Reminder from Atlas: page Priya for anything this cycle, not Tomasz Nowak.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2025-12-23] standup/atlas/2025-12-23: The Atlas team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-02-21] standup/boreal/2025-02-21: The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-05-09] standup/atlas/2025-05-09: Reminder from Atlas: page Tomasz for anything this cycle, not Priya.\n- [2025-02-19] standup/atlas/2025-02-19: Reminder from Atlas: page Tomasz Nowak for anything this cycle, not Priya Raman.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n- [2025-01-14] standup/atlas/2025-01-14: Atlas pager: Priya has it first.\n- [2025-06-05] standup/boreal/2025-06-05-2: Lena Fischer is the release captain for Q1 2026.\n- [2025-04-18] standup/atlas/2025-04-18-2: Heads-up from the Atlas team: the catalog service's disk usage jumped 30 percent after the retention change.\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-11-21] standup/dune/2025-11-21: Heads-up from team Dune: billing-api's queue depth hit 50,000 after the marketing send.\n- [2026-01-13] standup/atlas/2026-01-13: The Atlas team noticed that Ledger's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.\n- [2025-01-14] standup/cinder/2025-01-14: Yuki takes the first team Cinder on-call shift of the year.\n- [2026-03-09] standup/atlas/2026-03-09-2: Observation from Atlas: after the runtime upgrade, the scheduler's cold start time tripled.\n\nQuestion: Who was on call for Atlas on 2025-06-21?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618968-zJMtEjKSiba8pzLmywuq",
+  "object": "chat.completion",
+  "created": 1788618968,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tomasz Nowak",
+     "refusal": null,
+     "reasoning": "The question asks: Who was on call for Atlas on 2025-06-21?\n\nLet me look through the memory entries for Atlas on-call information around that date.\n\n- [2025-01-06] Team Atlas this year is Priya and Tomasz Nowak.\n- [2025-01-14] Atlas pager: Priya has it first.\n- [2025-02-19] Reminder from Atlas: page Tomasz Nowak for anything this cycle, not Priya Raman.\n- [2025-03-10-2] Atlas team sits on second floor.\n- [2025-04-07] Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-05-09] Reminder from Atlas: page Tomasz for anything this cycle, not Priya.\n- [2025-06-23] The quarterly capacity review is run by Priya.\n- [2025-07-03] Reminder from Atlas: page Priya for anything this cycle, not Tomasz Nowak.\n\nSo on 2025-06-21, what's the latest info? The 2025-05-09 entry says page Tomasz for anything this cycle. The next entry after that is 2025-06-23 (capacity review) and 2025-07-03 (page Priya).\n\nSo as of 2025-06-21, the most recent on-call note is 2025-05-09: page Tomasz for anything this cycle, not Priya.\n\nHmm, but \"this cycle\" — cycles could be short. The 2025-04-07 entry said Priya carries the phone until the next rotation. Then 2025-05-09 says page Tomasz this cycle. So between 2025-05-09 and the next rotation... The next on-call related entry is 2025-07-03 saying page Priya.\n\nSo on 2025-06-21, the latest applicable note (2025-05-09) says Tomasz. Answer: Tomasz (Tomasz Nowak).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Who was on call for Atlas on 2025-06-21?\n\nLet me look through the memory entries for Atlas on-call information around that date.\n\n- [2025-01-06] Team Atlas this year is Priya and Tomasz Nowak.\n- [2025-01-14] Atlas pager: Priya has it first.\n- [2025-02-19] Reminder from Atlas: page Tomasz Nowak for anything this cycle, not Priya Raman.\n- [2025-03-10-2] Atlas team sits on second floor.\n- [2025-04-07] Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-05-09] Reminder from Atlas: page Tomasz for anything this cycle, not Priya.\n- [2025-06-23] The quarterly capacity review is run by Priya.\n- [2025-07-03] Reminder from Atlas: page Priya for anything this cycle, not Tomasz Nowak.\n\nSo on 2025-06-21, what's the latest info? The 2025-05-09 entry says page Tomasz for anything this cycle. The next entry after that is 2025-06-23 (capacity review) and 2025-07-03 (page Priya).\n\nSo as of 2025-06-21, the most recent on-call note is 2025-05-09: page Tomasz for anything this cycle, not Priya.\n\nHmm, but \"this cycle\" — cycles could be short. The 2025-04-07 entry said Priya carries the phone until the next rotation. Then 2025-05-09 says page Tomasz this cycle. So between 2025-05-09 and the next rotation... The next on-call related entry is 2025-07-03 saying page Priya.\n\nSo on 2025-06-21, the latest applicable note (2025-05-09) says Tomasz. Answer: Tomasz (Tomasz Nowak).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1674,
+   "completion_tokens": 447,
+   "total_tokens": 2121,
+   "cost": 0.0002373,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002373,
+    "upstream_inference_prompt_cost": 0.00012555,
+    "upstream_inference_completions_cost": 0.00011175
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 440,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.468779082992114,
+ "fetched_at": "2026-09-05T14:36:18Z"
+}

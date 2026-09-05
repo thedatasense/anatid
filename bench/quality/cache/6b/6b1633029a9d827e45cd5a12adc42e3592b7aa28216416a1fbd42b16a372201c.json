@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-29, the Ember team's pager contact is Oskar, not Diego. [constraint; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, the Ember team's pager contact is Diego, not Oskar, for this cycle. [constraint; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, the Ember team reminded everyone to page Oskar, not Diego, for anything this cycle. [constraint; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n- As of 2026-05-29, Oskar has the Ember pager for the cycle, taking over from Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, Diego has the Ember pager for the cycle, taking over from Oskar. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n- As of 2026-05-29, Oskar is on the Ember team on-call rotation as the primary on-call. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- On 2026-05-28 the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- On 2026-03-11 the Cinder team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- Oskar wrote up the handover doc for the feature-flags service handover to the Atlas team for Farah. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: Oskar wrote up the handover doc for the feature-flags service handover to the Dune team for Farah. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- The feature-flags service was owned by the Ember team as of 2025-11-06, having moved from the Atlas team, until ownership transferred to the Atlas team on 2026-02-11. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: The feature-flags service was owned by the Ember team as of 2025-11-06, having moved from the Atlas team, until ownership transferred to the Dune team on 2026-02-11. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team, having moved from the Atlas team. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n- The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team, until ownership transferred to the Atlas team on 2026-02-11. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team, until ownership transferred to the Dune team on 2026-02-11. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: The feature-flags service is owned by the Ember team as of 2025-11-06, having moved from the Atlas team. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team, having moved from the Ember team; the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team, having moved from the Ember team. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n\nQuestion: Which team is Diego on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604853-zDQ4LDQkJn61URd0FQGX",
+  "object": "chat.completion",
+  "created": 1788604853,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember",
+     "refusal": null,
+     "reasoning": "The question asks: Which team is Diego on now?\n\nLooking at the memory, all entries about Diego relate to the Ember team's pager and on-call rotation. But the question is which team Diego is on. The memory mentions \"the Ember team's pager contact is Oskar, not Diego\" — this implies Diego was associated with the Ember team. But does the memory actually state Diego's team membership? Entries say \"Diego has the Ember pager\" and \"Diego is off the Ember team on-call rotation.\" These reference the Ember team's rotation, but never explicitly say Diego is a member of the Ember team... Actually \"Diego is off the Ember team on-call rotation\" implies he's on the Ember team (otherwise he wouldn't be on its rotation). Hmm, but strictly, the memory says \"Ember team on-call rotation\" — being on a team's on-call rotation suggests team membership.\n\nThe rules say answer only from memory, one short line with just the value asked for. If not contained, reply \"I don't know\".\n\nThe memory strongly implies Diego is on the Ember team (he had the Ember pager, was primary on-call for Ember team, is off the Ember team on-call rotation). I think the intended answer is Ember. The phrase \"Diego is off the Ember team on-call rotation\" — \"Ember team on-call rotation\" implies he's part of Ember team.\n\nYes, I'd answer: Ember.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which team is Diego on now?\n\nLooking at the memory, all entries about Diego relate to the Ember team's pager and on-call rotation. But the question is which team Diego is on. The memory mentions \"the Ember team's pager contact is Oskar, not Diego\" — this implies Diego was associated with the Ember team. But does the memory actually state Diego's team membership? Entries say \"Diego has the Ember pager\" and \"Diego is off the Ember team on-call rotation.\" These reference the Ember team's rotation, but never explicitly say Diego is a member of the Ember team... Actually \"Diego is off the Ember team on-call rotation\" implies he's on the Ember team (otherwise he wouldn't be on its rotation). Hmm, but strictly, the memory says \"Ember team on-call rotation\" — being on a team's on-call rotation suggests team membership.\n\nThe rules say answer only from memory, one short line with just the value asked for. If not contained, reply \"I don't know\".\n\nThe memory strongly implies Diego is on the Ember team (he had the Ember pager, was primary on-call for Ember team, is off the Ember team on-call rotation). I think the intended answer is Ember. The phrase \"Diego is off the Ember team on-call rotation\" — \"Ember team on-call rotation\" implies he's part of Ember team.\n\nYes, I'd answer: Ember.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1737,
+   "completion_tokens": 299,
+   "total_tokens": 2036,
+   "cost": 0.000197345,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000197345,
+    "upstream_inference_prompt_cost": 0.000122595,
+    "upstream_inference_completions_cost": 7.475e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 295,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.645560208009556,
+ "fetched_at": "2026-09-05T10:40:59Z"
+}

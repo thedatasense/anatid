@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.\n- [2025-09-29] handover/2025-09-29-feature-flags: Feature-flags has a new home: team Boreal. Cinder kept it until today.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-11-20] handover/2025-11-20-event-bus: Boreal is taking over the bus from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2025-03-31] standup/boreal/2025-03-31: The event bus remains a Boreal service.\n- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2026-02-19] standup/boreal/2026-02-19: As of today Marcus Oyelaran is on the Atlas team; team Boreal loses a pair of hands.\n- [2026-05-04] standup/boreal/2026-05-04: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. Boreal still owns the catalog service, in case anyone asks.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.\n- [2025-09-08] standup/boreal/2025-09-08-2: New dependency for billing-api: feature-flags. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch. Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners.\n- [2025-11-12] standup/boreal/2025-11-12: The Boreal team holds planning on Thursdays.\n- [2025-08-01] standup/boreal/2025-08-01: Rotation day for the Boreal team: Marcus hands the pager to Lena.\n- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.\n- [2025-04-16] standup/boreal/2025-04-16: Rotation day for the Boreal team: Marcus Oyelaran hands the pager to Lena Fischer.\n- [2026-02-24] handover/2026-02-24-feature-flags: Quick one: the flags service belongs to the Cinder team starting today. Thanks to the Boreal team for running it until now.\n- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-03-17] handover/2025-03-17-billing-api: Atlas handed billing-api to team Boreal today; Tomasz wrote up the handover doc for Marcus.\n- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.\n- [2025-10-31] standup/boreal/2025-10-31: Lena has the Boreal pager this cycle, taking over from Marcus.\n\nQuestion: Which team owned the notifier before Boreal?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788619905-qqShzansN4kZZeJKPhk4",
+  "object": "chat.completion",
+  "created": 1788619905,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: which team owned the notifier before Boreal?\n\nMemory entries about notifier:\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.\n\nThe question: \"Which team owned the notifier before Boreal?\" This asks for the team that owned it before Boreal. The earliest record shows Boreal owned it on 2025-01-09. There's no record of any team owning the notifier before Boreal. So the answer would be \"I don't know\" — the memory does not indicate who owned it before Boreal.\n\nWait, but maybe the question means \"who owned it immediately before leaving Boreal\" — i.e., the team that received it after Boreal? That would be Cinder (2025-04-04 handover: Boreal kept it until today, then Cinder). Hmm, \"owned the notifier before Boreal\" — the phrasing: before Boreal owned it. The memory's first mention of notifier ownership is Boreal (2025-01-09). No prior owner recorded. So the answer per rules: I don't know.\n\nBut perhaps the intended interpretation is different: the question could be a temporal question — \"before Boreal\" meaning at a time before Boreal owned it. Since we have no info, answer \"I don't know\".\n\nAlternatively, if the question intends \"the team that owned it after Boreal\" (i.e., before Boreal stopped owning it?), that's ambiguous. Standard reading: before Boreal = prior owner. No data. Answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which team owned the notifier before Boreal?\n\nMemory entries about notifier:\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.\n\nThe question: \"Which team owned the notifier before Boreal?\" This asks for the team that owned it before Boreal. The earliest record shows Boreal owned it on 2025-01-09. There's no record of any team owning the notifier before Boreal. So the answer would be \"I don't know\" — the memory does not indicate who owned it before Boreal.\n\nWait, but maybe the question means \"who owned it immediately before leaving Boreal\" — i.e., the team that received it after Boreal? That would be Cinder (2025-04-04 handover: Boreal kept it until today, then Cinder). Hmm, \"owned the notifier before Boreal\" — the phrasing: before Boreal owned it. The memory's first mention of notifier ownership is Boreal (2025-01-09). No prior owner recorded. So the answer per rules: I don't know.\n\nBut perhaps the intended interpretation is different: the question could be a temporal question — \"before Boreal\" meaning at a time before Boreal owned it. Since we have no info, answer \"I don't know\".\n\nAlternatively, if the question intends \"the team that owned it after Boreal\" (i.e., before Boreal stopped owning it?), that's ambiguous. Standard reading: before Boreal = prior owner. No data. Answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1614,
+   "completion_tokens": 427,
+   "total_tokens": 2041,
+   "cost": 0.00022012,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00022012,
+    "upstream_inference_prompt_cost": 0.00011337,
+    "upstream_inference_completions_cost": 0.00010675
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 421,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.935655375011265,
+ "fetched_at": "2026-09-05T14:51:51Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- The job scheduler leader lease will be shortened to ten seconds, a decision from the INC-2026-009 review. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- INC-2026-003 was an incident in which the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- On 2025-12-31, the Atlas team saw that feature-flags' queue depth hit 50,000 following the marketing send and flagged it as not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager; on 2026-04-14 he handed the pager to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Tomasz is off the on-call rotation for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager; on 2026-04-14 Tomasz handed the pager back to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is the primary on-call for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- On 2025-11-04, the Ember team saw that the billing service's queue depth hit 50,000 following the marketing send and flagged it as not their service. [valid 2025-11-04 to now; recorded by standup/ember/2025-11-04]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it as not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n\nQuestion: Which note records the decision that certificate expiry will alert 30 days ahead, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596274-BJp8eGFfYLAdEP5p4U23",
+  "object": "chat.completion",
+  "created": 1788596274,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "incident-review/INC-2025-017, recorded 2025-08-07.",
+     "refusal": null,
+     "reasoning": "The user asks which note records the decision that certificate expiry will alert 30 days ahead, and when it was written.\n\nMemory entry: \"Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n\nSo the note is incident-review/INC-2025-017, recorded 2025-08-07.\n\nThe answer should be one short line with the value asked for: the note name and the date.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks which note records the decision that certificate expiry will alert 30 days ahead, and when it was written.\n\nMemory entry: \"Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n\nSo the note is incident-review/INC-2025-017, recorded 2025-08-07.\n\nThe answer should be one short line with the value asked for: the note name and the date.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1306,
+   "completion_tokens": 146,
+   "total_tokens": 1452,
+   "cost": 0.00012677,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012677,
+    "upstream_inference_prompt_cost": 9.027e-05,
+    "upstream_inference_completions_cost": 3.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 124,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.3343946669483557,
+ "fetched_at": "2026-09-05T08:17:56Z"
+}

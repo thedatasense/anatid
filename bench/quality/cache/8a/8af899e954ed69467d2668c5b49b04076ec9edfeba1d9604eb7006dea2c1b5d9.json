@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Ember owns billing-api [valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: Atlas owns billing-api [valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: Boreal owns billing-api [valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: Ember owns billing-api [valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: Atlas owns billing-api [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- Cinder noticed that billing-api's cold start time tripled after the runtime upgrade [observation; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- Boreal noticed that billing-api's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Billing-api depends on feature-flags [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- Ember noticed that billing-api's queue depth hit 50,000 after the marketing send [observation; valid 2025-11-04 to now; recorded by standup/ember/2025-11-04]\n- Ember owns reporting [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: Dune owns reporting [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- Atlas owns the catalog [valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the catalog [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- Cinder owns auth-gateway [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- Cinder owns the ledger [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n    earlier: Atlas owns the ledger [valid 2025-01-08 to 2025-10-13; recorded by standup/atlas/2025-01-08]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- Cinder owns the scheduler [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: Dune owns the scheduler [valid 2025-06-25 to 2025-09-23; recorded by handover/2025-06-25-scheduler]\n    earlier: Ember owns the scheduler [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- Atlas owns the event-bus [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: Boreal owns the event-bus [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- Billing-api depends on the ledger [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- The handover note of 2025-06-09 wrongly recorded Boreal as the owner of billing-api [valid 2025-07-03 to now; recorded by handover/2025-07-03-billing-api-correction]\n- Billing-api deploys only on weekdays after 15:00 UTC [constraint; valid 2025-02-11 to now; recorded by standup/atlas/2025-02-11]\n- Changes to billing-api need a rollback plan attached to the pull request [constraint; valid 2025-04-02 to now; recorded by standup/ember/2025-04-02]\n- Priya is on call for Atlas [valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: Marcus is on call for Atlas [valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: Priya is on call for Atlas [valid 2025-07-30 to 2026-04-08; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is on call for Atlas [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya is on call for Atlas [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is on call for Atlas [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya is on call for Atlas [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz is on call for Atlas [valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n\nQuestion: Who owns billing-api today?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788597409-vwG7Ujm9RRglxMChkPTS",
+  "object": "chat.completion",
+  "created": 1788597409,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember",
+     "refusal": null,
+     "reasoning": "Today is 2026-06-30. The latest entry: Ember owns billing-api [valid 2026-01-12 to now]. Answer: Ember.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Today is 2026-06-30. The latest entry: Ember owns billing-api [valid 2026-01-12 to now]. Answer: Ember.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1695,
+   "completion_tokens": 38,
+   "total_tokens": 1733,
+   "cost": 0.000113585,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 384,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000113585,
+    "upstream_inference_prompt_cost": 0.000104085,
+    "upstream_inference_completions_cost": 9.5e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 34,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.663512583996635,
+ "fetched_at": "2026-09-05T08:36:50Z"
+}

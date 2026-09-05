@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- As of 2025-11-27, Yuki Tanaka holds the Cinder pager, taking over from Diego, who is leaving the team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego holds the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: As of 2025-08-15, the Boreal team still owns the bus. [valid 2025-08-15 to 2025-11-24; recorded by standup/boreal/2025-08-15-2]\n- During incident INC-2026-003, the webhooks service delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- On 2025-05-14 the Cinder team observed that webhooks' memory use grew steadily for a week after the cache change. [valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n- Webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- On 2026-04-08 the Atlas team noticed that webhooks' request volume halved following the client rollout and flagged it because it is not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- On 2025-11-03 the Boreal team decided that webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n\nQuestion: Who owns webhooks today?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603799-XSLxyXjmpzEDVpiZmPty",
+  "object": "chat.completion",
+  "created": 1788603799,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks who owns the webhooks service today (2026-06-30). Let me scan the memory for ownership of webhooks.\n\nMemory entries:\n1. Ember team owns reporting service — not webhooks.\n2. Yuki Tanaka holds Cinder pager — not webhooks ownership.\n3. Atlas team owns the bus — not webhooks.\n4. INC-2026-003 webhooks delivered events twice — about an incident, not ownership.\n5. Cinder team observed webhooks' memory growth — observation, not ownership.\n6. Webhooks idempotency key decision — not ownership.\n7. Atlas team noticed webhooks' request volume halved and \"flagged it because it is not their service\" — this implies webhooks is not owned by Atlas, but doesn't say who owns it.\n8. Boreal decided webhooks will sign payloads — decision, not ownership.\n\nNo entry states who owns webhooks. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who owns the webhooks service today (2026-06-30). Let me scan the memory for ownership of webhooks.\n\nMemory entries:\n1. Ember team owns reporting service — not webhooks.\n2. Yuki Tanaka holds Cinder pager — not webhooks ownership.\n3. Atlas team owns the bus — not webhooks.\n4. INC-2026-003 webhooks delivered events twice — about an incident, not ownership.\n5. Cinder team observed webhooks' memory growth — observation, not ownership.\n6. Webhooks idempotency key decision — not ownership.\n7. Atlas team noticed webhooks' request volume halved and \"flagged it because it is not their service\" — this implies webhooks is not owned by Atlas, but doesn't say who owns it.\n8. Boreal decided webhooks will sign payloads — decision, not ownership.\n\nNo entry states who owns webhooks. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 760,
+   "completion_tokens": 206,
+   "total_tokens": 966,
+   "cost": 9.698e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.698e-05,
+    "upstream_inference_prompt_cost": 4.548e-05,
+    "upstream_inference_completions_cost": 5.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 200,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.103607124998234,
+ "fetched_at": "2026-09-05T10:23:22Z"
+}

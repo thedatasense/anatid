@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-06-09 the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- On 2026-05-27 the Atlas team decided that the bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- On 2026-05-22 the Dune team reported that the job scheduler's error rate crept up to 2 percent after the dependency bump. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- On 2026-05-22 the Dune team noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- As of 2026-05-22, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- Per the 2026-04-14 Dune team standup, Farah is release captain for Q3 2025. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2026-04-14, Farah holds the Dune team pager, taking over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is the primary on-call for the Dune team, taking over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah is the primary on-call for the Dune team. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- Cinder runs its planning on Mondays. [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- On 2026-03-11 the Cinder team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team, having moved from the Ember team; the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team, having moved from the Ember team. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- On 2026-02-16 the Dune team noticed that the product catalog's request volume halved after the client rollout and pinged the owners. [valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- On 2026-01-30 the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- On 2025-12-29 the Dune team observed that the event bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- The product catalog is owned by the Atlas team as of 2025-12-19, having moved from Cinder. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of 2025-12-19, the Atlas team is taking over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- As of 2025-12-10, Tomasz holds the Dune team pager this cycle, taking over from Farah. [valid 2025-12-10 to now; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still holds the Dune team pager. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n\nQuestion: On what date was the review of INC-2025-004 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788605049-tvzJOKjKX9URLEGZ7vOe",
+  "object": "chat.completion",
+  "created": 1788605049,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks about the review date of INC-2025-004. Looking through the memory, there's no mention of INC-2025-004 or any incident review. I should reply \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the review date of INC-2025-004. Looking through the memory, there's no mention of INC-2025-004 or any incident review. I should reply \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1709,
+   "completion_tokens": 53,
+   "total_tokens": 1762,
+   "cost": 0.000129905,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000129905,
+    "upstream_inference_prompt_cost": 0.000116655,
+    "upstream_inference_completions_cost": 1.325e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 47,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.6085449579986744,
+ "fetched_at": "2026-09-05T10:44:12Z"
+}

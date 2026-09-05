@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- INC-2026-003 was an incident in which the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- INC-2025-011 was a ledger service incident on 2025-05-24. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- INC-2025-017 was an incident where the auth gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- From 2025-03-03, the pager for the webhook dispatcher rings the Ember team. [valid 2025-03-03 to now; recorded by handover/2025-03-03-webhooks]\n- On 2025-06-09, Oskar wrote the billing API handover document for Lena. [valid 2025-06-09 to now; recorded by handover/2025-06-09-billing-api]\n- A partner asked for webhook key rotation in their security review. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- The webhook dispatcher relies on the bus for outbound events, so the webhook dispatcher is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The notifier missed alerts for 40 minutes on 2025-02-01 during INC-2025-004. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- On 2025-09-16, Oskar wrote the authentication gateway handover document for Diego. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- As of 2025-12-05, the pager for reporting rings the Ember team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- The root cause of INC-2025-004 was a notifier consumer offset stuck after a broker restart. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- As of 2025-09-23, the pager for the job scheduler rings the Cinder team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- On 2026-06-04, the Boreal team noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, having taken over from Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, Diego is the primary on-call for the Ember team, having taken over from Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, Oskar Lind is the primary on-call for the Ember team, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, for anything related to the Ember team, page Oskar this cycle, not Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, for anything related to the Ember team, page Diego this cycle, not Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, for anything related to the Ember team, page Oskar Lind for anything this cycle, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, for anything related to the Ember team, page Diego, the primary on-call; Oskar is off rotation. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n    earlier: For anything related to the Ember team, page Oskar. [decision; valid 2025-03-31 to 2026-01-15; recorded by standup/ember/2025-03-31]\n- As of 2025-05-15, the webhook dispatcher is owned by the Boreal team. [decision; valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n\nQuestion: Who was responsible for webhooks on 2025-04-06?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595683-a0pAab7OeTukg5ELT718",
+  "object": "chat.completion",
+  "created": 1788595683,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Together",
+  "system_fingerprint": "default",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember team",
+     "refusal": null,
+     "reasoning": "The question asks who was responsible for webhooks on 2025-04-06.\n\nLooking at the memory:\n- As of 2025-05-15, the webhook dispatcher is owned by the Boreal team. [valid 2025-05-15 to now]\n- Earlier: The webhook dispatcher is owned by the Ember team. [valid 2025-03-03 to 2025-05-15]\n- Earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03]\n\nOn 2025-04-06, the webhook dispatcher was owned by the Ember team (valid 2025-03-03 to 2025-05-15).\n\nSo the answer is the Ember team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was responsible for webhooks on 2025-04-06.\n\nLooking at the memory:\n- As of 2025-05-15, the webhook dispatcher is owned by the Boreal team. [valid 2025-05-15 to now]\n- Earlier: The webhook dispatcher is owned by the Ember team. [valid 2025-03-03 to 2025-05-15]\n- Earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03]\n\nOn 2025-04-06, the webhook dispatcher was owned by the Ember team (valid 2025-03-03 to 2025-05-15).\n\nSo the answer is the Ember team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1723,
+   "completion_tokens": 169,
+   "total_tokens": 1892,
+   "cost": 0.00034295,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00034295,
+    "upstream_inference_prompt_cost": 0.00025845,
+    "upstream_inference_completions_cost": 8.45e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 164,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.80346795899095,
+ "fetched_at": "2026-09-05T08:08:07Z"
+}

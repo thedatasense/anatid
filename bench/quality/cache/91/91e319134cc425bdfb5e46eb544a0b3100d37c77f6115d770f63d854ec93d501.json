@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-08-27] standup/cinder/2025-08-27: The search indexer is pinned to OpenSearch 2.11; the pin lifts when the full reindex completes. Cinder sits on the third floor.\n- [2025-05-09] standup/dune/2025-05-09: Reporting must stay on Python 3.11 until the pandas 3 upgrade lands.\n- [2025-04-08] standup/dune/2025-04-08: Reminder that the reporting service depends on the ledger.\n- [2026-03-31] standup/ember/2026-03-31: Diego Alvarez has the Ember pager this cycle, taking over from Oskar. Ember saw that the feature flag service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.\n- [2025-09-15] standup/dune/2025-09-15: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from reporting.\n- [2025-09-29] handover/2025-09-29-feature-flags: Feature-flags has a new home: team Boreal. Cinder kept it until today.\n- [2025-09-12] standup/atlas/2025-09-12: Do not upgrade the ledger service past Postgres 14 until the partitioning work finishes.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2026-01-13] standup/atlas/2026-01-13: The Atlas team noticed that Ledger's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-02-25] standup/dune/2025-02-25: Reporting can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.\n- [2026-05-04] standup/boreal/2026-05-04: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. Boreal still owns the catalog service, in case anyone asks.\n- [2025-02-11] incident-review/INC-2025-004: Review of INC-2025-004 (the notifier, 2025-02-06). The root cause was a consumer offset stuck after a broker restart. We decided that notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004.\n- [2025-09-08] standup/boreal/2025-09-08-2: New dependency for billing-api: feature-flags. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch. Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners.\n- [2026-01-01] standup/cinder/2026-01-01: The Cinder team noticed that the search indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n- [2025-07-28] standup/cinder/2025-07-28: Decided in today's standup: clients will cache feature-flags evaluations for 30 seconds, since feature-flags saw 40,000 requests per second at peak and most of them were identical.\n- [2025-07-09] handover/2025-07-09-feature-flags: Quick one: the flags service belongs to team Cinder starting today. Thanks to Atlas for running it until now.\n- [2026-03-19] standup/ember/2026-03-19-2: Team Ember noticed that the job scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-03-28] standup/ember/2025-03-28: The scheduler pulls per-job kill switches from the feature flag service on every run.\n- [2026-03-19] standup/ember/2026-03-19: No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2025-07-28] standup/cinder/2025-07-28-2: Heads-up from Cinder: the ledger's p99 latency doubled after Tuesday's deploy. Observation from team Cinder: after the dependency bump, the billing API's error rate crept up to 2 percent.\n\nQuestion: Which version is reporting pinned to, and until when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608433-BZxns9WR8QggRCQtHs8B",
+  "object": "chat.completion",
+  "created": 1788608433,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Python 3.11, until the pandas 3 upgrade lands.",
+     "refusal": null,
+     "reasoning": "The question: \"Which version is reporting pinned to, and until when?\"\n\nMemory entries about reporting pinning:\n- [2025-05-09] standup/dune/2025-05-09: Reporting must stay on Python 3.11 until the pandas 3 upgrade lands.\n\nAny later entries superseding? The 2025-09-15 entry says reporting will read from event-bus instead of ledger — removes ledger dependency, but doesn't change the Python pin. So answer: Python 3.11, until the pandas 3 upgrade lands.\n\nOne short line with the value asked.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Which version is reporting pinned to, and until when?\"\n\nMemory entries about reporting pinning:\n- [2025-05-09] standup/dune/2025-05-09: Reporting must stay on Python 3.11 until the pandas 3 upgrade lands.\n\nAny later entries superseding? The 2025-09-15 entry says reporting will read from event-bus instead of ledger — removes ledger dependency, but doesn't change the Python pin. So answer: Python 3.11, until the pandas 3 upgrade lands.\n\nOne short line with the value asked.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1497,
+   "completion_tokens": 140,
+   "total_tokens": 1637,
+   "cost": 0.000139595,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000139595,
+    "upstream_inference_prompt_cost": 0.000104595,
+    "upstream_inference_completions_cost": 3.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 124,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.9263641660218127,
+ "fetched_at": "2026-09-05T11:40:36Z"
+}

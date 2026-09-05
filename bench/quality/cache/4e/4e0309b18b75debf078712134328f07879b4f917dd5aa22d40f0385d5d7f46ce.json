@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2026-03-20] standup/boreal/2026-03-20-2: Observation from the Boreal team: after the retention change, the catalog service's disk usage jumped 30 percent. The Boreal team runs its planning on Thursdays.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-11-03] standup/boreal/2025-11-03-2: Heads-up from the Boreal team: the notification service's CPU sat at 90 percent after the traffic shift.\n- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-01-09] standup/boreal/2025-01-09: Boreal looks after the bus.\n- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-05-29] standup/boreal/2025-05-29: For anything Boreal-related, page Marcus.\n- [2025-12-18] standup/boreal/2025-12-18: Rotation day for Boreal: Marcus hands the pager to Lena. Boreal adopted a weekly dependency update day.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.\n- [2025-02-11] standup/boreal/2025-02-11-2: If the bus is down, the webhooks service is down: it relies on it for outbound events.\n- [2025-02-11] standup/boreal/2025-02-11: If the event bus is down, the notification service is down: it relies on it for delivery events.\n- [2025-01-09] standup/boreal/2025-01-09-4: Boreal pager: Lena has it first.\n- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-06-27] standup/boreal/2025-06-27: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2025-11-06] standup/boreal/2025-11-06: Marcus has the Boreal pager this cycle, taking over from Lena.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.\n- [2025-03-17] standup/boreal/2025-03-17: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2026-02-10] standup/boreal/2026-02-10-2: Team Boreal noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-06-09] handover/2025-06-09-billing-api: The Ember team handed billing-api to Boreal today; Oskar wrote up the handover doc for Lena Fischer.\n- [2025-08-15] standup/boreal/2025-08-15: Reminder from Boreal: page Marcus for anything this cycle, not Lena Fischer.\n- [2025-09-23] standup/boreal/2025-09-23: Reminder from team Boreal: page Lena for anything this cycle, not Marcus.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n\nQuestion: Which services does Boreal own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620366-6ZmsRI8UaJH4WTJ6zb81",
+  "object": "chat.completion",
+  "created": 1788620366,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The event bus, the webhook dispatcher, and the billing API.",
+     "refusal": null,
+     "reasoning": "The question asks which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the memory entries about Boreal ownership:\n\n1. [2025-01-09] Boreal owns the notifier (notification service).\n2. [2025-01-09] webhook dispatcher owned by team Boreal.\n3. [2025-01-09] Boreal looks after the bus (event bus).\n4. [2025-08-15] Team Boreal still owns the bus.\n5. [2025-06-11] handover: notification service has a new home: Cinder. Boreal kept it until today (2025-06-11). But then [2025-06-27] correction: the notification service went to the Dune team, not Cinder. So as of 2025-06-27, notification service is with Dune, not Boreal.\n6. [2025-06-09] handover: The Ember team handed billing-api to Boreal today. So Boreal owns billing-api as of 2025-06-09. No later handover of billing-api mentioned.\n\nWebhook dispatcher: owned by Boreal per 2025-01-09. No later change mentioned. So presumably still Boreal.\n\nThe bus: Boreal owns it per 2025-01-09 and 2025-08-15. No later change.\n\nNotification service: transferred away on 2025-06-11 (to Cinder, corrected to Dune on 2025-06-27). So Boreal no longer owns it.\n\nBilling API: Boreal received it 2025-06-09 from Ember. Note: [2025-01-08] Atlas says billing API lives with Atlas, but the later handover of 2025-06-09 supersedes: Boreal.\n\nSo now (2026-06-30), Boreal owns: the event bus (bus), the webhook dispatcher, and billing-api.\n\nShould \"notifier\"/notification service be excluded? Yes, it moved to Dune (per correction).\n\nAnswer: the event bus, the webhook dispatcher, and the billing API.\n\nOne short line with just the values.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the memory entries about Boreal ownership:\n\n1. [2025-01-09] Boreal owns the notifier (notification service).\n2. [2025-01-09] webhook dispatcher owned by team Boreal.\n3. [2025-01-09] Boreal looks after the bus (event bus).\n4. [2025-08-15] Team Boreal still owns the bus.\n5. [2025-06-11] handover: notification service has a new home: Cinder. Boreal kept it until today (2025-06-11). But then [2025-06-27] correction: the notification service went to the Dune team, not Cinder. So as of 2025-06-27, notification service is with Dune, not Boreal.\n6. [2025-06-09] handover: The Ember team handed billing-api to Boreal today. So Boreal owns billing-api as of 2025-06-09. No later handover of billing-api mentioned.\n\nWebhook dispatcher: owned by Boreal per 2025-01-09. No later change mentioned. So presumably still Boreal.\n\nThe bus: Boreal owns it per 2025-01-09 and 2025-08-15. No later change.\n\nNotification service: transferred away on 2025-06-11 (to Cinder, corrected to Dune on 2025-06-27). So Boreal no longer owns it.\n\nBilling API: Boreal received it 2025-06-09 from Ember. Note: [2025-01-08] Atlas says billing API lives with Atlas, but the later handover of 2025-06-09 supersedes: Boreal.\n\nSo now (2026-06-30), Boreal owns: the event bus (bus), the webhook dispatcher, and billing-api.\n\nShould \"notifier\"/notification service be excluded? Yes, it moved to Dune (per correction).\n\nAnswer: the event bus, the webhook dispatcher, and the billing API.\n\nOne short line with just the values.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1682,
+   "completion_tokens": 475,
+   "total_tokens": 2157,
+   "cost": 0.0002449,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002449,
+    "upstream_inference_prompt_cost": 0.00012615,
+    "upstream_inference_completions_cost": 0.00011875
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 460,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 11.402781458047684,
+ "fetched_at": "2026-09-05T14:59:37Z"
+}

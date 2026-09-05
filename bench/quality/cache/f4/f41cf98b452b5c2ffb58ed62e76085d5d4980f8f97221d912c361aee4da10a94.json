@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Changes to the billing API need a rollback plan attached to the pull request. [constraint; valid 2025-04-02 to now; recorded by standup/ember/2025-04-02]\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- The ledger service relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- Per Ember team policy, every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-07-29 to now; recorded by standup/ember/2025-07-29]\n- As of 2025-12-29, the auth gateway deploys only on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-12-29 to now; recorded by standup/cinder/2025-12-29]\n- On 2026-01-30 the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- On 2025-09-03 the Cinder team observed that the auth gateway's cold start time tripled after the runtime upgrade. [valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03-2]\n- Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-18 to now; recorded by standup/ember/2025-02-18]\n- On 2025-12-25 the Atlas team noticed that the reports pipeline's disk usage jumped 30 percent after the retention change and flagged it because it is not their service. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- On 2026-04-16 the Atlas team noticed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it because it is not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- On 2026-05-22 the Dune team noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- On 2025-05-14 the Cinder team observed that webhooks' memory use grew steadily for a week after the cache change. [valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n- On 2025-05-07 the Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump. [valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07-2]\n- As of 2025-08-25, the ledger service only ships on Wednesdays between 09:00 and 11:00 UTC; the previous weekday mornings before 11:00 UTC slot is retired. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- As of 2025-11-11, the billing API has a deploy freeze from 2025-11-24 to 2025-12-02 for the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- On 2025-03-26 the Dune team observed that the notification service's memory use grew steadily for a week after the cache change. [valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays; the previous Mon-Thu 09:00-17:00 UTC window no longer applies. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- As of 2026-03-11, the ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- On 2026-04-08 the Atlas team noticed that webhooks' request volume halved following the client rollout and flagged it because it is not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n\nQuestion: What does a change to auth-gateway need before it can merge?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603676-STpINq0GwZuvMFQ8Y9FU",
+  "object": "chat.completion",
+  "created": 1788603676,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Two reviewer approvals and a security sign-off.",
+     "refusal": null,
+     "reasoning": "The question asks what a change to auth-gateway needs before it can merge. Looking at memory:\n\n- Per Ember team policy, every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-07-29 to now]\n\nThere's also deployment windows, but those are for deploys, not merging. The rollback plan constraint is for billing API, not auth gateway.\n\nSo the answer: two reviewer approvals and a security sign-off.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks what a change to auth-gateway needs before it can merge. Looking at memory:\n\n- Per Ember team policy, every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-07-29 to now]\n\nThere's also deployment windows, but those are for deploys, not merging. The rollback plan constraint is for billing API, not auth gateway.\n\nSo the answer: two reviewer approvals and a security sign-off.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1493,
+   "completion_tokens": 107,
+   "total_tokens": 1600,
+   "cost": 0.000131045,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000131045,
+    "upstream_inference_prompt_cost": 0.000104295,
+    "upstream_inference_completions_cost": 2.675e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 96,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4036831670091487,
+ "fetched_at": "2026-09-05T10:21:18Z"
+}

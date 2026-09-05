@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-02-11] standup/boreal/2025-02-11: If the event bus is down, the notification service is down: it relies on it for delivery events.\n- [2025-06-19] standup/boreal/2025-06-19: As before, webhooks needs the event-bus to work.\n- [2025-02-11] standup/boreal/2025-02-11-2: If the bus is down, the webhooks service is down: it relies on it for outbound events.\n- [2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\n- [2025-01-09] standup/boreal/2025-01-09: Boreal looks after the bus.\n- [2025-11-24] handover/2025-11-24-event-bus: Atlas is taking over the event bus from Boreal, effective today. Dashboards and alerts are being repointed.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-12-29] standup/dune/2025-12-29: Observation from team Dune: after the client rollout, the event-bus' request volume halved.\n- [2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2026-05-27] standup/atlas/2026-05-27: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. The Atlas team noticed that search-indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. The catalog still relies on the resizer; keep that in mind for the maintenance.\n- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.\n- [2025-11-03] standup/boreal/2025-11-03-2: Heads-up from the Boreal team: the notification service's CPU sat at 90 percent after the traffic shift.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2025-04-29] standup/ember/2025-04-29: The scheduler still relies on the feature flag service; keep that in mind for the maintenance.\n- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2026-02-26] incident-review/INC-2026-003: INC-2026-003 review. What happened: the webhooks service delivered some events twice on 2026-02-20. Why: a retry loop that ignored idempotency keys. Follow-up decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-04-07] standup/ember/2025-04-07: Per the change policy, the webhooks service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. Heads-up from the Ember team: the notifier's request volume halved after the client rollout.\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-01-30] standup/cinder/2025-01-30: If the catalog service is down, the search indexer is down: it relies on it for product documents.\n- [2025-01-09] standup/atlas/2025-01-09-2: Dependency map update: billing-api needs Ledger (invoice postings).\n- [2025-02-21] standup/boreal/2025-02-21: Decision: the notifier will retry failed pushes three times with exponential backoff, because the flat one-second retry was hammering the push provider during its outages.\n- [2025-09-23] standup/dune/2025-09-23-2: Team Dune noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-03-26] standup/dune/2025-03-26: Reminder that the reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. Observation from team Dune: after the cache change, the notification service's memory use grew steadily for a week.\n\nQuestion: Which service does the event-bus depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788621416-Xqj0XZXf0yxpBIIBT9QL",
+  "object": "chat.completion",
+  "created": 1788621416,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which service does the event-bus depend on?\n\nLooking at the memory, I see dependencies:\n- notification service depends on event bus\n- webhooks depends on event bus\n- scheduler needs feature flag service\n- reporting needs ledger (later switched to bus)\n- billing-api needs Ledger\n- search indexer relies on catalog\n- ledger relies on auth gateway\n- catalog relies on resizer\n\nI don't see any entry stating the event-bus itself depends on a service. The memory only shows services that depend on the event-bus, not what the event-bus depends on.\n\nSo the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which service does the event-bus depend on?\n\nLooking at the memory, I see dependencies:\n- notification service depends on event bus\n- webhooks depends on event bus\n- scheduler needs feature flag service\n- reporting needs ledger (later switched to bus)\n- billing-api needs Ledger\n- search indexer relies on catalog\n- ledger relies on auth gateway\n- catalog relies on resizer\n\nI don't see any entry stating the event-bus itself depends on a service. The memory only shows services that depend on the event-bus, not what the event-bus depends on.\n\nSo the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1613,
+   "completion_tokens": 138,
+   "total_tokens": 1751,
+   "cost": 0.000147795,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000147795,
+    "upstream_inference_prompt_cost": 0.000113295,
+    "upstream_inference_completions_cost": 3.45e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 132,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.334600667003542,
+ "fetched_at": "2026-09-05T15:16:58Z"
+}

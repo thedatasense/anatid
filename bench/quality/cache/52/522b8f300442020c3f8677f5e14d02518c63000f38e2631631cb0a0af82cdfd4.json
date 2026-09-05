@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- As of 2025-06-16, Team Boreal owns the catalog service, having taken it over from Team Dune. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: As of 2025-03-20, Team Dune owns the catalog service. [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Team Cinder owns the catalog service. [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n- The nightly ledger scans were blocking billing runs. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- Ledger migrations will ship with a reviewed query plan. [decision; valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- Do not upgrade the ledger service past Postgres 14 until the partitioning work finishes. [constraint; valid 2025-09-12 to now; recorded by standup/atlas/2025-09-12]\n- During INC-2025-011, the ledger saw write latency spike tenfold for an hour on 2025-04-26. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- On 2025-07-28, Team Cinder reported that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- On 2026-01-05, Team Cinder observed that the ledger's disk usage jumped 30 percent after the retention change. [valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- There is a deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2026-04-16, the ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC; the old Wednesday 09:00-11:00 UTC slot is retired. [constraint; valid 2026-04-16 to now; recorded by standup/ember/2026-04-16]\n    earlier: Per the change policy, the ledger deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-04-18 to 2026-04-16; recorded by standup/atlas/2025-04-18]\n- On 2026-01-13, Team Atlas noticed that the ledger's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- The Ember team never owned the webhooks service. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- On 2026-03-19, the Ember team noticed that the scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n\nQuestion: Who owns the ledger today?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614525-CEwstVsHeZcvNeWBdZrz",
+  "object": "chat.completion",
+  "created": 1788614525,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The Ember team",
+     "refusal": null,
+     "reasoning": "The memory says: \"As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now...]\"\n\nToday is 2026-06-30, so the answer is Ember team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now...]\"\n\nToday is 2026-06-30, so the answer is Ember team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1465,
+   "completion_tokens": 67,
+   "total_tokens": 1532,
+   "cost": 0.000126625,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000126625,
+    "upstream_inference_prompt_cost": 0.000109875,
+    "upstream_inference_completions_cost": 1.675e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 62,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.489390624978114,
+ "fetched_at": "2026-09-05T13:22:09Z"
+}

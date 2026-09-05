@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Cinder runs its planning on Mondays. [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- As of 2026-05-22, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- The job scheduler was owned by the Dune team from 2025-06-25, having moved from the Ember team, until ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The job scheduler is owned by the Dune team as of 2025-06-25, having moved from the Ember team. [valid 2025-06-25 to 2025-09-23; recorded by handover/2025-06-25-scheduler]\n    earlier: The job scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- On 2026-03-11 the Cinder team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- As of 2025-11-27, Yuki Tanaka holds the Cinder pager, taking over from Diego, who is leaving the team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego holds the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n- As of 2025-10-16, the Cinder team sits on the third floor. [valid 2025-10-16 to now; recorded by standup/cinder/2025-10-16]\n- As of 2025-10-13, the pager for the ledger service rings Cinder instead of the Atlas team. [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- As of 2025-09-23, the pager for the job scheduler rings Cinder instead of the Dune team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- As of 2025-11-27, Diego is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on Cinder. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, having moved from the Boreal team. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- Yuki Tanaka is on Cinder. [valid 2025-01-08 to now; recorded by standup/cinder/2025-01-08]\n- On 2026-01-30 the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- As of 2025-09-05, the Dune team still owned the job scheduler; ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, the Dune team still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- On 2025-05-14 the Cinder team observed that webhooks' memory use grew steadily for a week after the cache change. [valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n- As of 2025-10-13, ownership of the ledger service transferred to Cinder from the Atlas team. [decision; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- On 2025-09-03 the Cinder team observed that the auth gateway's cold start time tripled after the runtime upgrade. [valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03-2]\n- As of 2025-09-04, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n    earlier: Farah has the first on-call rotation for the Dune team. [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n\nQuestion: Who was on call for Cinder on 2025-02-10?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603317-GzIocsQrvML9MGYXrzny",
+  "object": "chat.completion",
+  "created": 1788603317,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks who was on call for Cinder on 2025-02-10.\n\nLooking at the memory:\n- \"As of 2025-11-27, Yuki Tanaka holds the Cinder pager, taking over from Diego, who is leaving the team. [valid 2025-11-27 to now]\"\n- \"earlier: As of 2025-10-24, Diego holds the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to 2025-11-27]\"\n\nThe earliest pager record for Cinder is from 2025-10-24. There's no record of who held the Cinder pager on 2025-02-10. The memory doesn't contain information about the Cinder pager holder in February 2025.\n\nSo the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was on call for Cinder on 2025-02-10.\n\nLooking at the memory:\n- \"As of 2025-11-27, Yuki Tanaka holds the Cinder pager, taking over from Diego, who is leaving the team. [valid 2025-11-27 to now]\"\n- \"earlier: As of 2025-10-24, Diego holds the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to 2025-11-27]\"\n\nThe earliest pager record for Cinder is from 2025-10-24. There's no record of who held the Cinder pager on 2025-02-10. The memory doesn't contain information about the Cinder pager holder in February 2025.\n\nSo the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1759,
+   "completion_tokens": 185,
+   "total_tokens": 1944,
+   "cost": 0.000178175,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000178175,
+    "upstream_inference_prompt_cost": 0.000131925,
+    "upstream_inference_completions_cost": 4.625e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 179,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.2031602910137735,
+ "fetched_at": "2026-09-05T10:15:20Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The product catalog depends on the image resizer for thumbnails. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- The ledger service depends on the auth gateway for service tokens. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: As of 2025-06-19, Tomasz is the primary on-call for the Atlas team and Priya Raman is no longer the primary on-call. [decision; valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: As of 2025-05-13, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Priya Raman is no longer the primary on-call for the Atlas team; Tomasz is the primary on-call for the Atlas team this cycle as of 2025-04-03. [decision; valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12; Tomasz is off rotation. [decision; valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz takes the first on-call rotation for the Atlas team. [decision; valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- Until 2025-09-23, the reporting service depended on the ledger service for the nightly balance export; it no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- On 2026-06-04, the Boreal team noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- On 2026-03-20, the Boreal team observed that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, having taken over from Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, Diego is the primary on-call for the Ember team, having taken over from Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, Oskar Lind is the primary on-call for the Ember team, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- As of 2025-11-27, Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-09-05 to 2025-10-24; recorded by standup/cinder/2025-09-05]\n    earlier: Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-07-17 to 2025-09-05; recorded by standup/cinder/2025-07-17]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-06-06 to 2025-07-17; recorded by standup/cinder/2025-06-06]\n    earlier: Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-04-24 to 2025-06-06; recorded by standup/cinder/2025-04-24]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-02-27 to 2025-04-24; recorded by standup/cinder/2025-02-27]\n    earlier: Diego is on call for the Cinder team to start the year. [decision; valid 2025-01-09 to 2025-02-27; recorded by standup/cinder/2025-01-09]\n\nQuestion: Who is on call for the team that owns the service the catalog depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596189-1CwLbssAN2cmtR0TjPEL",
+  "object": "chat.completion",
+  "created": 1788596189,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nFirst, find what service the catalog depends on. Memory entries:\n- The indexer depends on the product catalog for product documents.\n- The product catalog depends on the image resizer for thumbnails. [valid 2025-04-14 to now]\n\nSo the catalog depends on the image resizer. Which team owns the image resizer? The memory doesn't explicitly state team ownership of services... Let's check entries recorded by standup/cinder/ — the product catalog dependency was recorded by standup/cinder/2025-04-14. Hmm, that suggests the Cinder team recorded it, but does that mean Cinder owns the image resizer? Not explicitly.\n\nAlso, the Boreal team noticed catalog service issues — Boreal noticed catalog service's memory use and disk usage, and \"pinged the owners.\" That doesn't say who owns the catalog.\n\nHmm. The question asks about the team that owns the service the catalog depends on — i.e., the image resizer. The entry recording the dependency is from standup/cinder — Cinder team standups recorded \"The product catalog depends on the image resizer for thumbnails.\" Does that indicate Cinder owns the image resizer? Not necessarily.\n\nActually, wait — maybe the reasoning intended: the catalog service observations are by Boreal team... The Boreal team \"pinged the owners\" — but owners not named.\n\nLet me reconsider: perhaps the intended chain: catalog depends on image resizer (per cinder standup). The Cinder team owns... hmm, cinder standups record Cinder team's dependencies. Actually in these memory setups, entries recorded by standup/<team>/ typically are from that team's standup, describing dependencies they observed. \"The indexer depends on the product catalog\" recorded by cinder — could be the cinder team owns the indexer? Or the catalog?\n\nThe question likely intends: catalog depends on image resizer; who owns image resizer? If the memory doesn't state ownership, answer \"I don't know.\"\n\nIs there any entry linking a team to the image resizer? No. Entries mention teams: Atlas (ledger, billing), Dune (reporting), Boreal (catalog observations), Ember, Cinder. No ownership of image resizer stated.\n\nAlternatively, maybe the intended interpretation: \"the service the catalog depends on\" — the catalog service. The Boreal team observed catalog service issues — maybe Boreal owns the catalog? No, Boreal \"noticed\" and \"pinged the owners,\" implying Boreal is not the owner.\n\nSo the answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nFirst, find what service the catalog depends on. Memory entries:\n- The indexer depends on the product catalog for product documents.\n- The product catalog depends on the image resizer for thumbnails. [valid 2025-04-14 to now]\n\nSo the catalog depends on the image resizer. Which team owns the image resizer? The memory doesn't explicitly state team ownership of services... Let's check entries recorded by standup/cinder/ — the product catalog dependency was recorded by standup/cinder/2025-04-14. Hmm, that suggests the Cinder team recorded it, but does that mean Cinder owns the image resizer? Not explicitly.\n\nAlso, the Boreal team noticed catalog service issues — Boreal noticed catalog service's memory use and disk usage, and \"pinged the owners.\" That doesn't say who owns the catalog.\n\nHmm. The question asks about the team that owns the service the catalog depends on — i.e., the image resizer. The entry recording the dependency is from standup/cinder — Cinder team standups recorded \"The product catalog depends on the image resizer for thumbnails.\" Does that indicate Cinder owns the image resizer? Not necessarily.\n\nActually, wait — maybe the reasoning intended: the catalog service observations are by Boreal team... The Boreal team \"pinged the owners\" — but owners not named.\n\nLet me reconsider: perhaps the intended chain: catalog depends on image resizer (per cinder standup). The Cinder team owns... hmm, cinder standups record Cinder team's dependencies. Actually in these memory setups, entries recorded by standup/<team>/ typically are from that team's standup, describing dependencies they observed. \"The indexer depends on the product catalog\" recorded by cinder — could be the cinder team owns the indexer? Or the catalog?\n\nThe question likely intends: catalog depends on image resizer; who owns image resizer? If the memory doesn't state ownership, answer \"I don't know.\"\n\nIs there any entry linking a team to the image resizer? No. Entries mention teams: Atlas (ledger, billing), Dune (reporting), Boreal (catalog observations), Ember, Cinder. No ownership of image resizer stated.\n\nAlternatively, maybe the intended interpretation: \"the service the catalog depends on\" — the catalog service. The Boreal team observed catalog service issues — maybe Boreal owns the catalog? No, Boreal \"noticed\" and \"pinged the owners,\" implying Boreal is not the owner.\n\nSo the answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1685,
+   "completion_tokens": 546,
+   "total_tokens": 2231,
+   "cost": 0.000255195,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000255195,
+    "upstream_inference_prompt_cost": 0.000118695,
+    "upstream_inference_completions_cost": 0.0001365
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 540,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 8.850348874984775,
+ "fetched_at": "2026-09-05T08:16:38Z"
+}

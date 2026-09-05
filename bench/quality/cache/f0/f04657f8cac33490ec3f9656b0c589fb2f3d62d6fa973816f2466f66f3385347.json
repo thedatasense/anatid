@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- On 2026-05-28 the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- As of 2026-03-11, the ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- On 2026-05-27 the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2026-02-03, the Atlas team has a no-deploy Friday. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- The notifier relies on the bus for delivery events, so if the bus is down the notifier is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- On 2026-04-08 the Atlas team noticed that webhooks' request volume halved following the client rollout and flagged it because it is not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- On 2026-04-16 the Atlas team noticed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it because it is not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- As of 2025-04-07, the Ember team reported that the notifier's request volume halved after the client rollout. [valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- On 2026-05-22 the Dune team reported that the job scheduler's error rate crept up to 2 percent after the dependency bump. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n- As of 2025-04-24, the Cinder team reported that the feature-flags service's p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- On 2025-12-31 the Atlas team noticed that the feature-flags service's queue depth hit 50,000 following the marketing send and flagged it because it is not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- During incident INC-2025-004, the notifier missed alerts for 40 minutes on 2025-02-01. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The notifier's flat one-second retry was hammering the push provider during its outages. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- On 2025-11-03 the Boreal team noticed that the notification service's CPU sat at 90 percent after the traffic shift. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n- As of 2025-08-25, the ledger service only ships on Wednesdays between 09:00 and 11:00 UTC; the previous weekday mornings before 11:00 UTC slot is retired. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, having moved from the Boreal team. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- As of 2026-05-19, the job scheduler's leader lease will be shortened to ten seconds. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n\nQuestion: What is the deploy window of the service that the notifier depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603490-2tG7GZjk5onEubXWIcAF",
+  "object": "chat.completion",
+  "created": 1788603490,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The notifier relies on the bus for delivery events — that's the dependency. Wait, but the question asks about the deploy window of the service the notifier depends on. The notifier depends on the bus. Do we have a deploy window for the bus? Memory has deploy window for the ledger service: Wednesdays 09:00-11:00 UTC. Does the notifier depend on the ledger? Memory says the reporting service no longer depends on the ledger. Nothing says the notifier depends on the ledger.\n\nThe notifier depends on the bus. There's no deploy window for the bus in memory. So answer: I don't know.\n\nWait — maybe someone might confuse \"bus\" with something else. Memory entries: ledger service deploys Wednesdays 09:00-11:00 UTC. But the notifier's dependency is the bus. No bus deploy window. So \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The notifier relies on the bus for delivery events — that's the dependency. Wait, but the question asks about the deploy window of the service the notifier depends on. The notifier depends on the bus. Do we have a deploy window for the bus? Memory has deploy window for the ledger service: Wednesdays 09:00-11:00 UTC. Does the notifier depend on the ledger? Memory says the reporting service no longer depends on the ledger. Nothing says the notifier depends on the ledger.\n\nThe notifier depends on the bus. There's no deploy window for the bus in memory. So answer: I don't know.\n\nWait — maybe someone might confuse \"bus\" with something else. Memory entries: ledger service deploys Wednesdays 09:00-11:00 UTC. But the notifier's dependency is the bus. No bus deploy window. So \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1529,
+   "completion_tokens": 187,
+   "total_tokens": 1716,
+   "cost": 0.000153745,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000153745,
+    "upstream_inference_prompt_cost": 0.000106995,
+    "upstream_inference_completions_cost": 4.675e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 181,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.9169925409951247,
+ "fetched_at": "2026-09-05T10:18:14Z"
+}

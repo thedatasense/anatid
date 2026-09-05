@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Who owns the ledger today?\nGold answer: Ember\nAlso accepted: the Ember team; team Ember\nGrading rule: Correct only if the answer gives the CURRENT value (the gold). Naming an earlier value listed under distractors is wrong, even if it was once true. 'I don't know' is wrong.\n\nAnswer to grade: Ember team"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616561-PEV7jKa6a40frVYg42Oh",
+  "object": "chat.completion",
+  "created": 1788616561,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'Ember team' matches the accepted alternative phrasing 'the Ember team' (with only the article omitted) and refers to the current owner, Ember.\"}",
+     "refusal": null,
+     "reasoning": "The answer is \"Ember team\". The gold answer is \"Ember\". Accepted alternatives: \"the Ember team; team Ember\". The answer to grade is \"Ember team\" — this matches \"the Ember team\" essentially. The accepted list includes \"the Ember team\" (with \"the\"). \"Ember team\" without \"the\" — is that acceptable? The rule says apply literally. Accepted alternative phrasings: \"the Ember team; team Ember\". \"Ember team\" is missing \"the\". Hmm, literally it's not exactly listed. But \"Ember team\" is a substring variant of \"the Ember team\" and semantically identical. Graders typically allow minor article differences. The accepted phrasing \"the Ember team\" implies \"Ember team\" is fine — dropping the article. I'd say correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer is \"Ember team\". The gold answer is \"Ember\". Accepted alternatives: \"the Ember team; team Ember\". The answer to grade is \"Ember team\" — this matches \"the Ember team\" essentially. The accepted list includes \"the Ember team\" (with \"the\"). \"Ember team\" without \"the\" — is that acceptable? The rule says apply literally. Accepted alternative phrasings: \"the Ember team; team Ember\". \"Ember team\" is missing \"the\". Hmm, literally it's not exactly listed. But \"Ember team\" is a substring variant of \"the Ember team\" and semantically identical. Graders typically allow minor article differences. The accepted phrasing \"the Ember team\" implies \"Ember team\" is fine — dropping the article. I'd say correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 237,
+   "completion_tokens": 218,
+   "total_tokens": 455,
+   "cost": 6.0755e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 6.0755e-05,
+    "upstream_inference_prompt_cost": 6.255e-06,
+    "upstream_inference_completions_cost": 5.45e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 172,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.432142124976963,
+ "fetched_at": "2026-09-05T13:56:05Z"
+}

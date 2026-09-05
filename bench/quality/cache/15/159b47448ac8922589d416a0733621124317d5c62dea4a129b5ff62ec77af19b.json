@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- The billing API was owned by the Atlas team from 2025-06-09, having moved from the Ember team, until ownership transferred to the Ember team on 2026-01-12. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: The billing API is owned by the Atlas team as of 2025-06-09, having moved from the Ember team; the Boreal team was recorded by mistake and never held it. [valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: The billing API is owned by the Boreal team as of 2025-06-09, having moved from the Ember team. [valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: The billing API is owned by the Ember team as of 2025-03-07. [valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- The billing API is owned by the Ember team as of 2026-01-12, having moved from the Atlas team. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n- As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus because nightly ledger scans were blocking billing runs. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- On 2025-06-09 Oskar wrote the billing API handover doc for Lena. [valid 2025-06-09 to now; recorded by handover/2025-06-09-billing-api]\n- On 2025-12-01 the Boreal team noticed that the billing API's error rate crept up to 2 percent after the dependency bump. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to now; recorded by standup/dune/2025-06-24]\n- As of 2025-09-30, the billing API gates the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The billing API only ships on weekdays after 15:00 UTC. [constraint; valid 2025-02-11 to now; recorded by standup/atlas/2025-02-11]\n- On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- The ledger service is owned by the Atlas team. [valid 2025-01-08 to now; recorded by standup/atlas/2025-01-08]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n- On 2025-02-21 the Boreal team pinged the owners of the ledger service about the memory growth. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- As of 2025-07-17, the ledger service remains owned by the Atlas team. [valid 2025-07-17 to now; recorded by standup/atlas/2025-07-17]\n- As of 2025-08-25, the ledger service only ships on Wednesdays between 09:00 and 11:00 UTC; the previous weekday mornings before 11:00 UTC slot is retired. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- On 2025-11-04 the Ember team saw that the billing API's queue depth hit 50,000 following the marketing send and flagged it because it is not their service. [valid 2025-11-04 to now; recorded by standup/ember/2025-11-04]\n- As of 2025-11-11, the billing API has a deploy freeze from 2025-11-24 to 2025-12-02 for the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- On 2026-03-11 the Cinder team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- Changes to the billing API need a rollback plan attached to the pull request. [constraint; valid 2025-04-02 to now; recorded by standup/ember/2025-04-02]\n\nQuestion: Which note first recorded that billing-api depends on the ledger, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604536-Efpe4XAO8C5w8XKEVkEM",
+  "object": "chat.completion",
+  "created": 1788604536,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/atlas/2025-01-09-2, on 2025-01-09",
+     "refusal": null,
+     "reasoning": "The question asks: Which note first recorded that billing-api depends on the ledger, and when?\n\nLooking at the memory:\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n\nThis is the only entry recording this dependency. It was recorded by standup/atlas/2025-01-09-2, valid from 2025-01-09.\n\nSo the answer: standup/atlas/2025-01-09-2 on 2025-01-09.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which note first recorded that billing-api depends on the ledger, and when?\n\nLooking at the memory:\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n\nThis is the only entry recording this dependency. It was recorded by standup/atlas/2025-01-09-2, valid from 2025-01-09.\n\nSo the answer: standup/atlas/2025-01-09-2 on 2025-01-09.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1603,
+   "completion_tokens": 152,
+   "total_tokens": 1755,
+   "cost": 0.000150545,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000150545,
+    "upstream_inference_prompt_cost": 0.000112545,
+    "upstream_inference_completions_cost": 3.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 128,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.603670249984134,
+ "fetched_at": "2026-09-05T10:35:38Z"
+}

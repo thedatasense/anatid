@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Reporting depends on the event-bus [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: Reporting depends on the ledger [valid 2025-03-10 to 2025-09-15; recorded by standup/dune/2025-03-10]\n- Boreal noticed that the notifier's request volume halved after the client rollout [observation; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- The notifier depends on the event-bus [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- Dune owns the notifier [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: Cinder owns the notifier [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: Boreal owns the notifier [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- Atlas noticed that the notifier's memory use grew steadily for a week after the cache change [observation; valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03-2]\n- Webhooks depends on the event-bus [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- Billing-api depends on feature-flags [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-03; the root cause was two leaders elected during a network partition [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- The scheduler depends on feature-flags [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- Dune noticed that the notifier's CPU sat at 90 percent after the traffic shift [observation; valid 2025-06-12 to now; recorded by standup/dune/2025-06-12]\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-06; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- Billing-api depends on the ledger [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- Ember noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- Decision: the notifier will retry failed pushes three times with exponential backoff, because the flat one-second retry was hammering the push provider during its outages [decision; valid 2025-02-20 to now; recorded by standup/boreal/2025-02-20]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- The scheduler deploys only on weekday mornings before 11:00 UTC [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n    earlier: The scheduler deploys only on weekdays after 15:00 UTC [constraint; valid 2025-03-19 to 2025-10-27; recorded by standup/ember/2025-03-19]\n- Search-indexer depends on the catalog [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one [decision; valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- Lena is on call for Boreal [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: Marcus is on call for Boreal [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: Lena is on call for Boreal [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n    earlier: Marcus is on call for Boreal [valid 2025-09-08 to 2025-10-31; recorded by standup/boreal/2025-09-08]\n    earlier: Lena is on call for Boreal [valid 2025-08-01 to 2025-09-08; recorded by standup/boreal/2025-08-01]\n    earlier: Marcus is on call for Boreal [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n    earlier: Lena is on call for Boreal [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: Marcus is on call for Boreal [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n    earlier: Lena is on call for Boreal [valid 2025-01-13 to 2025-02-27; recorded by standup/boreal/2025-01-13]\n- Boreal owns the event-bus [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: Cinder owns the event-bus [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: Atlas owns the event-bus [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: Boreal owns the event-bus [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n\nQuestion: Which service depends on the notifier?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788616240-8d1vnqFcigzQ4wbmoTDQ",
+  "object": "chat.completion",
+  "created": 1788616240,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: which service depends on the notifier?\n\nLooking at memory entries for \"depends on\":\n- Reporting depends on the event-bus\n- The notifier depends on the event-bus\n- Webhooks depends on the event-bus\n- Billing-api depends on feature-flags\n- The scheduler depends on feature-flags\n- Billing-api depends on the ledger\n- Search-indexer depends on the catalog\n\nNone of these say something depends on the notifier. There's no entry like \"X depends on the notifier\". So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which service depends on the notifier?\n\nLooking at memory entries for \"depends on\":\n- Reporting depends on the event-bus\n- The notifier depends on the event-bus\n- Webhooks depends on the event-bus\n- Billing-api depends on feature-flags\n- The scheduler depends on feature-flags\n- Billing-api depends on the ledger\n- Search-indexer depends on the catalog\n\nNone of these say something depends on the notifier. There's no entry like \"X depends on the notifier\". So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1705,
+   "completion_tokens": 122,
+   "total_tokens": 1827,
+   "cost": 0.000150695,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000150695,
+    "upstream_inference_prompt_cost": 0.000120195,
+    "upstream_inference_completions_cost": 3.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 116,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.373289167007897,
+ "fetched_at": "2026-09-05T13:50:43Z"
+}

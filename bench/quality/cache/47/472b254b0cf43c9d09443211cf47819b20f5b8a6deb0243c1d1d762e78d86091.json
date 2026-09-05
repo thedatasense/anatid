@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Who was on call for Boreal on 2025-07-20?\nGold answer: Lena\nAlso accepted: Lena Fischer\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: Lena"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788598046-tushEtYF7OormSpm8tXE",
+  "object": "chat.completion",
+  "created": 1788598046,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'Lena' matches the gold answer for who was on call for Boreal on 2025-07-20.\"}",
+     "refusal": null,
+     "reasoning": "The question asks who was on call for Boreal on 2025-07-20. The gold answer is \"Lena\" and also accepted is \"Lena Fischer\". The answer to grade is \"Lena\", which matches the gold answer exactly.\n\nThe grading rule says correct only if the answer gives the value that held at the date or moment the question names. The answer \"Lena\" matches the gold answer.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was on call for Boreal on 2025-07-20. The gold answer is \"Lena\" and also accepted is \"Lena Fischer\". The answer to grade is \"Lena\", which matches the gold answer exactly.\n\nThe grading rule says correct only if the answer gives the value that held at the date or moment the question names. The answer \"Lena\" matches the gold answer.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 243,
+   "completion_tokens": 125,
+   "total_tokens": 368,
+   "cost": 3.7955e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.7955e-05,
+    "upstream_inference_prompt_cost": 6.705e-06,
+    "upstream_inference_completions_cost": 3.125e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 86,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.039997958985623,
+ "fetched_at": "2026-09-05T08:47:28Z"
+}

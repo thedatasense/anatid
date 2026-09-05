@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Marcus is on call for Atlas [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: Priya is on call for Atlas [valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: Marcus is on call for Atlas [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n    earlier: Priya is on call for Atlas [valid 2025-07-03 to 2026-03-09; recorded by standup/atlas/2025-07-03]\n    earlier: Tomasz is on call for Atlas [valid 2025-05-09 to 2025-07-03; recorded by standup/atlas/2025-05-09]\n    earlier: Priya is on call for Atlas [valid 2025-04-07 to 2025-05-09; recorded by standup/atlas/2025-04-07]\n    earlier: Tomasz is on call for Atlas [valid 2025-02-19 to 2025-04-07; recorded by standup/atlas/2025-02-19]\n    earlier: Priya is on call for Atlas [valid 2025-01-14 to 2025-02-19; recorded by standup/atlas/2025-01-14]\n- Priya runs the quarterly capacity review [valid 2025-06-23 to now; recorded by standup/atlas/2025-06-23]\n- Priya is a member of Atlas [valid 2025-01-06 to now; recorded by standup/atlas/2025-01-06]\n- Marcus is a member of Atlas [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19]\n    earlier: Marcus is a member of Boreal [valid 2025-01-07 to 2026-02-19; recorded by standup/boreal/2025-01-07]\n- Atlas noticed that webhooks's memory use grew steadily for a week after the cache change [observation; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Atlas noticed that the ledger's memory use grew steadily for a week after the cache change [observation; valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- Atlas holds its planning meeting on Tuesdays [valid 2025-10-31 to now; recorded by standup/atlas/2025-10-31]\n- Ember noticed that auth-gateway's CPU sat at 90 percent after the traffic shift [observation; valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- Atlas noticed that the notifier's memory use grew steadily for a week after the cache change [observation; valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03-2]\n- Yuki is on call for Cinder [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n    earlier: Diego is on call for Cinder [valid 2025-08-29 to 2025-10-27; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki is on call for Cinder [valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: Diego is on call for Cinder [valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: Yuki is on call for Cinder [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n    earlier: Diego is on call for Cinder [valid 2025-02-21 to 2025-04-09; recorded by standup/cinder/2025-02-21]\n    earlier: Yuki is on call for Cinder [valid 2025-01-14 to 2025-02-21; recorded by standup/cinder/2025-01-14]\n- Lena is on call for Boreal [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: Marcus is on call for Boreal [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: Lena is on call for Boreal [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n    earlier: Marcus is on call for Boreal [valid 2025-09-08 to 2025-10-31; recorded by standup/boreal/2025-09-08]\n    earlier: Lena is on call for Boreal [valid 2025-08-01 to 2025-09-08; recorded by standup/boreal/2025-08-01]\n    earlier: Marcus is on call for Boreal [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n    earlier: Lena is on call for Boreal [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: Marcus is on call for Boreal [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n    earlier: Lena is on call for Boreal [valid 2025-01-13 to 2025-02-27; recorded by standup/boreal/2025-01-13]\n- INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-07-27; the root cause was an expired intermediate certificate [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n\nQuestion: Who is on call for Priya's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788616079-sHnK4UBOPrJzVRiJKKMG",
+  "object": "chat.completion",
+  "created": 1788616079,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Marcus",
+     "refusal": null,
+     "reasoning": "The question asks: \"Who is on call for Priya's team right now?\"\n\nPriya is a member of Atlas [valid 2025-01-06 to now]. So Priya's team is Atlas.\n\nWho is on call for Atlas right now (today is 2026-06-30)? Marcus is on call for Atlas [valid 2026-05-25 to now].\n\nAnswer: Marcus.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Who is on call for Priya's team right now?\"\n\nPriya is a member of Atlas [valid 2025-01-06 to now]. So Priya's team is Atlas.\n\nWho is on call for Atlas right now (today is 2026-06-30)? Marcus is on call for Atlas [valid 2026-05-25 to now].\n\nAnswer: Marcus.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1607,
+   "completion_tokens": 88,
+   "total_tokens": 1695,
+   "cost": 0.000115645,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 448,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000115645,
+    "upstream_inference_prompt_cost": 9.3645e-05,
+    "upstream_inference_completions_cost": 2.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 85,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0003914579865523,
+ "fetched_at": "2026-09-05T13:48:01Z"
+}

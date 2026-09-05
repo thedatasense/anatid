@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, having moved from the Boreal team. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- As of 2025-09-05, the Dune team still owned the job scheduler; ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, the Dune team still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- On 2025-03-26 the Dune team observed that the notification service's memory use grew steadily for a week after the cache change. [valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- The job scheduler was owned by the Dune team from 2025-06-25, having moved from the Ember team, until ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The job scheduler is owned by the Dune team as of 2025-06-25, having moved from the Ember team. [valid 2025-06-25 to 2025-09-23; recorded by handover/2025-06-25-scheduler]\n    earlier: The job scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- The Dune team adopted a monthly game day. [decision; valid 2025-04-21 to now; recorded by standup/dune/2025-04-21]\n- On 2026-05-22 the Dune team noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- On 2025-09-23 the Dune team noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- On 2026-02-16 the Dune team noticed that the product catalog's request volume halved after the client rollout and pinged the owners. [valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- On 2025-12-29 the Dune team observed that the event bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- Per the 2026-04-14 Dune team standup, Farah is release captain for Q3 2025. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- On 2026-06-09 the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- As of 2026-04-14, Farah holds the Dune team pager, taking over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is the primary on-call for the Dune team, taking over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah is the primary on-call for the Dune team. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- On 2025-08-19 the Dune team observed that the resizer's cold start time tripled after the runtime upgrade. [valid 2025-08-19 to now; recorded by standup/dune/2025-08-19-2]\n- As of 2026-05-22, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- As of 2025-09-04, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n    earlier: Farah has the first on-call rotation for the Dune team. [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n- On 2026-05-22 the Dune team reported that the job scheduler's error rate crept up to 2 percent after the dependency bump. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- The Dune team sits on the fourth floor. [valid 2025-07-24 to now; recorded by standup/dune/2025-07-24]\n- As of 2025-10-15, Farah holds the Dune team pager this cycle, taking over from Tomasz. [valid 2025-10-15 to now; recorded by standup/dune/2025-10-15]\n\nQuestion: When did Dune take over the notifier?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604353-avGlg4NPlVE0PWb0TjpX",
+  "object": "chat.completion",
+  "created": 1788604353,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-06-11",
+     "refusal": null,
+     "reasoning": "The question asks when Dune took over the notifier.\n\nMemory says: \"The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it.\"\n\nBefore that: \"The Boreal team owns the notifier\" valid 2025-01-09 to 2025-06-11. Then the 2025-06-11 note says Cinder took ownership, but that was a mistake; the correction says Cinder never owned it. So the notifier moved from Boreal to Dune. The Dune ownership is valid as of 2025-06-27.\n\nHmm, when did Dune take over? The Boreal ownership was valid until 2025-06-11. The correction recorded 2025-06-27 says Dune owns it. The 2025-06-11 note had the wrong team — it said Cinder took ownership, but actually it was Dune that took over at that point. So the takeover happened 2025-06-11 (when it moved from Boreal), but the recorded date for Dune ownership is 2025-06-27.\n\nThe memory entry says \"The notifier is owned by the Dune team as of 2025-06-27\". The question asks \"When did Dune take over the notifier?\" The most direct answer from memory is 2025-06-27. Though the takeover itself might have been on 2025-06-11 (the correction reinterprets the 06-11 handover as being Dune, not Cinder). The correction says the handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team — implying the handover occurred on 2025-06-11 but to Dune, not Cinder. So Dune took over on 2025-06-11.\n\nHmm, which is the answer? The question: \"When did Dune take over the notifier?\" The handover happened on 2025-06-11 (the note was written about that handover, just with wrong team name). The correction confirms Dune owned it. So the takeover date is 2025-06-11. But the memory entry for Dune ownership says \"as of 2025-06-27\".\n\nI think the intended answer is 2025-06-11, because the correction clarifies that the handover on 2025-06-11 was actually to Dune. Alternatively 2025-06-27 as \"as of\" date.\n\nLet me re-read: \"The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it. earlier: The notifier is owned by Cinder as of 2025-06-11, having moved from the Boreal team.\"\n\nSo the chain: Boreal until 2025-06-11, then the handover on 2025-06-11 (wrongly attributed to Cinder, actually Dune), then confirmed Dune as of 2025-06-27. The takeover date is 2025-06-11.\n\nAnswer: 2025-06-11.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Dune took over the notifier.\n\nMemory says: \"The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it.\"\n\nBefore that: \"The Boreal team owns the notifier\" valid 2025-01-09 to 2025-06-11. Then the 2025-06-11 note says Cinder took ownership, but that was a mistake; the correction says Cinder never owned it. So the notifier moved from Boreal to Dune. The Dune ownership is valid as of 2025-06-27.\n\nHmm, when did Dune take over? The Boreal ownership was valid until 2025-06-11. The correction recorded 2025-06-27 says Dune owns it. The 2025-06-11 note had the wrong team — it said Cinder took ownership, but actually it was Dune that took over at that point. So the takeover happened 2025-06-11 (when it moved from Boreal), but the recorded date for Dune ownership is 2025-06-27.\n\nThe memory entry says \"The notifier is owned by the Dune team as of 2025-06-27\". The question asks \"When did Dune take over the notifier?\" The most direct answer from memory is 2025-06-27. Though the takeover itself might have been on 2025-06-11 (the correction reinterprets the 06-11 handover as being Dune, not Cinder). The correction says the handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team — implying the handover occurred on 2025-06-11 but to Dune, not Cinder. So Dune took over on 2025-06-11.\n\nHmm, which is the answer? The question: \"When did Dune take over the notifier?\" The handover happened on 2025-06-11 (the note was written about that handover, just with wrong team name). The correction confirms Dune owned it. So the takeover date is 2025-06-11. But the memory entry for Dune ownership says \"as of 2025-06-27\".\n\nI think the intended answer is 2025-06-11, because the correction clarifies that the handover on 2025-06-11 was actually to Dune. Alternatively 2025-06-27 as \"as of\" date.\n\nLet me re-read: \"The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it. earlier: The notifier is owned by Cinder as of 2025-06-11, having moved from the Boreal team.\"\n\nSo the chain: Boreal until 2025-06-11, then the handover on 2025-06-11 (wrongly attributed to Cinder, actually Dune), then confirmed Dune as of 2025-06-27. The takeover date is 2025-06-11.\n\nAnswer: 2025-06-11.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1754,
+   "completion_tokens": 711,
+   "total_tokens": 2465,
+   "cost": 0.0002901,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002901,
+    "upstream_inference_prompt_cost": 0.00011235,
+    "upstream_inference_completions_cost": 0.00017775
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 703,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.183958916983102,
+ "fetched_at": "2026-09-05T10:32:43Z"
+}

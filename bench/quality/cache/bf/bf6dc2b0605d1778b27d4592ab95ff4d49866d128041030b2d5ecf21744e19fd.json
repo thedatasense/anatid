@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What is the deploy window of the service that search-indexer depends on?\nGold answer: on Tuesdays between 13:00 and 15:00 UTC\nAlso accepted: Tuesdays 13:00-15:00 UTC\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong.\n\nAnswer to grade: Mondays to Thursdays between 09:00 and 17:00 UTC"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616505-xkU28vnSzFuz4M0pFaCg",
+  "object": "chat.completion",
+  "created": 1788616505,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer gives Mondays to Thursdays 09:00-17:00 UTC, which does not match the gold deploy window of Tuesdays 13:00-15:00 UTC.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"on Tuesdays between 13:00 and 15:00 UTC\". The answer to grade says \"Mondays to Thursdays between 09:00 and 17:00 UTC\". That's different. So incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"on Tuesdays between 13:00 and 15:00 UTC\". The answer to grade says \"Mondays to Thursdays between 09:00 and 17:00 UTC\". That's different. So incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 280,
+   "completion_tokens": 101,
+   "total_tokens": 381,
+   "cost": 3.089e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.089e-05,
+    "upstream_inference_prompt_cost": 5.64e-06,
+    "upstream_inference_completions_cost": 2.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 51,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8131580830086023,
+ "fetched_at": "2026-09-05T13:55:07Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-09-29] handover/2025-09-29-feature-flags: Feature-flags has a new home: team Boreal. Cinder kept it until today.\n- [2025-07-09] handover/2025-07-09-feature-flags: Quick one: the flags service belongs to team Cinder starting today. Thanks to Atlas for running it until now.\n- [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n- [2025-07-28] standup/cinder/2025-07-28: Decided in today's standup: clients will cache feature-flags evaluations for 30 seconds, since feature-flags saw 40,000 requests per second at peak and most of them were identical.\n- [2026-02-24] handover/2026-02-24-feature-flags: Quick one: the flags service belongs to the Cinder team starting today. Thanks to the Boreal team for running it until now.\n- [2025-09-08] standup/boreal/2025-09-08-2: New dependency for billing-api: feature-flags. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch. Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners.\n- [2025-03-28] standup/ember/2025-03-28: The scheduler pulls per-job kill switches from the feature flag service on every run.\n- [2026-03-31] standup/ember/2026-03-31: Diego Alvarez has the Ember pager this cycle, taking over from Oskar. Ember saw that the feature flag service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-11-07] handover/2025-11-07-reporting: Handover: as of today the reporting service moves from team Dune to Boreal. Farah walked Marcus through the runbook this morning.\n- [2025-07-03] standup/cinder/2025-07-03: The Cinder team saw that the bus' CPU sat at 90 percent following the traffic shift; not their service, so they flagged it.\n- [2025-02-21] standup/cinder/2025-02-21: Rotation day for team Cinder: Yuki Tanaka hands the pager to Diego Alvarez. Team Cinder saw that the auth gateway's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2026-01-22] standup/atlas/2026-01-22: Auth-gateway tokens will expire after 15 minutes instead of an hour. Rationale: the security audit flagged long-lived tokens.\n- [2025-08-26] handover/2025-08-26-event-bus: The bus has a new home: Cinder. The Atlas team kept it until today.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-04-29] standup/cinder/2025-04-29: For anything Cinder-related, page Yuki.\n- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.\n- [2025-09-23] standup/cinder/2025-09-23: Cinder has switched to trunk-based development.\n- [2025-01-17] standup/cinder/2025-01-17-2: The indexer lives with the Cinder team.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-01-08] standup/cinder/2025-01-08: Yuki and Diego make up team Cinder.\n- [2025-01-14] standup/atlas/2025-01-14: Atlas pager: Priya has it first.\n- [2025-05-23] standup/ember/2025-05-23: The Ember team saw that the webhooks service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-08-29] standup/cinder/2025-08-29: Diego has the Cinder pager this cycle, taking over from Yuki.\n- [2025-05-19] standup/cinder/2025-05-19: Rotation day for Cinder: Yuki hands the pager to Diego.\n- [2025-01-14] standup/cinder/2025-01-14: Yuki takes the first team Cinder on-call shift of the year.\n- [2025-10-31] standup/atlas/2025-10-31: Team Atlas runs its planning on Tuesdays.\n- [2025-03-10] standup/atlas/2025-03-10-2: The Atlas team sits on the second floor.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2025-10-27] standup/cinder/2025-10-27: Rotation day for the Cinder team: Diego hands the pager to Yuki.\n\nQuestion: Why was feature-flags moved from Atlas to Cinder?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608308-vFZOZL2DC014C6Vv7zwy",
+  "object": "chat.completion",
+  "created": 1788608308,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Reka",
+  "system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp8-53169669",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Why was feature-flags moved from Atlas to Cinder?\n\nLooking at the memory entries about feature-flags ownership:\n- [2025-01-08] Feature-flags lives with Atlas.\n- [2025-07-09] the flags service belongs to team Cinder starting today. Thanks to Atlas for running it until now.\n- [2025-09-29] Feature-flags has a new home: team Boreal. Cinder kept it until today.\n- [2026-02-24] the flags service belongs to the Cinder team starting today. Thanks to the Boreal team for running it until now.\n\nNone of these entries give a reason for the move from Atlas to Cinder. The handover notes just state the move happened, no rationale. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Why was feature-flags moved from Atlas to Cinder?\n\nLooking at the memory entries about feature-flags ownership:\n- [2025-01-08] Feature-flags lives with Atlas.\n- [2025-07-09] the flags service belongs to team Cinder starting today. Thanks to Atlas for running it until now.\n- [2025-09-29] Feature-flags has a new home: team Boreal. Cinder kept it until today.\n- [2026-02-24] the flags service belongs to the Cinder team starting today. Thanks to the Boreal team for running it until now.\n\nNone of these entries give a reason for the move from Atlas to Cinder. The handover notes just state the move happened, no rationale. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1601,
+   "completion_tokens": 173,
+   "total_tokens": 1774,
+   "cost": 0.00032665,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00032665,
+    "upstream_inference_prompt_cost": 0.00024015,
+    "upstream_inference_completions_cost": 8.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 171,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.5174878329853527,
+ "fetched_at": "2026-09-05T11:38:29Z"
+}

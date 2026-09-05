@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: When is the deploy freeze for billing-api, and why?\nGold answer: 2025-11-24 to 2025-12-02, because of the peak season\nAlso accepted: 2025-11-24 to 2025-12-02; the peak season\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: 2025-11-24 to 2025-12-02, because of peak season."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616554-XT0KZoo2gEikbNsS3E6e",
+  "object": "chat.completion",
+  "created": 1788616554,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states the exact date range 2025-11-24 to 2025-12-02 and the reason of peak season, matching the gold fact.\"}",
+     "refusal": null,
+     "reasoning": "The answer states \"2025-11-24 to 2025-12-02, because of peak season.\" The gold answer is \"2025-11-24 to 2025-12-02, because of the peak season\". This matches exactly (with trivial phrasing difference \"peak season\" vs \"the peak season\", which is an accepted alias).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer states \"2025-11-24 to 2025-12-02, because of peak season.\" The gold answer is \"2025-11-24 to 2025-12-02, because of the peak season\". This matches exactly (with trivial phrasing difference \"peak season\" vs \"the peak season\", which is an accepted alias).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 288,
+   "completion_tokens": 121,
+   "total_tokens": 409,
+   "cost": 4.417e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.417e-05,
+    "upstream_inference_prompt_cost": 1.392e-05,
+    "upstream_inference_completions_cost": 3.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 75,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1196131670149043,
+ "fetched_at": "2026-09-05T13:55:56Z"
+}

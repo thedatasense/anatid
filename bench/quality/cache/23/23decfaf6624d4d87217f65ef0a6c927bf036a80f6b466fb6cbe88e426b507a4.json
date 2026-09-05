@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-01-15] standup/ember/2026-01-15: For newcomers: the deploy window for the ledger service is still on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-04-16] standup/ember/2026-04-16: The ledger service's deploy window changes today: it is now on Mondays and Wednesdays between 14:00 and 16:00 UTC. The old slot (Wednesdays 09:00-11:00 UTC) is retired.\n- [2025-12-16] standup/ember/2025-12-16: The ledger service deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-02-23] standup/dune/2026-02-23: The job scheduler deploy window (unchanged): on weekday mornings before 11:00 UTC.\n- [2025-01-29] standup/ember/2025-01-29: Per the change policy, auth-gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2025-05-05] standup/dune/2025-05-05: For newcomers: the deploy window for the catalog is still on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-03-17] standup/boreal/2025-03-17: Reminder that webhooks only ships on Mondays between 10:00 and 12:00 UTC.\n- [2026-03-10] standup/dune/2026-03-10-2: Observation from team Dune: after Tuesday's deploy, the reporting service's p99 latency doubled. The webhook dispatcher deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-10-27] standup/dune/2025-10-27-2: New deploy window for scheduler: on weekday mornings before 11:00 UTC. Forget the previous weekdays after 15:00 UTC slot.\n- [2025-03-19] standup/ember/2025-03-19: Deploys to the scheduler happen on weekdays after 15:00 UTC and at no other time.\n- [2025-02-21] standup/boreal/2025-02-21: The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-04-18] standup/atlas/2025-04-18: Per the change policy, Ledger deploys on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-03-19] standup/ember/2026-03-19: No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2025-05-23] standup/ember/2025-05-23: The Ember team saw that the webhooks service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-03-16] standup/boreal/2026-03-16: From today the product catalog deploys on Tuesdays between 13:00 and 15:00 UTC instead of on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2025-02-25] standup/boreal/2025-02-25: Webhooks still relies on the bus; keep that in mind for the maintenance.\n- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2026-03-31] standup/ember/2026-03-31: Diego Alvarez has the Ember pager this cycle, taking over from Oskar. Ember saw that the feature flag service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-01-17] standup/boreal/2025-01-17: The notification service depends on the bus for delivery events. If the event bus is down, the webhook dispatcher is down: it relies on it for outbound events.\n- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.\n- [2025-11-04] standup/boreal/2025-11-04: No deploys to the billing API from 2025-11-24 to 2025-12-02 because of the peak season.\n- [2025-03-17] standup/atlas/2025-03-17: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n\nQuestion: What is the deploy window of the service that webhooks depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788619028-OsvOjrLFoh0H7QpamTEl",
+  "object": "chat.completion",
+  "created": 1788619028,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "refusal": null,
+     "reasoning": "Webhooks depends on the bus (2025-02-25: \"Webhooks still relies on the bus\"). Also 2025-01-17: webhook dispatcher relies on event bus for outbound events.\n\nThe bus deploy window: 2025-02-21 standup/boreal: \"The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"\n\nNo later entry about the bus deploy window. So answer: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Webhooks depends on the bus (2025-02-25: \"Webhooks still relies on the bus\"). Also 2025-01-17: webhook dispatcher relies on event bus for outbound events.\n\nThe bus deploy window: 2025-02-21 standup/boreal: \"The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"\n\nNo later entry about the bus deploy window. So answer: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1364,
+   "completion_tokens": 131,
+   "total_tokens": 1495,
+   "cost": 0.00013505,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013505,
+    "upstream_inference_prompt_cost": 0.0001023,
+    "upstream_inference_completions_cost": 3.275e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 112,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.197401667013764,
+ "fetched_at": "2026-09-05T14:37:12Z"
+}

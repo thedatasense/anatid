@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-08-14] standup/boreal/2025-08-14: Changes to auth-gateway need two reviewer approvals and a security sign-off.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2026-05-18] standup/ember/2026-05-18-2: The Ember team noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-01-20] standup/ember/2025-01-20-2: The auth gateway is a Ember service.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2025-03-17] handover/2025-03-17-billing-api: Atlas handed billing-api to team Boreal today; Tomasz wrote up the handover doc for Marcus.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2025-12-29] standup/ember/2025-12-29-2: Observation from team Ember: after the traffic shift, the auth gateway's CPU sat at 90 percent. The ledger remains a Ember service.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-03-17] standup/atlas/2025-03-17: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2025-10-15] handover/2025-10-15-scheduler: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred.\n- [2025-01-29] standup/ember/2025-01-29: Per the change policy, auth-gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-11-20] handover/2025-11-20-event-bus: Boreal is taking over the bus from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2026-01-22] standup/atlas/2026-01-22: Auth-gateway tokens will expire after 15 minutes instead of an hour. Rationale: the security audit flagged long-lived tokens.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-09-29] handover/2025-09-29-feature-flags: Feature-flags has a new home: team Boreal. Cinder kept it until today.\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-03-20] handover/2025-03-20-catalog: From today the pager for the catalog service rings Dune, not the Cinder team. Ownership transferred.\n- [2025-08-01] incident-review/INC-2025-017: Review of INC-2025-017 (the auth gateway, 2025-07-27). The root cause was an expired intermediate certificate. We decided that certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\n\nQuestion: Which team owns auth-gateway now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618726-TLhKQi6qWkOfqsXapGdn",
+  "object": "chat.completion",
+  "created": 1788618726,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Atlas",
+     "refusal": null,
+     "reasoning": "The question asks which team owns auth-gateway now (today is 2026-06-30).\n\nTimeline of auth-gateway ownership:\n- 2025-01-20: Ember service\n- 2025-03-31: Ownership change: auth gateway now sits with Boreal team. Ember no longer owns it.\n- 2025-12-23: Pager for auth-gateway rings Atlas team, not Boreal. Ownership transferred.\n\nSo as of 2025-12-23, auth-gateway belongs to Atlas. The latest entry is 2025-12-23 saying Atlas. So answer: Atlas.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owns auth-gateway now (today is 2026-06-30).\n\nTimeline of auth-gateway ownership:\n- 2025-01-20: Ember service\n- 2025-03-31: Ownership change: auth gateway now sits with Boreal team. Ember no longer owns it.\n- 2025-12-23: Pager for auth-gateway rings Atlas team, not Boreal. Ownership transferred.\n\nSo as of 2025-12-23, auth-gateway belongs to Atlas. The latest entry is 2025-12-23 saying Atlas. So answer: Atlas.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1356,
+   "completion_tokens": 132,
+   "total_tokens": 1488,
+   "cost": 0.00012702,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012702,
+    "upstream_inference_prompt_cost": 9.402e-05,
+    "upstream_inference_completions_cost": 3.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 127,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.420395999972243,
+ "fetched_at": "2026-09-05T14:32:09Z"
+}

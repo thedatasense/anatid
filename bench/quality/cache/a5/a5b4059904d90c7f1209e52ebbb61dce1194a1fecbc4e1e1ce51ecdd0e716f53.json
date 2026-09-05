@@ -1,0 +1,66 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The ledger deploys only on Mondays and Wednesdays between 14:00 and 16:00 UTC [constraint; valid 2026-04-16 to now; recorded by standup/ember/2026-04-16]\n    earlier: The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC [constraint; valid 2025-04-18 to 2026-04-16; recorded by standup/atlas/2025-04-18]\n- Atlas owns auth-gateway [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: Boreal owns auth-gateway [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- Decision: auth-gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens [decision; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- Ember noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- Changes to auth-gateway need two reviewer approvals and a security sign-off [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- Auth-gateway deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\n- Atlas adopted a no-deploy Friday [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Ember noticed that auth-gateway's CPU sat at 90 percent after the traffic shift [observation; valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- The ledger depends on auth-gateway [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-07-27; the root cause was an expired intermediate certificate [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- Ember noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- The handover note of 2025-06-20 wrongly recorded Ember as the owner of webhooks [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- Billing-api deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-05-05 to now; recorded by standup/boreal/2025-05-05]\n- Cinder noticed that auth-gateway's cold start time tripled after the runtime upgrade [observation; valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- Ember noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- Cinder noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- Atlas noticed that webhooks's memory use grew steadily for a week after the cache change [observation; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Diego is on call for Ember [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: Oskar is on call for Ember [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: Diego is on call for Ember [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: Oskar is on call for Ember [valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: Diego is on call for Ember [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n    earlier: Oskar is on call for Ember [valid 2025-01-14 to 2025-12-29; recorded by standup/ember/2025-01-14]\n- Atlas noticed that the ledger's memory use grew steadily for a week after the cache change [observation; valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n\nQuestion: Which note first recorded the deploy window for auth-gateway, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788616221-Ed5RlwFK0GUOoDhQc2mK",
+  "object": "chat.completion",
+  "created": 1788616221,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/ember/2025-01-29, on 2025-01-29",
+     "refusal": null,
+     "reasoning": null
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1477,
+   "completion_tokens": 22,
+   "total_tokens": 1499,
+   "cost": 0.0001554,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001554,
+    "upstream_inference_prompt_cost": 0.0001477,
+    "upstream_inference_completions_cost": 7.7e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.4147283749771304,
+ "fetched_at": "2026-09-05T13:50:23Z"
+}

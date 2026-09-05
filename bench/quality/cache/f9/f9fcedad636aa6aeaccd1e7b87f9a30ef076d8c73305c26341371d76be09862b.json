@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to now; recorded by standup/dune/2025-06-24]\n- As of 2026-03-11, the ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- The reporting service is owned by the Ember team as of 2025-12-05, having moved from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is owned by the Dune team. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus because nightly ledger scans were blocking billing runs. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- As of 2025-11-11, the billing API has a deploy freeze from 2025-11-24 to 2025-12-02 for the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- As of 2026-02-03, the Atlas team has a no-deploy Friday. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- As of 2025-04-24, the Cinder team reported that the feature-flags service's p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team instead of the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n- The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays; the previous Mon-Thu 09:00-17:00 UTC window no longer applies. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- As of 2025-08-25, the ledger service only ships on Wednesdays between 09:00 and 11:00 UTC; the previous weekday mornings before 11:00 UTC slot is retired. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- The job scheduler depends on the feature-flags service for per-job kill switches. [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- On 2025-12-25 the Atlas team noticed that the reports pipeline's disk usage jumped 30 percent after the retention change and flagged it because it is not their service. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- On 2026-05-28 the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- As of 2025-08-19, deploys to the job scheduler happen on Tuesdays and Fridays between 09:00 and 10:30 UTC; the previous Tuesdays 13:00-15:00 UTC slot is retired. [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time. [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n\nQuestion: What is the deploy window of the service that reporting depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603473-YTkZFtyyO46LYqTrbgBD",
+  "object": "chat.completion",
+  "created": 1788603473,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"What is the deploy window of the service that reporting depends on?\"\n\nFirst, what service does the reporting service depend on? Entries:\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now]\n- As of 2025-06-24, the reporting service still relies on the ledger service.\n- As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus.\n\nSo as of now (2026-06-30), the reporting service depends on the bus, not the ledger. The later entry (2025-09-23) supersedes the earlier one (2025-06-24).\n\nWait — \"switched its data source from the ledger service to the bus\" — does that mean reporting depends on the bus now? Yes, that's the reasonable interpretation.\n\nNow, what is the deploy window of the bus? Looking through the memory... I don't see any entry about the bus's deploy window. There's no constraint about the bus's deployment schedule.\n\nThe deploy windows mentioned:\n- Reporting service: Tuesdays and Thursdays between 10:00 and 12:00 UTC\n- Ledger service: Wednesdays between 09:00 and 11:00 UTC\n- Product catalog: weekdays 08:00-10:00 UTC, never Fridays\n- Job scheduler: Tuesdays and Fridays 09:00-10:30 UTC\n- Billing API: no deploy freeze (that's a freeze, not a window)\n\nNo deploy window for the bus. So the answer would be \"I don't know.\"\n\nBut wait — is the question asking about \"now\" or implicitly at some point? No stated moment, so answer for now (2026-06-30). Now, reporting depends on the bus, and the bus has no recorded deploy window. Answer: I don't know.\n\nHowever, one could argue the question intends the ledger service (a common trap). If someone naively answered, they'd say the ledger deploys Wednesdays 09:00-11:00 UTC. But per rules, the reporting service no longer depends on ledger as of 2025-09-23, which is \"to now\". So currently it depends on the bus. The bus's deploy window is not in memory. So: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"What is the deploy window of the service that reporting depends on?\"\n\nFirst, what service does the reporting service depend on? Entries:\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now]\n- As of 2025-06-24, the reporting service still relies on the ledger service.\n- As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus.\n\nSo as of now (2026-06-30), the reporting service depends on the bus, not the ledger. The later entry (2025-09-23) supersedes the earlier one (2025-06-24).\n\nWait — \"switched its data source from the ledger service to the bus\" — does that mean reporting depends on the bus now? Yes, that's the reasonable interpretation.\n\nNow, what is the deploy window of the bus? Looking through the memory... I don't see any entry about the bus's deploy window. There's no constraint about the bus's deployment schedule.\n\nThe deploy windows mentioned:\n- Reporting service: Tuesdays and Thursdays between 10:00 and 12:00 UTC\n- Ledger service: Wednesdays between 09:00 and 11:00 UTC\n- Product catalog: weekdays 08:00-10:00 UTC, never Fridays\n- Job scheduler: Tuesdays and Fridays 09:00-10:30 UTC\n- Billing API: no deploy freeze (that's a freeze, not a window)\n\nNo deploy window for the bus. So the answer would be \"I don't know.\"\n\nBut wait — is the question asking about \"now\" or implicitly at some point? No stated moment, so answer for now (2026-06-30). Now, reporting depends on the bus, and the bus has no recorded deploy window. Answer: I don't know.\n\nHowever, one could argue the question intends the ledger service (a common trap). If someone naively answered, they'd say the ledger deploys Wednesdays 09:00-11:00 UTC. But per rules, the reporting service no longer depends on ledger as of 2025-09-23, which is \"to now\". So currently it depends on the bus. The bus's deploy window is not in memory. So: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1591,
+   "completion_tokens": 510,
+   "total_tokens": 2101,
+   "cost": 0.000246825,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000246825,
+    "upstream_inference_prompt_cost": 0.000119325,
+    "upstream_inference_completions_cost": 0.0001275
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 504,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 10.605585790995974,
+ "fetched_at": "2026-09-05T10:18:03Z"
+}

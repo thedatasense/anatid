@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- The notifier relies on the bus for delivery events, so the notifier is down whenever the bus is down. (since 2025-02-11; source standup/boreal/2025-02-11)\n- The notifier's request volume halved after the client rollout. (since 2025-04-07; source standup/ember/2025-04-07)\n- The notifier missed alerts for 40 minutes on 2025-02-01 during INC-2025-004. (since 2025-02-05; source incident-review/INC-2025-004)\n- The root cause of INC-2025-004 was a notifier consumer offset stuck after a broker restart. (since 2025-02-05; source incident-review/INC-2025-004)\n- [decision] The notifier will retry failed pushes three times with exponential backoff because the flat one-second retry was hammering the push provider during its outages. (since 2025-02-21; source standup/boreal/2025-02-21)\n- As of 2025-06-11, team Dune owns the notifier, which the Boreal team owned until then. (since 2025-06-27; source handover/2025-06-27-notifier-correction)\n  - earlier: As of 2025-06-11, the Cinder team owns the notifier, which the Boreal team owned until then. (held 2025-06-11 to 2025-06-27; source handover/2025-06-11-notifier)\n  - earlier: The Boreal team owns the notifier. (held 2025-01-09 to 2025-06-11; source standup/boreal/2025-01-09-2)\n- Team Dune observed that the notification service's memory use grew steadily for a week after the cache change. (since 2025-03-26; source standup/dune/2025-03-26)\n- The Boreal team observed that the notification service's CPU sat at 90 percent after the traffic shift. (since 2025-11-03; source standup/boreal/2025-11-03-2)\n- The ledger service depends on the auth gateway for service tokens. (since 2025-03-04; source standup/atlas/2025-03-04)\n- The billing API depends on the ledger service for invoice postings. (since 2025-01-09; source standup/atlas/2025-01-09-2)\n- The reporting service is owned by the Ember team. (since 2026-04-13; source standup/ember/2026-04-13-2)\n  - earlier: The reporting service is owned by team Dune. (held 2025-01-20 to 2026-04-13; source standup/dune/2025-01-20-2)\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service, because the nightly ledger scans were blocking billing runs. (since 2025-09-23; source standup/dune/2025-09-23)\n- [constraint] The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. (since 2025-03-26; source standup/dune/2025-03-26)\n- Until 2025-09-23, the reporting service depended on the ledger service for the nightly balance export; it no longer depends on the ledger service. (since 2025-09-23; source standup/dune/2025-09-23)\n  - earlier: The reporting service depends on the ledger service for the nightly balance export. (held 2025-01-21 to 2025-09-23; source standup/dune/2025-01-21)\n- [decision] The webhook dispatcher will require an idempotency key on every delivery, a follow-up decision from the INC-2026-003 review. (since 2026-02-26; source incident-review/INC-2026-003)\n- Team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the reporting service's owners. (since 2026-04-14; source standup/dune/2026-04-14-2)\n- As of 2026-04-13, the Ember team still owns the reporting service. (since 2026-04-13; source standup/ember/2026-04-13-2)\n- Boreal noticed the ledger service's memory use growth after the cache change and pinged the ledger service's owners. (since 2025-02-21; source standup/boreal/2025-02-21-2)\n- The job scheduler is not the Boreal team's service, so the Boreal team flagged it. (since 2025-12-01; source standup/boreal/2025-12-01-2)\n- [decision] As of 2025-05-15, the webhook dispatcher is owned by the Boreal team. (since 2025-05-15; source handover/2025-05-15-webhooks)\n  - earlier: The webhook dispatcher is owned by the Ember team. (held 2025-03-03 to 2025-05-15; source handover/2025-03-03-webhooks)\n  - earlier: The webhook dispatcher is owned by the Boreal team. (held 2025-01-09 to 2025-03-03; source standup/boreal/2025-01-09-3)\n\nQuestion: Which service does the notifier depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608269-LYKqULvYZZ2Ho5Z8DJFu",
+  "object": "chat.completion",
+  "created": 1788608269,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The bus",
+     "refusal": null,
+     "reasoning": "The memory says: \"The notifier relies on the bus for delivery events, so the notifier is down whenever the bus is down.\" So the notifier depends on the bus.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"The notifier relies on the bus for delivery events, so the notifier is down whenever the bus is down.\" So the notifier depends on the bus.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1474,
+   "completion_tokens": 38,
+   "total_tokens": 1512,
+   "cost": 0.00010853,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00010853,
+    "upstream_inference_prompt_cost": 9.903e-05,
+    "upstream_inference_completions_cost": 9.5e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 34,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6654203749494627,
+ "fetched_at": "2026-09-05T11:37:51Z"
+}

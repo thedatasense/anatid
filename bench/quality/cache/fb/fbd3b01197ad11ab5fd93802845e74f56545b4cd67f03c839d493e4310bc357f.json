@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- The reporting service must stay on Python 3.11 until the pandas 3 upgrade lands. [constraint; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- The reporting service can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- Farah runs Team Dune solo until the next hire lands. [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- As of 2026-02-24, the feature-flags service belongs to Team Cinder, which took it over from Team Boreal. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the feature-flags service belongs to Team Boreal, which took it over from Team Cinder. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the feature-flags service belongs to Team Cinder, which took it over from Team Atlas. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n    earlier: The feature-flags service lives with Team Atlas. [valid 2025-01-08 to 2025-07-09; recorded by standup/atlas/2025-01-08-2]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- Do not upgrade the ledger service past Postgres 14 until the partitioning work finishes. [constraint; valid 2025-09-12 to now; recorded by standup/atlas/2025-09-12]\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- Changes to the auth gateway require two reviewer approvals and a security sign-off. [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Atlas, which took it over from the Ember team. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder, which took it over from the Ember team. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- As of 2025-12-08, the indexer is owned by Team Dune, which took it over from Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n- As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2025-11-20, the event bus is owned by Team Boreal, which took it over from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is owned by Team Cinder, which took it over from Team Atlas. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n\nQuestion: Which version is reporting pinned to, and until when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614450-ZlAMUfQIIHD2MP5AagwX",
+  "object": "chat.completion",
+  "created": 1788614450,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Python 3.11, until the pandas 3 upgrade lands.",
+     "refusal": null,
+     "reasoning": "The question asks: which version is reporting pinned to, and until when?\n\nFrom memory: \"The reporting service must stay on Python 3.11 until the pandas 3 upgrade lands.\"\n\nSo answer: Python 3.11, until the pandas 3 upgrade lands.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which version is reporting pinned to, and until when?\n\nFrom memory: \"The reporting service must stay on Python 3.11 until the pandas 3 upgrade lands.\"\n\nSo answer: Python 3.11, until the pandas 3 upgrade lands.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1710,
+   "completion_tokens": 71,
+   "total_tokens": 1781,
+   "cost": 0.00013832,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013832,
+    "upstream_inference_prompt_cost": 0.00012057,
+    "upstream_inference_completions_cost": 1.775e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 55,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9819847919861786,
+ "fetched_at": "2026-09-05T13:20:52Z"
+}

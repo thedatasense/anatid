@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Yuki is on call for Cinder [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n    earlier: Diego is on call for Cinder [valid 2025-08-29 to 2025-10-27; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki is on call for Cinder [valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: Diego is on call for Cinder [valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: Yuki is on call for Cinder [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n    earlier: Diego is on call for Cinder [valid 2025-02-21 to 2025-04-09; recorded by standup/cinder/2025-02-21]\n    earlier: Yuki is on call for Cinder [valid 2025-01-14 to 2025-02-21; recorded by standup/cinder/2025-01-14]\n- Yuki runs the monthly cost review [valid 2025-10-13 to now; recorded by standup/cinder/2025-10-13]\n- Yuki is a member of Cinder [valid 2025-01-08 to now; recorded by standup/cinder/2025-01-08]\n- Cinder sits on the third floor [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- Reporting depends on the event-bus [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: Reporting depends on the ledger [valid 2025-03-10 to 2025-09-15; recorded by standup/dune/2025-03-10]\n- Cinder holds its planning meeting on Mondays [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- The scheduler depends on feature-flags [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- Billing-api depends on feature-flags [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Reporting deploys only on Thursdays between 07:00 and 09:00 UTC [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- Priya is a member of Atlas [valid 2025-01-06 to now; recorded by standup/atlas/2025-01-06]\n- Marcus is on call for Atlas [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: Priya is on call for Atlas [valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: Marcus is on call for Atlas [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n    earlier: Priya is on call for Atlas [valid 2025-07-03 to 2026-03-09; recorded by standup/atlas/2025-07-03]\n    earlier: Tomasz is on call for Atlas [valid 2025-05-09 to 2025-07-03; recorded by standup/atlas/2025-05-09]\n    earlier: Priya is on call for Atlas [valid 2025-04-07 to 2025-05-09; recorded by standup/atlas/2025-04-07]\n    earlier: Tomasz is on call for Atlas [valid 2025-02-19 to 2025-04-07; recorded by standup/atlas/2025-02-19]\n    earlier: Priya is on call for Atlas [valid 2025-01-14 to 2025-02-19; recorded by standup/atlas/2025-01-14]\n- Lena is on call for Boreal [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: Marcus is on call for Boreal [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: Lena is on call for Boreal [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n    earlier: Marcus is on call for Boreal [valid 2025-09-08 to 2025-10-31; recorded by standup/boreal/2025-09-08]\n    earlier: Lena is on call for Boreal [valid 2025-08-01 to 2025-09-08; recorded by standup/boreal/2025-08-01]\n    earlier: Marcus is on call for Boreal [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n    earlier: Lena is on call for Boreal [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: Marcus is on call for Boreal [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n    earlier: Lena is on call for Boreal [valid 2025-01-13 to 2025-02-27; recorded by standup/boreal/2025-01-13]\n- Reporting must stay on Python 3.11 until the pandas 3 upgrade lands [constraint; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09]\n- Lena is a member of Boreal [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Diego is on call for Ember [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: Oskar is on call for Ember [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: Diego is on call for Ember [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: Oskar is on call for Ember [valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: Diego is on call for Ember [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n    earlier: Oskar is on call for Ember [valid 2025-01-14 to 2025-12-29; recorded by standup/ember/2025-01-14]\n- Oskar is a member of Ember [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n\nQuestion: Which team is Yuki on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615863-gfjgVOVPIkixiUaIG1Kd",
+  "object": "chat.completion",
+  "created": 1788615863,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Cinder",
+     "refusal": null,
+     "reasoning": "The question asks which team Yuki is on. Memory says \"Yuki is a member of Cinder\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Yuki is on. Memory says \"Yuki is a member of Cinder\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1891,
+   "completion_tokens": 25,
+   "total_tokens": 1916,
+   "cost": 0.000140395,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000140395,
+    "upstream_inference_prompt_cost": 0.000134145,
+    "upstream_inference_completions_cost": 6.25e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 21,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.335888542002067,
+ "fetched_at": "2026-09-05T13:44:25Z"
+}

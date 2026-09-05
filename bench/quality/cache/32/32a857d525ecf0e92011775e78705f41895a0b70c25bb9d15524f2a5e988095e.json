@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-10-15] handover/2025-10-15-scheduler: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2025-01-20] standup/ember/2025-01-20: For the record, scheduler is owned by the Ember team.\n- [2025-02-21] standup/cinder/2025-02-21: Rotation day for team Cinder: Yuki Tanaka hands the pager to Diego Alvarez. Team Cinder saw that the auth gateway's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-10-27] standup/cinder/2025-10-27: Rotation day for the Cinder team: Diego hands the pager to Yuki.\n- [2025-03-19] standup/ember/2025-03-19: Deploys to the scheduler happen on weekdays after 15:00 UTC and at no other time.\n- [2025-03-20] handover/2025-03-20-catalog: From today the pager for the catalog service rings Dune, not the Cinder team. Ownership transferred.\n- [2025-07-30] standup/dune/2025-07-30: Rotation day for team Dune: Farah Haddad hands the pager to Tomasz Nowak.\n- [2026-03-19] standup/ember/2026-03-19-2: Team Ember noticed that the job scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2026-05-08] incident-review/INC-2026-009: INC-2026-009 review. What happened: scheduler ran the nightly jobs twice on 2026-05-03. Why: two leaders elected during a network partition. Follow-up decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2025-12-08] handover/2025-12-08-search-indexer: From today the pager for the indexer rings Dune, not the Cinder team. Ownership transferred.\n- [2025-06-13] standup/ember/2025-06-13: Decision: the scheduler will use leader election instead of a single fixed node, because the fixed node turned every restart into a missed run.\n- [2025-10-27] standup/dune/2025-10-27-2: New deploy window for scheduler: on weekday mornings before 11:00 UTC. Forget the previous weekdays after 15:00 UTC slot.\n- [2025-05-19] standup/cinder/2025-05-19: Rotation day for Cinder: Yuki hands the pager to Diego.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-10-31] standup/atlas/2025-10-31: Team Atlas runs its planning on Tuesdays.\n- [2025-11-20] handover/2025-11-20-event-bus: Boreal is taking over the bus from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-03-28] standup/ember/2025-03-28: The scheduler pulls per-job kill switches from the feature flag service on every run.\n- [2025-07-04] handover/2025-07-04-webhooks-correction: Fixing an error in the 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-11-07] handover/2025-11-07-reporting: Handover: as of today the reporting service moves from team Dune to Boreal. Farah walked Marcus through the runbook this morning.\n- [2025-12-15] standup/dune/2025-12-15: Rotation day for Dune: Tomasz hands the pager to Farah.\n- [2026-02-23] standup/dune/2026-02-23: The job scheduler deploy window (unchanged): on weekday mornings before 11:00 UTC.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.\n- [2025-08-01] standup/boreal/2025-08-01: Rotation day for the Boreal team: Marcus hands the pager to Lena.\n- [2025-08-26] handover/2025-08-26-event-bus: The bus has a new home: Cinder. The Atlas team kept it until today.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-04-16] standup/boreal/2025-04-16: Rotation day for the Boreal team: Marcus Oyelaran hands the pager to Lena Fischer.\n\nQuestion: Who was responsible for the scheduler on 2025-09-29?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788619547-sO3v7D8bfPIivj8acS7t",
+  "object": "chat.completion",
+  "created": 1788619547,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Atlas",
+     "refusal": null,
+     "reasoning": "The question asks: who was responsible for the scheduler on 2025-09-29?\n\nTimeline of scheduler ownership:\n- 2025-01-20: Ember owns scheduler.\n- 2025-08-29: handover says scheduler now sits with team Cinder (but this was corrected).\n- 2025-09-05: Correction: scheduler went to Atlas, not team Cinder. Team Cinder never owned it.\n- 2025-10-15: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred.\n\nSo on 2025-09-29: after the correction (2025-09-05) that scheduler went to Atlas, and before 2025-10-15 transfer to Dune. So the answer is Atlas.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: who was responsible for the scheduler on 2025-09-29?\n\nTimeline of scheduler ownership:\n- 2025-01-20: Ember owns scheduler.\n- 2025-08-29: handover says scheduler now sits with team Cinder (but this was corrected).\n- 2025-09-05: Correction: scheduler went to Atlas, not team Cinder. Team Cinder never owned it.\n- 2025-10-15: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred.\n\nSo on 2025-09-29: after the correction (2025-09-05) that scheduler went to Atlas, and before 2025-10-15 transfer to Dune. So the answer is Atlas.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1629,
+   "completion_tokens": 163,
+   "total_tokens": 1792,
+   "cost": 8.2285e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1344,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 8.2285e-05,
+    "upstream_inference_prompt_cost": 4.1535e-05,
+    "upstream_inference_completions_cost": 4.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 160,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.59671191603411,
+ "fetched_at": "2026-09-05T14:45:50Z"
+}

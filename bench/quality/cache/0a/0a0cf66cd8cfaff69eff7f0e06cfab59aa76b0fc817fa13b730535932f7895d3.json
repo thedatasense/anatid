@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-12-23] standup/atlas/2025-12-23: The Atlas team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-04-18] standup/atlas/2025-04-18-2: Heads-up from the Atlas team: the catalog service's disk usage jumped 30 percent after the retention change.\n- [2025-10-31] standup/atlas/2025-10-31: Team Atlas runs its planning on Tuesdays.\n- [2025-03-10] standup/atlas/2025-03-10-2: The Atlas team sits on the second floor.\n- [2025-08-29] standup/atlas/2025-08-29: Observation from Atlas: after the client rollout, the product catalog's request volume halved.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz Nowak.\n- [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-03-17] handover/2025-03-17-billing-api: Atlas handed billing-api to team Boreal today; Tomasz wrote up the handover doc for Marcus.\n- [2025-07-02] standup/atlas/2025-07-02: Tomasz has transferred to Dune. Team Atlas continues without them.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-01-14] standup/atlas/2025-01-14: Atlas pager: Priya has it first.\n- [2025-08-26] handover/2025-08-26-event-bus: The bus has a new home: Cinder. The Atlas team kept it until today.\n- [2026-01-13] standup/atlas/2026-01-13: The Atlas team noticed that Ledger's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2025-07-09] handover/2025-07-09-feature-flags: Quick one: the flags service belongs to team Cinder starting today. Thanks to Atlas for running it until now.\n- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2025-07-03] standup/atlas/2025-07-03: Reminder from Atlas: page Priya for anything this cycle, not Tomasz Nowak.\n- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-03-17] standup/atlas/2025-03-17: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2025-10-15] handover/2025-10-15-scheduler: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred.\n- [2025-03-10] standup/atlas/2025-03-10: Dependency map update: the billing service needs the ledger (invoice postings).\n- [2025-05-09] standup/atlas/2025-05-09: Reminder from Atlas: page Tomasz for anything this cycle, not Priya.\n- [2026-02-19] standup/boreal/2026-02-19: As of today Marcus Oyelaran is on the Atlas team; team Boreal loses a pair of hands.\n- [2026-03-09] standup/atlas/2026-03-09-2: Observation from Atlas: after the runtime upgrade, the scheduler's cold start time tripled.\n- [2025-06-23] standup/atlas/2025-06-23: The quarterly capacity review is run by Priya.\n- [2025-02-19] standup/atlas/2025-02-19: Reminder from Atlas: page Tomasz Nowak for anything this cycle, not Priya Raman.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n\nQuestion: Which services does Atlas own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608776-kcn9XDWZtIAyWiqryNDc",
+  "object": "chat.completion",
+  "created": 1788608776,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "auth-gateway",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which services does Atlas own now?\" Today is 2026-06-30.\n\nLet me go through the memory entries to determine current ownership of services relative to Atlas.\n\nEntries about ownership:\n\n1. [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n2. [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n3. [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n4. [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n5. [2025-03-17] handover/2025-03-17-billing-api: Atlas handed billing-api to team Boreal today.\n6. [2025-08-26] handover/2025-08-26-event-bus: The bus has a new home: Cinder. The Atlas team kept it until today. → event bus no longer Atlas.\n7. [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today. → ledger no longer Atlas.\n8. [2025-07-09] handover/2025-07-09-feature-flags: the flags service belongs to team Cinder starting today. → feature-flags no longer Atlas.\n9. [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today. → webhooks no longer Atlas.\n10. [2025-10-15] handover/2025-10-15-scheduler: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred. → scheduler no longer Atlas.\n11. [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. → scheduler went to Atlas (as of 2025-08-29), then on 2025-10-15 scheduler pager rings Dune, not Atlas. So scheduler no longer Atlas.\n12. [2026-05-26] handover/2026-05-26-billing-api: billing-api now sits with the Dune team. Boreal no longer owns it. → billing-api with Dune, not Atlas.\n13. [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred. → auth-gateway with Atlas as of 2025-12-23. No later entry changes auth-gateway ownership.\n\nSo what does Atlas own now (2026-06-30)?\n\n- ledger: handed to Ember 2025-11-13. Not Atlas.\n- billing service/billing-api: handed to Boreal 2025-03-17, then to Dune 2026-05-26. Not Atlas.\n- feature-flags: to Cinder 2025-07-09. Not Atlas.\n- event bus: to Cinder 2025-08-26. Not Atlas.\n- webhooks: to Ember 2025-06-20. Not Atlas.\n- scheduler: to Atlas 2025-08-29 (per correction), then to Dune 2025-10-15. Not Atlas.\n- auth-gateway: to Atlas 2025-12-23. Still Atlas (no later handover).\n- catalog service: owned by Cinder (2025-01-17). Not Atlas.\n\nSo the only service Atlas owns now is auth-gateway.\n\nWait, also check \"webhook dispatcher\" — that's mentioned in 2026-05-25-2 as an observation, not ownership. The webhooks service went to Ember. The webhook dispatcher might be the same as webhooks service; either way, no ownership entry for dispatcher to Atlas.\n\nSo answer: auth-gateway.\n\nThe rule says: \"reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\"\n\nSo answer: \"auth-gateway\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which services does Atlas own now?\" Today is 2026-06-30.\n\nLet me go through the memory entries to determine current ownership of services relative to Atlas.\n\nEntries about ownership:\n\n1. [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n2. [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n3. [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n4. [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n5. [2025-03-17] handover/2025-03-17-billing-api: Atlas handed billing-api to team Boreal today.\n6. [2025-08-26] handover/2025-08-26-event-bus: The bus has a new home: Cinder. The Atlas team kept it until today. → event bus no longer Atlas.\n7. [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today. → ledger no longer Atlas.\n8. [2025-07-09] handover/2025-07-09-feature-flags: the flags service belongs to team Cinder starting today. → feature-flags no longer Atlas.\n9. [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today. → webhooks no longer Atlas.\n10. [2025-10-15] handover/2025-10-15-scheduler: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred. → scheduler no longer Atlas.\n11. [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. → scheduler went to Atlas (as of 2025-08-29), then on 2025-10-15 scheduler pager rings Dune, not Atlas. So scheduler no longer Atlas.\n12. [2026-05-26] handover/2026-05-26-billing-api: billing-api now sits with the Dune team. Boreal no longer owns it. → billing-api with Dune, not Atlas.\n13. [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred. → auth-gateway with Atlas as of 2025-12-23. No later entry changes auth-gateway ownership.\n\nSo what does Atlas own now (2026-06-30)?\n\n- ledger: handed to Ember 2025-11-13. Not Atlas.\n- billing service/billing-api: handed to Boreal 2025-03-17, then to Dune 2026-05-26. Not Atlas.\n- feature-flags: to Cinder 2025-07-09. Not Atlas.\n- event bus: to Cinder 2025-08-26. Not Atlas.\n- webhooks: to Ember 2025-06-20. Not Atlas.\n- scheduler: to Atlas 2025-08-29 (per correction), then to Dune 2025-10-15. Not Atlas.\n- auth-gateway: to Atlas 2025-12-23. Still Atlas (no later handover).\n- catalog service: owned by Cinder (2025-01-17). Not Atlas.\n\nSo the only service Atlas owns now is auth-gateway.\n\nWait, also check \"webhook dispatcher\" — that's mentioned in 2026-05-25-2 as an observation, not ownership. The webhooks service went to Ember. The webhook dispatcher might be the same as webhooks service; either way, no ownership entry for dispatcher to Atlas.\n\nSo answer: auth-gateway.\n\nThe rule says: \"reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\"\n\nSo answer: \"auth-gateway\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1683,
+   "completion_tokens": 984,
+   "total_tokens": 2667,
+   "cost": 0.000372225,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000372225,
+    "upstream_inference_prompt_cost": 0.000126225,
+    "upstream_inference_completions_cost": 0.000246
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 979,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 19.535582291020546,
+ "fetched_at": "2026-09-05T11:46:36Z"
+}

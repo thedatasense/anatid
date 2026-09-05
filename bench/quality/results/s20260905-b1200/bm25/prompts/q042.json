@@ -1,0 +1,53 @@
+{
+ "qid": "q042",
+ "system": "bm25",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-10-13] handover/2025-10-13-ledger: From today the pager for the ledger rings Cinder, not team Atlas. Ownership transferred.\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2025-01-20] standup/dune/2025-01-20: The Dune team owns the image resizer.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-07-17] standup/atlas/2025-07-17: The ledger remains a Atlas service.\n- [2025-05-30] incident-review/INC-2025-011: Review of INC-2025-011 (Ledger, 2025-05-24). The root cause was an index missing after the schema migration. We decided that ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-11-04] standup/atlas/2025-11-04: Reminder that the billing API depends on the ledger.\n- [2025-06-24] standup/dune/2025-06-24: Reporting still relies on Ledger; keep that in mind for the maintenance.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2025-01-31] standup/atlas/2025-01-31: Ledger must stay on Postgres 14 until the partitioning work finishes.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-01-14] standup/atlas/2025-01-14: Reminder that Ledger only ships on weekday mornings before 11:00 UTC.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-01-09] standup/atlas/2025-01-09-2: Dependency map update: billing-api needs Ledger (invoice postings).\n- [2025-09-24] standup/atlas/2025-09-24: Ledger deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-05-28] standup/ember/2026-05-28: Ember noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2026-03-11] standup/cinder/2026-03-11: No deploys to Ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2026-04-16] standup/atlas/2026-04-16: The Atlas team saw that the ledger service's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-08-25] standup/atlas/2025-08-25: New deploy window for Ledger: on Wednesdays between 09:00 and 11:00 UTC. Forget the previous weekday mornings before 11:00 UTC slot.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2026-05-22] standup/dune/2026-05-22: Tomasz picked up the Dune on-call shift from Farah today.\n- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.\n- [2026-01-15] standup/ember/2026-01-15: On-call rotation: Diego is primary for Ember starting today; Oskar is off rotation.\n\nQuestion: Who owns the ledger today?"
+  }
+ ],
+ "contexts": [
+  "- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.",
+  "- [2025-10-13] handover/2025-10-13-ledger: From today the pager for the ledger rings Cinder, not team Atlas. Ownership transferred.",
+  "- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.",
+  "- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.",
+  "- [2025-01-20] standup/dune/2025-01-20: The Dune team owns the image resizer.",
+  "- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.",
+  "- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.",
+  "- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.",
+  "- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.",
+  "- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.",
+  "- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.",
+  "- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.",
+  "- [2025-07-17] standup/atlas/2025-07-17: The ledger remains a Atlas service.",
+  "- [2025-05-30] incident-review/INC-2025-011: Review of INC-2025-011 (Ledger, 2025-05-24). The root cause was an index missing after the schema migration. We decided that ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.",
+  "- [2025-11-04] standup/atlas/2025-11-04: Reminder that the billing API depends on the ledger.",
+  "- [2025-06-24] standup/dune/2025-06-24: Reporting still relies on Ledger; keep that in mind for the maintenance.",
+  "- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.",
+  "- [2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.",
+  "- [2025-01-31] standup/atlas/2025-01-31: Ledger must stay on Postgres 14 until the partitioning work finishes.",
+  "- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.",
+  "- [2025-01-14] standup/atlas/2025-01-14: Reminder that Ledger only ships on weekday mornings before 11:00 UTC.",
+  "- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.",
+  "- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).",
+  "- [2025-01-09] standup/atlas/2025-01-09-2: Dependency map update: billing-api needs Ledger (invoice postings).",
+  "- [2025-09-24] standup/atlas/2025-09-24: Ledger deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.",
+  "- [2026-05-28] standup/ember/2026-05-28: Ember noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners.",
+  "- [2026-03-11] standup/cinder/2026-03-11: No deploys to Ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.",
+  "- [2026-04-16] standup/atlas/2026-04-16: The Atlas team saw that the ledger service's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.",
+  "- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.",
+  "- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.",
+  "- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.",
+  "- [2025-08-25] standup/atlas/2025-08-25: New deploy window for Ledger: on Wednesdays between 09:00 and 11:00 UTC. Forget the previous weekday mornings before 11:00 UTC slot.",
+  "- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.",
+  "- [2026-05-22] standup/dune/2026-05-22: Tomasz picked up the Dune on-call shift from Farah today.",
+  "- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.",
+  "- [2026-01-15] standup/ember/2026-01-15: On-call rotation: Diego is primary for Ember starting today; Oskar is off rotation."
+ ],
+ "answer": "Cinder"
+}

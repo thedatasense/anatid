@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-03-20] handover/2025-03-20-catalog: From today the pager for the catalog service rings Dune, not the Cinder team. Ownership transferred.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-12-08] handover/2025-12-08-search-indexer: From today the pager for the indexer rings Dune, not the Cinder team. Ownership transferred.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2025-04-08] standup/cinder/2025-04-08: Reminder that the indexer depends on the catalog.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2025-10-15] handover/2025-10-15-scheduler: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-02-28] standup/cinder/2025-02-28: Dependency map update: search-indexer needs the product catalog (product documents). Cinder holds planning on Mondays.\n- [2025-04-04] standup/dune/2025-04-04: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.\n- [2025-04-18] standup/atlas/2025-04-18-2: Heads-up from the Atlas team: the catalog service's disk usage jumped 30 percent after the retention change.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-10-13] standup/cinder/2025-10-13: The monthly cost review is run by Yuki. Reminder that the search indexer depends on the catalog.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.\n- [2025-01-17] standup/cinder/2025-01-17-2: The indexer lives with the Cinder team.\n- [2025-08-29] standup/atlas/2025-08-29: Observation from Atlas: after the client rollout, the product catalog's request volume halved.\n- [2026-01-01] standup/cinder/2026-01-01: The Cinder team noticed that the search indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.\n- [2025-05-05] standup/dune/2025-05-05: For newcomers: the deploy window for the catalog is still on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-08-26] handover/2025-08-26-event-bus: The bus has a new home: Cinder. The Atlas team kept it until today.\n- [2025-07-04] handover/2025-07-04-webhooks-correction: Fixing an error in the 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n- [2025-03-24] standup/dune/2025-03-24: Reminder that the product catalog only ships on Mondays to Thursdays between 09:00 and 17:00 UTC. Farah still has the Dune pager.\n- [2025-03-17] handover/2025-03-17-billing-api: Atlas handed billing-api to team Boreal today; Tomasz wrote up the handover doc for Marcus.\n- [2025-11-20] handover/2025-11-20-event-bus: Boreal is taking over the bus from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2025-12-17] standup/dune/2025-12-17: Decided in today's standup: search-indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes.\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n\nQuestion: Who owns the catalog today?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788619469-Z8RZuitS20JXeM9tXQHc",
+  "object": "chat.completion",
+  "created": 1788619469,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Boreal",
+     "refusal": null,
+     "reasoning": "The catalog ownership timeline:\n- 2025-01-17: Cinder owns catalog\n- 2025-03-20: Dune takes over from Cinder\n- 2025-06-16: Boreal takes over from Dune, effective today\n\nNo later entries about catalog ownership. Today is 2026-06-30. So the latest entry is Boreal (2025-06-16). Answer: Boreal.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The catalog ownership timeline:\n- 2025-01-17: Cinder owns catalog\n- 2025-03-20: Dune takes over from Cinder\n- 2025-06-16: Boreal takes over from Dune, effective today\n\nNo later entries about catalog ownership. Today is 2026-06-30. So the latest entry is Boreal (2025-06-16). Answer: Boreal.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1596,
+   "completion_tokens": 95,
+   "total_tokens": 1691,
+   "cost": 0.00013577,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013577,
+    "upstream_inference_prompt_cost": 0.00011202,
+    "upstream_inference_completions_cost": 2.375e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 91,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.550203790946398,
+ "fetched_at": "2026-09-05T14:44:31Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.\n- [2025-11-12] standup/boreal/2025-11-12: The Boreal team holds planning on Thursdays.\n- [2025-06-13] standup/ember/2025-06-13-2: Team Ember planning meeting is every Friday.\n- [2025-02-28] standup/cinder/2025-02-28: Dependency map update: search-indexer needs the product catalog (product documents). Cinder holds planning on Mondays.\n- [2026-06-08] standup/dune/2026-06-08: Rotation day for Dune: Tomasz hands the pager to Farah.\n- [2025-12-15] standup/dune/2025-12-15: Rotation day for Dune: Tomasz hands the pager to Farah.\n- [2025-05-09] standup/dune/2025-05-09-2: The Dune team has switched to a monthly game day.\n- [2025-07-30] standup/dune/2025-07-30: Rotation day for team Dune: Farah Haddad hands the pager to Tomasz Nowak.\n- [2026-03-03] standup/dune/2026-03-03: Image-resizer will keep original uploads for 90 days only. Rationale: storage for originals doubled in six months.\n- [2025-10-31] standup/atlas/2025-10-31: Team Atlas runs its planning on Tuesdays.\n- [2025-09-09] standup/boreal/2025-09-09: Changes to the billing API need a rollback plan attached to the pull request.\n- [2025-06-27] standup/boreal/2025-06-27-2: Boreal adopted a weekly dependency update day.\n- [2025-05-19] standup/cinder/2025-05-19: Rotation day for Cinder: Yuki hands the pager to Diego.\n- [2025-12-29] standup/ember/2025-12-29: Rotation day for the Ember team: Oskar hands the pager to Diego.\n- [2025-10-27] standup/cinder/2025-10-27: Rotation day for the Cinder team: Diego hands the pager to Yuki.\n- [2025-08-01] standup/boreal/2025-08-01: Rotation day for the Boreal team: Marcus hands the pager to Lena.\n- [2025-04-16] standup/boreal/2025-04-16: Rotation day for the Boreal team: Marcus Oyelaran hands the pager to Lena Fischer.\n- [2025-04-28] incident-review/INC-2025-011: INC-2025-011 review. What happened: the ledger service saw write latency spike tenfold for an hour on 2025-04-26. Why: an index missing after the schema migration. Follow-up decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-01-20] standup/dune/2025-01-20: The resizer lives with Dune.\n- [2026-05-04] standup/boreal/2026-05-04: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. Boreal still owns the catalog service, in case anyone asks.\n- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.\n- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.\n- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.\n- [2025-10-27] standup/dune/2025-10-27: Reminder from Dune: page Tomasz for anything this cycle, not Farah.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2025-02-21] standup/cinder/2025-02-21: Rotation day for team Cinder: Yuki Tanaka hands the pager to Diego Alvarez. Team Cinder saw that the auth gateway's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-01-09] standup/dune/2025-01-09: Farah runs team Dune solo until the next hire lands.\n- [2025-08-01] incident-review/INC-2025-017: Review of INC-2025-017 (the auth gateway, 2025-07-27). The root cause was an expired intermediate certificate. We decided that certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\n- [2026-04-13] standup/dune/2026-04-13: On-call rotation: Tomasz is primary for Dune starting today; Farah is off rotation.\n- [2026-03-10] standup/dune/2026-03-10: On-call rotation: Farah is primary for Dune starting today; Tomasz Nowak is off rotation.\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.\n- [2025-11-21] standup/dune/2025-11-21: Heads-up from team Dune: billing-api's queue depth hit 50,000 after the marketing send.\n- [2025-11-06] standup/dune/2025-11-06: Heads-up from the Dune team: search-indexer's queue depth hit 50,000 after the marketing send.\n- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.\n\nQuestion: On which day does Dune hold its planning meeting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788607584-VZwmtz0DKiP41go4yRp5",
+  "object": "chat.completion",
+  "created": 1788607584,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Wednesday",
+     "refusal": null,
+     "reasoning": "The question asks: On which day does Dune hold its planning meeting?\n\nMemory: [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.\n\nThat's the only entry about Dune's planning meeting day. No later entries supersede it. Answer: Wednesday.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: On which day does Dune hold its planning meeting?\n\nMemory: [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.\n\nThat's the only entry about Dune's planning meeting day. No later entries supersede it. Answer: Wednesday.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1710,
+   "completion_tokens": 74,
+   "total_tokens": 1784,
+   "cost": 0.00014675,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014675,
+    "upstream_inference_prompt_cost": 0.00012825,
+    "upstream_inference_completions_cost": 1.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 70,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.5505981250316836,
+ "fetched_at": "2026-09-05T11:26:27Z"
+}

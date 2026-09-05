@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which team owned auth-gateway before Boreal took it over?\nGold answer: Ember\nAlso accepted: the Ember team; team Ember\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: Ember team"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616594-ONqvT76TcUUg6avzku8p",
+  "object": "chat.completion",
+  "created": 1788616594,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'Ember team' matches the accepted alternative phrasing 'the Ember team' and correctly gives the pre-Boreal owner, Ember.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"Ember\". Accepted alternatives: \"the Ember team; team Ember\". The answer to grade is \"Ember team\". That matches \"team Ember\" — well, \"Ember team\" vs \"team Ember\". The accepted list includes \"the Ember team\" and \"team Ember\". \"Ember team\" is essentially \"the Ember team\" without \"the\", which should be acceptable. Apply literally — \"the Ember team\" is accepted, \"Ember team\" is the same phrase minus article. I'd say correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"Ember\". Accepted alternatives: \"the Ember team; team Ember\". The answer to grade is \"Ember team\". That matches \"team Ember\" — well, \"Ember team\" vs \"team Ember\". The accepted list includes \"the Ember team\" and \"team Ember\". \"Ember team\" is essentially \"the Ember team\" without \"the\", which should be acceptable. Apply literally — \"the Ember team\" is accepted, \"Ember team\" is the same phrase minus article. I'd say correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 245,
+   "completion_tokens": 152,
+   "total_tokens": 397,
+   "cost": 5.6375e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.6375e-05,
+    "upstream_inference_prompt_cost": 1.8375e-05,
+    "upstream_inference_completions_cost": 3.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 111,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.220107375003863,
+ "fetched_at": "2026-09-05T13:56:39Z"
+}

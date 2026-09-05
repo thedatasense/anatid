@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Atlas adopted a no-deploy Friday [valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- Dune noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- Atlas noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Dune owns the notifier [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: Cinder owns the notifier [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: Boreal owns the notifier [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- The notifier depends on the event-bus [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- Ember noticed that the notifier's request volume halved after the client rollout [observation; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- Priya is on call for Atlas [valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: Marcus is on call for Atlas [valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: Priya is on call for Atlas [valid 2025-07-30 to 2026-04-08; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is on call for Atlas [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya is on call for Atlas [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is on call for Atlas [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya is on call for Atlas [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz is on call for Atlas [valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- Farah is the release captain for Q3 2025 [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- Tomasz is on call for Dune [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n    earlier: Farah is on call for Dune [valid 2026-04-14 to 2026-05-22; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz is on call for Dune [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: Farah is on call for Dune [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: Tomasz is on call for Dune [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: Farah is on call for Dune [valid 2025-10-15 to 2025-12-10; recorded by standup/dune/2025-10-15]\n    earlier: Tomasz is on call for Dune [valid 2025-09-04 to 2025-10-15; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Dune [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n- Dune noticed that the notifier's memory use grew steadily for a week after the cache change [observation; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- Boreal noticed that the notifier's CPU sat at 90 percent after the traffic shift [observation; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-01; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- Decision: the event-bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The handover note of 2025-06-11 wrongly recorded Cinder as the owner of the notifier [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n- Dune noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- Dune noticed that the catalog's request volume halved after the client rollout [observation; valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- Decision: the notifier will retry failed pushes three times with exponential backoff, because the flat one-second retry was hammering the push provider during its outages [decision; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- The handover note of 2026-02-11 wrongly recorded Dune as the owner of feature-flags [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n\nQuestion: What is the deploy window for the notifier?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788605542-CwHd6aEqLgPQbz5OXPUp",
+  "object": "chat.completion",
+  "created": 1788605542,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The user asks: \"What is the deploy window for the notifier?\"\n\nLooking at the memory, I see entries about the notifier: ownership, dependencies, observations, incidents, decisions. There's no mention of a deploy window for the notifier. There's \"Atlas adopted a no-deploy Friday\" but that's not a deploy window for the notifier.\n\nSo the answer should be: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"What is the deploy window for the notifier?\"\n\nLooking at the memory, I see entries about the notifier: ownership, dependencies, observations, incidents, decisions. There's no mention of a deploy window for the notifier. There's \"Atlas adopted a no-deploy Friday\" but that's not a deploy window for the notifier.\n\nSo the answer should be: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1742,
+   "completion_tokens": 86,
+   "total_tokens": 1828,
+   "cost": 0.00014447,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014447,
+    "upstream_inference_prompt_cost": 0.00012297,
+    "upstream_inference_completions_cost": 2.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 80,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.8731909999623895,
+ "fetched_at": "2026-09-05T10:52:26Z"
+}

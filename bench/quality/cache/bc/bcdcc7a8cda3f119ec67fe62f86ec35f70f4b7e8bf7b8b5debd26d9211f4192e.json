@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-03-31] standup/boreal/2025-03-31: The event bus remains a Boreal service.\n- [2025-08-26] handover/2025-08-26-event-bus: The bus has a new home: Cinder. The Atlas team kept it until today.\n- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.\n- [2025-11-20] handover/2025-11-20-event-bus: Boreal is taking over the bus from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2026-05-04] standup/boreal/2026-05-04: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. Boreal still owns the catalog service, in case anyone asks.\n- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-01-17] standup/boreal/2025-01-17: The notification service depends on the bus for delivery events. If the event bus is down, the webhook dispatcher is down: it relies on it for outbound events.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-02-21] standup/boreal/2025-02-21: The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-03-17] handover/2025-03-17-billing-api: Atlas handed billing-api to team Boreal today; Tomasz wrote up the handover doc for Marcus.\n- [2025-02-25] standup/boreal/2025-02-25: Webhooks still relies on the bus; keep that in mind for the maintenance.\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n- [2026-02-19] standup/boreal/2026-02-19: As of today Marcus Oyelaran is on the Atlas team; team Boreal loses a pair of hands.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2025-09-15] standup/dune/2025-09-15: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from reporting.\n- [2025-03-10] standup/atlas/2025-03-10-2: The Atlas team sits on the second floor.\n- [2025-10-31] standup/atlas/2025-10-31: Team Atlas runs its planning on Tuesdays.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-12-23] standup/atlas/2025-12-23: The Atlas team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-07-02] standup/atlas/2025-07-02: Tomasz has transferred to Dune. Team Atlas continues without them.\n- [2026-03-09] standup/atlas/2026-03-09-2: Observation from Atlas: after the runtime upgrade, the scheduler's cold start time tripled.\n- [2025-11-07] handover/2025-11-07-reporting: Handover: as of today the reporting service moves from team Dune to Boreal. Farah walked Marcus through the runbook this morning.\n- [2026-01-13] standup/atlas/2026-01-13: The Atlas team noticed that Ledger's memory use grew steadily for a week after the cache change and pinged the owners.\n\nQuestion: Why was the event-bus moved from Boreal to Atlas?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618525-RG2AJH2jlufroi237etq",
+  "object": "chat.completion",
+  "created": 1788618525,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Why was the event-bus moved from Boreal to Atlas?\n\nLet me look at the memory entries about the event bus ownership:\n- [2025-04-03] handover: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-08-26] handover: The bus has a new home: Cinder. The Atlas team kept it until today.\n- [2025-11-20] handover: Boreal is taking over the bus from team Cinder, effective today.\n\nSo the event bus moved from Boreal to Atlas on 2025-04-03, but no reason is given for that move. The handover entry just states the ownership change, not the reason.\n\nThere's no entry explaining why the event bus was moved from Boreal to Atlas. The entries about reasons: reporting reading from event-bus had a reason (nightly ledger scans blocking billing runs), but that's different.\n\nSo the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Why was the event-bus moved from Boreal to Atlas?\n\nLet me look at the memory entries about the event bus ownership:\n- [2025-04-03] handover: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-08-26] handover: The bus has a new home: Cinder. The Atlas team kept it until today.\n- [2025-11-20] handover: Boreal is taking over the bus from team Cinder, effective today.\n\nSo the event bus moved from Boreal to Atlas on 2025-04-03, but no reason is given for that move. The handover entry just states the ownership change, not the reason.\n\nThere's no entry explaining why the event bus was moved from Boreal to Atlas. The entries about reasons: reporting reading from event-bus had a reason (nightly ledger scans blocking billing runs), but that's different.\n\nSo the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1379,
+   "completion_tokens": 222,
+   "total_tokens": 1601,
+   "cost": 0.000158925,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000158925,
+    "upstream_inference_prompt_cost": 0.000103425,
+    "upstream_inference_completions_cost": 5.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 216,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.677742208994459,
+ "fetched_at": "2026-09-05T14:28:52Z"
+}

@@ -1,0 +1,46 @@
+{
+ "qid": "q009",
+ "system": "anatid-gold",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- [observation] Ember noticed that the ledger's p99 latency doubled after Tuesday's deploy (since 2026-05-28; source standup/ember/2026-05-28)\n- [constraint] The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC (since 2025-08-25; source standup/atlas/2025-08-25)\n  - earlier: [constraint] The ledger deploys only on weekday mornings before 11:00 UTC (held 2025-01-14 to 2025-08-25; source standup/atlas/2025-01-14)\n- [constraint] No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close (since 2026-03-11; source standup/cinder/2026-03-11)\n- [observation] Atlas noticed that the ledger's disk usage jumped 30 percent after the retention change (since 2026-04-16; source standup/atlas/2026-04-16)\n- [constraint] The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC (since 2025-08-19; source standup/dune/2025-08-19)\n  - earlier: [constraint] The scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC (held 2025-02-06 to 2025-08-19; source standup/ember/2025-02-06)\n- Cinder owns the ledger (since 2025-10-13; source handover/2025-10-13-ledger)\n  - earlier: Atlas owns the ledger (held 2025-01-08 to 2025-10-13; source standup/atlas/2025-01-08)\n- [decision] Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs (since 2025-09-23; source standup/dune/2025-09-23)\n- INC-2025-011: the ledger saw write latency spike tenfold for an hour on 2025-05-24; the root cause was an index missing after the schema migration (since 2025-05-30; source incident-review/INC-2025-011)\n- The ledger depends on auth-gateway (since 2025-03-04; source standup/atlas/2025-03-04)\n- [observation] Cinder noticed that feature-flags's p99 latency doubled after Tuesday's deploy (since 2025-04-24; source standup/cinder/2025-04-24-2)\n- [decision] Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011 (since 2025-05-30; source incident-review/INC-2025-011)\n- Oskar is on call for Ember (since 2026-05-29; source standup/ember/2026-05-29)\n  - earlier: Diego is on call for Ember (held 2026-04-13 to 2026-05-29; source standup/ember/2026-04-13)\n  - earlier: Oskar is on call for Ember (held 2026-03-02 to 2026-04-13; source standup/ember/2026-03-02)\n  - earlier: Diego is on call for Ember (held 2026-01-15 to 2026-03-02; source standup/ember/2026-01-15)\n  - earlier: Oskar is on call for Ember (held 2025-01-14 to 2026-01-15; source standup/ember/2025-01-14)\n- [observation] Boreal noticed that the ledger's memory use grew steadily for a week after the cache change (since 2025-02-21; source standup/boreal/2025-02-21-2)\n- Atlas adopted a no-deploy Friday (since 2026-02-03; source standup/atlas/2026-02-03)\n- [constraint] The ledger must stay on Postgres 14 until the partitioning work finishes (since 2025-01-31; source standup/atlas/2025-01-31)\n- Yuki is on call for Cinder (since 2025-11-27; source standup/cinder/2025-11-27)\n  - earlier: Diego is on call for Cinder (held 2025-10-24 to 2025-11-27; source standup/cinder/2025-10-24)\n- [decision] Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 (since 2026-05-19; source incident-review/INC-2026-009)\n- Billing-api depends on the ledger (since 2025-01-09; source standup/atlas/2025-01-09-2)\n- [constraint] Reporting deploys only on Tuesdays and Thursdays between 10:00 and 12:00 UTC (since 2025-03-26; source standup/dune/2025-03-26)\n- [constraint] No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season (since 2025-11-11; source standup/atlas/2025-11-11)\n\nQuestion: When is the deploy freeze for the ledger, and why?"
+  }
+ ],
+ "contexts": [
+  "Memory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.",
+  "- [observation] Ember noticed that the ledger's p99 latency doubled after Tuesday's deploy (since 2026-05-28; source standup/ember/2026-05-28)",
+  "- [constraint] The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC (since 2025-08-25; source standup/atlas/2025-08-25)",
+  "  - earlier: [constraint] The ledger deploys only on weekday mornings before 11:00 UTC (held 2025-01-14 to 2025-08-25; source standup/atlas/2025-01-14)",
+  "- [constraint] No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close (since 2026-03-11; source standup/cinder/2026-03-11)",
+  "- [observation] Atlas noticed that the ledger's disk usage jumped 30 percent after the retention change (since 2026-04-16; source standup/atlas/2026-04-16)",
+  "- [constraint] The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC (since 2025-08-19; source standup/dune/2025-08-19)",
+  "  - earlier: [constraint] The scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC (held 2025-02-06 to 2025-08-19; source standup/ember/2025-02-06)",
+  "- Cinder owns the ledger (since 2025-10-13; source handover/2025-10-13-ledger)",
+  "  - earlier: Atlas owns the ledger (held 2025-01-08 to 2025-10-13; source standup/atlas/2025-01-08)",
+  "- [decision] Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs (since 2025-09-23; source standup/dune/2025-09-23)",
+  "- INC-2025-011: the ledger saw write latency spike tenfold for an hour on 2025-05-24; the root cause was an index missing after the schema migration (since 2025-05-30; source incident-review/INC-2025-011)",
+  "- The ledger depends on auth-gateway (since 2025-03-04; source standup/atlas/2025-03-04)",
+  "- [observation] Cinder noticed that feature-flags's p99 latency doubled after Tuesday's deploy (since 2025-04-24; source standup/cinder/2025-04-24-2)",
+  "- [decision] Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011 (since 2025-05-30; source incident-review/INC-2025-011)",
+  "- Oskar is on call for Ember (since 2026-05-29; source standup/ember/2026-05-29)",
+  "  - earlier: Diego is on call for Ember (held 2026-04-13 to 2026-05-29; source standup/ember/2026-04-13)",
+  "  - earlier: Oskar is on call for Ember (held 2026-03-02 to 2026-04-13; source standup/ember/2026-03-02)",
+  "  - earlier: Diego is on call for Ember (held 2026-01-15 to 2026-03-02; source standup/ember/2026-01-15)",
+  "  - earlier: Oskar is on call for Ember (held 2025-01-14 to 2026-01-15; source standup/ember/2025-01-14)",
+  "- [observation] Boreal noticed that the ledger's memory use grew steadily for a week after the cache change (since 2025-02-21; source standup/boreal/2025-02-21-2)",
+  "- Atlas adopted a no-deploy Friday (since 2026-02-03; source standup/atlas/2026-02-03)",
+  "- [constraint] The ledger must stay on Postgres 14 until the partitioning work finishes (since 2025-01-31; source standup/atlas/2025-01-31)",
+  "- Yuki is on call for Cinder (since 2025-11-27; source standup/cinder/2025-11-27)",
+  "  - earlier: Diego is on call for Cinder (held 2025-10-24 to 2025-11-27; source standup/cinder/2025-10-24)",
+  "- [decision] Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 (since 2026-05-19; source incident-review/INC-2026-009)",
+  "- Billing-api depends on the ledger (since 2025-01-09; source standup/atlas/2025-01-09-2)",
+  "- [constraint] Reporting deploys only on Tuesdays and Thursdays between 10:00 and 12:00 UTC (since 2025-03-26; source standup/dune/2025-03-26)",
+  "- [constraint] No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season (since 2025-11-11; source standup/atlas/2025-11-11)"
+ ],
+ "answer": "2026-03-30 to 2026-04-03, because of the fiscal year close"
+}

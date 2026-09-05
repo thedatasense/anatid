@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n(the memory is empty)\n\nQuestion: Which note first recorded the deploy window for the catalog, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788597211-iuTgAYXSuH76GRcPdIsa",
+  "object": "chat.completion",
+  "created": 1788597211,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The memory is empty. The question asks which note first recorded the deploy window for the catalog and when. Since memory is empty, I must reply exactly: \"I don't know\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory is empty. The question asks which note first recorded the deploy window for the catalog and when. Since memory is empty, I must reply exactly: \"I don't know\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 204,
+   "completion_tokens": 43,
+   "total_tokens": 247,
+   "cost": 5.21e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.21e-05,
+    "upstream_inference_prompt_cost": 3.06e-05,
+    "upstream_inference_completions_cost": 2.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 37,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.1489469169755466,
+ "fetched_at": "2026-09-05T08:33:32Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.\n- [2025-11-20] handover/2025-11-20-event-bus: Boreal is taking over the bus from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2025-03-31] standup/boreal/2025-03-31: The event bus remains a Boreal service.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-08-26] handover/2025-08-26-event-bus: The bus has a new home: Cinder. The Atlas team kept it until today.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2026-05-04] standup/boreal/2026-05-04: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. Boreal still owns the catalog service, in case anyone asks.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-02-21] standup/boreal/2025-02-21: The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-01-17] standup/boreal/2025-01-17: The notification service depends on the bus for delivery events. If the event bus is down, the webhook dispatcher is down: it relies on it for outbound events.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-10-15] handover/2025-10-15-scheduler: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred.\n- [2025-02-25] standup/boreal/2025-02-25: Webhooks still relies on the bus; keep that in mind for the maintenance.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-04-16] standup/boreal/2025-04-16: Rotation day for the Boreal team: Marcus Oyelaran hands the pager to Lena Fischer.\n- [2025-07-03] standup/cinder/2025-07-03: The Cinder team saw that the bus' CPU sat at 90 percent following the traffic shift; not their service, so they flagged it.\n- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n\nQuestion: Who is on call for the team that owns the event-bus?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618926-0CfRetYec2ZwlfSnpuNt",
+  "object": "chat.completion",
+  "created": 1788618926,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Marcus Oyelaran",
+     "refusal": null,
+     "reasoning": "The event bus ownership timeline:\n- 2025-01-09: Boreal owns it\n- 2025-03-31: Boreal remains\n- 2025-04-03: Atlas takes over\n- 2025-08-26: Cinder takes over from Atlas\n- 2025-11-20: Boreal takes over from Cinder, effective today\n\nSo as of now (2026-06-30), the latest entry on event bus ownership is 2025-11-20: Boreal owns the event bus. The 2026-05-04 standup mentions \"Boreal still owns the catalog service\" — that's about the catalog service, not the bus. No later entry changes event bus ownership after 2025-11-20.\n\nSo the team that owns the event-bus now is Boreal.\n\nWho is on call for Boreal? On-call entries for Boreal:\n- 2025-02-27: Marcus Oyelaran carries the phone\n- 2025-04-16: Marcus hands pager to Lena Fischer\n- 2025-09-08: Marcus carries the phone until next rotation\n\nLatest Boreal on-call entry: 2025-09-08, Marcus carries the phone until the next rotation. No later entry about a Boreal rotation change. So Marcus (Oyelaran) is on call.\n\nAnswer: Marcus Oyelaran.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The event bus ownership timeline:\n- 2025-01-09: Boreal owns it\n- 2025-03-31: Boreal remains\n- 2025-04-03: Atlas takes over\n- 2025-08-26: Cinder takes over from Atlas\n- 2025-11-20: Boreal takes over from Cinder, effective today\n\nSo as of now (2026-06-30), the latest entry on event bus ownership is 2025-11-20: Boreal owns the event bus. The 2026-05-04 standup mentions \"Boreal still owns the catalog service\" — that's about the catalog service, not the bus. No later entry changes event bus ownership after 2025-11-20.\n\nSo the team that owns the event-bus now is Boreal.\n\nWho is on call for Boreal? On-call entries for Boreal:\n- 2025-02-27: Marcus Oyelaran carries the phone\n- 2025-04-16: Marcus hands pager to Lena Fischer\n- 2025-09-08: Marcus carries the phone until next rotation\n\nLatest Boreal on-call entry: 2025-09-08, Marcus carries the phone until the next rotation. No later entry about a Boreal rotation change. So Marcus (Oyelaran) is on call.\n\nAnswer: Marcus Oyelaran.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1365,
+   "completion_tokens": 300,
+   "total_tokens": 1665,
+   "cost": 0.000169695,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000169695,
+    "upstream_inference_prompt_cost": 9.4695e-05,
+    "upstream_inference_completions_cost": 7.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 294,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.048527416016441,
+ "fetched_at": "2026-09-05T14:35:30Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n\nQuestion: Who is on call for the team that owns the service webhooks depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788597079-72sn3frPEpadl7yvKHNC",
+  "object": "chat.completion",
+  "created": 1788597079,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The memory contains one entry: \"On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service.\"\n\nThe question asks: \"Who is on call for the team that owns the service webhooks depends on?\"\n\nThe memory says the Atlas team flagged the webhook request volume drop as not their service. So the Atlas team does not own webhooks... but the question asks who owns the service webhooks depends on, and who is on call for that team. The memory doesn't say which team owns webhooks or which service webhooks depends on, nor who is on call. So the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory contains one entry: \"On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service.\"\n\nThe question asks: \"Who is on call for the team that owns the service webhooks depends on?\"\n\nThe memory says the Atlas team flagged the webhook request volume drop as not their service. So the Atlas team does not own webhooks... but the question asks who owns the service webhooks depends on, and who is on call for that team. The memory doesn't say which team owns webhooks or which service webhooks depends on, nor who is on call. So the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 261,
+   "completion_tokens": 150,
+   "total_tokens": 411,
+   "cost": 4.5555e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.5555e-05,
+    "upstream_inference_prompt_cost": 8.055e-06,
+    "upstream_inference_completions_cost": 3.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 144,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.629011959012132,
+ "fetched_at": "2026-09-05T08:31:21Z"
+}

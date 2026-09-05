@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- [constraint] Changes to the billing API need a rollback plan attached to the pull request. (since 2025-04-02; source standup/ember/2025-04-02)\n- [decision] The billing API gates the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. (since 2025-09-30; source standup/atlas/2025-09-30)\n- The billing API depends on the ledger service for invoice postings. (since 2025-01-09; source standup/atlas/2025-01-09-2)\n- [constraint] The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, the peak season. (since 2025-11-11; source standup/atlas/2025-11-11)\n- [constraint] The billing API only ships on weekdays after 15:00 UTC. (since 2025-02-11; source standup/atlas/2025-02-11)\n- As of 2025-12-01, the billing API's error rate crept up to 2 percent after the dependency bump, per a heads-up from Boreal team. (since 2025-12-01; source standup/boreal/2025-12-01)\n- [decision] As of 2026-01-12, the billing API is owned by the Ember team, which the Atlas team owned until then. (since 2026-01-12; source handover/2026-01-12-billing-api)\n  - earlier: [decision] From 2025-06-09, the billing API is owned by the Atlas team. (held 2025-07-03 to 2026-01-12; source handover/2025-07-03-billing-api-correction)\n  - earlier: From 2025-06-09, the billing API is owned by the Boreal team. (held 2025-06-09 to 2025-07-03; source handover/2025-06-09-billing-api)\n  - earlier: Since 2025-03-07, the billing API is owned by the Ember team. (held 2025-03-07 to 2025-06-09; source handover/2025-03-07-billing-api)\n  - earlier: The billing API is owned by the Atlas team. (held 2025-01-08 to 2025-03-07; source standup/atlas/2025-01-08-2)\n- The Cinder team observed that the billing API's cold start time tripled after the runtime upgrade and pinged the billing API's owners. (since 2026-03-11; source standup/cinder/2026-03-11-2)\n- On 2025-06-09, Oskar wrote the billing API handover document for Lena. (since 2025-06-09; source handover/2025-06-09-billing-api)\n- The billing service is not the Ember team's service, so the Ember team flagged the billing service's queue depth issue. (since 2025-11-04; source standup/ember/2025-11-04)\n- The Ember team saw that the billing service's queue depth hit 50,000 following the marketing send. (since 2025-11-04; source standup/ember/2025-11-04)\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service, because the nightly ledger scans were blocking billing runs. (since 2025-09-23; source standup/dune/2025-09-23)\n- [decision] Ledger service migrations will ship with a reviewed query plan. (since 2025-05-30; source incident-review/INC-2025-011)\n- From 2025-10-13, the pager for the ledger service rings the Cinder team, not the Atlas team. (since 2025-10-13; source handover/2025-10-13-ledger)\n- Boreal noticed the ledger service's memory use growth after the cache change and pinged the ledger service's owners. (since 2025-02-21; source standup/boreal/2025-02-21-2)\n- [constraint] Per policy, every authentication gateway change requires two reviewer approvals and a security sign-off. (since 2025-07-29; source standup/ember/2025-07-29)\n- The notifier's request volume halved after the client rollout. (since 2025-04-07; source standup/ember/2025-04-07)\n- The ledger service's memory use grew steadily for a week after the cache change. (since 2025-02-21; source standup/boreal/2025-02-21-2)\n- [constraint] Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. (since 2025-02-18; source standup/ember/2025-02-18)\n- Until 2025-09-23, the reporting service depended on the ledger service for the nightly balance export; it no longer depends on the ledger service. (since 2025-09-23; source standup/dune/2025-09-23)\n  - earlier: The reporting service depends on the ledger service for the nightly balance export. (held 2025-01-21 to 2025-09-23; source standup/dune/2025-01-21)\n\nQuestion: What does a change to billing-api need before it can merge?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608256-E7qJYM4uuRWy6cKOZehr",
+  "object": "chat.completion",
+  "created": 1788608256,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "A rollback plan attached to the pull request.",
+     "refusal": null,
+     "reasoning": "The question asks: What does a change to billing-api need before it can merge?\n\nFrom memory: \"[constraint] Changes to the billing API need a rollback plan attached to the pull request. (since 2025-04-02; source standup/ember/2025-04-02)\"\n\nAnswer: a rollback plan attached to the pull request.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: What does a change to billing-api need before it can merge?\n\nFrom memory: \"[constraint] Changes to the billing API need a rollback plan attached to the pull request. (since 2025-04-02; source standup/ember/2025-04-02)\"\n\nAnswer: a rollback plan attached to the pull request.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1466,
+   "completion_tokens": 83,
+   "total_tokens": 1549,
+   "cost": 0.00011918,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00011918,
+    "upstream_inference_prompt_cost": 9.843e-05,
+    "upstream_inference_completions_cost": 2.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 72,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.086289042024873,
+ "fetched_at": "2026-09-05T11:37:39Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-01-15] standup/ember/2026-01-15: For newcomers: the deploy window for the ledger service is still on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-04-16] standup/ember/2026-04-16: The ledger service's deploy window changes today: it is now on Mondays and Wednesdays between 14:00 and 16:00 UTC. The old slot (Wednesdays 09:00-11:00 UTC) is retired.\n- [2025-12-16] standup/ember/2025-12-16: The ledger service deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-04-18] standup/atlas/2025-04-18: Per the change policy, Ledger deploys on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-03-19] standup/ember/2026-03-19: No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2025-04-08] standup/dune/2025-04-08: Reminder that the reporting service depends on the ledger.\n- [2026-02-23] standup/dune/2026-02-23: The job scheduler deploy window (unchanged): on weekday mornings before 11:00 UTC.\n- [2025-05-05] standup/dune/2025-05-05: For newcomers: the deploy window for the catalog is still on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-09-15] standup/dune/2025-09-15: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from reporting.\n- [2025-10-27] standup/dune/2025-10-27-2: New deploy window for scheduler: on weekday mornings before 11:00 UTC. Forget the previous weekdays after 15:00 UTC slot.\n- [2025-03-10] standup/dune/2025-03-10: The reports pipeline depends on the ledger service for the nightly balance export.\n- [2025-01-29] standup/ember/2025-01-29: Per the change policy, auth-gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2026-03-10] standup/dune/2026-03-10-2: Observation from team Dune: after Tuesday's deploy, the reporting service's p99 latency doubled. The webhook dispatcher deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-02-21] standup/boreal/2025-02-21: The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-03-19] standup/ember/2025-03-19: Deploys to the scheduler happen on weekdays after 15:00 UTC and at no other time.\n- [2025-03-10] standup/atlas/2025-03-10: Dependency map update: the billing service needs the ledger (invoice postings).\n- [2026-03-16] standup/boreal/2026-03-16: From today the product catalog deploys on Tuesdays between 13:00 and 15:00 UTC instead of on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-12-29] standup/ember/2025-12-29-2: Observation from team Ember: after the traffic shift, the auth gateway's CPU sat at 90 percent. The ledger remains a Ember service.\n- [2026-01-13] standup/atlas/2026-01-13: The Atlas team noticed that Ledger's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-03-17] standup/atlas/2025-03-17: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2025-04-28] incident-review/INC-2025-011: INC-2025-011 review. What happened: the ledger service saw write latency spike tenfold for an hour on 2025-04-26. Why: an index missing after the schema migration. Follow-up decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-09-12] standup/atlas/2025-09-12: Do not upgrade the ledger service past Postgres 14 until the partitioning work finishes.\n- [2025-03-17] standup/boreal/2025-03-17: Reminder that webhooks only ships on Mondays between 10:00 and 12:00 UTC.\n\nQuestion: Which note first recorded the deploy window for the ledger, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788619106-meDtn4Iz6NjtQnpnl9mC",
+  "object": "chat.completion",
+  "created": 1788619106,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/atlas/2025-04-18, on 2025-04-18",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which note first recorded the deploy window for the ledger, and when?\"\n\nLooking at the memory entries about the ledger deploy window:\n- [2025-04-18] standup/atlas/2025-04-18: Per the change policy, Ledger deploys on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-12-16] standup/ember/2025-12-16: The ledger service deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-01-15] standup/ember/2026-01-15: For newcomers: the deploy window for the ledger service is still on Wednesdays...\n- [2026-04-16] standup/ember/2026-04-16: The ledger service's deploy window changes today...\n\nThe first (earliest dated) note recording the ledger deploy window is standup/atlas/2025-04-18, dated 2025-04-18.\n\nAnswer should be one short line: standup/atlas/2025-04-18, on 2025-04-18.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which note first recorded the deploy window for the ledger, and when?\"\n\nLooking at the memory entries about the ledger deploy window:\n- [2025-04-18] standup/atlas/2025-04-18: Per the change policy, Ledger deploys on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-12-16] standup/ember/2025-12-16: The ledger service deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-01-15] standup/ember/2026-01-15: For newcomers: the deploy window for the ledger service is still on Wednesdays...\n- [2026-04-16] standup/ember/2026-04-16: The ledger service's deploy window changes today...\n\nThe first (earliest dated) note recording the ledger deploy window is standup/atlas/2025-04-18, dated 2025-04-18.\n\nAnswer should be one short line: standup/atlas/2025-04-18, on 2025-04-18.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1371,
+   "completion_tokens": 274,
+   "total_tokens": 1645,
+   "cost": 0.000163645,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000163645,
+    "upstream_inference_prompt_cost": 9.5145e-05,
+    "upstream_inference_completions_cost": 6.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 252,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.137657582992688,
+ "fetched_at": "2026-09-05T14:38:29Z"
+}

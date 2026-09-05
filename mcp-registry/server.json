@@ -1,0 +1,50 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.thedatasense/anatid",
+  "title": "anatid memory",
+  "description": "Local memory for AI agents, with evidence, corrections and history. One DuckDB file. Bitemporal graph memory with provenance, hybrid recall and approval-gated writes.",
+  "repository": {
+    "url": "https://github.com/thedatasense/anatid",
+    "source": "github"
+  },
+  "version": "0.4.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "anatid",
+      "version": "0.4.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "named",
+          "name": "--db",
+          "description": "Path of the anatid database file to open. Created if absent. Use --socket instead to share one memory through a running anatid-server.",
+          "isRequired": false,
+          "format": "filepath"
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "ANATID_DB",
+          "description": "Path of the anatid database file (alternative to --db).",
+          "isRequired": false,
+          "format": "filepath"
+        },
+        {
+          "name": "ANATID_TENANT",
+          "description": "Tenant id the server is pinned to. Defaults to 1.",
+          "isRequired": false,
+          "format": "number"
+        },
+        {
+          "name": "ANATID_SOCKET",
+          "description": "Unix socket of a running anatid-server. When set, the MCP server writes through it so several clients can share one memory.",
+          "isRequired": false,
+          "format": "filepath"
+        }
+      ]
+    }
+  ]
+}

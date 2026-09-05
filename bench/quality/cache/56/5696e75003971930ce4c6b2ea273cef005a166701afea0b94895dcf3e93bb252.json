@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The security audit flagged the auth gateway's long-lived tokens. [valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- On 2026-05-18, the Ember team noticed that the auth gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas, which took it over from Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- On 2026-01-22, Team Atlas decided that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- On 2025-12-29, the Ember team observed that the auth gateway's CPU sat at 90 percent after the traffic shift. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- As of 2025-12-23, the pager for the auth gateway rings Team Atlas instead of Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- Changes to the auth gateway require two reviewer approvals and a security sign-off. [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- Per the change policy, the auth gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\n- As of 2026-02-24, the feature-flags service belongs to Team Cinder, which took it over from Team Boreal. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the feature-flags service belongs to Team Boreal, which took it over from Team Cinder. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the feature-flags service belongs to Team Cinder, which took it over from Team Atlas. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n    earlier: The feature-flags service lives with Team Atlas. [valid 2025-01-08 to 2025-07-09; recorded by standup/atlas/2025-01-08-2]\n- Team Cinder flagged that the auth gateway's cold start time tripled following the runtime upgrade. [valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy and flagged it because the service is not theirs. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- INC-2025-017's root cause was an expired intermediate certificate, which took logins down. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- As of 2025-06-20, the webhooks service lives with Team Dune, which took it over from Team Atlas. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n    earlier: As of 2025-06-20, the webhooks service lives with the Ember team, which took it over from Team Atlas. [valid 2025-06-20 to 2025-07-04; recorded by handover/2025-06-20-webhooks]\n    earlier: As of 2025-03-28, the webhooks service lives with Team Atlas. [valid 2025-03-28 to 2025-06-20; recorded by handover/2025-03-28-webhooks]\n    earlier: The webhooks service lives with Team Boreal. [valid 2025-01-09 to 2025-03-28; recorded by standup/boreal/2025-01-09-2]\n\nQuestion: Which service does auth-gateway depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614327-X941SH6jbLofhCXnwIuA",
+  "object": "chat.completion",
+  "created": 1788614327,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which service auth-gateway depends on. Looking at the memory:\n\n\"The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down.\"\n\nThis says the ledger relies on the auth gateway — so the ledger depends on auth-gateway, not the other way around. The question asks which service auth-gateway depends on. The memory doesn't state that auth-gateway depends on anything. It states the ledger depends on auth-gateway.\n\nSo the memory does not contain the answer. Reply: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which service auth-gateway depends on. Looking at the memory:\n\n\"The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down.\"\n\nThis says the ledger relies on the auth gateway — so the ledger depends on auth-gateway, not the other way around. The question asks which service auth-gateway depends on. The memory doesn't state that auth-gateway depends on anything. It states the ledger depends on auth-gateway.\n\nSo the memory does not contain the answer. Reply: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1652,
+   "completion_tokens": 122,
+   "total_tokens": 1774,
+   "cost": 0.00014672,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014672,
+    "upstream_inference_prompt_cost": 0.00011622,
+    "upstream_inference_completions_cost": 3.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 116,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2711185829830356,
+ "fetched_at": "2026-09-05T13:18:49Z"
+}

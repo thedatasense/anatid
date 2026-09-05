@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-02-11, feature-flags is owned by the Atlas team, which the Ember team owned until then. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, feature-flags is owned by team Dune, which the Ember team owned until then. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, feature-flags is owned by the Ember team, which the Atlas team owned until then. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: feature-flags is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- On 2025-12-31, the Atlas team saw that feature-flags' queue depth hit 50,000 following the marketing send and flagged it as not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- As of 2026-02-03, the Atlas team does a no-deploy Friday. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- On 2025-12-25, the Atlas team flagged the reports pipeline as not their service. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- As of 2025-12-19, the Atlas team owns the product catalog, which the Cinder team owned until then. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: The Cinder team owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of 2025-11-24, the Atlas team looks after the bus, which the Boreal team looked after until then. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- On 2026-03-20, Marcus moved from the Boreal team to the Atlas team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- As of 2025-12-25, the Atlas team sits on the second floor. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- The Atlas team planning meeting is every Tuesday. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it as not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- As of 2025-07-30, the Atlas team consists of Priya Raman, after Tomasz left the team. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: The Atlas team in 2025 consists of Priya Raman and Tomasz. [valid 2025-01-06 to 2025-07-30; recorded by standup/atlas/2025-01-06]\n- On 2026-02-11, Oskar wrote the feature-flags handover document for Farah. [valid 2026-02-11 to now; recorded by handover/2026-02-11-feature-flags]\n- On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- As of 2025-11-26, the image resizer is owned by the Atlas team, which the Ember team owned until then. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The image resizer is owned by the Ember team. [valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: team Dune owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- As of 2026-06-04, Priya Raman holds the Atlas team pager this cycle, taking over from Marcus. [decision; valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: As of 2026-04-08, page Marcus for anything Atlas-related this cycle, not Priya Raman. [decision; valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: As of 2026-03-17, Priya Raman is the person to page for anything Atlas-related. [decision; valid 2026-03-17 to 2026-04-08; recorded by standup/atlas/2026-03-17]\n- On 2026-05-27, the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n\nQuestion: When did Atlas take over feature-flags?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596542-owgrtrfnp38Ybj4zUiBA",
+  "object": "chat.completion",
+  "created": 1788596542,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2026-03-09",
+     "refusal": null,
+     "reasoning": "The question asks when Atlas took over feature-flags. Looking at the memory:\n\n- 2026-03-09 correction: feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it.\n- 2026-02-11: feature-flags owned by team Dune (corrected - wrong team)\n- 2025-11-06: owned by Ember team, which Atlas team owned until then (so Atlas owned it before 2025-11-06)\n- 2025-01-08: owned by Atlas\n\nSo the history: Atlas owned it (2025-01-08 to 2025-11-06), then Ember (2025-11-06 to 2026-02-11), then... the 2026-02-11 handover said Dune, but that was corrected — the note was written against the wrong team, and Dune never owned it. The correction entry says \"feature-flags is owned by the Atlas team\" as of 2026-03-09.\n\nThe question: \"When did Atlas take over feature-flags?\" This is asking about the latest takeover. Per the correction, the current ownership by Atlas is as of 2026-03-09. The correction valid 2026-03-09 to now states Atlas owns it, correcting the Dune claim. So Atlas took over feature-flags on 2026-03-09 (per the corrected record). The valid dates for the correction entry: \"valid 2026-03-09 to now\" — so as of 2026-03-09 Atlas owns it.\n\nAnswer: 2026-03-09.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Atlas took over feature-flags. Looking at the memory:\n\n- 2026-03-09 correction: feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it.\n- 2026-02-11: feature-flags owned by team Dune (corrected - wrong team)\n- 2025-11-06: owned by Ember team, which Atlas team owned until then (so Atlas owned it before 2025-11-06)\n- 2025-01-08: owned by Atlas\n\nSo the history: Atlas owned it (2025-01-08 to 2025-11-06), then Ember (2025-11-06 to 2026-02-11), then... the 2026-02-11 handover said Dune, but that was corrected — the note was written against the wrong team, and Dune never owned it. The correction entry says \"feature-flags is owned by the Atlas team\" as of 2026-03-09.\n\nThe question: \"When did Atlas take over feature-flags?\" This is asking about the latest takeover. Per the correction, the current ownership by Atlas is as of 2026-03-09. The correction valid 2026-03-09 to now states Atlas owns it, correcting the Dune claim. So Atlas took over feature-flags on 2026-03-09 (per the corrected record). The valid dates for the correction entry: \"valid 2026-03-09 to now\" — so as of 2026-03-09 Atlas owns it.\n\nAnswer: 2026-03-09.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1668,
+   "completion_tokens": 378,
+   "total_tokens": 2046,
+   "cost": 0.00021192,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00021192,
+    "upstream_inference_prompt_cost": 0.00011742,
+    "upstream_inference_completions_cost": 9.45e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 370,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.638412792002782,
+ "fetched_at": "2026-09-05T08:22:26Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-02-11] incident-review/INC-2025-004: Review of INC-2025-004 (the notifier, 2025-02-06). The root cause was a consumer offset stuck after a broker restart. We decided that notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004.\n- [2025-02-20] standup/boreal/2025-02-20: Decided in today's standup: the notifier will retry failed pushes three times with exponential backoff, since the flat one-second retry was hammering the push provider during its outages.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-09-08] standup/boreal/2025-09-08-2: New dependency for billing-api: feature-flags. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch. Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2025-02-21] standup/cinder/2025-02-21: Rotation day for team Cinder: Yuki Tanaka hands the pager to Diego Alvarez. Team Cinder saw that the auth gateway's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2026-02-24] handover/2026-02-24-feature-flags: Quick one: the flags service belongs to the Cinder team starting today. Thanks to the Boreal team for running it until now.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.\n- [2025-04-29] handover/2025-04-29-image-resizer: The Ember team is taking over the image resizer from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2026-02-19] standup/boreal/2026-02-19: As of today Marcus Oyelaran is on the Atlas team; team Boreal loses a pair of hands.\n- [2025-10-15] handover/2025-10-15-scheduler: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred.\n- [2025-11-20] handover/2025-11-20-event-bus: Boreal is taking over the bus from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n\nQuestion: As of now, which team is responsible for the notifier?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618901-ugDKhLjePxTTgYBek4eT",
+  "object": "chat.completion",
+  "created": 1788618901,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Dune",
+     "refusal": null,
+     "reasoning": "The notifier ownership history:\n- 2025-01-09: Boreal\n- 2025-04-04: Cinder (from Boreal)\n- 2025-06-19: Dune (from Cinder)\n\nNo later handover notes about notifier. Today is 2026-06-30. So the notifier belongs to team Dune.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The notifier ownership history:\n- 2025-01-09: Boreal\n- 2025-04-04: Cinder (from Boreal)\n- 2025-06-19: Dune (from Cinder)\n\nNo later handover notes about notifier. Today is 2026-06-30. So the notifier belongs to team Dune.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1574,
+   "completion_tokens": 79,
+   "total_tokens": 1653,
+   "cost": 5.716e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1344,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.716e-05,
+    "upstream_inference_prompt_cost": 3.741e-05,
+    "upstream_inference_completions_cost": 1.975e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 74,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.855391082994174,
+ "fetched_at": "2026-09-05T14:35:04Z"
+}

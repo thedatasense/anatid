@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-15] standup/dune/2025-04-15: If image-resizer is down, the product catalog is down: it relies on it for thumbnails.\n- [2025-12-01] handover/2025-12-01-image-resizer: The resizer has a new home: the Dune team. Ember kept it until today.\n- [2026-03-03] standup/dune/2026-03-03: Image-resizer will keep original uploads for 90 days only. Rationale: storage for originals doubled in six months.\n- [2025-04-29] handover/2025-04-29-image-resizer: The Ember team is taking over the image resizer from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-01-20] standup/dune/2025-01-20: The resizer lives with Dune.\n- [2025-05-19] standup/cinder/2025-05-19-2: Team Cinder noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-04-04] standup/dune/2025-04-04: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-12-17] standup/dune/2025-12-17: Decided in today's standup: search-indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes.\n- [2025-06-23] standup/cinder/2025-06-23: Observation from the Cinder team: after the retention change, the reports pipeline's disk usage jumped 30 percent.\n- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.\n- [2025-04-08] standup/cinder/2025-04-08: Reminder that the indexer depends on the catalog.\n- [2026-03-10] standup/dune/2026-03-10-2: Observation from team Dune: after Tuesday's deploy, the reporting service's p99 latency doubled. The webhook dispatcher deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-05-23] standup/ember/2025-05-23: The Ember team saw that the webhooks service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-04-18] standup/atlas/2025-04-18-2: Heads-up from the Atlas team: the catalog service's disk usage jumped 30 percent after the retention change.\n- [2026-01-01] standup/cinder/2026-01-01: The Cinder team noticed that the search indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2025-02-28] standup/cinder/2025-02-28: Dependency map update: search-indexer needs the product catalog (product documents). Cinder holds planning on Mondays.\n- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.\n- [2025-08-29] standup/atlas/2025-08-29: Observation from Atlas: after the client rollout, the product catalog's request volume halved.\n- [2026-03-19] standup/ember/2026-03-19-2: Team Ember noticed that the job scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2026-03-31] standup/ember/2026-03-31: Diego Alvarez has the Ember pager this cycle, taking over from Oskar. Ember saw that the feature flag service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-10-13] standup/cinder/2025-10-13: The monthly cost review is run by Yuki. Reminder that the search indexer depends on the catalog.\n- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.\n- [2025-08-27] standup/cinder/2025-08-27: The search indexer is pinned to OpenSearch 2.11; the pin lifts when the full reindex completes. Cinder sits on the third floor.\n- [2026-02-12] standup/ember/2026-02-12: Ember on-call swapped this morning. Oskar carries the phone until the next rotation. Heads-up from team Ember: the search indexer's p99 latency doubled after Tuesday's deploy.\n\nQuestion: Which service does image-resizer depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788619123-SkIjjdE7dX51BF9IAPl9",
+  "object": "chat.completion",
+  "created": 1788619123,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which service does image-resizer depend on?\n\nLooking through the memory:\n- [2025-04-15] If image-resizer is down, the product catalog is down: it relies on it for thumbnails. — this says the catalog depends on the resizer, not the other way around.\n- [2025-04-08] Reminder that the indexer depends on the catalog.\n- [2025-02-28] search-indexer needs the product catalog.\n\nIs there anything saying image-resizer depends on a service? I don't see any entry stating what image-resizer depends on. The dependency direction is catalog → image-resizer (catalog relies on resizer for thumbnails).\n\nSo the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which service does image-resizer depend on?\n\nLooking through the memory:\n- [2025-04-15] If image-resizer is down, the product catalog is down: it relies on it for thumbnails. — this says the catalog depends on the resizer, not the other way around.\n- [2025-04-08] Reminder that the indexer depends on the catalog.\n- [2025-02-28] search-indexer needs the product catalog.\n\nIs there anything saying image-resizer depends on a service? I don't see any entry stating what image-resizer depends on. The dependency direction is catalog → image-resizer (catalog relies on resizer for thumbnails).\n\nSo the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1387,
+   "completion_tokens": 159,
+   "total_tokens": 1546,
+   "cost": 0.000136095,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000136095,
+    "upstream_inference_prompt_cost": 9.6345e-05,
+    "upstream_inference_completions_cost": 3.975e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 153,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.071500791003928,
+ "fetched_at": "2026-09-05T14:38:48Z"
+}

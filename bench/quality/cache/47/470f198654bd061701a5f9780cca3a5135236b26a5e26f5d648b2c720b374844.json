@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded that the ledger depends on auth-gateway, and when?\nGold answer: standup/atlas/2025-03-17 (2025-03-17)\nAlso accepted: standup/atlas/2025-03-17; 2025-03-17; 17 March 2025; March 17, 2025; the standup note of 2025-03-17; the standup note of 17 March 2025; the standup note of March 17, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/atlas/2025-03-17, on 2025-03-17."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616509-G07a4mQi4Msh56LgSUQ1",
+  "object": "chat.completion",
+  "created": 1788616509,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the exact source label standup/atlas/2025-03-17 together with the correct date 2025-03-17, matching the gold answer.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade: \"standup/atlas/2025-03-17, on 2025-03-17.\"\n\nGold: standup/atlas/2025-03-17 (2025-03-17). The answer identifies the source label and the date. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade: \"standup/atlas/2025-03-17, on 2025-03-17.\"\n\nGold: standup/atlas/2025-03-17 (2025-03-17). The answer identifies the source label and the date. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 343,
+   "completion_tokens": 108,
+   "total_tokens": 451,
+   "cost": 5.2725e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.2725e-05,
+    "upstream_inference_prompt_cost": 2.5725e-05,
+    "upstream_inference_completions_cost": 2.7e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 60,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.6264737090095878,
+ "fetched_at": "2026-09-05T13:55:13Z"
+}

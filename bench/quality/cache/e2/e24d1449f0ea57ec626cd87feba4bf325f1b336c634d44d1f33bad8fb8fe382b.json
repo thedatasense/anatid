@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-29, Diego is off the Ember team's on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- As of 2025-11-27, Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-09-05 to 2025-10-24; recorded by standup/cinder/2025-09-05]\n    earlier: Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-07-17 to 2025-09-05; recorded by standup/cinder/2025-07-17]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-06-06 to 2025-07-17; recorded by standup/cinder/2025-06-06]\n    earlier: Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-04-24 to 2025-06-06; recorded by standup/cinder/2025-04-24]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-02-27 to 2025-04-24; recorded by standup/cinder/2025-02-27]\n    earlier: Diego is on call for the Cinder team to start the year. [decision; valid 2025-01-09 to 2025-02-27; recorded by standup/cinder/2025-01-09]\n- As of 2025-11-27, Diego is on the Ember team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on the Cinder team. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, having taken over from Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, Diego is the primary on-call for the Ember team, having taken over from Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, Oskar Lind is the primary on-call for the Ember team, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- As of 2025-11-27, the Ember team consists of Oskar and Diego. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: The Ember team is currently a one-person team consisting of Oskar. [valid 2025-01-10 to 2025-11-27; recorded by standup/ember/2025-01-10]\n- As of 2026-05-29, for anything related to the Ember team, page Oskar this cycle, not Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, for anything related to the Ember team, page Diego this cycle, not Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, for anything related to the Ember team, page Oskar Lind for anything this cycle, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, for anything related to the Ember team, page Diego, the primary on-call; Oskar is off rotation. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n    earlier: For anything related to the Ember team, page Oskar. [decision; valid 2025-03-31 to 2026-01-15; recorded by standup/ember/2025-03-31]\n- As of 2026-03-02, Oskar Lind is on the Ember team's on-call rotation. [valid 2026-03-02 to now; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Oskar is off the Ember team's on-call rotation. [valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n\nQuestion: Who is on call for Diego's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596644-YyX1yTNbUy0eMhvFkkOl",
+  "object": "chat.completion",
+  "created": 1788596644,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Oskar",
+     "refusal": null,
+     "reasoning": "Diego's team: As of 2025-11-27, Diego is on the Ember team (valid to now). So Diego's team is Ember.\n\nWho is on call for Ember right now (2026-06-30)? As of 2026-05-29, Oskar is the primary on-call for the Ember team. So answer: Oskar.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Diego's team: As of 2025-11-27, Diego is on the Ember team (valid to now). So Diego's team is Ember.\n\nWho is on call for Ember right now (2026-06-30)? As of 2026-05-29, Oskar is the primary on-call for the Ember team. So answer: Oskar.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1549,
+   "completion_tokens": 84,
+   "total_tokens": 1633,
+   "cost": 0.000129495,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000129495,
+    "upstream_inference_prompt_cost": 0.000108495,
+    "upstream_inference_completions_cost": 2.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 79,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.9953772500157356,
+ "fetched_at": "2026-09-05T08:24:07Z"
+}

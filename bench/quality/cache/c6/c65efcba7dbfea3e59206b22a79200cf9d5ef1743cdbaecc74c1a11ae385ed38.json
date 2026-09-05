@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Cinder own now?\nGold answer: ledger, auth-gateway and scheduler\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 3 services.\n\nAnswer to grade: Ledger service, job scheduler, and authentication gateway."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788598051-MuJ7FF1rkjr1J9gogsqO",
+  "object": "chat.completion",
+  "created": 1788598051,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names all three gold services (ledger, scheduler, auth-gateway) with acceptable phrasings and no extra items.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer names three services: ledger, auth-gateway, and scheduler. The answer to grade names: \"Ledger service, job scheduler, and authentication gateway.\"\n\n- \"Ledger service\" ≈ ledger ✓\n- \"job scheduler\" ≈ scheduler ✓ (job scheduler is a scheduler)\n- \"authentication gateway\" ≈ auth-gateway ✓\n\nAll three items named, no extra items. This matches. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer names three services: ledger, auth-gateway, and scheduler. The answer to grade names: \"Ledger service, job scheduler, and authentication gateway.\"\n\n- \"Ledger service\" ≈ ledger ✓\n- \"job scheduler\" ≈ scheduler ✓ (job scheduler is a scheduler)\n- \"authentication gateway\" ≈ auth-gateway ✓\n\nAll three items named, no extra items. This matches. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 250,
+   "completion_tokens": 125,
+   "total_tokens": 375,
+   "cost": 8.464e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 8.464e-05,
+    "upstream_inference_prompt_cost": 2.214e-05,
+    "upstream_inference_completions_cost": 6.25e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 87,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.2115890409913845,
+ "fetched_at": "2026-09-05T08:47:34Z"
+}

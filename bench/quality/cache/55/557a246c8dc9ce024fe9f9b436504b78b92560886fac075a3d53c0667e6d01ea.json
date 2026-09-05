@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-02-25] standup/dune/2025-02-25: Reporting can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception.\n- [2025-07-04] handover/2025-07-04-webhooks-correction: Fixing an error in the 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.\n- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.\n- [2025-11-07] handover/2025-11-07-reporting: Handover: as of today the reporting service moves from team Dune to Boreal. Farah walked Marcus through the runbook this morning.\n- [2025-10-15] handover/2025-10-15-scheduler: From today the pager for scheduler rings Dune, not team Atlas. Ownership transferred.\n- [2025-06-05] standup/boreal/2025-06-05-2: Lena Fischer is the release captain for Q1 2026.\n- [2025-04-08] standup/dune/2025-04-08: Reminder that the reporting service depends on the ledger.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-09-15] standup/dune/2025-09-15: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from reporting.\n- [2025-12-23] handover/2025-12-23-auth-gateway: From today the pager for auth-gateway rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.\n- [2025-05-09] standup/dune/2025-05-09-2: The Dune team has switched to a monthly game day.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.\n- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.\n- [2025-09-29] handover/2025-09-29-feature-flags: Feature-flags has a new home: team Boreal. Cinder kept it until today.\n- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-06-27] standup/boreal/2025-06-27-2: Boreal adopted a weekly dependency update day.\n- [2025-10-31] standup/atlas/2025-10-31: Team Atlas runs its planning on Tuesdays.\n- [2026-03-10] standup/dune/2026-03-10-2: Observation from team Dune: after Tuesday's deploy, the reporting service's p99 latency doubled. The webhook dispatcher deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-12-08] handover/2025-12-08-search-indexer: From today the pager for the indexer rings Dune, not the Cinder team. Ownership transferred.\n\nQuestion: Which team owned reporting on 2025-06-25?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608588-X1LIuBq5JZw7iXZIAuaK",
+  "object": "chat.completion",
+  "created": 1788608588,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Dune",
+     "refusal": null,
+     "reasoning": "The question asks which team owned reporting on 2025-06-25.\n\nRelevant memory entries about reporting:\n- [2025-01-20] Dune team owns reporting service.\n- [2025-02-25] reporting release windows (Dune standup, so Dune still owns it).\n- [2025-04-08] reporting depends on ledger (Dune standup).\n- [2025-09-15] reporting reads from event-bus (Dune standup).\n- [2025-11-07] handover: reporting moves from Dune to Boreal (but later corrected on 2025-11-17: the 2025-11-07 note named the wrong team. Ember took it over on that date; team Boreal did not).\n- [2026-02-10] reporting pipeline new home: Cinder team. Ember kept it until today.\n\nSo timeline: Dune owned reporting until 2025-11-07, when Ember took over. Then on 2026-02-10, Cinder took over.\n\nOn 2025-06-25, reporting was owned by Dune.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owned reporting on 2025-06-25.\n\nRelevant memory entries about reporting:\n- [2025-01-20] Dune team owns reporting service.\n- [2025-02-25] reporting release windows (Dune standup, so Dune still owns it).\n- [2025-04-08] reporting depends on ledger (Dune standup).\n- [2025-09-15] reporting reads from event-bus (Dune standup).\n- [2025-11-07] handover: reporting moves from Dune to Boreal (but later corrected on 2025-11-17: the 2025-11-07 note named the wrong team. Ember took it over on that date; team Boreal did not).\n- [2026-02-10] reporting pipeline new home: Cinder team. Ember kept it until today.\n\nSo timeline: Dune owned reporting until 2025-11-07, when Ember took over. Then on 2026-02-10, Cinder took over.\n\nOn 2025-06-25, reporting was owned by Dune.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1607,
+   "completion_tokens": 243,
+   "total_tokens": 1850,
+   "cost": 0.000173595,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000173595,
+    "upstream_inference_prompt_cost": 0.000112845,
+    "upstream_inference_completions_cost": 6.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 239,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.942689415998757,
+ "fetched_at": "2026-09-05T11:43:11Z"
+}

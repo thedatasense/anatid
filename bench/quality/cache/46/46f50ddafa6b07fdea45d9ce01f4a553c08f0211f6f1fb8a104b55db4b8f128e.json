@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n\nQuestion: Which note records the decision that certificate expiry will alert 30 days ahead, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788597135-wcYhmw2NJ4uVv7L0AP6G",
+  "object": "chat.completion",
+  "created": 1788597135,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "incident-review/INC-2025-017, recorded 2025-08-07",
+     "refusal": null,
+     "reasoning": "The user asks: Which note records the decision that certificate expiry will alert 30 days ahead, and when was it written?\n\nThe memory entry: \"Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n\nThe note is recorded by \"incident-review/INC-2025-017\" and valid from 2025-08-07. The question asks when it was written — the recorded date. The entry says \"valid 2025-08-07 to now\" — the date recorded is presumably 2025-08-07. The answer should be one short line with the note name and date.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: Which note records the decision that certificate expiry will alert 30 days ahead, and when was it written?\n\nThe memory entry: \"Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n\nThe note is recorded by \"incident-review/INC-2025-017\" and valid from 2025-08-07. The question asks when it was written — the recorded date. The entry says \"valid 2025-08-07 to now\" — the date recorded is presumably 2025-08-07. The answer should be one short line with the note name and date.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 258,
+   "completion_tokens": 186,
+   "total_tokens": 444,
+   "cost": 5.817e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.817e-05,
+    "upstream_inference_prompt_cost": 1.167e-05,
+    "upstream_inference_completions_cost": 4.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 165,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.8186217499896884,
+ "fetched_at": "2026-09-05T08:32:17Z"
+}

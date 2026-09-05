@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: When did Atlas take over feature-flags?\nGold answer: 2026-02-11\nAlso accepted: 11 February 2026; February 11, 2026\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: I don't know"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788598069-RDTg7PHs7OeFkDRDfIqy",
+  "object": "chat.completion",
+  "created": 1788598069,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer 'I don't know' does not provide the date 2026-02-11, and the rule states 'I don't know' is wrong.\"}",
+     "refusal": null,
+     "reasoning": "The question asks when Atlas took over feature-flags. Gold answer is 2026-02-11. The answer to grade is \"I don't know\". The grading rule says 'I don't know' is wrong. So correct = false.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Atlas took over feature-flags. Gold answer is 2026-02-11. The answer to grade is \"I don't know\". The grading rule says 'I don't know' is wrong. So correct = false.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 257,
+   "completion_tokens": 97,
+   "total_tokens": 354,
+   "cost": 3.5845e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.5845e-05,
+    "upstream_inference_prompt_cost": 1.1595e-05,
+    "upstream_inference_completions_cost": 2.425e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 51,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6416748749907129,
+ "fetched_at": "2026-09-05T08:47:50Z"
+}

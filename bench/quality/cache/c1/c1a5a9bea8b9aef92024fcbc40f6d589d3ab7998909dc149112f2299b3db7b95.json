@@ -1,0 +1,69 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note records the decision that certificate expiry will alert 30 days ahead, and when was it written?\nGold answer: incident-review/INC-2025-017 (2025-08-07)\nAlso accepted: incident-review/INC-2025-017; 2025-08-07; 7 August 2025; August 7, 2025; the incident review of 2025-08-07; the incident review of 7 August 2025; the incident review of August 7, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: incident-review/INC-2025-017, recorded 2025-08-07."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788597904-qod0OM3PKrQmsH9x8sp6",
+  "object": "chat.completion",
+  "created": 1788597904,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the gold note incident-review/INC-2025-017 with the matching date 2025-08-07.\"}",
+     "refusal": null,
+     "reasoning": null
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 289,
+   "completion_tokens": 40,
+   "total_tokens": 329,
+   "cost": 4.29e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.29e-05,
+    "upstream_inference_prompt_cost": 2.89e-05,
+    "upstream_inference_completions_cost": 1.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.97157450002851,
+ "fetched_at": "2026-09-05T08:45:10Z"
+}

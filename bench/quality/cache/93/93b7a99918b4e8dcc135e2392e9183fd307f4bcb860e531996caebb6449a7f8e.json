@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-01-30, the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- INC-2025-017 was an incident where the auth gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- The ledger service depends on the auth gateway for service tokens. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- As of 2026-03-03, the auth gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2026-03-03 to now; recorded by standup/cinder/2026-03-03]\n- On 2026-05-22, team Dune noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- The Cinder team observed that the auth gateway's cold start time tripled after the runtime upgrade. [valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03-2]\n- The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- INC-2026-003 was an incident in which the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- The Ember team decided that the job scheduler will use leader election instead of a single fixed node. [decision; valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\n- The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- As of 2025-12-18, the indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes. [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- The job scheduler leader lease will be shortened to ten seconds, a decision from the INC-2026-009 review. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- As of 2026-04-14, Farah holds the Dune on-call shift for team Dune, taking over from Tomasz; Tomasz held it as of 2026-03-11, and Farah held it as of 2026-01-16. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah; as of 2026-01-16 Farah held it. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad holds the Dune on-call shift for team Dune; Tomasz is off rotation. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz holds the Dune on-call shift for team Dune, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n    earlier: As of 2025-10-15, Farah holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-10-15 to 2025-11-17; recorded by standup/dune/2025-10-15]\n    earlier: As of 2025-09-04, Tomasz holds the Dune on-call shift, having picked it up from Farah. [valid 2025-09-04 to 2025-10-15; recorded by standup/dune/2025-09-04]\n- As of 2025-11-24, the Atlas team looks after the bus, which the Boreal team looked after until then. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n\nQuestion: Which note records the decision that auth-gateway tokens will expire after 15 minutes instead of an hour, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596270-2jcOcHaLShCO0vUSXqZN",
+  "object": "chat.completion",
+  "created": 1788596270,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/cinder/2026-01-30, written 2026-01-30.",
+     "refusal": null,
+     "reasoning": "The question asks which note records the decision that auth gateway tokens will expire after 15 minutes instead of an hour, and when it was written.\n\nFrom memory: \"As of 2026-01-30, the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\"\n\nSo the note is standup/cinder/2026-01-30, recorded/written 2026-01-30.\n\nThe rules say \"reply in one short line with just the value asked for\". The question asks for two things: the note and the date. So answer: standup/cinder/2026-01-30, written 2026-01-30.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which note records the decision that auth gateway tokens will expire after 15 minutes instead of an hour, and when it was written.\n\nFrom memory: \"As of 2026-01-30, the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\"\n\nSo the note is standup/cinder/2026-01-30, recorded/written 2026-01-30.\n\nThe rules say \"reply in one short line with just the value asked for\". The question asks for two things: the note and the date. So answer: standup/cinder/2026-01-30, written 2026-01-30.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1751,
+   "completion_tokens": 203,
+   "total_tokens": 1954,
+   "cost": 0.000174395,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000174395,
+    "upstream_inference_prompt_cost": 0.000123645,
+    "upstream_inference_completions_cost": 5.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 180,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.1642296249629,
+ "fetched_at": "2026-09-05T08:17:53Z"
+}

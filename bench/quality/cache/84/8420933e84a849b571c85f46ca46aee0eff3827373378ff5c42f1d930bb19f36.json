@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note recorded the handover of image-resizer to Atlas, and on what date?\nGold answer: handover/2025-11-26-image-resizer (2025-11-26)\nAlso accepted: handover/2025-11-26-image-resizer; 2025-11-26; 26 November 2025; November 26, 2025; the handover message of 2025-11-26; the handover message of 26 November 2025; the handover message of November 26, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: handover/2025-11-26-image-resizer, 2025-11-26"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788597953-QNYhlOxGQd4yXPEC83cZ",
+  "object": "chat.completion",
+  "created": 1788597953,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the exact gold note label 'handover/2025-11-26-image-resizer' along with the gold date '2025-11-26', fully matching the gold answer.\"}\n",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"handover/2025-11-26-image-resizer, 2025-11-26\" which matches the gold answer exactly (both the note label and the date). This is correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"handover/2025-11-26-image-resizer, 2025-11-26\" which matches the gold answer exactly (both the note label and the date). This is correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 354,
+   "completion_tokens": 103,
+   "total_tokens": 457,
+   "cost": 3.31e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.31e-05,
+    "upstream_inference_prompt_cost": 7.35e-06,
+    "upstream_inference_completions_cost": 2.575e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 46,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.6138848749687895,
+ "fetched_at": "2026-09-05T08:45:55Z"
+}

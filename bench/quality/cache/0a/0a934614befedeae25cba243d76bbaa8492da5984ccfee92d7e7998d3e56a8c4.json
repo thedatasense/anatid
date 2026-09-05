@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-05-18, the Ember team noticed that the auth gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- As of 2026-02-10, the reports pipeline is owned by Team Cinder, which took it over from the Ember team. [decision; valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas, which took it over from Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- On 2025-12-29, the Ember team observed that the auth gateway's CPU sat at 90 percent after the traffic shift. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- As of 2026-06-18, for anything Ember-related, page Diego. [preference; valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of 2026-05-18, for anything Ember-related, page Oskar. [preference; valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of 2026-03-31, for anything Ember-related, page Diego. [preference; valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: As of 2026-02-12, for anything Ember-related, page Oskar. [preference; valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: As of 2025-12-29, for anything Ember-related, page Diego. [preference; valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n    earlier: As of 2025-03-19, for anything Ember-related, page Oskar. [preference; valid 2025-03-19 to 2025-12-29; recorded by standup/ember/2025-03-19-3]\n- As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2026-06-18, Diego has the Ember team's pager this cycle, taking over from Oskar. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of 2026-05-18, Oskar has the Ember team's pager this cycle, taking over from Diego. [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of 2026-03-31, Diego has the Ember team's pager this cycle, taking over from Oskar. [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: As of 2026-02-12, Oskar is the on-call for the Ember team, taking the pager back from Diego. [valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: As of 2025-12-29, Diego is the on-call for the Ember team, having taken over the pager from Oskar. [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n- As of 2025-12-01, the resizer is owned by Team Dune, which took it over from the Ember team. [valid 2025-12-01 to now; recorded by handover/2025-12-01-image-resizer]\n    earlier: As of 2025-04-29, the resizer is owned by the Ember team. [valid 2025-04-29 to 2025-12-01; recorded by handover/2025-04-29-image-resizer]\n    earlier: The resizer lives with Team Dune. [valid 2025-01-20 to 2025-04-29; recorded by standup/dune/2025-01-20]\n- The security audit flagged the auth gateway's long-lived tokens. [valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- The Ember team never owned the webhooks service. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- As of 2025-12-23, the pager for the auth gateway rings Team Atlas instead of Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n- On 2026-01-22, Team Atlas decided that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy and flagged it because the service is not theirs. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n\nQuestion: Which team owned auth-gateway before Ember?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614374-Sb3AmdMTIcGrifUmJG20",
+  "object": "chat.completion",
+  "created": 1788614374,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: which team owned auth-gateway before Ember?\n\nLooking at the memory:\n- As of 2025-01-20 to 2025-03-31: auth gateway is an Ember team service.\n- As of 2025-03-31: auth gateway is Team Boreal service (Ember → Boreal).\n- As of 2025-12-23: Team Atlas took over from Team Boreal.\n\nSo before Ember, the auth gateway was owned by Team Boreal (Ember had it from 2025-01-20 to 2025-03-31, then Boreal took over... wait, actually the question is \"before Ember\" — chronologically, the earliest entry says Ember owned it from 2025-01-20. Before that, there's no record. Hmm.\n\nWait, but the sequence: Ember (2025-01-20 to 2025-03-31), then Boreal (2025-03-31 to 2025-12-23), then Atlas (2025-12-23 to now).\n\n\"Which team owned auth-gateway before Ember?\" — the memory only shows Ember as the first owner. There's no entry before 2025-01-20. So technically, the memory doesn't say who owned it before Ember.\n\nBut wait — maybe the question means \"the team that owned it before the current owner took over from... \" No, it clearly asks who owned it before Ember.\n\nHmm, but perhaps the intended reading: the handover chain is Ember → Boreal → Atlas. Before Ember... unknown. But maybe the question is interpreted as \"before Ember handed it off\" which would be Boreal? No, \"before Ember\" means prior to Ember's ownership.\n\nActually, let me reconsider. The entries: \"As of 2025-03-31, the auth gateway is a Team Boreal service\" with the earlier entry being Ember. The chain is later entries supersede. The chronological order: Ember first (2025-01-20), then Boreal (2025-03-31), then Atlas (2025-12-23).\n\nSo \"before Ember\" — no data. The memory does not contain the answer. Reply: \"I don't know\".\n\nHmm, but maybe the question intends: after Ember, Boreal owned it... no. The question is specifically \"before Ember\".\n\nHowever, another interpretation: some might read \"took it over from\" chains. Ember's entry doesn't say \"took it over from anyone\". So no prior owner is recorded.\n\nAnswer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which team owned auth-gateway before Ember?\n\nLooking at the memory:\n- As of 2025-01-20 to 2025-03-31: auth gateway is an Ember team service.\n- As of 2025-03-31: auth gateway is Team Boreal service (Ember → Boreal).\n- As of 2025-12-23: Team Atlas took over from Team Boreal.\n\nSo before Ember, the auth gateway was owned by Team Boreal (Ember had it from 2025-01-20 to 2025-03-31, then Boreal took over... wait, actually the question is \"before Ember\" — chronologically, the earliest entry says Ember owned it from 2025-01-20. Before that, there's no record. Hmm.\n\nWait, but the sequence: Ember (2025-01-20 to 2025-03-31), then Boreal (2025-03-31 to 2025-12-23), then Atlas (2025-12-23 to now).\n\n\"Which team owned auth-gateway before Ember?\" — the memory only shows Ember as the first owner. There's no entry before 2025-01-20. So technically, the memory doesn't say who owned it before Ember.\n\nBut wait — maybe the question means \"the team that owned it before the current owner took over from... \" No, it clearly asks who owned it before Ember.\n\nHmm, but perhaps the intended reading: the handover chain is Ember → Boreal → Atlas. Before Ember... unknown. But maybe the question is interpreted as \"before Ember handed it off\" which would be Boreal? No, \"before Ember\" means prior to Ember's ownership.\n\nActually, let me reconsider. The entries: \"As of 2025-03-31, the auth gateway is a Team Boreal service\" with the earlier entry being Ember. The chain is later entries supersede. The chronological order: Ember first (2025-01-20), then Boreal (2025-03-31), then Atlas (2025-12-23).\n\nSo \"before Ember\" — no data. The memory does not contain the answer. Reply: \"I don't know\".\n\nHmm, but maybe the question intends: after Ember, Boreal owned it... no. The question is specifically \"before Ember\".\n\nHowever, another interpretation: some might read \"took it over from\" chains. Ember's entry doesn't say \"took it over from anyone\". So no prior owner is recorded.\n\nAnswer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1836,
+   "completion_tokens": 544,
+   "total_tokens": 2380,
+   "cost": 0.00026602,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00026602,
+    "upstream_inference_prompt_cost": 0.00013002,
+    "upstream_inference_completions_cost": 0.000136
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 538,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.209780084027443,
+ "fetched_at": "2026-09-05T13:19:41Z"
+}

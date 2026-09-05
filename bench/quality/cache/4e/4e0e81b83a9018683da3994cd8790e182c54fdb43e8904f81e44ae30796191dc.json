@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.\n- [2026-05-22] standup/dune/2026-05-22: Tomasz picked up the Dune on-call shift from Farah today.\n- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.\n- [2026-03-11] standup/dune/2026-03-11: Tomasz has the Dune pager this cycle, taking over from Farah.\n- [2025-12-10] standup/dune/2025-12-10: Tomasz Nowak has the Dune pager this cycle, taking over from Farah.\n- [2026-04-14] standup/dune/2026-04-14: Rotation day for the Dune team: Tomasz hands the pager to Farah.\n- [2025-10-15] standup/dune/2025-10-15: Farah has the Dune pager this cycle, taking over from Tomasz Nowak.\n- [2026-01-16] standup/dune/2026-01-16: On-call rotation: Farah Haddad is primary for team Dune starting today; Tomasz is off rotation.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-07-24] standup/dune/2025-07-24: The Dune team sits on the fourth floor.\n- [2025-04-21] standup/dune/2025-04-21: The Dune team adopted a monthly game day.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2026-05-22] standup/dune/2026-05-22-4: The Dune team planning meeting is every Wednesday.\n- [2025-06-19] standup/atlas/2025-06-19: Rotation day for team Atlas: Priya hands the pager to Tomasz.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2025-11-17] standup/dune/2025-11-17: Farah still has the Dune pager.\n- [2026-04-14] standup/dune/2026-04-14-2: The Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.\n- [2025-03-26] standup/dune/2025-03-26: Reminder that the reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. Observation from team Dune: after the cache change, the notification service's memory use grew steadily for a week.\n- [2026-04-14] standup/dune/2026-04-14-3: Release captain for Q3 2025: Farah.\n- [2025-06-25] handover/2025-06-25-scheduler: Handover: as of today scheduler moves from the Ember team to the Dune team. Oskar walked Farah Haddad through the runbook this morning.\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n- [2026-06-09] standup/dune/2026-06-09: Observation from team Dune: after the retention change, search-indexer's disk usage jumped 30 percent.\n- [2025-09-23] standup/dune/2025-09-23-2: Team Dune noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2026-05-22] standup/dune/2026-05-22-2: The Dune team noticed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2025-12-29] standup/dune/2025-12-29: Observation from team Dune: after the client rollout, the event-bus' request volume halved.\n- [2025-01-09] standup/dune/2025-01-09: Farah runs team Dune solo until the next hire lands.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-01-06] standup/atlas/2025-01-06: The Atlas team this year is Priya Raman and Tomasz.\n- [2026-05-22] standup/dune/2026-05-22-3: Heads-up from the Dune team: the scheduler's error rate crept up to 2 percent after the dependency bump.\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2025-08-19] standup/dune/2025-08-19-2: Observation from the Dune team: after the runtime upgrade, the resizer's cold start time tripled.\n- [2026-02-16] standup/dune/2026-02-16: The Dune team noticed that the product catalog's request volume halved after the client rollout and pinged the owners.\n- [2025-08-19] standup/dune/2025-08-19: The job scheduler's deploy window changes today: it is now on Tuesdays and Fridays between 09:00 and 10:30 UTC. The old slot (Tuesdays 13:00-15:00 UTC) is retired.\n\nQuestion: Which note recorded Tomasz's move to Dune, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788592688-ELqsQC5AUFUq8mMHNy18",
+  "object": "chat.completion",
+  "created": 1788592688,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Together",
+  "system_fingerprint": "default",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/atlas/2025-07-30, recorded 2025-07-30",
+     "refusal": null,
+     "reasoning": "The question asks: Which note recorded Tomasz's move to Dune, and when?\n\nLooking at memory: [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today.\n\nSo the note is standup/atlas/2025-07-30, recorded 2025-07-30.\n\nAnswer in one short line with just the value asked for: the note name and date.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which note recorded Tomasz's move to Dune, and when?\n\nLooking at memory: [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today.\n\nSo the note is standup/atlas/2025-07-30, recorded 2025-07-30.\n\nAnswer in one short line with just the value asked for: the note name and date.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1774,
+   "completion_tokens": 124,
+   "total_tokens": 1898,
+   "cost": 0.0003281,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003281,
+    "upstream_inference_prompt_cost": 0.0002661,
+    "upstream_inference_completions_cost": 6.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 102,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.1653070420143194,
+ "fetched_at": "2026-09-05T07:18:09Z"
+}

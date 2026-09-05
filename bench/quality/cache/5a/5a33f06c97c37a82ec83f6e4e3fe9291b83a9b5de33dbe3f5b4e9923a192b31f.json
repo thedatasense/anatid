@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2025-07-24] standup/dune/2025-07-24: The Dune team sits on the fourth floor.\n- [2026-04-14] standup/dune/2026-04-14-2: The Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2026-02-16] standup/dune/2026-02-16: The Dune team noticed that the product catalog's request volume halved after the client rollout and pinged the owners.\n- [2026-05-22] standup/dune/2026-05-22-4: The Dune team planning meeting is every Wednesday.\n- [2025-01-20] standup/dune/2025-01-20: The Dune team owns the image resizer.\n- [2025-01-09] standup/dune/2025-01-09: Farah runs team Dune solo until the next hire lands.\n- [2025-04-21] standup/dune/2025-04-21: The Dune team adopted a monthly game day.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-03-26] standup/dune/2025-03-26: Reminder that the reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. Observation from team Dune: after the cache change, the notification service's memory use grew steadily for a week.\n- [2026-05-22] standup/dune/2026-05-22-2: The Dune team noticed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2025-11-17] standup/dune/2025-11-17: Farah still has the Dune pager.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-12-29] standup/dune/2025-12-29: Observation from team Dune: after the client rollout, the event-bus' request volume halved.\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2026-05-22] standup/dune/2026-05-22: Tomasz picked up the Dune on-call shift from Farah today.\n- [2026-05-22] standup/dune/2026-05-22-3: Heads-up from the Dune team: the scheduler's error rate crept up to 2 percent after the dependency bump.\n- [2026-04-14] standup/dune/2026-04-14: Rotation day for the Dune team: Tomasz hands the pager to Farah.\n- [2025-09-23] standup/dune/2025-09-23-2: Team Dune noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.\n- [2025-10-15] standup/dune/2025-10-15: Farah has the Dune pager this cycle, taking over from Tomasz Nowak.\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n- [2026-03-11] standup/dune/2026-03-11: Tomasz has the Dune pager this cycle, taking over from Farah.\n- [2026-01-16] standup/dune/2026-01-16: On-call rotation: Farah Haddad is primary for team Dune starting today; Tomasz is off rotation.\n- [2026-06-09] standup/dune/2026-06-09: Observation from team Dune: after the retention change, search-indexer's disk usage jumped 30 percent.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2025-06-24] standup/dune/2025-06-24: Reporting still relies on Ledger; keep that in mind for the maintenance.\n- [2025-08-19] standup/dune/2025-08-19: The job scheduler's deploy window changes today: it is now on Tuesdays and Fridays between 09:00 and 10:30 UTC. The old slot (Tuesdays 13:00-15:00 UTC) is retired.\n- [2025-12-10] standup/dune/2025-12-10: Tomasz Nowak has the Dune pager this cycle, taking over from Farah.\n- [2025-06-25] handover/2025-06-25-scheduler: Handover: as of today scheduler moves from the Ember team to the Dune team. Oskar walked Farah Haddad through the runbook this morning.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-08-19] standup/dune/2025-08-19-2: Observation from the Dune team: after the runtime upgrade, the resizer's cold start time tripled.\n- [2026-04-14] standup/dune/2026-04-14-3: Release captain for Q3 2025: Farah.\n\nQuestion: Which services does Dune own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788621277-M6EQFQMVhN3prU60leUS",
+  "object": "chat.completion",
+  "created": 1788621277,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The notification service.",
+     "refusal": null,
+     "reasoning": "I need to figure out which services Dune owns now, as of today 2026-06-30.\n\nLet me go through the memory entries about ownership:\n\n1. [2025-01-20] reporting service is a Dune team service.\n2. [2025-03-20] reports pipeline is owned by Dune.\n3. [2025-09-05] Dune team still owns the scheduler (but this is superseded later).\n4. [2025-01-20] Dune owns the image resizer.\n5. [2025-03-20] handover: image resizer now sits with team Ember. Team Dune no longer owns it.\n6. [2025-09-23] handover: scheduler pager rings the Cinder team, not Dune. Ownership transferred. (So scheduler is no longer Dune's — wait, but [2025-06-25] handover says scheduler moved from Ember to Dune. Then [2025-09-23] scheduler moved to Cinder. Then [2025-09-05] says Dune still owns the scheduler — but that's before 2025-09-23, so superseded.)\n7. [2026-03-11] handover correction: flags service went to team Atlas, not Dune. Dune never owned it.\n8. [2025-06-27] handover correction: notification service went to the Dune team, not Cinder. So Dune owns the notification service (as of 2025-06-27). No later entry changes this.\n9. [2025-12-05] handover: reporting pager rings Ember, not Dune. Ownership transferred. So reporting no longer Dune's. Also [2026-04-13] Ember still owns reporting.\n\nSo current ownership by Dune:\n- Notification service (from 2025-06-27 correction; no later transfer mentioned).\n- Scheduler? [2025-09-05] Dune still owns scheduler, but [2025-09-23] handover says scheduler pager rings Cinder, not Dune — \"Ownership transferred.\" That's later, so scheduler went to Cinder. Also [2026-05-22-3] scheduler error rate observed by Dune and \"pinged the owners\" — implies Dune doesn't own it.\n- Reporting: transferred to Ember on 2025-12-05.\n- Image resizer: transferred to Ember 2025-03-20.\n- Flags service: never Dune's (Atlas).\n- Job scheduler: [2025-06-25] moved Ember → Dune; then [2025-09-23] moved Dune → Cinder. Wait, [2025-09-05] says \"The Dune team still owns the scheduler, in case anyone asks\" — dated 2025-09-05, before the 2025-09-23 transfer. So the scheduler is Cinder's now.\n\nWhat about the \"bus\"/\"event-bus\", auth-gateway, product catalog, search-indexer? Those are just observations; ownership not stated.\n\nSo the only service Dune owns now: the notification service (notification service / notifier).\n\nAnswer: the notification service.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "I need to figure out which services Dune owns now, as of today 2026-06-30.\n\nLet me go through the memory entries about ownership:\n\n1. [2025-01-20] reporting service is a Dune team service.\n2. [2025-03-20] reports pipeline is owned by Dune.\n3. [2025-09-05] Dune team still owns the scheduler (but this is superseded later).\n4. [2025-01-20] Dune owns the image resizer.\n5. [2025-03-20] handover: image resizer now sits with team Ember. Team Dune no longer owns it.\n6. [2025-09-23] handover: scheduler pager rings the Cinder team, not Dune. Ownership transferred. (So scheduler is no longer Dune's — wait, but [2025-06-25] handover says scheduler moved from Ember to Dune. Then [2025-09-23] scheduler moved to Cinder. Then [2025-09-05] says Dune still owns the scheduler — but that's before 2025-09-23, so superseded.)\n7. [2026-03-11] handover correction: flags service went to team Atlas, not Dune. Dune never owned it.\n8. [2025-06-27] handover correction: notification service went to the Dune team, not Cinder. So Dune owns the notification service (as of 2025-06-27). No later entry changes this.\n9. [2025-12-05] handover: reporting pager rings Ember, not Dune. Ownership transferred. So reporting no longer Dune's. Also [2026-04-13] Ember still owns reporting.\n\nSo current ownership by Dune:\n- Notification service (from 2025-06-27 correction; no later transfer mentioned).\n- Scheduler? [2025-09-05] Dune still owns scheduler, but [2025-09-23] handover says scheduler pager rings Cinder, not Dune — \"Ownership transferred.\" That's later, so scheduler went to Cinder. Also [2026-05-22-3] scheduler error rate observed by Dune and \"pinged the owners\" — implies Dune doesn't own it.\n- Reporting: transferred to Ember on 2025-12-05.\n- Image resizer: transferred to Ember 2025-03-20.\n- Flags service: never Dune's (Atlas).\n- Job scheduler: [2025-06-25] moved Ember → Dune; then [2025-09-23] moved Dune → Cinder. Wait, [2025-09-05] says \"The Dune team still owns the scheduler, in case anyone asks\" — dated 2025-09-05, before the 2025-09-23 transfer. So the scheduler is Cinder's now.\n\nWhat about the \"bus\"/\"event-bus\", auth-gateway, product catalog, search-indexer? Those are just observations; ownership not stated.\n\nSo the only service Dune owns now: the notification service (notification service / notifier).\n\nAnswer: the notification service.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1752,
+   "completion_tokens": 680,
+   "total_tokens": 2432,
+   "cost": 0.00029372,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00029372,
+    "upstream_inference_prompt_cost": 0.00012372,
+    "upstream_inference_completions_cost": 0.00017
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 674,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.673279416980222,
+ "fetched_at": "2026-09-05T15:14:44Z"
+}

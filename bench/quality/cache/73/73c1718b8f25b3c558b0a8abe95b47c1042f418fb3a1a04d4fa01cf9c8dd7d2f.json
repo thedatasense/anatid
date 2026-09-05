@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-03-03, storage for the resizer's original uploads doubled in six months. [valid 2026-03-03 to now; recorded by standup/dune/2026-03-03]\n- As of 2026-03-03, Team Dune decided the resizer will keep original uploads for only 90 days. [decision; valid 2026-03-03 to now; recorded by standup/dune/2026-03-03]\n- As of 2025-12-01, the resizer is owned by Team Dune, which took it over from the Ember team. [valid 2025-12-01 to now; recorded by handover/2025-12-01-image-resizer]\n    earlier: As of 2025-04-29, the resizer is owned by the Ember team. [valid 2025-04-29 to 2025-12-01; recorded by handover/2025-04-29-image-resizer]\n    earlier: The resizer lives with Team Dune. [valid 2025-01-20 to 2025-04-29; recorded by standup/dune/2025-01-20]\n- The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- On 2025-05-19, Team Cinder noticed the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19-2]\n- As of 2026-03-16, the catalog service deploys on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16]\n    earlier: The catalog service only ships on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n- As of 2025-04-04, the catalog service will keep image metadata in a separate table. [decision; valid 2025-04-04 to now; recorded by standup/dune/2025-04-04]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- As of 2026-02-24, the feature-flags service belongs to Team Cinder, which took it over from Team Boreal. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the feature-flags service belongs to Team Boreal, which took it over from Team Cinder. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the feature-flags service belongs to Team Cinder, which took it over from Team Atlas. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n    earlier: The feature-flags service lives with Team Atlas. [valid 2025-01-08 to 2025-07-09; recorded by standup/atlas/2025-01-08-2]\n- On 2025-07-03, Team Atlas noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03-2]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- As of 2025-09-08, billing-api has a new dependency on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- On 2026-03-10, Team Dune observed that the reporting service's p99 latency doubled after Tuesday's deploy. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- On 2025-05-08, Team Boreal flagged that the catalog service's memory use grew steadily for a week following the cache change, noting the catalog service is not their service. [valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n\nQuestion: Which service does image-resizer depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614329-6ky57a4QZtveQTGFySQK",
+  "object": "chat.completion",
+  "created": 1788614329,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which service does image-resizer depend on?\n\nLooking at the memory, I see entries about the resizer:\n- storage for original uploads doubled\n- Team Dune decided resizer will keep original uploads for 90 days\n- resizer owned by Team Dune\n- catalog service relies on the resizer for thumbnails\n- queue depth incident\n- cold start time tripled\n\nThere's no entry saying the resizer depends on any service. The catalog service depends on the resizer, not the other way around. So the memory doesn't contain the answer.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which service does image-resizer depend on?\n\nLooking at the memory, I see entries about the resizer:\n- storage for original uploads doubled\n- Team Dune decided resizer will keep original uploads for 90 days\n- resizer owned by Team Dune\n- catalog service relies on the resizer for thumbnails\n- queue depth incident\n- cold start time tripled\n\nThere's no entry saying the resizer depends on any service. The catalog service depends on the resizer, not the other way around. So the memory doesn't contain the answer.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1735,
+   "completion_tokens": 124,
+   "total_tokens": 1859,
+   "cost": 0.000153445,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000153445,
+    "upstream_inference_prompt_cost": 0.000122445,
+    "upstream_inference_completions_cost": 3.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 118,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.944189624977298,
+ "fetched_at": "2026-09-05T13:18:52Z"
+}

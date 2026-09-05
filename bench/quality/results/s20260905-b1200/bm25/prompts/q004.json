@@ -1,0 +1,35 @@
+{
+ "qid": "q004",
+ "system": "bm25",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-10-07] incident-review/INC-2025-023: Incident review INC-2025-023. The indexer served stale results for two days on 2025-10-03. Root cause: a reindex job that failed silently on a full disk. Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2025-04-22] standup/cinder/2025-04-22: The search indexer is pinned to OpenSearch 2.11; the pin lifts when the full reindex completes.\n- [2025-05-29] standup/boreal/2025-05-29: For anything Boreal-related, page Marcus.\n- [2025-03-31] standup/ember/2025-03-31: For anything Ember-related, page Oskar.\n- [2026-05-19] incident-review/INC-2026-009: Incident review INC-2026-009. The scheduler ran the nightly jobs twice on 2026-05-16. Root cause: two leaders elected during a network partition. Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-09-23] standup/boreal/2025-09-23: Reminder from team Boreal: page Lena for anything this cycle, not Marcus.\n- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.\n- [2025-08-15] standup/boreal/2025-08-15: Reminder from Boreal: page Marcus for anything this cycle, not Lena Fischer.\n- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2025-02-06] standup/ember/2025-02-06: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time.\n- [2026-03-02] standup/ember/2026-03-02: Reminder from the Ember team: page Oskar Lind for anything this cycle, not Diego.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-08-19] standup/dune/2025-08-19: The job scheduler's deploy window changes today: it is now on Tuesdays and Fridays between 09:00 and 10:30 UTC. The old slot (Tuesdays 13:00-15:00 UTC) is retired.\n- [2026-04-08] standup/atlas/2026-04-08: Reminder from the Atlas team: page Marcus for anything this cycle, not Priya. The Atlas team saw that webhooks' request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-03-17] standup/atlas/2026-03-17: Decided in today's standup: image-resizer will keep original uploads for 90 days only, since storage for originals doubled in six months. For anything Atlas-related, page Priya.\n\nQuestion: Why do reindex jobs page on failure?"
+  }
+ ],
+ "contexts": [
+  "- [2025-10-07] incident-review/INC-2025-023: Incident review INC-2025-023. The indexer served stale results for two days on 2025-10-03. Root cause: a reindex job that failed silently on a full disk. Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.",
+  "- [2025-04-22] standup/cinder/2025-04-22: The search indexer is pinned to OpenSearch 2.11; the pin lifts when the full reindex completes.",
+  "- [2025-05-29] standup/boreal/2025-05-29: For anything Boreal-related, page Marcus.",
+  "- [2025-03-31] standup/ember/2025-03-31: For anything Ember-related, page Oskar.",
+  "- [2026-05-19] incident-review/INC-2026-009: Incident review INC-2026-009. The scheduler ran the nightly jobs twice on 2026-05-16. Root cause: two leaders elected during a network partition. Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.",
+  "- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).",
+  "- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.",
+  "- [2025-09-23] standup/boreal/2025-09-23: Reminder from team Boreal: page Lena for anything this cycle, not Marcus.",
+  "- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.",
+  "- [2025-08-15] standup/boreal/2025-08-15: Reminder from Boreal: page Marcus for anything this cycle, not Lena Fischer.",
+  "- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.",
+  "- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.",
+  "- [2025-02-06] standup/ember/2025-02-06: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time.",
+  "- [2026-03-02] standup/ember/2026-03-02: Reminder from the Ember team: page Oskar Lind for anything this cycle, not Diego.",
+  "- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.",
+  "- [2025-08-19] standup/dune/2025-08-19: The job scheduler's deploy window changes today: it is now on Tuesdays and Fridays between 09:00 and 10:30 UTC. The old slot (Tuesdays 13:00-15:00 UTC) is retired.",
+  "- [2026-04-08] standup/atlas/2026-04-08: Reminder from the Atlas team: page Marcus for anything this cycle, not Priya. The Atlas team saw that webhooks' request volume halved following the client rollout; not their service, so they flagged it.",
+  "- [2026-03-17] standup/atlas/2026-03-17: Decided in today's standup: image-resizer will keep original uploads for 90 days only, since storage for originals doubled in six months. For anything Atlas-related, page Priya."
+ ],
+ "answer": "Because a silent reindex failure left stale results for two days in INC-2025-023."
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2025-01-14] standup/cinder/2025-01-14: Yuki takes the first team Cinder on-call shift of the year.\n- [2025-04-09] standup/cinder/2025-04-09: On-call rotation: Yuki Tanaka is primary for the Cinder team starting today; Diego Alvarez is off rotation.\n- [2025-04-29] standup/cinder/2025-04-29: For anything Cinder-related, page Yuki.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-01-17] standup/cinder/2025-01-17-2: The indexer lives with the Cinder team.\n- [2025-05-19] standup/cinder/2025-05-19: Rotation day for Cinder: Yuki hands the pager to Diego.\n- [2025-08-29] standup/cinder/2025-08-29: Diego has the Cinder pager this cycle, taking over from Yuki.\n- [2025-10-27] standup/cinder/2025-10-27: Rotation day for the Cinder team: Diego hands the pager to Yuki.\n- [2025-09-23] standup/cinder/2025-09-23: Cinder has switched to trunk-based development.\n- [2025-01-08] standup/cinder/2025-01-08: Yuki and Diego make up team Cinder.\n- [2025-02-21] standup/cinder/2025-02-21: Rotation day for team Cinder: Yuki Tanaka hands the pager to Diego Alvarez. Team Cinder saw that the auth gateway's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-07-28] standup/cinder/2025-07-28-2: Heads-up from Cinder: the ledger's p99 latency doubled after Tuesday's deploy. Observation from team Cinder: after the dependency bump, the billing API's error rate crept up to 2 percent.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2025-12-05] standup/cinder/2025-12-05: Team change: Diego Alvarez leaves team Cinder and joins Ember, effective today.\n- [2025-01-14] standup/ember/2025-01-14: Oskar Lind is on call for the Ember team to start the year.\n- [2026-05-18] standup/ember/2026-05-18: Oskar Lind picked up the Ember on-call shift from Diego today.\n- [2025-01-13] standup/boreal/2025-01-13: Lena takes the first Boreal on-call shift of the year.\n- [2025-06-23] standup/cinder/2025-06-23: Observation from the Cinder team: after the retention change, the reports pipeline's disk usage jumped 30 percent.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.\n- [2025-07-03] standup/cinder/2025-07-03: The Cinder team saw that the bus' CPU sat at 90 percent following the traffic shift; not their service, so they flagged it.\n- [2026-01-01] standup/cinder/2026-01-01: The Cinder team noticed that the search indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2026-01-05] standup/cinder/2026-01-05: Observation from the Cinder team: after the retention change, Ledger's disk usage jumped 30 percent.\n- [2025-08-27] standup/cinder/2025-08-27: The search indexer is pinned to OpenSearch 2.11; the pin lifts when the full reindex completes. Cinder sits on the third floor.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n\nQuestion: Who is on call for Cinder right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788617829-UPFjbHdKSgBMWKVQ2yV5",
+  "object": "chat.completion",
+  "created": 1788617829,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Yuki (Yuki Tanaka)",
+     "refusal": null,
+     "reasoning": "The question asks who is on call for Cinder right now (2026-06-30).\n\nLet me trace the Cinder on-call history:\n- 2025-01-14: Yuki takes first shift\n- 2025-02-21: Yuki hands pager to Diego\n- 2025-04-09: Yuki Tanaka primary starting today; Diego off rotation\n- 2025-05-19: Yuki hands pager to Diego\n- 2025-07-10: Yuki carries the phone\n- 2025-08-29: Diego has the Cinder pager, taking over from Yuki\n- 2025-10-27: Diego hands the pager to Yuki\n- 2025-12-05: Diego leaves Cinder, joins Ember\n\nAfter 2025-10-27, Yuki has the pager. Then Diego leaves the team 2025-12-05. No further Cinder on-call entries after that. The latest entry on Cinder on-call is 2025-10-27: Diego hands the pager to Yuki. So right now, Yuki is on call for Cinder.\n\nWait, also check Ember entries: 2026-06-18 Diego carries phone for Ember. 2026-05-18 Oskar picked up Ember on-call from Diego. These don't affect Cinder.\n\nSo the answer: Yuki (Yuki Tanaka).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who is on call for Cinder right now (2026-06-30).\n\nLet me trace the Cinder on-call history:\n- 2025-01-14: Yuki takes first shift\n- 2025-02-21: Yuki hands pager to Diego\n- 2025-04-09: Yuki Tanaka primary starting today; Diego off rotation\n- 2025-05-19: Yuki hands pager to Diego\n- 2025-07-10: Yuki carries the phone\n- 2025-08-29: Diego has the Cinder pager, taking over from Yuki\n- 2025-10-27: Diego hands the pager to Yuki\n- 2025-12-05: Diego leaves Cinder, joins Ember\n\nAfter 2025-10-27, Yuki has the pager. Then Diego leaves the team 2025-12-05. No further Cinder on-call entries after that. The latest entry on Cinder on-call is 2025-10-27: Diego hands the pager to Yuki. So right now, Yuki is on call for Cinder.\n\nWait, also check Ember entries: 2026-06-18 Diego carries phone for Ember. 2026-05-18 Oskar picked up Ember on-call from Diego. These don't affect Cinder.\n\nSo the answer: Yuki (Yuki Tanaka).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1369,
+   "completion_tokens": 304,
+   "total_tokens": 1673,
+   "cost": 0.000178675,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000178675,
+    "upstream_inference_prompt_cost": 0.000102675,
+    "upstream_inference_completions_cost": 7.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 294,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.039339540991932,
+ "fetched_at": "2026-09-05T14:17:16Z"
+}

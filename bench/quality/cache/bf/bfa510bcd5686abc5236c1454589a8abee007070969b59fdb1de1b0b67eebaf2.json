@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The monthly cost review is run by Yuki. [valid 2025-10-13 to now; recorded by standup/cinder/2025-10-13]\n- On 2026-01-01, Team Cinder noticed that the indexer's disk usage jumped 30 percent after the retention change and pinged the owners. [valid 2026-01-01 to now; recorded by standup/cinder/2026-01-01]\n- On 2026-01-05, Team Cinder observed that the ledger's disk usage jumped 30 percent after the retention change. [valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- On 2025-07-28, Team Cinder observed that the billing service's error rate crept up to 2 percent after the dependency bump. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- As of 2026-02-10, the reports pipeline is owned by Team Cinder, which took it over from the Ember team. [decision; valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- On 2025-06-23, Team Cinder observed that the reports pipeline's disk usage jumped 30 percent after the retention change. [valid 2025-06-23 to now; recorded by standup/cinder/2025-06-23]\n- Priya runs the quarterly capacity review. [valid 2025-06-23 to now; recorded by standup/atlas/2025-06-23]\n- Oskar runs the weekly architecture review. [valid 2026-06-16 to now; recorded by standup/ember/2026-06-16]\n- As of 2025-12-08, the pager for the indexer rings Team Dune instead of Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n- On 2025-05-19, Team Cinder noticed the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19-2]\n- As of 2025-12-08, the indexer is owned by Team Dune, which took it over from Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- The nightly ledger scans were blocking billing runs. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- Team Atlas runs its planning on Tuesdays. [valid 2025-10-31 to now; recorded by standup/atlas/2025-10-31]\n- As of 2025-05-09, Team Dune has switched to a monthly game day. [decision; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09-2]\n- On 2025-07-03, Team Cinder noticed the event bus's CPU sat at 90 percent following the traffic shift and flagged it, noting the event bus is not their service. [valid 2025-07-03 to now; recorded by standup/cinder/2025-07-03]\n- As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder. [valid 2025-03-20 to now; recorded by handover/2025-03-20-catalog]\n- As of 2026-06-18, Diego has the Ember team's pager this cycle, taking over from Oskar. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of 2026-05-18, Oskar has the Ember team's pager this cycle, taking over from Diego. [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of 2026-03-31, Diego has the Ember team's pager this cycle, taking over from Oskar. [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: As of 2026-02-12, Oskar is the on-call for the Ember team, taking the pager back from Diego. [valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: As of 2025-12-29, Diego is the on-call for the Ember team, having taken over the pager from Oskar. [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n- As of 2026-02-24, the feature-flags service belongs to Team Cinder, which took it over from Team Boreal. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the feature-flags service belongs to Team Boreal, which took it over from Team Cinder. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the feature-flags service belongs to Team Cinder, which took it over from Team Atlas. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n    earlier: The feature-flags service lives with Team Atlas. [valid 2025-01-08 to 2025-07-09; recorded by standup/atlas/2025-01-08-2]\n\nQuestion: Who runs the monthly cost review?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788613701-YpKt3VyFRBa901KEPQmD",
+  "object": "chat.completion",
+  "created": 1788613701,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Yuki",
+     "refusal": null,
+     "reasoning": "The memory says: \"The monthly cost review is run by Yuki. [valid 2025-10-13 to now]\" — so the answer is Yuki.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"The monthly cost review is run by Yuki. [valid 2025-10-13 to now]\" — so the answer is Yuki.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1581,
+   "completion_tokens": 39,
+   "total_tokens": 1620,
+   "cost": 0.000120645,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000120645,
+    "upstream_inference_prompt_cost": 0.000110895,
+    "upstream_inference_completions_cost": 9.75e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 35,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.558796875004191,
+ "fetched_at": "2026-09-05T13:08:22Z"
+}

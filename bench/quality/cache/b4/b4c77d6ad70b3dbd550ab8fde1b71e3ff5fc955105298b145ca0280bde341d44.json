@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Why do reindex jobs page on failure?\nGold answer: a silent reindex failure left stale results for two days in INC-2025-023\nAlso accepted: (none)\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: A reindex job failed silently on a full disk (the root cause of INC-2025-023)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788597989-3dhh3lKp7g24MsCBZrwr",
+  "object": "chat.completion",
+  "created": 1788597989,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer attributes the paging to a full disk and omits the gold fact that a silent reindex failure left stale results for two days in INC-2025-023, so it gives a different value.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer: \"a silent reindex failure left stale results for two days in INC-2025-023\"\n\nThe answer to grade: \"A reindex job failed silently on a full disk (the root cause of INC-2025-023).\"\n\nThe gold fact is that a silent reindex failure left stale results for two days, referenced in INC-2025-023. The answer states a silent reindex failure occurred (root cause of INC-2025-023), but attributes it to a full disk and omits the \"left stale results for two days\" part. The grading rule: correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value is wrong.\n\nThe answer mentions the silent reindex failure and INC-2025-023, but adds \"on a full disk\" which is not in the gold answer — is that a different value? The core gold fact is \"a silent reindex failure left stale results for two days in INC-2025-023\". The answer says the silent reindex failure was the root cause of INC-2025-023, but doesn't mention stale results for two days. It adds a cause (full disk) that isn't in the gold.\n\nIs \"full disk\" a different value? The gold doesn't specify a cause. The answer's core claim — silent reindex failure related to INC-2025-023 — matches partially, but the key detail \"left stale results for two days\" is missing, and an unsupported detail \"full disk\" is added. The grading rule says a different value is wrong. The answer gives a different explanation (full disk) rather than the gold fact (stale results for two days). The question is \"why do reindex jobs page on failure?\" — the gold answer is the incident where silent failure left stale results for two days. The answer says it's because of a full disk root cause — that's a different value/reason.\n\nI'd grade this as incorrect because it states a different reason (full disk) and omits the gold fact (stale results for two days). Although it references INC-2025-023 and silent failure, the substantive fact differs. The rule: \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\" The answer does not state the gold fact (stale results for two days); it states a different cause. So incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer: \"a silent reindex failure left stale results for two days in INC-2025-023\"\n\nThe answer to grade: \"A reindex job failed silently on a full disk (the root cause of INC-2025-023).\"\n\nThe gold fact is that a silent reindex failure left stale results for two days, referenced in INC-2025-023. The answer states a silent reindex failure occurred (root cause of INC-2025-023), but attributes it to a full disk and omits the \"left stale results for two days\" part. The grading rule: correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value is wrong.\n\nThe answer mentions the silent reindex failure and INC-2025-023, but adds \"on a full disk\" which is not in the gold answer — is that a different value? The core gold fact is \"a silent reindex failure left stale results for two days in INC-2025-023\". The answer says the silent reindex failure was the root cause of INC-2025-023, but doesn't mention stale results for two days. It adds a cause (full disk) that isn't in the gold.\n\nIs \"full disk\" a different value? The gold doesn't specify a cause. The answer's core claim — silent reindex failure related to INC-2025-023 — matches partially, but the key detail \"left stale results for two days\" is missing, and an unsupported detail \"full disk\" is added. The grading rule says a different value is wrong. The answer gives a different explanation (full disk) rather than the gold fact (stale results for two days). The question is \"why do reindex jobs page on failure?\" — the gold answer is the incident where silent failure left stale results for two days. The answer says it's because of a full disk root cause — that's a different value/reason.\n\nI'd grade this as incorrect because it states a different reason (full disk) and omits the gold fact (stale results for two days). Although it references INC-2025-023 and silent failure, the substantive fact differs. The rule: \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\" The answer does not state the gold fact (stale results for two days); it states a different cause. So incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 207,
+   "completion_tokens": 580,
+   "total_tokens": 787,
+   "cost": 0.00032105,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00032105,
+    "upstream_inference_prompt_cost": 3.105e-05,
+    "upstream_inference_completions_cost": 0.00029
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 525,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.71925874997396,
+ "fetched_at": "2026-09-05T08:46:36Z"
+}

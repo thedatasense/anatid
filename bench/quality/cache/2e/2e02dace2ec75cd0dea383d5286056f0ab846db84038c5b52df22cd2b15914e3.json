@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note records the decision that the scheduler leader lease will be shortened to ten seconds, and when was it written?\nGold answer: incident-review/INC-2026-009 (2026-05-19)\nAlso accepted: incident-review/INC-2026-009; 2026-05-19; 19 May 2026; May 19, 2026; the incident review of 2026-05-19; the incident review of 19 May 2026; the incident review of May 19, 2026\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: incident-review/INC-2026-009, recorded 2026-05-19."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788598059-ClMFkahMvLvQ8ExQQ7zC",
+  "object": "chat.completion",
+  "created": 1788598059,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the gold note's source label (incident-review/INC-2026-009) together with its exact date (2026-05-19), matching the accepted answer.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade: \"incident-review/INC-2026-009, recorded 2026-05-19.\"\n\nGold answer: incident-review/INC-2026-009 (2026-05-19). The answer identifies the source label and the date. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade: \"incident-review/INC-2026-009, recorded 2026-05-19.\"\n\nGold answer: incident-review/INC-2026-009 (2026-05-19). The answer identifies the source label and the date. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 352,
+   "completion_tokens": 110,
+   "total_tokens": 462,
+   "cost": 3.47e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.47e-05,
+    "upstream_inference_prompt_cost": 7.2e-06,
+    "upstream_inference_completions_cost": 2.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 59,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9008760409778915,
+ "fetched_at": "2026-09-05T08:47:41Z"
+}

@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000312\": Tomasz is on the Atlas team on-call rotation as of 2025-04-03.  (about: Atlas team, Tomasz)\n- memory_id \"1000286\": On 2025-03-26 the Dune team observed that the notification service's memory use grew steadily for a week after the cache change.  (about: Dune team, notification service)\n- memory_id \"1000284\" [constraint]: The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC.  (about: reporting service)\n- memory_id \"1000266\": Lena has the pager rotation for the Boreal team as of 2025-03-17, taking over from Marcus.  (about: Boreal team, Lena, Marcus)\n- memory_id \"1000253\": The ledger service relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down.  (about: ledger service, auth gateway)\n- memory_id \"1000246\": The webhook dispatcher is owned by the Ember team as of 2025-03-03.  (about: webhook dispatcher, Ember team)\n- memory_id \"1000242\": As of 2025-03-03, the pager for the webhook dispatcher rings the Ember team instead of the Boreal team.  (about: Boreal team, webhook dispatcher, Ember team)\n- memory_id \"1000230\": On 2025-02-21 the Boreal team pinged the owners of the ledger service about the memory growth.  (about: Boreal team, ledger service)\n- memory_id \"1000227\": On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change.  (about: Boreal team, ledger service)\n- memory_id \"1000180\" [decision]: The Ember team does pairing on every production change.  (about: Ember team)\n- memory_id \"1000160\" [constraint]: The ledger service must stay on Postgres 14 until the partitioning work finishes.  (about: ledger service, Postgres 14)\n- memory_id \"1000136\": The job scheduler is owned by the Ember team.  (about: Ember team, job scheduler)\n- memory_id \"1000130\": The reporting service is owned by the Dune team.  (about: Dune team, reporting service)\n- memory_id \"1000109\" [constraint]: The ledger service only ships on weekday mornings before 11:00 UTC.  (about: ledger service)\n- memory_id \"1000105\": Oskar takes the first on-call shift of the year for the Ember team.  (about: Ember team, Oskar)\n- memory_id \"1000101\": Farah has the first on-call rotation for the Dune team.  (about: Farah, Dune team)\n- memory_id \"1000094\": The Ember team is a one-person team consisting of Oskar.  (about: Ember team, Oskar)\n- memory_id \"1000089\": The billing API depends on the ledger service for invoice postings.  (about: ledger service, billing API)\n- memory_id \"1000050\": Farah runs the Dune team solo until the next hire lands.  (about: Farah, Dune team)\n- memory_id \"1000033\": The ledger service is owned by the Atlas team.  (about: Atlas team, ledger service)\nExisting entity names: Atlas team, Tomasz, Dune team, notification service, reporting service, Boreal team, Lena, Marcus, ledger service, auth gateway, webhook dispatcher, Ember team, Postgres 14, job scheduler, Oskar, Farah, billing API\n\nThe note:\n\n[2025-04-21] standup/dune/2025-04-21: The Dune team adopted a monthly game day."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788600536-Y5WdwjbLYv70GJ7Fq2Xv",
+  "object": "chat.completion",
+  "created": 1788600536,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Together",
+  "system_fingerprint": "default",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\":[{\"content\":\"The Dune team adopted a monthly game day.\",\"entities\":[\"Dune team\"],\"kind\":\"decision\",\"confidence\":1,\"evidence\":\"The Dune team adopted a monthly game day.\"}],\"corrections\":[],\"add_relations\":[],\"remove_relations\":[],\"entity_aliases\":[]}",
+     "refusal": null,
+     "reasoning": "Let me analyze this note.\n\nThe note: \"[2025-04-21] standup/dune/2025-04-21: The Dune team adopted a monthly game day.\"\n\nThis is a standup note from the Dune team dated 2025-04-21. The durable fact: The Dune team adopted a monthly game day.\n\nIs this durable? It's a decision/practice adopted by the team. It seems like a durable fact — a team practice. It could be kind \"decision\" or \"fact\". \"Adopted a monthly game day\" — a decision about team practice. I'd say kind \"decision\" or \"fact\". Let's use \"decision\" since adopting a practice is a decision. Actually \"fact\" might be safer, but \"decision\" fits: the team decided to adopt a monthly game day.\n\nEntities: Dune team.\n\nEvidence: \"The Dune team adopted a monthly game day.\"\n\nNo relations — game day isn't an entity relationship between two entities. Could add relation Dune team -> game day? rel_kind like \"practices\"? The schema says relationships between two entities the note establishes. \"game day\" is not an existing entity and it's more of an activity. I think it's fine to skip relations, or we could add one. The instruction: \"A relation joins two entities with a short rel_kind such as leads, maintains, owns, depends_on, member_of, reports_to.\" A monthly game day is not really an entity. I'll skip relations.\n\nNo corrections, no aliases, no removals.\n\nSo output:\n\n{\n \"add_facts\": [\n  {\n   \"content\": \"The Dune team adopted a monthly game day.\",\n   \"entities\": [\"Dune team\"],\n   \"kind\": \"decision\",\n   \"confidence\": 1.0,\n   \"evidence\": \"The Dune team adopted a monthly game day.\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [],\n \"remove_relations\": [],\n \"entity_aliases\": []\n}\n\nConfidence: the note is a standup note, straightforward. 1.0 or 0.9. I'll use 1.0? Maybe 0.9 to be safe. It's directly stated, so 1.0 is fine. I'll go with 1.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Let me analyze this note.\n\nThe note: \"[2025-04-21] standup/dune/2025-04-21: The Dune team adopted a monthly game day.\"\n\nThis is a standup note from the Dune team dated 2025-04-21. The durable fact: The Dune team adopted a monthly game day.\n\nIs this durable? It's a decision/practice adopted by the team. It seems like a durable fact — a team practice. It could be kind \"decision\" or \"fact\". \"Adopted a monthly game day\" — a decision about team practice. I'd say kind \"decision\" or \"fact\". Let's use \"decision\" since adopting a practice is a decision. Actually \"fact\" might be safer, but \"decision\" fits: the team decided to adopt a monthly game day.\n\nEntities: Dune team.\n\nEvidence: \"The Dune team adopted a monthly game day.\"\n\nNo relations — game day isn't an entity relationship between two entities. Could add relation Dune team -> game day? rel_kind like \"practices\"? The schema says relationships between two entities the note establishes. \"game day\" is not an existing entity and it's more of an activity. I think it's fine to skip relations, or we could add one. The instruction: \"A relation joins two entities with a short rel_kind such as leads, maintains, owns, depends_on, member_of, reports_to.\" A monthly game day is not really an entity. I'll skip relations.\n\nNo corrections, no aliases, no removals.\n\nSo output:\n\n{\n \"add_facts\": [\n  {\n   \"content\": \"The Dune team adopted a monthly game day.\",\n   \"entities\": [\"Dune team\"],\n   \"kind\": \"decision\",\n   \"confidence\": 1.0,\n   \"evidence\": \"The Dune team adopted a monthly game day.\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [],\n \"remove_relations\": [],\n \"entity_aliases\": []\n}\n\nConfidence: the note is a standup note, straightforward. 1.0 or 0.9. I'll use 1.0? Maybe 0.9 to be safe. It's directly stated, so 1.0 is fine. I'll go with 1.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2167,
+   "completion_tokens": 540,
+   "total_tokens": 2707,
+   "cost": 0.00059505,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00059505,
+    "upstream_inference_prompt_cost": 0.00032505,
+    "upstream_inference_completions_cost": 0.00027
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 476,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 11.993469750043005,
+ "fetched_at": "2026-09-05T09:29:08Z"
+}

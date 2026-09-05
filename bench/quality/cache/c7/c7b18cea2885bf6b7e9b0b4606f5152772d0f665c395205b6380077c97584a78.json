@@ -1,0 +1,66 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-04-14, Farah holds the Dune pager this cycle, taking over from Tomasz, who held it as of 2026-03-11. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune pager this cycle, taking over from Farah. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n- As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: As of 2025-06-19, Tomasz is the primary on-call for the Atlas team and Priya Raman is no longer the primary on-call. [decision; valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: As of 2025-05-13, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Priya Raman is no longer the primary on-call for the Atlas team; Tomasz is the primary on-call for the Atlas team this cycle as of 2025-04-03. [decision; valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12; Tomasz is off rotation. [decision; valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz takes the first on-call rotation for the Atlas team. [decision; valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- The Atlas team planning meeting is every Tuesday. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- As of 2026-02-11, feature-flags is owned by the Atlas team, which the Ember team owned until then. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, feature-flags is owned by team Dune, which the Ember team owned until then. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, feature-flags is owned by the Ember team, which the Atlas team owned until then. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: feature-flags is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- As of 2025-11-26, the image resizer is owned by the Atlas team, which the Ember team owned until then. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The image resizer is owned by the Ember team. [valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: team Dune owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- As of 2026-01-12, the billing API is owned by the Ember team, which the Atlas team owned until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: From 2025-06-09, the billing API is owned by the Atlas team. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: From 2025-06-09, the billing API is owned by the Boreal team. [valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: Since 2025-03-07, the billing API is owned by the Ember team. [valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- As of 2025-11-27, Diego is on the Ember team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on the Cinder team. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- As of 2025-07-30, Priya Raman holds the Atlas team pager instead of Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: As of 2025-06-19, Tomasz holds the Atlas team pager instead of Priya Raman. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: As of 2025-05-13, Priya Raman holds the Atlas team pager instead of Tomasz. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: As of 2025-04-03, Tomasz holds the Atlas team pager instead of Priya Raman. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: As of 2025-03-28, Priya Raman still holds the Atlas team pager. [valid 2025-03-28 to 2025-04-03; recorded by standup/atlas/2025-03-28]\n\nQuestion: Who is the manager of Atlas?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596363-ovaDTcsETpvLEfcRJTBT",
+  "object": "chat.completion",
+  "created": 1788596363,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": null
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1783,
+   "completion_tokens": 6,
+   "total_tokens": 1789,
+   "cost": 0.0001804,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001804,
+    "upstream_inference_prompt_cost": 0.0001783,
+    "upstream_inference_completions_cost": 2.1e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 0.4363242500112392,
+ "fetched_at": "2026-09-05T08:19:24Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2025-11-04] standup/atlas/2025-11-04: Reminder that the billing API depends on the ledger.\n- [2025-07-17] standup/atlas/2025-07-17: The ledger remains a Atlas service.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.\n- [2025-01-09] standup/atlas/2025-01-09-2: Dependency map update: billing-api needs Ledger (invoice postings).\n- [2026-04-16] standup/atlas/2026-04-16: The Atlas team saw that the ledger service's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-10-13] handover/2025-10-13-ledger: From today the pager for the ledger rings Cinder, not team Atlas. Ownership transferred.\n- [2026-05-28] standup/ember/2026-05-28: Ember noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-09-24] standup/atlas/2025-09-24: Ledger deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2025-01-31] standup/atlas/2025-01-31: Ledger must stay on Postgres 14 until the partitioning work finishes.\n- [2025-07-03] handover/2025-07-03-billing-api-correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it.\n- [2025-01-14] standup/atlas/2025-01-14: Reminder that Ledger only ships on weekday mornings before 11:00 UTC.\n- [2025-06-24] standup/dune/2025-06-24: Reporting still relies on Ledger; keep that in mind for the maintenance.\n- [2025-08-25] standup/atlas/2025-08-25: New deploy window for Ledger: on Wednesdays between 09:00 and 11:00 UTC. Forget the previous weekday mornings before 11:00 UTC slot.\n- [2025-05-30] incident-review/INC-2025-011: Review of INC-2025-011 (Ledger, 2025-05-24). The root cause was an index missing after the schema migration. We decided that ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2026-03-11] standup/cinder/2026-03-11: No deploys to Ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2025-09-30] standup/atlas/2025-09-30: Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. The billing API now depends on the feature flag service. The Atlas team planning meeting is every Tuesday.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.\n- [2026-01-15] standup/ember/2026-01-15: On-call rotation: Diego is primary for Ember starting today; Oskar is off rotation.\n- [2026-01-12] handover/2026-01-12-billing-api: Quick one: billing-api belongs to the Ember team starting today. Thanks to the Atlas team for running it until now.\n- [2026-03-20] standup/boreal/2026-03-20-2: Observation from the Boreal team: after the retention change, the catalog service's disk usage jumped 30 percent. The Boreal team runs its planning on Thursdays.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n\nQuestion: Who is on call for the team that owns the service the ledger depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788592520-lnfWVa50y1mRCfQv5wIm",
+  "object": "chat.completion",
+  "created": 1788592520,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Oskar",
+     "refusal": null,
+     "reasoning": "The question: \"Who is on call for the team that owns the service the ledger depends on?\"\n\nFirst, what does the ledger depend on? From [2025-03-04]: \"If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\" So ledger depends on the auth gateway.\n\nWho owns the auth gateway? [2025-01-20] standup/ember/2025-01-20: \"the authentication gateway is owned by Ember.\"\n\nSo the team is Ember. Who is on call for Ember now? Entries:\n- [2026-01-15] Diego primary for Ember; Oskar off rotation.\n- [2026-05-29] Oskar is primary for Ember starting today; Diego is off rotation.\n\nToday is 2026-06-30, so the latest is 2026-05-29: Oskar.\n\nAnswer: Oskar.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Who is on call for the team that owns the service the ledger depends on?\"\n\nFirst, what does the ledger depend on? From [2025-03-04]: \"If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\" So ledger depends on the auth gateway.\n\nWho owns the auth gateway? [2025-01-20] standup/ember/2025-01-20: \"the authentication gateway is owned by Ember.\"\n\nSo the team is Ember. Who is on call for Ember now? Entries:\n- [2026-01-15] Diego primary for Ember; Oskar off rotation.\n- [2026-05-29] Oskar is primary for Ember starting today; Diego is off rotation.\n\nToday is 2026-06-30, so the latest is 2026-05-29: Oskar.\n\nAnswer: Oskar.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1632,
+   "completion_tokens": 200,
+   "total_tokens": 1832,
+   "cost": 0.0001724,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001724,
+    "upstream_inference_prompt_cost": 0.0001224,
+    "upstream_inference_completions_cost": 5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 195,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.605325084005017,
+ "fetched_at": "2026-09-05T07:15:23Z"
+}

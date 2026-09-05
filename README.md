@@ -392,6 +392,60 @@ Full tables covering every phase, the mixed workload, concurrency, correctness, 
 limitations of the benchmark itself are in [`docs/benchmarks.md`](docs/benchmarks.md). Raw JSON
 with per-operation latency arrays sits in `spike/results/`.
 
+## Does an agent answer better?
+
+Phase 0 measures storage. It says nothing about whether an agent answers better with anatid in
+front of it than with the obvious alternatives, so a second benchmark asks that. Eleven memory
+systems answer the same 150 questions about a synthetic engineering organisation (about 178 notes
+over eighteen months: handovers, on-call rotations, incidents, decisions, and three wrong records
+corrected weeks later) with the same model, `z-ai/glm-5.3-flash` at temperature 0, the same prompt
+and the same 1,200-token memory budget. A judge that never learns which system answered grades each
+answer against an exact gold, a lexical scorer is reported next to it, and every model call is
+cached so one command reproduces every number. Two seeds of the generator give two worlds. Accuracy
+under the judge, then multi-hop accuracy, false refusals (`I don't know` on a question the notes do
+answer) and mean context size, each as seed 20260905 / seed 7:
+
+| memory system | accuracy, seed 20260905 | accuracy, seed 7 | multi-hop | false refusals | context tokens |
+|---|---:|---:|---:|---:|---:|
+| Markdown file, most recent notes that fit | 39% | 41% | 36% / 28% | 68% / 61% | 1200 / 1187 |
+| Markdown file, whole, no budget | 92% | 99% | 88% / 96% | 2% / 0% | 6338 / 6310 |
+| BM25 over the notes | 89% | 88% | 40% / 32% | 2% / 3% | 1150 / 1145 |
+| vectors over the notes | 92% | 93% | 52% / 56% | 4% / 3% | 1178 / 1179 |
+| BM25 and vectors fused | 91% | 91% | 48% / 48% | 3% / 2% | 1179 / 1179 |
+| vectors with one feedback round | 93% | 92% | 60% / 56% | 3% / 2% | 1178 / 1179 |
+| anatid, every arm | 82% | 91% | 40% / 60% | 14% / 9% | 1096 / 1102 |
+| anatid, text arm only | 81% | 84% | 36% / 40% | 17% / 15% | 1069 / 1055 |
+| anatid, vector arm only | 89% | 93% | 56% / 68% | 9% / 7% | 1071 / 1075 |
+| anatid, graph arm only | 27% | 21% | 16% / 8% | 85% / 94% | 646 / 590 |
+| anatid built from gold patches (oracle) | 94% | 96% | 76% / 84% | 5% / 3% | 1066 / 1098 |
+
+Where anatid wins. On seed 7 it answers more of the 25 multi-hop questions than any raw-note
+system (15 against 14 for vectors), and its two outright wins are graph chains no raw-note system
+got: the on-call engineer of the team that owns a service, and the complete list of six services a
+team owns, which every other budgeted system truncated. Its memory block is smaller than any
+raw-note system's, at about 1,100 tokens against 1,180, for answers that cost the same two to three
+cents per 150 questions. It refused every unanswerable question in both worlds, as did nearly every
+other system. And the same store built from gold patches instead of the
+model's, an oracle for extraction rather than a product, is the best budgeted system in both worlds
+at 94% and 96%, so the retrieval is not the limit.
+
+Where anatid loses. On the committed corpus it trails every budgeted retriever, by ten points
+against vectors alone and eleven against vectors with a feedback round; it wins no question outright
+and loses 21, thirteen of them refusals on facts the extractor never wrote down in a findable form,
+three of them stale values from handover edges it never closed. On seed 7 it is level with the fused
+baselines and two points behind vectors, with two wins and eight losses. In both worlds it refuses
+answerable questions two to four times as often as the raw-note systems, and its own vector arm
+alone beats its fused recall. Building the store costs a model pass over every note, about $0.10
+and an hour of model time for 178 notes, where the vector index costs a cent. The whole file in the
+prompt beats everything at this corpus size, which is the honest answer at 6,300 tokens of notes
+and says nothing about 60,000.
+
+The corpus is ours, the judge is the answering model, and 25 questions per category means one
+question is four points, so the differences among the raw-note systems are noise and anatid's
+ten-point gap on the committed corpus probably is not. The method, the per-category tables, the arm
+ablations, every loss question by question and the one command that reproduces it all are in
+[`docs/quality.md`](docs/quality.md).
+
 ## OpenAI Agents SDK integration
 
 The [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) already carries what
@@ -588,6 +642,7 @@ This is v0.4. The API may still move, so pin the version.
 | [`docs/design/derived-index-framework.md`](docs/design/derived-index-framework.md) | the design the accelerators are built to, and what shipped against what was deferred |
 | [`docs/extension.md`](docs/extension.md) | the optional C++ extension: what it accelerates and how to build it |
 | [`docs/benchmarks.md`](docs/benchmarks.md) | Phase 0 method, every result, and what the benchmark does not tell you |
+| [`docs/quality.md`](docs/quality.md) | the answer-quality benchmark: eleven memory systems, one model, one budget, the losses next to the wins, and the command that reproduces it |
 | [`docs/roadmap.md`](docs/roadmap.md) | what comes next, and what is deliberately out of scope |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | how to build it, what we care about in a change, third-party notices |
 | `spike/` | the Phase 0 evidence, kept read-only |
@@ -597,3 +652,5 @@ This is v0.4. The API may still move, so pin the version.
 MIT. Copyright (c) 2026 anatid contributors. Code adapted from DuckDB (MIT), or from Kuzu and
 LadybugDB (MIT, Copyright 2022-2025 Kùzu Inc.), carries its original notice alongside ours. See
 [`CONTRIBUTING.md`](CONTRIBUTING.md#third-party-notices).
+
+<!-- mcp-name: io.github.thedatasense/anatid -->

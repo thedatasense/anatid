@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The image resizer is owned by the Atlas team as of 2025-11-26, having moved from the Ember team. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The image resizer is owned by the Ember team as of 2025-03-20. [valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: The Dune team owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- The product catalog calls the image resizer for thumbnails. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- The image resizer is a hard dependency of the product catalog. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- Dashboards and alerts for the image resizer are being repointed as of the 2025-11-26 handover. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n- The product catalog still relies on the image resizer. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2025-10-15 the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-10-15 to now; recorded by standup/atlas/2025-10-15]\n- On 2026-03-17 the Atlas team decided that the image resizer will keep original uploads for 90 days only, because storage for originals doubled in six months. [decision; valid 2026-03-17 to now; recorded by standup/atlas/2026-03-17]\n- As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation, taking over from Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is on the Atlas team on-call rotation as of 2025-06-19, taking over from Priya Raman. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya Raman is on the Atlas team on-call rotation as of 2025-05-13, taking over from Tomasz. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is on the Atlas team on-call rotation as of 2025-04-03. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Tomasz is off the Atlas team on-call rotation as of 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n- As of 2026-05-29, Oskar is on the Ember team on-call rotation as the primary on-call. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- Priya Raman holds the first on-call rotation for the Atlas team as of 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-07-30; recorded by standup/atlas/2025-01-09]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2025-09-04, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n    earlier: Farah has the first on-call rotation for the Dune team. [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n- As of 2026-05-22, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- As of 2025-09-05, the Dune team still owned the job scheduler; ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, the Dune team still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n\nQuestion: Who is on call for the team that owns image-resizer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604447-vBeWnB51nc66PQs9ZVxc",
+  "object": "chat.completion",
+  "created": 1788604447,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Priya Raman",
+     "refusal": null,
+     "reasoning": "The image resizer is owned by the Atlas team as of 2025-11-26, valid to now. Today is 2026-06-30, so Atlas owns the image resizer.\n\nWho is on call for Atlas team? As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation, valid to now. So Priya Raman.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The image resizer is owned by the Atlas team as of 2025-11-26, valid to now. Today is 2026-06-30, so Atlas owns the image resizer.\n\nWho is on call for Atlas team? As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation, valid to now. So Priya Raman.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1633,
+   "completion_tokens": 88,
+   "total_tokens": 1721,
+   "cost": 0.000125275,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000125275,
+    "upstream_inference_prompt_cost": 0.000103275,
+    "upstream_inference_completions_cost": 2.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 82,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.8005621249903925,
+ "fetched_at": "2026-09-05T10:34:09Z"
+}

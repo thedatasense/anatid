@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays; the previous Mon-Thu 09:00-17:00 UTC window no longer applies. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- As of 2025-04-29, the job scheduler still relies on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- As of 2025-09-02, the feature-flags service saw 40,000 requests per second at peak. [valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- As of 2025-09-02, most requests to the feature-flags service at peak were identical. [valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- The job scheduler depends on the feature-flags service for per-job kill switches. [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- On 2025-09-02 the Atlas team decided that clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- Oskar wrote up the handover doc for the feature-flags service handover to the Atlas team for Farah. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: Oskar wrote up the handover doc for the feature-flags service handover to the Dune team for Farah. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- As of 2025-04-24, the Cinder team reported that the feature-flags service's p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- As of 2026-05-19, the job scheduler's leader lease will be shortened to ten seconds. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- As of 2025-09-30, the billing API gates the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team, having moved from the Ember team; the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team, having moved from the Ember team. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team, until ownership transferred to the Atlas team on 2026-02-11. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team, until ownership transferred to the Dune team on 2026-02-11. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: The feature-flags service is owned by the Ember team as of 2025-11-06, having moved from the Atlas team. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- The feature-flags service was owned by the Ember team as of 2025-11-06, having moved from the Atlas team, until ownership transferred to the Atlas team on 2026-02-11. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: The feature-flags service was owned by the Ember team as of 2025-11-06, having moved from the Atlas team, until ownership transferred to the Dune team on 2026-02-11. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team, having moved from the Atlas team. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n- On 2025-12-31 the Atlas team noticed that the feature-flags service's queue depth hit 50,000 following the marketing send and flagged it because it is not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n\nQuestion: When can feature-flags be deployed?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604170-m3uXjP3fEsV6Gk1bM8Rj",
+  "object": "chat.completion",
+  "created": 1788604170,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks \"When can feature-flags be deployed?\" The memory contains a constraint about the product catalog release window: \"The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays\" — but that's the product catalog, not feature-flags. The question asks about feature-flags deployment times. There is no memory entry about when feature-flags can be deployed.\n\nHmm, but is the question maybe a trick? The constraint is about \"product catalog\" releases, not feature-flags deployments. The memory does not contain information about feature-flags deployment windows. So the answer should be \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks \"When can feature-flags be deployed?\" The memory contains a constraint about the product catalog release window: \"The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays\" — but that's the product catalog, not feature-flags. The question asks about feature-flags deployment times. There is no memory entry about when feature-flags can be deployed.\n\nHmm, but is the question maybe a trick? The constraint is about \"product catalog\" releases, not feature-flags deployments. The memory does not contain information about feature-flags deployment windows. So the answer should be \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1567,
+   "completion_tokens": 142,
+   "total_tokens": 1709,
+   "cost": 0.000145345,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000145345,
+    "upstream_inference_prompt_cost": 0.000109845,
+    "upstream_inference_completions_cost": 3.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 136,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.043740041030105,
+ "fetched_at": "2026-09-05T10:29:33Z"
+}

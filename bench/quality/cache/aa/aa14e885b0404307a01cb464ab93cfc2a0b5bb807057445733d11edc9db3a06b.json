@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000661\" [decision]: On 2025-09-02 the Atlas team decided that clients will cache feature-flags evaluations for 30 seconds.  (about: Atlas team, feature-flags)\n- memory_id \"1000594\": Priya Raman holds the first on-call rotation for the Atlas team as of 2025-07-30.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000582\": As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation, taking over from Tomasz.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000568\": The Ember team runs its planning on Fridays.  (about: Ember team)\n- memory_id \"1000557\": Diego has the Cinder pager as of 2025-07-17, taking over from Yuki Tanaka.  (about: Yuki Tanaka, Cinder, Diego)\n- memory_id \"1000548\": The billing API is owned by the Atlas team as of 2025-06-09, having moved from the Ember team; the Boreal team was recorded by mistake and never held it.  (about: Atlas team, Boreal team, billing API, Ember team)\n- memory_id \"1000514\": The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it.  (about: Cinder, Dune team, notifier)\n- memory_id \"1000506\": The job scheduler is owned by the Dune team as of 2025-06-25, having moved from the Ember team.  (about: Dune team, Ember team, job scheduler)\n- memory_id \"1000424\" [decision]: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder.  (about: Atlas team, Cinder, indexer)\n- memory_id \"1000409\" [decision]: Cinder adopted trunk-based development.  (about: Cinder)\n- memory_id \"1000404\": On 2025-05-14 the Cinder team observed that webhooks' memory use grew steadily for a week after the cache change.  (about: Cinder, webhooks)\n- memory_id \"1000364\": As of 2025-04-24, the Cinder team reported that the feature-flags service's p99 latency doubled after Tuesday's deploy.  (about: Cinder, feature-flags)\n- memory_id \"1000343\": The product catalog keeps image metadata in a separate table because the joined writes were locking product updates for seconds at a time.  (about: product catalog)\n- memory_id \"1000341\" [decision]: The product catalog will keep image metadata in a separate table.  (about: product catalog)\n- memory_id \"1000328\": The image resizer is a hard dependency of the product catalog.  (about: product catalog, image resizer)\n- memory_id \"1000325\": The product catalog calls the image resizer for thumbnails.  (about: product catalog, image resizer)\n- memory_id \"1000273\" [constraint]: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception.  (about: product catalog)\n- memory_id \"1000165\": During incident INC-2025-004, the notifier missed alerts for 40 minutes on 2025-02-01.  (about: notifier, INC-2025-004)\n- memory_id \"1000155\": The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down.  (about: product catalog, indexer)\n- memory_id \"1000112\": Cinder owns the product catalog.  (about: Cinder, product catalog)\n- memory_id \"1000026\": Diego is on Cinder.  (about: Cinder, Diego)\n- memory_id \"1000021\": Yuki Tanaka is on Cinder.  (about: Yuki Tanaka, Cinder)\nExisting entity names: Atlas team, feature-flags, Priya Raman, Tomasz, Ember team, Yuki Tanaka, Cinder, Diego, Boreal team, billing API, Dune team, notifier, job scheduler, indexer, webhooks, product catalog, image resizer, INC-2025-004\n\nThe note:\n\n[2025-09-03] standup/cinder/2025-09-03: New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Mon-Thu 09:00-17:00 UTC slot."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788601169-tFC9oUn2ad2GXJf6m4qK",
+  "object": "chat.completion",
+  "created": 1788601169,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [],\n \"corrections\": [\n  {\n   \"old_memory_id\": \"1000273\",\n   \"new_content\": \"The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays; the previous Mon-Thu 09:00-17:00 UTC window no longer applies.\",\n   \"entities\": [\n    \"product catalog\"\n   ],\n   \"kind\": \"constraint\",\n   \"confidence\": 1,\n   \"evidence\": \"New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Mon-Thu 09:00-17:00 UTC slot.\"\n  }\n ],\n \"add_relations\": [],\n \"remove_relations\": [],\n \"entity_aliases\": []\n}",
+     "refusal": null,
+     "reasoning": "The note says: New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Mon-Thu 09:00-17:00 UTC slot.\n\nThis changes the existing constraint memory_id \"1000273\": \"The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception.\"\n\nSo I should add a correction with old_memory_id \"1000273\", new content: \"The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays.\" Entities: product catalog. Kind: constraint. Evidence: \"New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays.\"\n\nShould I also add a fact? The instructions say when the note changes something an existing fact states, do not add a contradicting fact; add a correction. So just the correction.\n\nNo relations, no aliases.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Mon-Thu 09:00-17:00 UTC slot.\n\nThis changes the existing constraint memory_id \"1000273\": \"The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception.\"\n\nSo I should add a correction with old_memory_id \"1000273\", new content: \"The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays.\" Entities: product catalog. Kind: constraint. Evidence: \"New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays.\"\n\nShould I also add a fact? The instructions say when the note changes something an existing fact states, do not add a contradicting fact; add a correction. So just the correction.\n\nNo relations, no aliases.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2357,
+   "completion_tokens": 386,
+   "total_tokens": 2743,
+   "cost": 0.00054655,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00054655,
+    "upstream_inference_prompt_cost": 0.00035355,
+    "upstream_inference_completions_cost": 0.000193
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 215,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.854703540971968,
+ "fetched_at": "2026-09-05T09:39:36Z"
+}

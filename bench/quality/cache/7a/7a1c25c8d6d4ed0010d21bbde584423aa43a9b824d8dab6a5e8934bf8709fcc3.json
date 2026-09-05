@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n- The reporting service must stay on Python 3.11 until the pandas 3 upgrade lands. [constraint; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09]\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk, leaving stale results for two days. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- The reporting service can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- On 2026-03-10, Team Dune observed that the reporting service's p99 latency doubled after Tuesday's deploy. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- On 2025-08-01, it was decided that certificate expiry will alert 30 days ahead. [decision; valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- INC-2025-011 was caused by an index missing after the schema migration. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- INC-2025-017's root cause was an expired intermediate certificate, which took logins down. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2025-004 was a consumer offset stuck after a broker restart. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- The notifier's flat one-second retry was hammering the push provider during its outages. [valid 2025-02-20 to now; recorded by standup/boreal/2025-02-20]\n- For the Atlas on-call cycle starting 2025-02-19, page Tomasz Nowak instead of Priya for anything. [preference; valid 2025-02-19 to now; recorded by standup/atlas/2025-02-19]\n- As of 2026-05-25, for the Team Atlas on-call cycle, page Marcus for anything instead of Priya. [preference; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, for the Team Atlas on-call cycle, page Priya for anything instead of Marcus. [preference; valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, for the Team Atlas on-call cycle, page Marcus Oyelaran for anything instead of Priya. [preference; valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n    earlier: As of 2025-07-03, for the current Team Atlas on-call cycle, page Priya for anything instead of Tomasz Nowak. [preference; valid 2025-07-03 to 2026-03-09; recorded by standup/atlas/2025-07-03]\n    earlier: As of 2025-05-09, for the current Team Atlas on-call cycle, page Tomasz Nowak for anything instead of Priya. [preference; valid 2025-05-09 to 2025-07-03; recorded by standup/atlas/2025-05-09]\n\nQuestion: Who was responsible for reporting on 2025-11-26?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614589-e0qkHRjY8sOqDpDeP6yi",
+  "object": "chat.completion",
+  "created": 1788614589,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The Ember team",
+     "refusal": null,
+     "reasoning": "The question asks who was responsible for the reporting service on 2025-11-26.\n\nMemory entries about reporting service ownership:\n- Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07]\n- As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n\nSo on 2025-11-26, the valid entry is the Ember team (valid from 2025-11-17 onwards, superseding the Team Boreal entry).\n\nAnswer: Team Ember (the Ember team).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was responsible for the reporting service on 2025-11-26.\n\nMemory entries about reporting service ownership:\n- Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07]\n- As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n\nSo on 2025-11-26, the valid entry is the Ember team (valid from 2025-11-17 onwards, superseding the Team Boreal entry).\n\nAnswer: Team Ember (the Ember team).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1654,
+   "completion_tokens": 208,
+   "total_tokens": 1862,
+   "cost": 0.00017605,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00017605,
+    "upstream_inference_prompt_cost": 0.00012405,
+    "upstream_inference_completions_cost": 5.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 203,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.14840979204746,
+ "fetched_at": "2026-09-05T13:23:14Z"
+}

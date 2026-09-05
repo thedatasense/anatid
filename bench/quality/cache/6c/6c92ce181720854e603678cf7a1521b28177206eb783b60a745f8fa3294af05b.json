@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Cinder runs its planning on Mondays. [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- On 2026-03-11 the Cinder team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- On 2026-01-30 the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- The product catalog is owned by the Atlas team as of 2025-12-19, having moved from Cinder. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of 2025-12-19, the Atlas team is taking over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- As of 2025-11-27, Yuki Tanaka holds the Cinder pager, taking over from Diego, who is leaving the team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego holds the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n- As of 2025-11-27, Diego is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on Cinder. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- As of 2025-10-16, the Cinder team sits on the third floor. [valid 2025-10-16 to now; recorded by standup/cinder/2025-10-16]\n- As of 2025-10-13, ownership of the ledger service transferred to Cinder from the Atlas team. [decision; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- As of 2025-10-13, the pager for the ledger service rings Cinder instead of the Atlas team. [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- The job scheduler was owned by the Dune team from 2025-06-25, having moved from the Ember team, until ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The job scheduler is owned by the Dune team as of 2025-06-25, having moved from the Ember team. [valid 2025-06-25 to 2025-09-23; recorded by handover/2025-06-25-scheduler]\n    earlier: The job scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- As of 2025-09-05, the Dune team still owned the job scheduler; ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, the Dune team still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2025-09-23, the pager for the job scheduler rings Cinder instead of the Dune team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- The authentication gateway is owned by Cinder as of 2025-09-16, having moved from the Ember team. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: The authentication gateway is owned by the Ember team. [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n\nQuestion: On what date was the review of INC-2025-017 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788605052-WM7agQMtWApNpn9akXAj",
+  "object": "chat.completion",
+  "created": 1788605052,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The user asks about INC-2025-017 review date. The memory doesn't mention INC-2025-017 at all. So answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks about INC-2025-017 review date. The memory doesn't mention INC-2025-017 at all. So answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1470,
+   "completion_tokens": 43,
+   "total_tokens": 1513,
+   "cost": 0.00011332,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00011332,
+    "upstream_inference_prompt_cost": 0.00010257,
+    "upstream_inference_completions_cost": 1.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 37,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.714406707964372,
+ "fetched_at": "2026-09-05T10:44:14Z"
+}

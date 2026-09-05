@@ -1,0 +1,66 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus because nightly ledger scans were blocking billing runs. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- On 2025-12-29 the Dune team observed that the event bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- Dashboards and alerts for the event bus are being repointed as of the 2025-11-24 handover. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- As of 2025-11-24, the Atlas team is taking over the event bus from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: As of 2025-08-15, the Boreal team still owns the bus. [valid 2025-08-15 to 2025-11-24; recorded by standup/boreal/2025-08-15-2]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- Until 2025-11-24, the Boreal team looked after the bus; ownership then moved to the Atlas team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- As of 2025-08-25, the ledger service only ships on Wednesdays between 09:00 and 11:00 UTC; the previous weekday mornings before 11:00 UTC slot is retired. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- On 2026-04-08 the Atlas team noticed that webhooks' request volume halved following the client rollout and flagged it because it is not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to now; recorded by standup/dune/2025-06-24]\n- The notifier relies on the bus for delivery events, so if the bus is down the notifier is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- On 2025-11-04 the Ember team saw that the billing API's queue depth hit 50,000 following the marketing send and flagged it because it is not their service. [valid 2025-11-04 to now; recorded by standup/ember/2025-11-04]\n- The webhook dispatcher relies on the bus for outbound events, so if the bus is down the webhook dispatcher is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- On 2025-12-25 the Atlas team noticed that the reports pipeline's disk usage jumped 30 percent after the retention change and flagged it because it is not their service. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- On 2025-12-31 the Atlas team noticed that the feature-flags service's queue depth hit 50,000 following the marketing send and flagged it because it is not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- On 2026-04-16 the Atlas team noticed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it because it is not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n\nQuestion: What did reporting depend on before it switched to the event-bus?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603819-g7jbmmQ0RjqqPqo2YbzC",
+  "object": "chat.completion",
+  "created": 1788603819,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger service",
+     "refusal": null,
+     "reasoning": null
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1490,
+   "completion_tokens": 5,
+   "total_tokens": 1495,
+   "cost": 0.00015075,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015075,
+    "upstream_inference_prompt_cost": 0.000149,
+    "upstream_inference_completions_cost": 1.75e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 0.39639433403499424,
+ "fetched_at": "2026-09-05T10:23:39Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal noticed that the catalog's memory use grew steadily for a week after the cache change [observation; valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- Dune noticed that the catalog's request volume halved after the client rollout [observation; valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- Atlas noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Atlas adopted a no-deploy Friday [valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- Atlas owns the catalog [valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the catalog [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- Boreal noticed that the catalog's disk usage jumped 30 percent after the retention change [observation; valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- The catalog deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- Decision: the catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time [decision; valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n- Decision: search-indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- Cinder noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- INC-2025-023: search-indexer served stale results for two days on 2025-10-03; the root cause was a reindex job that failed silently on a full disk [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023 [decision; valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- Priya is on call for Atlas [valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: Marcus is on call for Atlas [valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: Priya is on call for Atlas [valid 2025-07-30 to 2026-04-08; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is on call for Atlas [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya is on call for Atlas [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is on call for Atlas [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya is on call for Atlas [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz is on call for Atlas [valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- Lena is on call for Boreal [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: Marcus is on call for Boreal [valid 2026-02-10 to 2026-03-20; recorded by standup/boreal/2026-02-10]\n    earlier: Lena is on call for Boreal [valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: Marcus is on call for Boreal [valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: Lena is on call for Boreal [valid 2025-09-23 to 2025-11-06; recorded by standup/boreal/2025-09-23]\n    earlier: Marcus is on call for Boreal [valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n    earlier: Lena is on call for Boreal [valid 2025-06-27 to 2025-08-15; recorded by standup/boreal/2025-06-27]\n    earlier: Marcus is on call for Boreal [valid 2025-05-07 to 2025-06-27; recorded by standup/boreal/2025-05-07]\n    earlier: Lena is on call for Boreal [valid 2025-03-17 to 2025-05-07; recorded by standup/boreal/2025-03-17]\n    earlier: Marcus is on call for Boreal [valid 2025-02-12 to 2025-03-17; recorded by standup/boreal/2025-02-12]\n    earlier: Lena is on call for Boreal [valid 2025-01-09 to 2025-02-12; recorded by standup/boreal/2025-01-09-4]\n- Search-indexer depends on the catalog [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The catalog depends on image-resizer [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n\nQuestion: What is the current deploy window for the catalog?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788597421-Dq8CkIXFUr8ev8XaiqUx",
+  "object": "chat.completion",
+  "created": 1788597421,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Weekdays between 08:00 and 10:00 UTC, never on Fridays",
+     "refusal": null,
+     "reasoning": "The question asks about the current deploy window for the catalog. The memory has:\n\n- The catalog deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-17 to 2025-09-03]\n\nThe current one (valid to now) is: weekdays between 08:00 and 10:00 UTC, never on Fridays.\n\nAnswer in one short line with just the value.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the current deploy window for the catalog. The memory has:\n\n- The catalog deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-17 to 2025-09-03]\n\nThe current one (valid to now) is: weekdays between 08:00 and 10:00 UTC, never on Fridays.\n\nAnswer in one short line with just the value.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1724,
+   "completion_tokens": 167,
+   "total_tokens": 1891,
+   "cost": 0.0003421,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003421,
+    "upstream_inference_prompt_cost": 0.0002586,
+    "upstream_inference_completions_cost": 8.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 148,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.353814792004414,
+ "fetched_at": "2026-09-05T08:37:04Z"
+}

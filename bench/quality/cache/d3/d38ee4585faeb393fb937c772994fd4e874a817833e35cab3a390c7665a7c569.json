@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which team was Diego on before moving to Ember?\nGold answer: Cinder\nAlso accepted: the Cinder team; team Cinder\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: Team Cinder"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616570-YAOY7o3Jyr2ZAkDWjhsY",
+  "object": "chat.completion",
+  "created": 1788616570,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'Team Cinder' matches the accepted alternative phrasing 'team Cinder' for the gold answer Cinder.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"Team Cinder\". The gold answer is \"Cinder\", also accepted: \"the Cinder team; team Cinder\". The answer matches an accepted alternative phrasing. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"Team Cinder\". The gold answer is \"Cinder\", also accepted: \"the Cinder team; team Cinder\". The answer matches an accepted alternative phrasing. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 242,
+   "completion_tokens": 76,
+   "total_tokens": 318,
+   "cost": 2.947e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.947e-05,
+    "upstream_inference_prompt_cost": 1.047e-05,
+    "upstream_inference_completions_cost": 1.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 42,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.953085375018418,
+ "fetched_at": "2026-09-05T13:56:13Z"
+}

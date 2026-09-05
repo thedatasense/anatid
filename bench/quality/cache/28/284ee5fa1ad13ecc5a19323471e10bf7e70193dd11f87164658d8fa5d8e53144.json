@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-06-04, Priya Raman holds the Atlas team pager this cycle, taking over from Marcus. [decision; valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: As of 2026-04-08, page Marcus for anything Atlas-related this cycle, not Priya Raman. [decision; valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: As of 2026-03-17, Priya Raman is the person to page for anything Atlas-related. [decision; valid 2026-03-17 to 2026-04-08; recorded by standup/atlas/2026-03-17]\n- The Boreal team consists of Lena, after Marcus moved to the Atlas team on 2026-03-20. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: The Boreal team consists of Lena and Marcus. [valid 2025-01-07 to 2026-03-20; recorded by standup/boreal/2025-01-07]\n- On 2026-03-20, Marcus moved from the Boreal team to the Atlas team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- As of 2026-03-20, Lena holds the Boreal team pager this cycle, taking over from Marcus. [decision; valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- As of 2026-02-10, Marcus Oyelaran has the Boreal team pager this cycle, taking over from Lena. [decision; valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10]\n- As of 2026-02-10, Marcus Oyelaran has the Boreal team pager this cycle, taking over from Lena. [decision; valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, Lena has the Boreal team pager this cycle, taking over from Marcus. [decision; valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n- As of 2025-11-06, Marcus has the Boreal team pager this cycle, taking over from Lena. [decision; valid 2025-11-06 to now; recorded by standup/boreal/2025-11-06]\n    earlier: As of 2025-09-23, for anything Boreal-related, page Lena this cycle, not Marcus. [decision; valid 2025-09-23 to 2025-11-06; recorded by standup/boreal/2025-09-23]\n    earlier: For anything Boreal-related, page Marcus. [decision; valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n    earlier: For anything Boreal-related, page Lena. [decision; valid 2025-06-27 to 2025-08-15; recorded by standup/boreal/2025-06-27]\n    earlier: For anything Boreal-related, page Marcus. [decision; valid 2025-05-29 to 2025-06-27; recorded by standup/boreal/2025-05-29]\n- On 2026-05-27, the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Marcus took over the Boreal team on-call shift from Lena on 2025-05-07. [decision; valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07]\n- The Atlas team planning meeting is every Tuesday. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- As of 2026-03-02, Oskar Lind is on the Ember team's on-call rotation. [valid 2026-03-02 to now; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Oskar is off the Ember team's on-call rotation. [valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: As of 2025-06-19, Tomasz is the primary on-call for the Atlas team and Priya Raman is no longer the primary on-call. [decision; valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: As of 2025-05-13, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Priya Raman is no longer the primary on-call for the Atlas team; Tomasz is the primary on-call for the Atlas team this cycle as of 2025-04-03. [decision; valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12; Tomasz is off rotation. [decision; valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz takes the first on-call rotation for the Atlas team. [decision; valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- As of 2026-05-29, Diego is off the Ember team's on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n\nQuestion: Who is on call for Marcus's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595762-ggRp5QX3YoPYABaHvsYK",
+  "object": "chat.completion",
+  "created": 1788595762,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Priya Raman",
+     "refusal": null,
+     "reasoning": "Marcus's team: Marcus moved to the Atlas team on 2026-03-20. So his current team is Atlas.\n\nWho is on call for Atlas right now? There are two types of entries: \"pager\" and \"primary on-call.\"\n\nThe Atlas pager: As of 2026-06-04, Priya Raman holds the Atlas team pager this cycle (valid to now).\n\nPrimary on-call for Atlas: As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team (valid to now).\n\nEither way, the answer is Priya Raman.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Marcus's team: Marcus moved to the Atlas team on 2026-03-20. So his current team is Atlas.\n\nWho is on call for Atlas right now? There are two types of entries: \"pager\" and \"primary on-call.\"\n\nThe Atlas pager: As of 2026-06-04, Priya Raman holds the Atlas team pager this cycle (valid to now).\n\nPrimary on-call for Atlas: As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team (valid to now).\n\nEither way, the answer is Priya Raman.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1699,
+   "completion_tokens": 132,
+   "total_tokens": 1831,
+   "cost": 0.000152745,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000152745,
+    "upstream_inference_prompt_cost": 0.000119745,
+    "upstream_inference_completions_cost": 3.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 126,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7051219579880126,
+ "fetched_at": "2026-09-05T08:09:24Z"
+}

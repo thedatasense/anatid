@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1001006\" [decision]: As of 2026-03-02, for anything related to the Ember team, page Oskar Lind for anything this cycle, not Diego.  (about: Diego, Ember team, Oskar)\n- memory_id \"1000829\": As of 2025-11-27, the Ember team consists of Oskar and Diego.  (about: Diego, Ember team, Oskar)\n- memory_id \"1000823\" [decision]: As of 2025-11-27, Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego.  (about: Yuki Tanaka, Cinder team, Diego)\n- memory_id \"1000818\": As of 2025-11-27, Diego is on the Ember team.  (about: Diego, Ember team)\n- memory_id \"1000654\": On 2025-09-16, Oskar wrote the authentication gateway handover document for Diego.  (about: Diego, Oskar, authentication gateway)\n- memory_id \"1001017\": As of 2026-03-02, Oskar Lind is on the Ember team's on-call rotation.  (about: Ember team, Oskar)\n- memory_id \"1001012\" [decision]: As of 2026-03-02, Oskar Lind is the primary on-call for the Ember team, not Diego.  (about: Ember team, Oskar)\n- memory_id \"1000974\": On 2026-02-11, Oskar wrote the feature-flags handover document for Farah.  (about: feature-flags, Farah, Oskar)\n- memory_id \"1000491\": On 2025-06-25, Oskar walked Farah through the job scheduler's runbook.  (about: Farah, Oskar, job scheduler)\n- memory_id \"1000454\": On 2025-06-09, Oskar wrote the billing API handover document for Lena.  (about: Lena, billing API, Oskar)\n- memory_id \"1000405\": On 2025-05-15, Oskar walked Lena through the webhook dispatcher's runbook.  (about: Lena, webhook dispatcher, Oskar)\n- memory_id \"1000150\": Oskar runs the weekly architecture review.  (about: Oskar, weekly architecture review)\n- memory_id \"1000103\" [decision]: Oskar takes the first on-call shift of the year for the Ember team.  (about: Ember team, Oskar)\n- memory_id \"1000852\": As of 2025-12-05, the pager for reporting rings the Ember team.  (about: Ember team, reporting)\n- memory_id \"1000237\": From 2025-03-03, the pager for the webhook dispatcher rings the Ember team.  (about: webhook dispatcher, Ember team)\n- memory_id \"1000650\": On 2025-09-16, the Ember team handed the authentication gateway over to the Cinder team.  (about: Cinder team, Ember team, authentication gateway)\n- memory_id \"1000856\": As of 2025-12-05, the Ember team owns reporting, which team Dune owned until then.  (about: team Dune, Ember team, reporting)\n- memory_id \"1001031\": As of 2026-02-11, feature-flags is owned by the Atlas team, which the Ember team owned until then.  (about: Atlas team, feature-flags, Ember team)\n- memory_id \"1000723\": From 2025-10-13, the pager for the ledger service rings the Cinder team instead of the Atlas team.  (about: Atlas team, Cinder team, ledger service)\n- memory_id \"1000915\" [decision]: As of 2026-01-12, the billing API is owned by the Ember team, which the Atlas team owned until then.  (about: Atlas team, billing API, Ember team)\n- memory_id \"1000542\": The Ember team runs its planning on Fridays.  (about: Ember team)\n- memory_id \"1000664\": As of 2025-09-23, the pager for the job scheduler rings the Cinder team.  (about: Cinder team, job scheduler)\n- memory_id \"1000810\" [decision]: As of 2025-11-26, the image resizer is owned by the Atlas team, which the Ember team owned until then.  (about: Atlas team, Ember team, image resizer)\n- memory_id \"1000771\": On 2025-11-04, the Ember team saw that the billing service's queue depth hit 50,000 following the marketing send and flagged it as not their service.  (about: Ember team, the marketing send, billing service)\nExisting entity names: Diego, Ember team, Oskar, Yuki Tanaka, Cinder team, authentication gateway, feature-flags, Farah, job scheduler, Lena, billing API, webhook dispatcher, weekly architecture review, reporting, team Dune, Atlas team, ledger service, image resizer, the marketing send, billing service\n\nThe note:\n\n[2026-04-13] standup/ember/2026-04-13: Diego has the Ember pager this cycle, taking over from Oskar."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788595210-LIYo6RR3QotNXjI8ExuX",
+  "object": "chat.completion",
+  "created": 1788595210,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"corrections\": [\n  {\n   \"old_memory_id\": \"1001012\",\n   \"new_content\": \"As of 2026-04-13, Diego is the primary on-call for the Ember team, having taken over from Oskar Lind.\",\n   \"entities\": [\"Diego\", \"Ember team\", \"Oskar\"],\n   \"evidence\": \"Diego has the Ember pager this cycle, taking over from Oskar.\"\n  },\n  {\n   \"old_memory_id\": \"1001006\",\n   \"new_content\": \"As of 2026-04-13, for anything related to the Ember team, page Diego this cycle, not Oskar Lind.\",\n   \"entities\": [\"Diego\", \"Ember team\", \"Oskar\"],\n   \"evidence\": \"Diego has the Ember pager this cycle, taking over from Oskar.\"\n  }\n ],\n \"remove_relations\": [\n  {\n   \"src\": \"Oskar\",\n   \"dst\": \"Ember team\",\n   \"rel_kind\": \"on_call_for\",\n   \"evidence\": \"taking over from Oskar\"\n  }\n ],\n \"add_relations\": [\n  {\n   \"src\": \"Diego\",\n   \"dst\": \"Ember team\",\n   \"rel_kind\": \"on_call_for\",\n   \"evidence\": \"Diego has the Ember pager this cycle\"\n  }\n ]\n}",
+     "refusal": null,
+     "reasoning": "Correct memory 1001012 and 1001006? Note says Diego has pager, taking over from Oskar. Corrections: 1001012 primary on-call Oskar → Diego. Also 1001006 decision to page Oskar → Diego? The note says Diego has pager, taking over from Oskar. Corrections: 1001012 primary on-call Oskar → Diego. Also 1001006 decision to page Oskar → Diego? That was a decision based on Oskar being on-call; note implies now page Diego. Correct both 1001012 and 1001006.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Correct memory 1001012 and 1001006? Note says Diego has pager, taking over from Oskar. Corrections: 1001012 primary on-call Oskar → Diego. Also 1001006 decision to page Oskar → Diego? The note says Diego has pager, taking over from Oskar. Corrections: 1001012 primary on-call Oskar → Diego. Also 1001006 decision to page Oskar → Diego? That was a decision based on Oskar being on-call; note implies now page Diego. Correct both 1001012 and 1001006.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2488,
+   "completion_tokens": 422,
+   "total_tokens": 2910,
+   "cost": 0.0003965,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003965,
+    "upstream_inference_prompt_cost": 0.0002488,
+    "upstream_inference_completions_cost": 0.0001477
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 129,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 11.392271000018809,
+ "fetched_at": "2026-09-05T08:00:21Z"
+}

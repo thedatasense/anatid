@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000742\": Team Dune decided the webhooks service will sign payloads with rotating keys because a partner asked for key rotation in their security review.  (about: Team Dune, webhooks service)\n- memory_id \"1000739\" [decision]: On 2025-10-22, Team Dune decided that the webhooks service will sign payloads with rotating keys.  (about: Team Dune, webhooks service)\n- memory_id \"1000719\": As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas.  (about: Team Atlas, Team Dune, scheduler)\n- memory_id \"1000715\": As of 2025-10-15, the pager for the scheduler rings Team Dune instead of Team Atlas.  (about: Team Atlas, Team Dune, scheduler)\n- memory_id \"1000691\": As of 2025-09-22, Farah is primary on-call for Team Dune and Tomasz Nowak is off rotation.  (about: Tomasz Nowak, Farah, Team Dune)\n- memory_id \"1000525\": As of 2025-06-20, the webhooks service lives with Team Dune, which took it over from Team Atlas.  (about: Team Atlas, Team Dune, webhooks service)\n- memory_id \"1000504\" [preference]: As of 2025-07-03, for the current Team Atlas on-call cycle, page Priya for anything instead of Tomasz Nowak.  (about: Team Atlas, Priya, Tomasz Nowak)\n- memory_id \"1000496\": As of 2025-07-02, Team Atlas consists of Priya only, after Tomasz Nowak transferred to Team Dune.  (about: Team Atlas, Priya, Tomasz Nowak)\n- memory_id \"1000492\": As of 2025-07-02, Tomasz Nowak has transferred from Team Atlas to Team Dune.  (about: Team Atlas, Tomasz Nowak, Team Dune)\n- memory_id \"1000455\": As of 2025-06-19, the notifier lives with Team Dune.  (about: Team Dune, notifier)\n- memory_id \"1000447\": As of 2025-06-16, Team Boreal owns the catalog service, having taken it over from Team Dune.  (about: Team Boreal, Team Dune, catalog service)\n- memory_id \"1000433\": Team Dune sits on the fourth floor.  (about: Team Dune)\n- memory_id \"1000430\": On 2025-06-12, Team Dune noticed the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners.  (about: Team Dune, notifier)\n- memory_id \"1000391\" [decision]: As of 2025-05-09, Team Dune has switched to a monthly game day.  (about: Team Dune)\n- memory_id \"1000263\": As of 2025-03-24, Farah still has the Team Dune pager.  (about: Farah, Team Dune)\n- memory_id \"1000250\": As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder.  (about: Team Cinder, Team Dune, catalog service)\n- memory_id \"1000129\": Team Dune owns the reporting service.  (about: Team Dune, reporting service)\n- memory_id \"1000098\": Farah takes the first on-call rotation for Team Dune.  (about: Farah, Team Dune)\n- memory_id \"1000053\": As of January 2025, Team Dune consists of Farah alone.  (about: Farah, Team Dune)\n- memory_id \"1000048\": Farah runs Team Dune solo until the next hire lands.  (about: Farah, Team Dune)\nExisting entity names: Team Dune, webhooks service, Team Atlas, scheduler, Tomasz Nowak, Farah, Priya, notifier, Team Boreal, catalog service, Team Cinder, reporting service\n\nThe note:\n\n[2025-10-22] standup/dune/2025-10-22-2: Release captain for Q3 2025: Farah."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788611884-Af0tooRV4lN1zOhBChek",
+  "object": "chat.completion",
+  "created": 1788611884,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\":[{\"content\":\"As of 2025-10-22, Farah is Team Dune's release captain for Q3 2025.\",\"entities\":[\"Farah\",\"Team Dune\"],\"kind\":\"fact\",\"confidence\":0.9,\"evidence\":\"Release captain for Q3 2025: Farah.\"}],\"add_relations\":[{\"src\":\"Farah\",\"dst\":\"Team Dune\",\"rel_kind\":\"release_captain_for\",\"evidence\":\"Release captain for Q3 2025: Farah.\"}]}",
+     "refusal": null,
+     "reasoning": "The note says: \"[2025-10-22] standup/dune/2025-10-22-2: Release captain for Q3 2025: Farah.\"\n\nThis is a durable fact: Farah is the release captain for Team Dune (or just release captain) for Q3 2025. The note is a Team Dune standup note. It states \"Release captain for Q3 2025: Farah.\"\n\nAdd fact: \"As of 2025-10-22, Farah is Team Dune's release captain for Q3 2025.\" Entities: Farah, Team Dune. Evidence: \"Release captain for Q3 2025: Farah.\" Could also add relation: Farah leads? Hmm, rel_kind... The relation schema says short verb like leads, maintains, owns, depends_on, member_of. Is \"release captain\" a relationship? Could be \"release_captain_for\" but the examples suggest short verbs. Maybe add relation Farah -> Team Dune with rel_kind \"release_captain_for\"? That might be inventing; the fact about release captain is between Farah and Team Dune (implied by standup/dune). The note is a Team Dune standup, so the release captain is presumably for Team Dune. I'd say the fact is about Farah and Team Dune. A relation could be added: Farah release_captain_of Team Dune? I think it's reasonable to add a relation. But cautious: \"Do not invent anything the note does not say.\" The note implies release captain for the standup's team. I'll add the fact mentioning Team Dune (context from note path standup/dune) and a relation with rel_kind \"is_release_captain_for\" or similar. Let me use rel_kind \"release_captain_for\"? Examples are leads, maintains, owns, depends_on, member_of, reports_to. \"leads\" isn't accurate. I'll use \"release_captain_for\". Hmm, that could be acceptable.\n\nAlternatively keep it minimal: just add fact, no relation. The instruction says \"Add one for each relationship the note states.\" The note states release captain role — that's a relationship between Farah and Team Dune. I'll include it with rel_kind \"release_captain_for\".\n\nOutput JSON only.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: \"[2025-10-22] standup/dune/2025-10-22-2: Release captain for Q3 2025: Farah.\"\n\nThis is a durable fact: Farah is the release captain for Team Dune (or just release captain) for Q3 2025. The note is a Team Dune standup note. It states \"Release captain for Q3 2025: Farah.\"\n\nAdd fact: \"As of 2025-10-22, Farah is Team Dune's release captain for Q3 2025.\" Entities: Farah, Team Dune. Evidence: \"Release captain for Q3 2025: Farah.\" Could also add relation: Farah leads? Hmm, rel_kind... The relation schema says short verb like leads, maintains, owns, depends_on, member_of. Is \"release captain\" a relationship? Could be \"release_captain_for\" but the examples suggest short verbs. Maybe add relation Farah -> Team Dune with rel_kind \"release_captain_for\"? That might be inventing; the fact about release captain is between Farah and Team Dune (implied by standup/dune). The note is a Team Dune standup, so the release captain is presumably for Team Dune. I'd say the fact is about Farah and Team Dune. A relation could be added: Farah release_captain_of Team Dune? I think it's reasonable to add a relation. But cautious: \"Do not invent anything the note does not say.\" The note implies release captain for the standup's team. I'll add the fact mentioning Team Dune (context from note path standup/dune) and a relation with rel_kind \"is_release_captain_for\" or similar. Let me use rel_kind \"release_captain_for\"? Examples are leads, maintains, owns, depends_on, member_of, reports_to. \"leads\" isn't accurate. I'll use \"release_captain_for\". Hmm, that could be acceptable.\n\nAlternatively keep it minimal: just add fact, no relation. The instruction says \"Add one for each relationship the note states.\" The note states release captain role — that's a relationship between Farah and Team Dune. I'll include it with rel_kind \"release_captain_for\".\n\nOutput JSON only.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2333,
+   "completion_tokens": 601,
+   "total_tokens": 2934,
+   "cost": 0.000244585,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1344,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000244585,
+    "upstream_inference_prompt_cost": 9.4335e-05,
+    "upstream_inference_completions_cost": 0.00015025
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 490,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.255071499967016,
+ "fetched_at": "2026-09-05T12:38:13Z"
+}

@@ -1,0 +1,55 @@
+{
+ "qid": "q135",
+ "system": "vector",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki Tanaka and Diego are on Cinder.\n- [2025-02-27] standup/cinder/2025-02-27: Yuki has the Cinder pager this cycle, taking over from Diego.\n- [2025-06-06] standup/cinder/2025-06-06: Yuki has the Cinder pager this cycle, taking over from Diego Alvarez.\n- [2025-11-27] standup/cinder/2025-11-27: As of today Diego Alvarez is on the Ember team; Cinder loses a pair of hands. Yuki takes the Cinder pager from Diego, who is leaving the team.\n- [2025-10-24] standup/cinder/2025-10-24: Diego has the Cinder pager this cycle, taking over from Yuki.\n- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.\n- [2025-04-24] standup/cinder/2025-04-24: Rotation day for the Cinder team: Yuki hands the pager to Diego.\n- [2025-07-17] standup/cinder/2025-07-17: Rotation day for the Cinder team: Yuki Tanaka hands the pager to Diego Alvarez.\n- [2025-10-16] standup/cinder/2025-10-16: The Cinder team has moved to the third floor.\n- [2025-06-27] standup/cinder/2025-06-27: The monthly cost review is run by Yuki.\n- [2026-04-03] standup/cinder/2026-04-03: Cinder runs its planning on Mondays.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.\n- [2025-05-20] handover/2025-05-20-search-indexer: Team Atlas is taking over search-indexer from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n- [2025-05-14] standup/cinder/2025-05-14-2: Cinder adopted trunk-based development.\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2025-10-13] handover/2025-10-13-ledger: From today the pager for the ledger rings Cinder, not team Atlas. Ownership transferred.\n- [2026-03-11] standup/cinder/2026-03-11-2: The Cinder team noticed that billing-api's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-09-03] standup/cinder/2025-09-03-2: Heads-up from the Cinder team: the auth gateway's cold start time tripled after the runtime upgrade.\n- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.\n- [2025-09-16] handover/2025-09-16-auth-gateway: The Ember team handed the authentication gateway to Cinder today; Oskar Lind wrote up the handover doc for Diego.\n- [2025-05-14] standup/cinder/2025-05-14: Observation from the Cinder team: after the cache change, webhooks' memory use grew steadily for a week.\n- [2025-12-19] handover/2025-12-19-catalog: Atlas is taking over the product catalog from the Cinder team, effective today. Dashboards and alerts are being repointed.\n- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.\n- [2026-03-03] standup/cinder/2026-03-03: The auth gateway deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.\n- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.\n- [2025-06-19] standup/atlas/2025-06-19: Rotation day for team Atlas: Priya hands the pager to Tomasz.\n- [2025-01-09] standup/dune/2025-01-09: Farah runs team Dune solo until the next hire lands.\n- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.\n- [2026-04-01] handover/2026-04-01-search-indexer: From today the pager for the search indexer rings the Boreal team, not team Atlas. Ownership transferred.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-02-06] standup/ember/2025-02-06-2: Team Ember now does pairing on every production change.\n\nQuestion: Which team was Yuki on before joining Cinder?"
+  }
+ ],
+ "contexts": [
+  "- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki Tanaka and Diego are on Cinder.",
+  "- [2025-02-27] standup/cinder/2025-02-27: Yuki has the Cinder pager this cycle, taking over from Diego.",
+  "- [2025-06-06] standup/cinder/2025-06-06: Yuki has the Cinder pager this cycle, taking over from Diego Alvarez.",
+  "- [2025-11-27] standup/cinder/2025-11-27: As of today Diego Alvarez is on the Ember team; Cinder loses a pair of hands. Yuki takes the Cinder pager from Diego, who is leaving the team.",
+  "- [2025-10-24] standup/cinder/2025-10-24: Diego has the Cinder pager this cycle, taking over from Yuki.",
+  "- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.",
+  "- [2025-04-24] standup/cinder/2025-04-24: Rotation day for the Cinder team: Yuki hands the pager to Diego.",
+  "- [2025-07-17] standup/cinder/2025-07-17: Rotation day for the Cinder team: Yuki Tanaka hands the pager to Diego Alvarez.",
+  "- [2025-10-16] standup/cinder/2025-10-16: The Cinder team has moved to the third floor.",
+  "- [2025-06-27] standup/cinder/2025-06-27: The monthly cost review is run by Yuki.",
+  "- [2026-04-03] standup/cinder/2026-04-03: Cinder runs its planning on Mondays.",
+  "- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.",
+  "- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.",
+  "- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.",
+  "- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.",
+  "- [2025-05-20] handover/2025-05-20-search-indexer: Team Atlas is taking over search-indexer from team Cinder, effective today. Dashboards and alerts are being repointed.",
+  "- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.",
+  "- [2025-05-14] standup/cinder/2025-05-14-2: Cinder adopted trunk-based development.",
+  "- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.",
+  "- [2025-10-13] handover/2025-10-13-ledger: From today the pager for the ledger rings Cinder, not team Atlas. Ownership transferred.",
+  "- [2026-03-11] standup/cinder/2026-03-11-2: The Cinder team noticed that billing-api's cold start time tripled after the runtime upgrade and pinged the owners.",
+  "- [2025-09-03] standup/cinder/2025-09-03-2: Heads-up from the Cinder team: the auth gateway's cold start time tripled after the runtime upgrade.",
+  "- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.",
+  "- [2025-09-16] handover/2025-09-16-auth-gateway: The Ember team handed the authentication gateway to Cinder today; Oskar Lind wrote up the handover doc for Diego.",
+  "- [2025-05-14] standup/cinder/2025-05-14: Observation from the Cinder team: after the cache change, webhooks' memory use grew steadily for a week.",
+  "- [2025-12-19] handover/2025-12-19-catalog: Atlas is taking over the product catalog from the Cinder team, effective today. Dashboards and alerts are being repointed.",
+  "- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.",
+  "- [2026-03-03] standup/cinder/2026-03-03: The auth gateway deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.",
+  "- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.",
+  "- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.",
+  "- [2025-06-19] standup/atlas/2025-06-19: Rotation day for team Atlas: Priya hands the pager to Tomasz.",
+  "- [2025-01-09] standup/dune/2025-01-09: Farah runs team Dune solo until the next hire lands.",
+  "- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.",
+  "- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.",
+  "- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.",
+  "- [2026-04-01] handover/2026-04-01-search-indexer: From today the pager for the search indexer rings the Boreal team, not team Atlas. Ownership transferred.",
+  "- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.",
+  "- [2025-02-06] standup/ember/2025-02-06-2: Team Ember now does pairing on every production change."
+ ],
+ "answer": "I don't know"
+}

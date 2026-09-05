@@ -1,0 +1,150 @@
+{"qid": "q001", "answer": "Two reviewer approvals and a security sign-off."}
+{"qid": "q002", "answer": "A rollback plan attached to the pull request"}
+{"qid": "q003", "answer": "Because the single fixed node turned every restart into a missed run."}
+{"qid": "q004", "answer": "Because a reindex job failed silently on a full disk in INC-2025-023, leaving the indexer serving stale results for two days."}
+{"qid": "q005", "answer": "Storage for originals doubled in six months."}
+{"qid": "q006", "answer": "The auth gateway"}
+{"qid": "q007", "answer": "The bus"}
+{"qid": "q008", "answer": "2025-11-24 to 2025-12-02, for the peak season."}
+{"qid": "q009", "answer": "2026-03-30 to 2026-04-03, for the fiscal year close."}
+{"qid": "q010", "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC."}
+{"qid": "q011", "answer": "Thursdays between 07:00 and 09:00 UTC"}
+{"qid": "q012", "answer": "Thursday"}
+{"qid": "q013", "answer": "Yuki Tanaka"}
+{"qid": "q014", "answer": "A consumer offset stuck after a broker restart."}
+{"qid": "q015", "answer": "A reindex job failed silently on a full disk"}
+{"qid": "q016", "answer": "A retry loop that ignored idempotency keys"}
+{"qid": "q017", "answer": "I don't know"}
+{"qid": "q018", "answer": "2025-10-03"}
+{"qid": "q019", "answer": "Dune team"}
+{"qid": "q020", "answer": "Cinder"}
+{"qid": "q021", "answer": "Python 3.11, until the pandas 3 upgrade lands."}
+{"qid": "q022", "answer": "Postgres 14, until the partitioning work finishes."}
+{"qid": "q023", "answer": "The Boreal team"}
+{"qid": "q024", "answer": "Dune team"}
+{"qid": "q025", "answer": "Cinder"}
+{"qid": "q026", "answer": "The bus"}
+{"qid": "q027", "answer": "The ledger service and the feature-flags service."}
+{"qid": "q028", "answer": "Marcus"}
+{"qid": "q029", "answer": "Priya Raman"}
+{"qid": "q030", "answer": "Yuki Tanaka"}
+{"qid": "q031", "answer": "Tomasz"}
+{"qid": "q032", "answer": "Oskar"}
+{"qid": "q033", "answer": "Atlas team"}
+{"qid": "q034", "answer": "Atlas team"}
+{"qid": "q035", "answer": "Ember team"}
+{"qid": "q036", "answer": "Atlas team"}
+{"qid": "q037", "answer": "Atlas team"}
+{"qid": "q038", "answer": "Dune"}
+{"qid": "q039", "answer": "Boreal"}
+{"qid": "q040", "answer": "Cinder"}
+{"qid": "q041", "answer": "Ember"}
+{"qid": "q042", "answer": "Cinder"}
+{"qid": "q043", "answer": "Cinder"}
+{"qid": "q044", "answer": "Boreal"}
+{"qid": "q045", "answer": "Ember"}
+{"qid": "q046", "answer": "Boreal"}
+{"qid": "q047", "answer": "Dune team"}
+{"qid": "q048", "answer": "Weekdays between 08:00 and 10:00 UTC, never on Fridays."}
+{"qid": "q049", "answer": "Wednesdays 09:00–11:00 UTC"}
+{"qid": "q050", "answer": "Tuesdays and Fridays between 09:00 and 10:30 UTC."}
+{"qid": "q051", "answer": "The ledger service"}
+{"qid": "q052", "answer": "2026-02-11"}
+{"qid": "q053", "answer": "2025-12-19"}
+{"qid": "q054", "answer": "2025-10-13"}
+{"qid": "q055", "answer": "2025-06-11"}
+{"qid": "q056", "answer": "Priya Raman"}
+{"qid": "q057", "answer": "Tomasz"}
+{"qid": "q058", "answer": "Lena"}
+{"qid": "q059", "answer": "Diego"}
+{"qid": "q060", "answer": "Oskar"}
+{"qid": "q061", "answer": "Atlas"}
+{"qid": "q062", "answer": "Ember"}
+{"qid": "q063", "answer": "Dune"}
+{"qid": "q064", "answer": "Boreal team"}
+{"qid": "q065", "answer": "Ember"}
+{"qid": "q066", "answer": "Ember team"}
+{"qid": "q067", "answer": "Ember team"}
+{"qid": "q068", "answer": "Cinder"}
+{"qid": "q069", "answer": "Atlas"}
+{"qid": "q070", "answer": "Cinder"}
+{"qid": "q071", "answer": "I don't know"}
+{"qid": "q072", "answer": "Atlas"}
+{"qid": "q073", "answer": "Mondays to Thursdays between 09:00 and 17:00 UTC"}
+{"qid": "q074", "answer": "Weekday mornings before 11:00 UTC"}
+{"qid": "q075", "answer": "Tuesdays between 13:00 and 15:00 UTC"}
+{"qid": "q076", "answer": "I don't know"}
+{"qid": "q077", "answer": "I don't know"}
+{"qid": "q078", "answer": "I don't know"}
+{"qid": "q079", "answer": "I don't know"}
+{"qid": "q080", "answer": "Oskar"}
+{"qid": "q081", "answer": "Priya Raman"}
+{"qid": "q082", "answer": "Oskar"}
+{"qid": "q083", "answer": "Marcus"}
+{"qid": "q084", "answer": "Priya Raman"}
+{"qid": "q085", "answer": "Oskar"}
+{"qid": "q086", "answer": "Tomasz"}
+{"qid": "q087", "answer": "Marcus"}
+{"qid": "q088", "answer": "Atlas team"}
+{"qid": "q089", "answer": "I don't know"}
+{"qid": "q090", "answer": "I don't know"}
+{"qid": "q091", "answer": "I don't know"}
+{"qid": "q092", "answer": "I don't know"}
+{"qid": "q093", "answer": "Product catalog, event bus, feature-flags, image resizer"}
+{"qid": "q094", "answer": "Indexer, webhook dispatcher"}
+{"qid": "q095", "answer": "The ledger service, the authentication gateway, and the job scheduler."}
+{"qid": "q096", "answer": "The notifier"}
+{"qid": "q097", "answer": "Thursdays between 07:00 and 09:00 UTC (the reporting service now depends on the bus)."}
+{"qid": "q098", "answer": "Weekdays between 08:00 and 10:00 UTC, never on Fridays."}
+{"qid": "q099", "answer": "Mondays between 10:00 and 12:00 UTC"}
+{"qid": "q100", "answer": "Thursdays between 07:00 and 09:00 UTC."}
+{"qid": "q101", "answer": "handover/2025-07-03-billing-api-correction, on 2025-07-03"}
+{"qid": "q102", "answer": "handover/2026-03-09-feature-flags-correction, on 2026-03-09"}
+{"qid": "q103", "answer": "handover/2025-06-27-notifier-correction, on 2025-06-27."}
+{"qid": "q104", "answer": "standup/cinder/2026-01-30, recorded 2026-01-30"}
+{"qid": "q105", "answer": "incident-review/INC-2025-017, recorded 2025-08-07"}
+{"qid": "q106", "answer": "incident-review/INC-2026-009, recorded 2026-05-19."}
+{"qid": "q107", "answer": "standup/ember/2025-06-06, recorded on 2025-06-06"}
+{"qid": "q108", "answer": "standup/atlas/2025-01-09-2, on 2025-01-09"}
+{"qid": "q109", "answer": "standup/cinder/2025-01-30, on 2025-01-30."}
+{"qid": "q110", "answer": "standup/cinder/2025-04-14, on 2025-04-14"}
+{"qid": "q111", "answer": "standup/boreal/2025-02-11-2, on 2025-02-11."}
+{"qid": "q112", "answer": "handover/2025-11-26-image-resizer, on 2025-11-26"}
+{"qid": "q113", "answer": "handover/2025-03-20-image-resizer, recorded on 2025-03-20."}
+{"qid": "q114", "answer": "handover/2025-05-20-search-indexer, on 2025-05-20"}
+{"qid": "q115", "answer": "handover/2026-04-01-search-indexer, on 2026-04-01."}
+{"qid": "q116", "answer": "standup/cinder/2025-11-27, recorded 2025-11-27"}
+{"qid": "q117", "answer": "I don't know"}
+{"qid": "q118", "answer": "standup/atlas/2025-07-30, on 2025-07-30"}
+{"qid": "q119", "answer": "2025-02-05"}
+{"qid": "q120", "answer": "2025-08-07"}
+{"qid": "q121", "answer": "2025-10-07"}
+{"qid": "q122", "answer": "2026-05-19"}
+{"qid": "q123", "answer": "standup/ember/2025-02-18, on 2025-02-18"}
+{"qid": "q124", "answer": "standup/cinder/2025-03-17, on 2025-03-17"}
+{"qid": "q125", "answer": "standup/atlas/2025-01-14, recorded on 2025-01-14"}
+{"qid": "q126", "answer": "I don't know"}
+{"qid": "q127", "answer": "I don't know"}
+{"qid": "q128", "answer": "I don't know"}
+{"qid": "q129", "answer": "I don't know"}
+{"qid": "q130", "answer": "I don't know"}
+{"qid": "q131", "answer": "I don't know"}
+{"qid": "q132", "answer": "I don't know"}
+{"qid": "q133", "answer": "I don't know"}
+{"qid": "q134", "answer": "I don't know"}
+{"qid": "q135", "answer": "I don't know"}
+{"qid": "q136", "answer": "I don't know"}
+{"qid": "q137", "answer": "I don't know"}
+{"qid": "q138", "answer": "I don't know"}
+{"qid": "q139", "answer": "I don't know"}
+{"qid": "q140", "answer": "I don't know"}
+{"qid": "q141", "answer": "I don't know"}
+{"qid": "q142", "answer": "I don't know"}
+{"qid": "q143", "answer": "I don't know"}
+{"qid": "q144", "answer": "I don't know"}
+{"qid": "q145", "answer": "I don't know"}
+{"qid": "q146", "answer": "I don't know"}
+{"qid": "q147", "answer": "I don't know"}
+{"qid": "q148", "answer": "I don't know"}
+{"qid": "q149", "answer": "I don't know"}
+{"qid": "q150", "answer": "I don't know"}

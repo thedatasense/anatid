@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000177\" [constraint]: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time.  (about: job scheduler)\n- memory_id \"1000171\" [decision]: Notifier consumers will commit offsets every five seconds.  (about: notifier, notifier consumers)\n- memory_id \"1000165\": During incident INC-2025-004, the notifier missed alerts for 40 minutes on 2025-02-01.  (about: notifier, INC-2025-004)\n- memory_id \"1000160\" [constraint]: The ledger service must stay on Postgres 14 until the partitioning work finishes.  (about: ledger service, Postgres 14)\n- memory_id \"1000140\": The authentication gateway is owned by the Ember team.  (about: Ember team, authentication gateway)\n- memory_id \"1000136\": The job scheduler is owned by the Ember team.  (about: Ember team, job scheduler)\n- memory_id \"1000109\" [constraint]: The ledger service only ships on weekday mornings before 11:00 UTC.  (about: ledger service)\n- memory_id \"1000105\": Oskar takes the first on-call shift of the year for the Ember team.  (about: Ember team, Oskar)\n- memory_id \"1000101\": Farah has the first on-call rotation for the Dune team.  (about: Farah, Dune team)\n- memory_id \"1000094\": The Ember team is a one-person team consisting of Oskar.  (about: Ember team, Oskar)\n- memory_id \"1000085\": Diego is on call for Cinder to start the year.  (about: Cinder, Diego)\n- memory_id \"1000080\": Lena has the first pager rotation for the Boreal team.  (about: Boreal team, Lena)\n- memory_id \"1000075\": Tomasz has the first on-call rotation for the Atlas team.  (about: Atlas team, Tomasz)\n- memory_id \"1000069\": The webhook dispatcher is owned by the Boreal team.  (about: Boreal team, webhook dispatcher)\n- memory_id \"1000063\": The Boreal team owns the notifier.  (about: Boreal team, notifier)\n- memory_id \"1000050\": Farah runs the Dune team solo until the next hire lands.  (about: Farah, Dune team)\n- memory_id \"1000033\": The ledger service is owned by the Atlas team.  (about: Atlas team, ledger service)\n- memory_id \"1000026\": Diego is on Cinder.  (about: Cinder, Diego)\n- memory_id \"1000021\": Yuki Tanaka is on Cinder.  (about: Yuki Tanaka, Cinder)\n- memory_id \"1000001\": The Atlas team in 2025 consists of Priya Raman and Tomasz.  (about: Atlas team, Priya Raman, Tomasz)\nExisting entity names: job scheduler, notifier, notifier consumers, INC-2025-004, ledger service, Postgres 14, Ember team, authentication gateway, Oskar, Farah, Dune team, Cinder, Diego, Boreal team, Lena, Atlas team, Tomasz, webhook dispatcher, Yuki Tanaka, Priya Raman\n\nThe note:\n\n[2025-02-06] standup/ember/2025-02-06-2: Team Ember now does pairing on every production change."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788600037-4cZ8tIH1ZHtcYIie9Zsl",
+  "object": "chat.completion",
+  "created": 1788600037,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"The Ember team does pairing on every production change.\",\n   \"entities\": [\"Ember team\"],\n   \"kind\": \"decision\",\n   \"confidence\": 0.95,\n   \"evidence\": \"Team Ember now does pairing on every production change.\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [],\n \"remove_relations\": [],\n \"entity_aliases\": [\n  {\n   \"name\": \"Team Ember\",\n   \"canonical\": \"Ember team\",\n   \"evidence\": \"standup/ember/2025-02-06-2: Team Ember now does pairing on every production change.\"\n  }\n ]\n}",
+     "refusal": null,
+     "reasoning": "The note says: \"[2025-02-06] standup/ember/2025-02-06-2: Team Ember now does pairing on every production change.\"\n\nThis is a durable fact about the Ember team: they now do pairing on every production change. \"Team Ember\" is an alias for \"Ember team\".\n\nSo:\n- add_facts: one fact: \"The Ember team does pairing on every production change.\" kind: \"decision\" or \"constraint\"? It's a process change — likely \"decision\". Entities: Ember team. Evidence: \"Team Ember now does pairing on every production change.\"\n- entity_aliases: name \"Team Ember\", canonical \"Ember team\", evidence \"Team Ember now does pairing...\"\n\nThe word \"now\" — should I write the fact as \"The Ember team does pairing on every production change.\"? Yes, durable statement. Confidence maybe 1.0 or 0.9. It doesn't correct any existing fact.\n\nOutput JSON only, no code fence? Wait, the system prompt says the assistant should output JSON object matching schema, \"one JSON object and nothing else, no prose, no code fence\". But the first message says \"ensure ends with ```\"? Actually the first system message in this conversation (the human-like instruction) says to end code block with ```. But the memory system prompt says no code fence. The final instruction in the system prompt: \"one JSON object and nothing else, no prose, no code fence, matching this JSON schema\". The first message says end with ``` to indicate end of JSON object. There's a conflict. The second system message is more specific to this task. Hmm, the first message is a general instruction: \"You should always follow instructions and output a valid JSON object... If unsure, default to {\"answer\": \"$your_answer\"}. Make sure to always end with \"```\" to indicate the end of the JSON object.\"\n\nThe later system prompt says no code fence. I'll follow the more specific memory-patch instruction: output a single JSON object without a fence. Actually, to satisfy both? Can't fully. The specific instruction wins. I'll output just the JSON object.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: \"[2025-02-06] standup/ember/2025-02-06-2: Team Ember now does pairing on every production change.\"\n\nThis is a durable fact about the Ember team: they now do pairing on every production change. \"Team Ember\" is an alias for \"Ember team\".\n\nSo:\n- add_facts: one fact: \"The Ember team does pairing on every production change.\" kind: \"decision\" or \"constraint\"? It's a process change — likely \"decision\". Entities: Ember team. Evidence: \"Team Ember now does pairing on every production change.\"\n- entity_aliases: name \"Team Ember\", canonical \"Ember team\", evidence \"Team Ember now does pairing...\"\n\nThe word \"now\" — should I write the fact as \"The Ember team does pairing on every production change.\"? Yes, durable statement. Confidence maybe 1.0 or 0.9. It doesn't correct any existing fact.\n\nOutput JSON only, no code fence? Wait, the system prompt says the assistant should output JSON object matching schema, \"one JSON object and nothing else, no prose, no code fence\". But the first message says \"ensure ends with ```\"? Actually the first system message in this conversation (the human-like instruction) says to end code block with ```. But the memory system prompt says no code fence. The final instruction in the system prompt: \"one JSON object and nothing else, no prose, no code fence, matching this JSON schema\". The first message says end with ``` to indicate end of JSON object. There's a conflict. The second system message is more specific to this task. Hmm, the first message is a general instruction: \"You should always follow instructions and output a valid JSON object... If unsure, default to {\"answer\": \"$your_answer\"}. Make sure to always end with \"```\" to indicate the end of the JSON object.\"\n\nThe later system prompt says no code fence. I'll follow the more specific memory-patch instruction: output a single JSON object without a fence. Actually, to satisfy both? Can't fully. The specific instruction wins. I'll output just the JSON object.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2133,
+   "completion_tokens": 586,
+   "total_tokens": 2719,
+   "cost": 0.000306475,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000306475,
+    "upstream_inference_prompt_cost": 0.000159975,
+    "upstream_inference_completions_cost": 0.0001465
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 443,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 13.610568707983475,
+ "fetched_at": "2026-09-05T09:20:51Z"
+}

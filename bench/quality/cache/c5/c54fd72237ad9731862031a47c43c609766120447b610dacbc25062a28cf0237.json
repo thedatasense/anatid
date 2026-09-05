@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2026-04-14] standup/dune/2026-04-14-2: The Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-06-24] standup/dune/2025-06-24: Reporting still relies on Ledger; keep that in mind for the maintenance.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-03-26] standup/dune/2025-03-26: Reminder that the reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. Observation from team Dune: after the cache change, the notification service's memory use grew steadily for a week.\n- [2025-04-15] standup/dune/2025-04-15: The reports pipeline must stay on Python 3.11 until the pandas 3 upgrade lands.\n- [2026-06-01] standup/ember/2026-06-01: For newcomers: the deploy window for the reporting service is still on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-12-25] standup/atlas/2025-12-25: Atlas saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it. Atlas has moved to the second floor.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-01-10] standup/ember/2025-01-10: The Ember team is a one-person team at the moment: Oskar.\n- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.\n- [2025-03-07] handover/2025-03-07-billing-api: Billing-api has a new home: the Ember team. Team Atlas kept it until today.\n- [2025-03-03] handover/2025-03-03-webhooks: From today the pager for webhooks rings the Ember team, not team Boreal. Ownership transferred.\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2026-04-01] handover/2026-04-01-search-indexer: From today the pager for the search indexer rings the Boreal team, not team Atlas. Ownership transferred.\n- [2026-01-12] handover/2026-01-12-billing-api: Quick one: billing-api belongs to the Ember team starting today. Thanks to the Atlas team for running it until now.\n- [2025-11-06] handover/2025-11-06-feature-flags: Quick one: feature-flags belongs to team Ember starting today. Thanks to team Atlas for running it until now.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.\n- [2025-11-26] handover/2025-11-26-image-resizer: The Atlas team is taking over the image resizer from the Ember team, effective today. Dashboards and alerts are being repointed.\n- [2025-05-20] handover/2025-05-20-search-indexer: Team Atlas is taking over search-indexer from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2026-02-11] handover/2026-02-11-feature-flags: The Ember team handed the flags service to the Dune team today; Oskar wrote up the handover doc for Farah.\n- [2025-06-25] handover/2025-06-25-scheduler: Handover: as of today scheduler moves from the Ember team to the Dune team. Oskar walked Farah Haddad through the runbook this morning.\n- [2025-05-15] handover/2025-05-15-webhooks: Handover: as of today the webhook dispatcher moves from team Ember to the Boreal team. Oskar walked Lena through the runbook this morning.\n- [2025-11-27] standup/cinder/2025-11-27: As of today Diego Alvarez is on the Ember team; Cinder loses a pair of hands. Yuki takes the Cinder pager from Diego, who is leaving the team.\n- [2026-04-08] standup/atlas/2026-04-08: Reminder from the Atlas team: page Marcus for anything this cycle, not Priya. The Atlas team saw that webhooks' request volume halved following the client rollout; not their service, so they flagged it.\n\nQuestion: As of now, which team is responsible for reporting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788591630-uWAUEQbhbcn0JKhu3bwm",
+  "object": "chat.completion",
+  "created": 1788591630,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Together",
+  "system_fingerprint": "default",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember",
+     "refusal": null,
+     "reasoning": "The question asks: as of now (2026-06-30), which team is responsible for reporting?\n\nMemory entries about reporting ownership:\n- [2025-01-20] reporting is Dune team service\n- [2025-03-20] reports pipeline owned by Dune\n- [2025-12-05] handover: from today the pager for reporting rings the Ember team, not Dune. Ownership transferred.\n- [2026-04-13] Ember still owns the reporting service.\n\nSo as of now, Ember owns reporting. Answer: Ember.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: as of now (2026-06-30), which team is responsible for reporting?\n\nMemory entries about reporting ownership:\n- [2025-01-20] reporting is Dune team service\n- [2025-03-20] reports pipeline owned by Dune\n- [2025-12-05] handover: from today the pager for reporting rings the Ember team, not Dune. Ownership transferred.\n- [2026-04-13] Ember still owns the reporting service.\n\nSo as of now, Ember owns reporting. Answer: Ember.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1596,
+   "completion_tokens": 123,
+   "total_tokens": 1719,
+   "cost": 0.0003009,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003009,
+    "upstream_inference_prompt_cost": 0.0002394,
+    "upstream_inference_completions_cost": 6.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 119,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.565646875009406,
+ "fetched_at": "2026-09-05T07:00:39Z"
+}

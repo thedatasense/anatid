@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- As of 2025-06-20, the webhooks service lives with Team Dune, which took it over from Team Atlas. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n    earlier: As of 2025-06-20, the webhooks service lives with the Ember team, which took it over from Team Atlas. [valid 2025-06-20 to 2025-07-04; recorded by handover/2025-06-20-webhooks]\n    earlier: As of 2025-03-28, the webhooks service lives with Team Atlas. [valid 2025-03-28 to 2025-06-20; recorded by handover/2025-03-28-webhooks]\n    earlier: The webhooks service lives with Team Boreal. [valid 2025-01-09 to 2025-03-28; recorded by standup/boreal/2025-01-09-2]\n- On 2025-10-22, Team Dune decided that the webhooks service will sign payloads with rotating keys. [decision; valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n- On 2025-05-23, the Ember team flagged that the webhooks service's request volume halved following the client rollout. [valid 2025-06-20 to now; recorded by handover/2025-06-20-webhooks]\n    earlier: On 2025-05-23, the Ember team flagged that the webhooks service's request volume halved following the client rollout, noting the webhooks service is not their service. [valid 2025-05-23 to 2025-06-20; recorded by standup/ember/2025-05-23]\n- As of 2025-06-16, Team Boreal owns the catalog service, having taken it over from Team Dune. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: As of 2025-03-20, Team Dune owns the catalog service. [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Team Cinder owns the catalog service. [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- As of 2026-03-04, the webhooks service remains a Team Dune service. [valid 2026-03-04 to now; recorded by standup/dune/2026-03-04]\n- The Ember team never owned the webhooks service. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- The webhooks service only ships on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-17 to now; recorded by standup/boreal/2025-03-17]\n- As of 2025-03-28, the pager for the webhooks service rings Team Atlas instead of Team Boreal. [valid 2025-03-28 to now; recorded by handover/2025-03-28-webhooks]\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n\nQuestion: Which team owns the service that webhooks depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614725-Ft1O2y9XwDoOmS0iz3cT",
+  "object": "chat.completion",
+  "created": 1788614725,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The webhooks service depends on the event bus. Now, which team owns the event bus? Let me check the memory for event bus ownership... I see dependencies: webhooks depends on event bus, notifier depends on event bus, reporting service reads from event bus. But no entry says who owns the event bus.\n\nSo the question: \"Which team owns the service that webhooks depends on?\" The webhooks depends on the event bus. But there's no ownership information for the event bus. So answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The webhooks service depends on the event bus. Now, which team owns the event bus? Let me check the memory for event bus ownership... I see dependencies: webhooks depends on event bus, notifier depends on event bus, reporting service reads from event bus. But no entry says who owns the event bus.\n\nSo the question: \"Which team owns the service that webhooks depends on?\" The webhooks depends on the event bus. But there's no ownership information for the event bus. So answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1560,
+   "completion_tokens": 113,
+   "total_tokens": 1673,
+   "cost": 0.00013757,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013757,
+    "upstream_inference_prompt_cost": 0.00010932,
+    "upstream_inference_completions_cost": 2.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 107,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.3084951670025475,
+ "fetched_at": "2026-09-05T13:25:27Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-03-10] standup/dune/2026-03-10-2: Observation from team Dune: after Tuesday's deploy, the reporting service's p99 latency doubled. The webhook dispatcher deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2026-01-15] standup/ember/2026-01-15: For newcomers: the deploy window for the ledger service is still on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-12-16] standup/ember/2025-12-16: The ledger service deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-01-17] standup/boreal/2025-01-17: The notification service depends on the bus for delivery events. If the event bus is down, the webhook dispatcher is down: it relies on it for outbound events.\n- [2026-04-16] standup/ember/2026-04-16: The ledger service's deploy window changes today: it is now on Mondays and Wednesdays between 14:00 and 16:00 UTC. The old slot (Wednesdays 09:00-11:00 UTC) is retired.\n- [2026-02-23] standup/dune/2026-02-23: The job scheduler deploy window (unchanged): on weekday mornings before 11:00 UTC.\n- [2025-02-21] standup/boreal/2025-02-21: The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-05-05] standup/dune/2025-05-05: For newcomers: the deploy window for the catalog is still on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-10-27] standup/dune/2025-10-27-2: New deploy window for scheduler: on weekday mornings before 11:00 UTC. Forget the previous weekdays after 15:00 UTC slot.\n- [2025-04-08] standup/dune/2025-04-08: Reminder that the reporting service depends on the ledger.\n- [2025-07-04] handover/2025-07-04-webhooks-correction: Fixing an error in the 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n- [2025-05-23] standup/ember/2025-05-23: The Ember team saw that the webhooks service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.\n- [2025-03-10] standup/dune/2025-03-10: The reports pipeline depends on the ledger service for the nightly balance export.\n- [2025-03-10] standup/atlas/2025-03-10: Dependency map update: the billing service needs the ledger (invoice postings).\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-07-28] standup/cinder/2025-07-28-2: Heads-up from Cinder: the ledger's p99 latency doubled after Tuesday's deploy. Observation from team Cinder: after the dependency bump, the billing API's error rate crept up to 2 percent.\n- [2026-03-31] standup/ember/2026-03-31: Diego Alvarez has the Ember pager this cycle, taking over from Oskar. Ember saw that the feature flag service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.\n- [2025-04-08] standup/cinder/2025-04-08: Reminder that the indexer depends on the catalog.\n- [2025-02-25] standup/boreal/2025-02-25: Webhooks still relies on the bus; keep that in mind for the maintenance.\n- [2026-01-22] incident-review/INC-2026-003: Incident review INC-2026-003. Webhooks delivered some events twice on 2026-01-17. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-06-27] standup/boreal/2025-06-27-2: Boreal adopted a weekly dependency update day.\n- [2025-10-13] standup/cinder/2025-10-13: The monthly cost review is run by Yuki. Reminder that the search indexer depends on the catalog.\n- [2025-03-17] standup/boreal/2025-03-17: Reminder that webhooks only ships on Mondays between 10:00 and 12:00 UTC.\n- [2025-02-28] standup/cinder/2025-02-28: Dependency map update: search-indexer needs the product catalog (product documents). Cinder holds planning on Mondays.\n- [2025-03-19] standup/ember/2025-03-19: Deploys to the scheduler happen on weekdays after 15:00 UTC and at no other time.\n\nQuestion: What is the deploy window of the service that webhooks depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608185-rZIJWOhVyje8bQAXoIdE",
+  "object": "chat.completion",
+  "created": 1788608185,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+     "refusal": null,
+     "reasoning": "The question: \"What is the deploy window of the service that webhooks depends on?\"\n\nWebhooks depends on the event bus (bus). Memory entries: webhooks relies on the bus for outbound events. The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC (2025-02-21). Any later entry superseding bus deploy window? No later entries about bus deploy window. So answer: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"What is the deploy window of the service that webhooks depends on?\"\n\nWebhooks depends on the event bus (bus). Memory entries: webhooks relies on the bus for outbound events. The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC (2025-02-21). Any later entry superseding bus deploy window? No later entries about bus deploy window. So answer: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1612,
+   "completion_tokens": 128,
+   "total_tokens": 1740,
+   "cost": 0.00014522,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014522,
+    "upstream_inference_prompt_cost": 0.00011322,
+    "upstream_inference_completions_cost": 3.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 108,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.662084374984261,
+ "fetched_at": "2026-09-05T11:36:31Z"
+}

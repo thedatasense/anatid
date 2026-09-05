@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-10-07] incident-review/INC-2025-023: Incident review INC-2025-023. The indexer served stale results for two days on 2025-10-03. Root cause: a reindex job that failed silently on a full disk. Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2025-04-22] standup/cinder/2025-04-22: The search indexer is pinned to OpenSearch 2.11; the pin lifts when the full reindex completes.\n- [2026-05-19] incident-review/INC-2026-009: Incident review INC-2026-009. The scheduler ran the nightly jobs twice on 2026-05-16. Root cause: two leaders elected during a network partition. Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2026-04-08] standup/atlas/2026-04-08: Reminder from the Atlas team: page Marcus for anything this cycle, not Priya. The Atlas team saw that webhooks' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-02-06] standup/ember/2025-02-06: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2026-03-17] standup/atlas/2026-03-17: Decided in today's standup: image-resizer will keep original uploads for 90 days only, since storage for originals doubled in six months. For anything Atlas-related, page Priya.\n- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.\n- [2025-08-19] standup/dune/2025-08-19: The job scheduler's deploy window changes today: it is now on Tuesdays and Fridays between 09:00 and 10:30 UTC. The old slot (Tuesdays 13:00-15:00 UTC) is retired.\n- [2025-09-23] standup/boreal/2025-09-23: Reminder from team Boreal: page Lena for anything this cycle, not Marcus.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-05-29] standup/boreal/2025-05-29: For anything Boreal-related, page Marcus.\n- [2025-03-31] standup/ember/2025-03-31: For anything Ember-related, page Oskar.\n- [2025-08-15] standup/boreal/2025-08-15: Reminder from Boreal: page Marcus for anything this cycle, not Lena Fischer.\n- [2026-03-02] standup/ember/2026-03-02: Reminder from the Ember team: page Oskar Lind for anything this cycle, not Diego.\n- [2025-12-18] standup/atlas/2025-12-18: Decided in today's standup: search-indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes.\n- [2025-01-30] standup/cinder/2025-01-30: If the catalog service is down, the search indexer is down: it relies on it for product documents.\n- [2026-05-27] standup/atlas/2026-05-27: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. The Atlas team noticed that search-indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. The catalog still relies on the resizer; keep that in mind for the maintenance.\n- [2025-05-20] handover/2025-05-20-search-indexer: Team Atlas is taking over search-indexer from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2025-05-30] incident-review/INC-2025-011: Review of INC-2025-011 (Ledger, 2025-05-24). The root cause was an index missing after the schema migration. We decided that ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2026-06-09] standup/dune/2026-06-09: Observation from team Dune: after the retention change, search-indexer's disk usage jumped 30 percent.\n- [2026-02-10] standup/boreal/2026-02-10-2: Team Boreal noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-04-01] handover/2026-04-01-search-indexer: From today the pager for the search indexer rings the Boreal team, not team Atlas. Ownership transferred.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n\nQuestion: Why do reindex jobs page on failure?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620007-cdzknGNtSdRTBCcbGk5o",
+  "object": "chat.completion",
+  "created": 1788620007,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "SiliconFlow",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Because a silent reindex failure left stale results for two days in INC-2025-023.",
+     "refusal": null,
+     "reasoning": "The question asks: Why do reindex jobs page on failure?\n\nFrom memory: [2025-10-07] incident-review/INC-2025-023: \"Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\"\n\nSo the answer: because a silent reindex failure left stale results for two days (INC-2025-023).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Why do reindex jobs page on failure?\n\nFrom memory: [2025-10-07] incident-review/INC-2025-023: \"Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\"\n\nSo the answer: because a silent reindex failure left stale results for two days (INC-2025-023).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1569,
+   "completion_tokens": 115,
+   "total_tokens": 1684,
+   "cost": 0.00029285,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00029285,
+    "upstream_inference_prompt_cost": 0.00023535,
+    "upstream_inference_completions_cost": 5.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 92,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0081042920355685,
+ "fetched_at": "2026-09-05T14:53:30Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2025-06-06 the Ember team decided that the job scheduler will use leader election instead of a single fixed node. [decision; valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\n- As of 2026-05-19, the job scheduler's leader lease will be shortened to ten seconds. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The job scheduler's single fixed node turned every restart into a missed run. [valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\n- As of 2025-09-23, the pager for the job scheduler rings Cinder instead of the Dune team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, having moved from the Boreal team. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The job scheduler was owned by the Dune team from 2025-06-25, having moved from the Ember team, until ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The job scheduler is owned by the Dune team as of 2025-06-25, having moved from the Ember team. [valid 2025-06-25 to 2025-09-23; recorded by handover/2025-06-25-scheduler]\n    earlier: The job scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- As of 2025-08-19, deploys to the job scheduler happen on Tuesdays and Fridays between 09:00 and 10:30 UTC; the previous Tuesdays 13:00-15:00 UTC slot is retired. [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time. [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- As of 2025-10-13, the pager for the ledger service rings Cinder instead of the Atlas team. [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- As of 2025-09-05, the Dune team still owned the job scheduler; ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, the Dune team still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- On 2026-01-30 the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- As of 2025-04-29, the job scheduler still relies on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- On 2026-05-22 the Dune team reported that the job scheduler's error rate crept up to 2 percent after the dependency bump. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- Ledger migrations will ship with a reviewed query plan. [decision; valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- On 2025-12-01 the Boreal team flagged the job scheduler's cold start regression because the job scheduler is not their service. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n- On 2025-12-01 the Boreal team observed that the job scheduler's cold start time tripled after the runtime upgrade. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n- On 2025-11-03 the Boreal team decided that webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- On 2025-12-18 the Atlas team decided that the indexer will rebuild the index nightly instead of on every product catalog write, because incremental updates left stale entries behind after failed writes. [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- On 2025-03-26 the Dune team observed that the notification service's memory use grew steadily for a week after the cache change. [valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n\nQuestion: Which note records the decision that the scheduler will use leader election instead of a single fixed node, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603520-fxW6LKaeoozzjxZpKN0i",
+  "object": "chat.completion",
+  "created": 1788603520,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/ember/2025-06-06, written 2025-06-06",
+     "refusal": null,
+     "reasoning": "The question asks which note records the decision that the scheduler will use leader election instead of a single fixed node, and when it was written.\n\nFrom memory: \"On 2025-06-06 the Ember team decided that the job scheduler will use leader election instead of a single fixed node. [decision; valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\"\n\nSo the note is standup/ember/2025-06-06, written on 2025-06-06.\n\nThe answer should be one short line with just the value asked for: the note name and date.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which note records the decision that the scheduler will use leader election instead of a single fixed node, and when it was written.\n\nFrom memory: \"On 2025-06-06 the Ember team decided that the job scheduler will use leader election instead of a single fixed node. [decision; valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\"\n\nSo the note is standup/ember/2025-06-06, written on 2025-06-06.\n\nThe answer should be one short line with just the value asked for: the note name and date.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1695,
+   "completion_tokens": 156,
+   "total_tokens": 1851,
+   "cost": 0.000158445,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000158445,
+    "upstream_inference_prompt_cost": 0.000119445,
+    "upstream_inference_completions_cost": 3.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 134,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.492911458015442,
+ "fetched_at": "2026-09-05T10:18:42Z"
+}

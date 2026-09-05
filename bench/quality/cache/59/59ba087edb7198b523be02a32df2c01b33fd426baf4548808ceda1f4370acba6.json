@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The scheduler deploys on weekday mornings before 11:00 UTC. [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n    earlier: The scheduler deploys on weekdays after 15:00 UTC and at no other time. [constraint; valid 2025-03-19 to 2025-10-27; recorded by standup/ember/2025-03-19]\n- The scheduler pulls per-job kill switches from the feature-flags service on every run. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Atlas, which took it over from the Ember team. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder, which took it over from the Ember team. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- The scheduler's previous single fixed node turned every restart into a missed run. [valid 2025-06-13 to now; recorded by standup/ember/2025-06-13]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- As a follow-up to INC-2026-009, the scheduler leader lease will be shortened to ten seconds. [decision; valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- On 2026-03-19, the Ember team noticed that the scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- As of 2026-03-16, the catalog service deploys on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16]\n    earlier: The catalog service only ships on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The event bus deploys on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- On 2025-06-13, the Ember team decided the scheduler will use leader election instead of a single fixed node. [decision; valid 2025-06-13 to now; recorded by standup/ember/2025-06-13]\n- As of 2025-10-15, the pager for the scheduler rings Team Dune instead of Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- On 2026-03-09, Team Atlas observed that the scheduler's cold start time tripled after the runtime upgrade. [valid 2026-03-09 to now; recorded by standup/atlas/2026-03-09-2]\n- The reporting service can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- INC-2026-009 happened because two leaders were elected on the scheduler during a network partition. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- The billing service only ships on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-05-05 to now; recorded by standup/boreal/2025-05-05]\n- The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n\nQuestion: Which service depends on the scheduler?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615404-qzuUxWtSiLER5lY847Br",
+  "object": "chat.completion",
+  "created": 1788615404,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which service depends on the scheduler. Looking through the memory:\n\n- The billing service depends on the ledger for invoice postings.\n- The notifier depends on the event bus for delivery events.\n- The indexer depends on the catalog service for product documents.\n- The webhooks service depends on the event bus for outbound events.\n- The catalog service relies on the resizer for thumbnails.\n\nNothing says any service depends on the scheduler. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which service depends on the scheduler. Looking through the memory:\n\n- The billing service depends on the ledger for invoice postings.\n- The notifier depends on the event bus for delivery events.\n- The indexer depends on the catalog service for product documents.\n- The webhooks service depends on the event bus for outbound events.\n- The catalog service relies on the resizer for thumbnails.\n\nNothing says any service depends on the scheduler. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1464,
+   "completion_tokens": 102,
+   "total_tokens": 1566,
+   "cost": 0.00012762,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012762,
+    "upstream_inference_prompt_cost": 0.00010212,
+    "upstream_inference_completions_cost": 2.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 96,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9740237499936484,
+ "fetched_at": "2026-09-05T13:36:46Z"
+}

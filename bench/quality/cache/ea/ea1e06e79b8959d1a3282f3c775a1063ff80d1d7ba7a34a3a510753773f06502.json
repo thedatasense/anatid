@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The indexer is pinned to OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- In INC-2025-023, the indexer served stale results for two days starting 2025-10-03 because a reindex job failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- On 2025-12-18 the Atlas team decided that the indexer will rebuild the index nightly instead of on every product catalog write, because incremental updates left stale entries behind after failed writes. [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- On 2026-06-09 the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- On 2026-05-27 the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-02-10 the Boreal team noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10-2]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- As of 2025-10-07, reindex jobs will page on failure. [decision; valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- On 2026-04-01, ownership of the indexer transferred from the Atlas team to the Boreal team. [valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- On 2026-06-04 the Boreal team noticed that the product catalog's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- On 2026-03-20 the Boreal team noticed that the product catalog's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- The product catalog is owned by the Atlas team as of 2025-12-19, having moved from Cinder. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- On 2026-02-16 the Dune team noticed that the product catalog's request volume halved after the client rollout and pinged the owners. [valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- As of 2025-10-13, the pager for the ledger service rings Cinder instead of the Atlas team. [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- On 2026-04-16 the Atlas team noticed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it because it is not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to now; recorded by standup/dune/2025-06-24]\n\nQuestion: Which note first recorded that search-indexer depends on the catalog, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604539-UX2v4yplYMoSidughwJU",
+  "object": "chat.completion",
+  "created": 1788604539,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/cinder/2025-01-30, on 2025-01-30.",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded that the search-indexer depends on the catalog, and when?\n\nLooking at memory: \"The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\"\n\nSo the note is standup/cinder/2025-01-30, recorded 2025-01-30.\n\nAnswer in one short line with just the value asked for.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded that the search-indexer depends on the catalog, and when?\n\nLooking at memory: \"The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\"\n\nSo the note is standup/cinder/2025-01-30, recorded 2025-01-30.\n\nAnswer in one short line with just the value asked for.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1471,
+   "completion_tokens": 136,
+   "total_tokens": 1607,
+   "cost": 0.000132805,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000132805,
+    "upstream_inference_prompt_cost": 9.8805e-05,
+    "upstream_inference_completions_cost": 3.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 113,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4898524160380475,
+ "fetched_at": "2026-09-05T10:35:41Z"
+}

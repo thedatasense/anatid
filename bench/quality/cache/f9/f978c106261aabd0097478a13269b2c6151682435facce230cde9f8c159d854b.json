@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- On 2026-04-08 the Atlas team noticed that webhooks' request volume halved following the client rollout and flagged it because it is not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- During incident INC-2026-003, the webhooks service delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- Webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- On 2025-11-03 the Boreal team decided that webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- On 2025-05-14 the Cinder team observed that webhooks' memory use grew steadily for a week after the cache change. [valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n- The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team, until ownership transferred to the Atlas team on 2026-02-11. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team, until ownership transferred to the Dune team on 2026-02-11. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: The feature-flags service is owned by the Ember team as of 2025-11-06, having moved from the Atlas team. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- On 2026-04-16 the Atlas team noticed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it because it is not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- The feature-flags service was owned by the Ember team as of 2025-11-06, having moved from the Atlas team, until ownership transferred to the Atlas team on 2026-02-11. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: The feature-flags service was owned by the Ember team as of 2025-11-06, having moved from the Atlas team, until ownership transferred to the Dune team on 2026-02-11. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team, having moved from the Atlas team. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team, having moved from the Ember team; the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team, having moved from the Ember team. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- On 2026-05-27 the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-06-04 the Boreal team noticed that the product catalog's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- On 2025-12-31 the Atlas team noticed that the feature-flags service's queue depth hit 50,000 following the marketing send and flagged it because it is not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- The reporting service is owned by the Ember team as of 2025-12-05, having moved from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is owned by the Dune team. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n\nQuestion: Which team owns the service that webhooks depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603453-0un9bxF4aDzLJcYZFjbT",
+  "object": "chat.completion",
+  "created": 1788603453,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which team owns the service that webhooks depends on?\"\n\nLooking at the memory, I see entries about the webhooks service itself, and entries about various services (reporting, feature-flags, ledger, indexer, product catalog). But there's no entry stating that webhooks depends on any particular service. The memory doesn't say webhooks depends on anything.\n\nSo the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which team owns the service that webhooks depends on?\"\n\nLooking at the memory, I see entries about the webhooks service itself, and entries about various services (reporting, feature-flags, ledger, indexer, product catalog). But there's no entry stating that webhooks depends on any particular service. The memory doesn't say webhooks depends on anything.\n\nSo the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1580,
+   "completion_tokens": 93,
+   "total_tokens": 1673,
+   "cost": 0.00013023,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013023,
+    "upstream_inference_prompt_cost": 0.00010698,
+    "upstream_inference_completions_cost": 2.325e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 87,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.263429958024062,
+ "fetched_at": "2026-09-05T10:17:35Z"
+}

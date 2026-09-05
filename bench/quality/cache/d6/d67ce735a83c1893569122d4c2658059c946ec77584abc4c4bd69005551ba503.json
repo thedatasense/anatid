@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team, until ownership transferred to the Atlas team on 2026-02-11. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team, until ownership transferred to the Dune team on 2026-02-11. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: The feature-flags service is owned by the Ember team as of 2025-11-06, having moved from the Atlas team. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- The feature-flags service was owned by the Ember team as of 2025-11-06, having moved from the Atlas team, until ownership transferred to the Atlas team on 2026-02-11. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: The feature-flags service was owned by the Ember team as of 2025-11-06, having moved from the Atlas team, until ownership transferred to the Dune team on 2026-02-11. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team, having moved from the Atlas team. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n- Oskar wrote up the handover doc for the feature-flags service handover to the Atlas team for Farah. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: Oskar wrote up the handover doc for the feature-flags service handover to the Dune team for Farah. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team, having moved from the Ember team; the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team, having moved from the Ember team. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- On 2025-12-31 the Atlas team noticed that the feature-flags service's queue depth hit 50,000 following the marketing send and flagged it because it is not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- On 2025-09-02 the Atlas team decided that clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- As of 2026-06-04, page Priya Raman for anything Atlas-related for this cycle, not Marcus. [constraint; valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: As of 2026-04-08, page Marcus for anything Atlas-related for this cycle, not Priya Raman. [constraint; valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: As of 2026-03-17, page Priya Raman for anything Atlas-related. [constraint; valid 2026-03-17 to 2026-04-08; recorded by standup/atlas/2026-03-17]\n- As of 2025-12-19, the Atlas team is taking over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- As of 2025-11-24, the Atlas team is taking over the event bus from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: As of 2025-08-15, the Boreal team still owns the bus. [valid 2025-08-15 to 2025-11-24; recorded by standup/boreal/2025-08-15-2]\n- As of 2026-02-03, the Atlas team has a no-deploy Friday. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n\nQuestion: When did Atlas take over feature-flags?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603294-4koDN4AgYGSCAM6P31WL",
+  "object": "chat.completion",
+  "created": 1788603294,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2026-02-11",
+     "refusal": null,
+     "reasoning": "The question asks: \"When did Atlas take over feature-flags?\"\n\nLooking at the memory:\n- The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team (i.e., Ember took it from Atlas on 2025-11-06).\n- Then ownership transferred to the Atlas team on 2026-02-11 (per the correction entry, which supersedes the Dune team claim).\n\nSo Atlas took over feature-flags on 2026-02-11. The question asks \"When did Atlas take over feature-flags?\" — the date is 2026-02-11.\n\nThe question doesn't specify a moment; latest info says Atlas took over on 2026-02-11.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"When did Atlas take over feature-flags?\"\n\nLooking at the memory:\n- The feature-flags service was owned by the Ember team from 2025-11-06, having moved from the Atlas team (i.e., Ember took it from Atlas on 2025-11-06).\n- Then ownership transferred to the Atlas team on 2026-02-11 (per the correction entry, which supersedes the Dune team claim).\n\nSo Atlas took over feature-flags on 2026-02-11. The question asks \"When did Atlas take over feature-flags?\" — the date is 2026-02-11.\n\nThe question doesn't specify a moment; latest info says Atlas took over on 2026-02-11.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1678,
+   "completion_tokens": 168,
+   "total_tokens": 1846,
+   "cost": 0.00016017,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016017,
+    "upstream_inference_prompt_cost": 0.00011817,
+    "upstream_inference_completions_cost": 4.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 160,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.933805458014831,
+ "fetched_at": "2026-09-05T10:14:57Z"
+}

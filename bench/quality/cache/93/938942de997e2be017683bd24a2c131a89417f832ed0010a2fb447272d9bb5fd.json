@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The reporting service can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- The reporting service must stay on Python 3.11 until the pandas 3 upgrade lands. [constraint; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n- On 2026-03-10, Team Dune observed that the reporting service's p99 latency doubled after Tuesday's deploy. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- On 2025-07-28, Team Cinder observed that the billing service's error rate crept up to 2 percent after the dependency bump. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- As of 2025-09-08, billing-api has a new dependency on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- As of 2026-02-10, the reports pipeline is owned by Team Cinder, which took it over from the Ember team. [decision; valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- As of 2025-06-16, dashboards and alerts for the catalog service are being repointed. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy and flagged it because the service is not theirs. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- On 2025-06-23, Team Cinder observed that the reports pipeline's disk usage jumped 30 percent after the retention change. [valid 2025-06-23 to now; recorded by standup/cinder/2025-06-23]\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- On 2025-05-08, Team Boreal flagged that the catalog service's memory use grew steadily for a week following the cache change, noting the catalog service is not their service. [valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The feature-flags service saw 40,000 requests per second at peak, and most of the requests were identical. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n\nQuestion: Which service depends on reporting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615397-lx3zhpbbDB90pqgjt7sg",
+  "object": "chat.completion",
+  "created": 1788615397,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which service depends on reporting?\n\nLooking through the memory:\n- reporting service depends on... (reads from event bus instead of ledger) - that's reporting depending on other things\n- billing service depends on ledger\n- reports pipeline depends on ledger\n- indexer depends on catalog\n- billing-api depends on feature-flags\n- notifier depends on event bus\n- webhooks depends on event bus\n- ledger relies on auth gateway\n\nNothing in the memory says a service depends on reporting. The memory has reporting depending on the event bus, but not any service depending on reporting.\n\nSo the answer is: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which service depends on reporting?\n\nLooking through the memory:\n- reporting service depends on... (reads from event bus instead of ledger) - that's reporting depending on other things\n- billing service depends on ledger\n- reports pipeline depends on ledger\n- indexer depends on catalog\n- billing-api depends on feature-flags\n- notifier depends on event bus\n- webhooks depends on event bus\n- ledger relies on auth gateway\n\nNothing in the memory says a service depends on reporting. The memory has reporting depending on the event bus, but not any service depending on reporting.\n\nSo the answer is: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1369,
+   "completion_tokens": 134,
+   "total_tokens": 1503,
+   "cost": 0.000136175,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000136175,
+    "upstream_inference_prompt_cost": 0.000102675,
+    "upstream_inference_completions_cost": 3.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 128,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.3585556249599904,
+ "fetched_at": "2026-09-05T13:36:41Z"
+}

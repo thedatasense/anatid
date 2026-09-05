@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-03-03] handover/2025-03-03-webhooks: From today the pager for webhooks rings the Ember team, not team Boreal. Ownership transferred.\n- [2026-04-08] standup/atlas/2026-04-08: Reminder from the Atlas team: page Marcus for anything this cycle, not Priya. The Atlas team saw that webhooks' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-02-11] standup/boreal/2025-02-11-2: If the bus is down, the webhooks service is down: it relies on it for outbound events.\n- [2025-05-15] handover/2025-05-15-webhooks: Handover: as of today the webhook dispatcher moves from team Ember to the Boreal team. Oskar walked Lena through the runbook this morning.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2026-02-26] incident-review/INC-2026-003: INC-2026-003 review. What happened: the webhooks service delivered some events twice on 2026-02-20. Why: a retry loop that ignored idempotency keys. Follow-up decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-04-07] standup/ember/2025-04-07: Per the change policy, the webhooks service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. Heads-up from the Ember team: the notifier's request volume halved after the client rollout.\n- [2025-09-30] standup/atlas/2025-09-30: Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. The billing API now depends on the feature flag service. The Atlas team planning meeting is every Tuesday.\n- [2025-01-20] standup/dune/2025-01-20: The Dune team owns the image resizer.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-05-14] standup/cinder/2025-05-14: Observation from the Cinder team: after the cache change, webhooks' memory use grew steadily for a week.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.\n- [2026-05-22] standup/dune/2026-05-22-3: Heads-up from the Dune team: the scheduler's error rate crept up to 2 percent after the dependency bump.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-06-19] standup/boreal/2025-06-19: As before, webhooks needs the event-bus to work.\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.\n\nQuestion: Who is on call for the team that owns the service webhooks depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788591849-lXOWVV83khOxvew9h5lq",
+  "object": "chat.completion",
+  "created": 1788591849,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Fireworks",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Lena",
+     "refusal": null,
+     "reasoning": "Webhooks depends on the event-bus (bus). Who owns the bus? Team Boreal (2025-08-15: Team Boreal still owns the bus). On-call for Boreal: as of 2026-03-20, on-call for Boreal passes from Marcus to Lena. Today is 2026-06-30, so Lena.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Webhooks depends on the event-bus (bus). Who owns the bus? Team Boreal (2025-08-15: Team Boreal still owns the bus). On-call for Boreal: as of 2026-03-20, on-call for Boreal passes from Marcus to Lena. Today is 2026-06-30, so Lena.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1644,
+   "completion_tokens": 79,
+   "total_tokens": 1723,
+   "cost": 0.0002861,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002861,
+    "upstream_inference_prompt_cost": 0.0002466,
+    "upstream_inference_completions_cost": 3.95e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 59,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.923659000021871,
+ "fetched_at": "2026-09-05T07:04:14Z"
+}

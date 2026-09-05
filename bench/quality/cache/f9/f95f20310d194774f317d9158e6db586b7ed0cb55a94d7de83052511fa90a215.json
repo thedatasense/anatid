@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-01-30 the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-18 to now; recorded by standup/ember/2025-02-18]\n- As of 2025-12-29, the auth gateway deploys only on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-12-29 to now; recorded by standup/cinder/2025-12-29]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- On 2025-05-07 the Boreal team pinged the owners of the authentication gateway about the error rate. [valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07-2]\n- On 2025-09-16 Oskar wrote the authentication gateway handover doc for Diego. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- The security audit flagged long-lived tokens. [valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- Per Ember team policy, every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-07-29 to now; recorded by standup/ember/2025-07-29]\n- On 2025-05-07 the Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump. [valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07-2]\n- Following the INC-2025-017 review, certificate expiry will alert 30 days ahead. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- The authentication gateway is owned by Cinder as of 2025-09-16, having moved from the Ember team. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: The authentication gateway is owned by the Ember team. [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- On 2026-05-22 the Dune team noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- On 2025-09-02 the Atlas team decided that clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- On 2025-11-03 the Boreal team decided that webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- On 2025-09-03 the Cinder team observed that the auth gateway's cold start time tripled after the runtime upgrade. [valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03-2]\n- As of 2025-09-30, the billing API gates the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- As of 2026-05-19, the job scheduler's leader lease will be shortened to ten seconds. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- The ledger service relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n\nQuestion: Which note records the decision that auth-gateway tokens will expire after 15 minutes instead of an hour, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604524-2BCX1EFfScrkllTlm2x3",
+  "object": "chat.completion",
+  "created": 1788604524,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/cinder/2026-01-30, recorded 2026-01-30",
+     "refusal": null,
+     "reasoning": "The question asks: which note records the decision that auth-gateway tokens will expire after 15 minutes instead of an hour, and when was it written?\n\nFrom memory: \"On 2026-01-30 the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\"\n\nThe note label is standup/cinder/2026-01-30, written on 2026-01-30.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note records the decision that auth-gateway tokens will expire after 15 minutes instead of an hour, and when was it written?\n\nFrom memory: \"On 2026-01-30 the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\"\n\nThe note label is standup/cinder/2026-01-30, written on 2026-01-30.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1334,
+   "completion_tokens": 139,
+   "total_tokens": 1473,
+   "cost": 0.00012712,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012712,
+    "upstream_inference_prompt_cost": 9.237e-05,
+    "upstream_inference_completions_cost": 3.475e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 117,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.1661473750136793,
+ "fetched_at": "2026-09-05T10:35:27Z"
+}

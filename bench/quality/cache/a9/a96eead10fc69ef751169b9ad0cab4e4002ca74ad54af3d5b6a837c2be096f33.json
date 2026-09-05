@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Why do reindex jobs page on failure?\nGold answer: a silent reindex failure left stale results for two days in INC-2025-023\nAlso accepted: (none)\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: A reindex job failed silently on a full disk, leaving the indexer serving stale results for two days (INC-2025-023)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788605597-rztLLHdZDGzF0IHGaxh7",
+  "object": "chat.completion",
+  "created": 1788605597,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states the gold fact that a silent reindex failure left stale results for two days in INC-2025-023, with acceptable extra context about the full disk.\"}",
+     "refusal": null,
+     "reasoning": "The question asks why reindex jobs page on failure. The gold answer: \"a silent reindex failure left stale results for two days in INC-2025-023\".\n\nThe answer to grade: \"A reindex job failed silently on a full disk, leaving the indexer serving stale results for two days (INC-2025-023).\"\n\nThis states the gold fact (silent reindex failure left stale results for two days, INC-2025-023), with extra detail \"on a full disk\" — extra correct context is fine. So correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks why reindex jobs page on failure. The gold answer: \"a silent reindex failure left stale results for two days in INC-2025-023\".\n\nThe answer to grade: \"A reindex job failed silently on a full disk, leaving the indexer serving stale results for two days (INC-2025-023).\"\n\nThis states the gold fact (silent reindex failure left stale results for two days, INC-2025-023), with extra detail \"on a full disk\" — extra correct context is fine. So correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 274,
+   "completion_tokens": 164,
+   "total_tokens": 438,
+   "cost": 5.387e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.387e-05,
+    "upstream_inference_prompt_cost": 1.287e-05,
+    "upstream_inference_completions_cost": 4.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 116,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7393376249819994,
+ "fetched_at": "2026-09-05T10:53:20Z"
+}

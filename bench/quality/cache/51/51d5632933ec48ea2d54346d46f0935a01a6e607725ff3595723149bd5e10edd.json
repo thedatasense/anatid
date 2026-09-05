@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-10-16] standup/cinder/2025-10-16: The Cinder team has moved to the third floor.\n- [2026-04-03] standup/cinder/2026-04-03: Cinder runs its planning on Mondays.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-11-27] standup/cinder/2025-11-27: As of today Diego Alvarez is on the Ember team; Cinder loses a pair of hands. Yuki takes the Cinder pager from Diego, who is leaving the team.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki Tanaka and Diego are on Cinder.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n- [2025-10-24] standup/cinder/2025-10-24: Diego has the Cinder pager this cycle, taking over from Yuki.\n- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.\n- [2025-02-27] standup/cinder/2025-02-27: Yuki has the Cinder pager this cycle, taking over from Diego.\n- [2025-07-17] standup/cinder/2025-07-17: Rotation day for the Cinder team: Yuki Tanaka hands the pager to Diego Alvarez.\n- [2025-04-24] standup/cinder/2025-04-24: Rotation day for the Cinder team: Yuki hands the pager to Diego.\n- [2025-06-06] standup/cinder/2025-06-06: Yuki has the Cinder pager this cycle, taking over from Diego Alvarez.\n- [2025-05-14] standup/cinder/2025-05-14-2: Cinder adopted trunk-based development.\n- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-09-03] standup/cinder/2025-09-03-2: Heads-up from the Cinder team: the auth gateway's cold start time tripled after the runtime upgrade.\n- [2026-03-11] standup/cinder/2026-03-11-2: The Cinder team noticed that billing-api's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-05-14] standup/cinder/2025-05-14: Observation from the Cinder team: after the cache change, webhooks' memory use grew steadily for a week.\n- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2025-10-13] handover/2025-10-13-ledger: From today the pager for the ledger rings Cinder, not team Atlas. Ownership transferred.\n- [2025-06-27] standup/cinder/2025-06-27: The monthly cost review is run by Yuki.\n- [2025-12-19] handover/2025-12-19-catalog: Atlas is taking over the product catalog from the Cinder team, effective today. Dashboards and alerts are being repointed.\n- [2025-05-20] handover/2025-05-20-search-indexer: Team Atlas is taking over search-indexer from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2026-03-03] standup/cinder/2026-03-03: The auth gateway deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-12-29] standup/cinder/2025-12-29: Reminder: auth-gateway deploys only on Mondays between 10:00 and 12:00 UTC.\n- [2025-09-16] handover/2025-09-16-auth-gateway: The Ember team handed the authentication gateway to Cinder today; Oskar Lind wrote up the handover doc for Diego.\n- [2025-03-17] standup/cinder/2025-03-17: The catalog service can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception.\n- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.\n- [2025-09-03] standup/cinder/2025-09-03: New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Mon-Thu 09:00-17:00 UTC slot.\n- [2025-01-30] standup/cinder/2025-01-30: If the catalog service is down, the search indexer is down: it relies on it for product documents.\n- [2026-03-11] standup/cinder/2026-03-11: No deploys to Ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2025-04-22] standup/cinder/2025-04-22: The search indexer is pinned to OpenSearch 2.11; the pin lifts when the full reindex completes.\n- [2025-04-17] standup/cinder/2025-04-17: Decision: the catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time.\n\nQuestion: Who is the manager of Cinder?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620670-00ruZEo0MFTlsDidp5gQ",
+  "object": "chat.completion",
+  "created": 1788620670,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks who the manager of Cinder is. Looking through the memory entries, I see mentions of team members (Yuki Tanaka, Diego Alvarez), ownership of services, pager rotations, etc. But nowhere is a manager of Cinder mentioned. So the answer should be \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who the manager of Cinder is. Looking through the memory entries, I see mentions of team members (Yuki Tanaka, Diego Alvarez), ownership of services, pager rotations, etc. But nowhere is a manager of Cinder mentioned. So the answer should be \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1642,
+   "completion_tokens": 66,
+   "total_tokens": 1708,
+   "cost": 0.00013965,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013965,
+    "upstream_inference_prompt_cost": 0.00012315,
+    "upstream_inference_completions_cost": 1.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 60,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.853605958982371,
+ "fetched_at": "2026-09-05T15:04:35Z"
+}

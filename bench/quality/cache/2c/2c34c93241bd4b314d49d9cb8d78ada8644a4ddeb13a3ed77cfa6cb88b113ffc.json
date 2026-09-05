@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Who is on call for Priya's team right now?\nGold answer: Marcus\nAlso accepted: Marcus Oyelaran\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong.\n\nAnswer to grade: Marcus"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616442-YJOjY9Ug4y1kDGNnY0Ud",
+  "object": "chat.completion",
+  "created": 1788616442,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names Marcus, which exactly matches the gold answer.\"}\n",
+     "refusal": null,
+     "reasoning": "The task is straightforward: compare the answer \"Marcus\" against the gold answer \"Marcus\" (with accepted alternative \"Marcus Oyelaran\"). The answer matches exactly.\n\nOutput format: one JSON object, wrapped in code block with ``` at the end. The instruction says: Ensure to always use \"```\" End the code block to indicate the end of the JSON object.\n\nSo I should output:\n```json\n{\"correct\": true, \"reason\": \"The answer names Marcus, which matches the gold answer.\"}\n```\n\nActually the system prompt says to always output a valid JSON object and use ``` to end the code block. Let me produce JSON in a code block.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The task is straightforward: compare the answer \"Marcus\" against the gold answer \"Marcus\" (with accepted alternative \"Marcus Oyelaran\"). The answer matches exactly.\n\nOutput format: one JSON object, wrapped in code block with ``` at the end. The instruction says: Ensure to always use \"```\" End the code block to indicate the end of the JSON object.\n\nSo I should output:\n```json\n{\"correct\": true, \"reason\": \"The answer names Marcus, which matches the gold answer.\"}\n```\n\nActually the system prompt says to always output a valid JSON object and use ``` to end the code block. Let me produce JSON in a code block.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 243,
+   "completion_tokens": 163,
+   "total_tokens": 406,
+   "cost": 5.1295e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.1295e-05,
+    "upstream_inference_prompt_cost": 1.0545e-05,
+    "upstream_inference_completions_cost": 4.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 135,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.982354749983642,
+ "fetched_at": "2026-09-05T13:54:07Z"
+}

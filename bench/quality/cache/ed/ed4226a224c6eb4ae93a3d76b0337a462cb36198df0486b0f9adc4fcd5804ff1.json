@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded that billing-api depends on the ledger, and when?\nGold answer: standup/atlas/2025-01-09-2 (2025-01-09)\nAlso accepted: standup/atlas/2025-01-09-2; 2025-01-09; 9 January 2025; January 9, 2025; the standup note of 2025-01-09; the standup note of 9 January 2025; the standup note of January 9, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/atlas/2025-01-09-2, 2025-01-09"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788621540-JQgUOJnsTHucgGBg9orm",
+  "object": "chat.completion",
+  "created": 1788621540,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the exact source label standup/atlas/2025-01-09-2 together with the correct date 2025-01-09, matching the gold answer.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"standup/atlas/2025-01-09-2, 2025-01-09\" which matches the gold answer exactly (both the source label and the date). This is correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"standup/atlas/2025-01-09-2, 2025-01-09\" which matches the gold answer exactly (both the source label and the date). This is correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 346,
+   "completion_tokens": 97,
+   "total_tokens": 443,
+   "cost": 9.272e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.272e-05,
+    "upstream_inference_prompt_cost": 4.422e-05,
+    "upstream_inference_completions_cost": 4.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 47,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0668030000524595,
+ "fetched_at": "2026-09-05T15:19:03Z"
+}

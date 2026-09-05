@@ -1,0 +1,24 @@
+{
+ "seconds": 0.12572812498547137,
+ "llm": {
+  "calls": 177,
+  "cache_hits": 177,
+  "network_calls": 0,
+  "chat_calls": 0,
+  "embed_calls": 177,
+  "embed_texts": 177,
+  "prompt_tokens": 0,
+  "completion_tokens": 0,
+  "embed_tokens": 7601,
+  "cost_usd": 0.008903559999999228,
+  "cost_usd_charged": 0.0,
+  "cost_known": true,
+  "wall_s": 0.0,
+  "recorded_wall_s": 2.6165655839163264,
+  "hit_rate": 1.0
+ },
+ "report": {
+  "notes": 177,
+  "dim": 1536
+ }
+}

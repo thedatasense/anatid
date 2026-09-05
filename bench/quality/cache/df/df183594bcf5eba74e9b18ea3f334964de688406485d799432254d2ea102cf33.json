@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- Following the INC-2025-017 review, certificate expiry will alert 30 days ahead. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- During incident INC-2025-004, the notifier missed alerts for 40 minutes on 2025-02-01. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The root cause of INC-2025-004 was a consumer offset stuck after a broker restart. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- During incident INC-2026-003, the webhooks service delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- The duplicate deliveries in INC-2026-003 were caused by a retry loop that ignored idempotency keys. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- In INC-2025-023, the indexer served stale results for two days starting 2025-10-03 because a reindex job failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- During incident INC-2026-009, the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- As of 2026-03-11, the ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- On 2025-12-01 the Boreal team flagged the job scheduler's cold start regression because the job scheduler is not their service. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n- As of 2025-09-30, the billing API gates the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- As of 2025-09-02, most requests to the feature-flags service at peak were identical. [valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- Dashboards and alerts for the event bus are being repointed as of the 2025-11-24 handover. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- As of 2026-02-03, the Atlas team has a no-deploy Friday. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- Dashboards and alerts for the image resizer are being repointed as of the 2025-11-26 handover. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n- On 2025-02-21 the Boreal team pinged the owners of the ledger service about the memory growth. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- On 2025-11-03 the Boreal team noticed that the notification service's CPU sat at 90 percent after the traffic shift. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n\nQuestion: On what date did INC-2025-011 happen?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604234-o0jtsfqsBztuEaioqZ2F",
+  "object": "chat.completion",
+  "created": 1788604234,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: On what date did INC-2025-011 happen?\n\nLooking at the memory:\n- \"The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\"\n\nThe entry was recorded by incident-review/INC-2025-011, valid 2025-05-30 to now. But does this tell us the date the incident happened? The validity start date is 2025-05-30, which is when the entry became valid, likely the incident review date or incident date. But the memory doesn't explicitly state the incident date.\n\nCompare with other incidents: INC-2025-004 - \"During incident INC-2025-004, the notifier missed alerts for 40 minutes on 2025-02-01.\" So the incident happened around 2025-02-01. But for INC-2025-011, there's no explicit statement of the incident date. The validity start of 2025-05-30 might be the record date, not necessarily the incident date.\n\nThe rules say: answer only from memory; if memory doesn't contain the answer, reply exactly \"I don't know\".\n\nThe memory doesn't explicitly state the date INC-2025-011 happened. The valid-from date is when the entry is valid, not necessarily the incident date. However, one could argue the incident occurred around 2025-05-30. But strictly, the memory doesn't say when the incident happened. Following the strict rule, I should reply \"I don't know\".\n\nHmm, but the pattern: the entry recorded by incident-review/INC-2025-011 valid from 2025-05-30. For other incidents like INC-2025-017: \"During incident INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now]\". So validity start (2025-08-07) is the review date, not the incident date (2025-08-02). So for INC-2025-011, valid from 2025-05-30 is likely the review date, not incident date. The memory does not contain the incident date.\n\nAnswer: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: On what date did INC-2025-011 happen?\n\nLooking at the memory:\n- \"The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\"\n\nThe entry was recorded by incident-review/INC-2025-011, valid 2025-05-30 to now. But does this tell us the date the incident happened? The validity start date is 2025-05-30, which is when the entry became valid, likely the incident review date or incident date. But the memory doesn't explicitly state the incident date.\n\nCompare with other incidents: INC-2025-004 - \"During incident INC-2025-004, the notifier missed alerts for 40 minutes on 2025-02-01.\" So the incident happened around 2025-02-01. But for INC-2025-011, there's no explicit statement of the incident date. The validity start of 2025-05-30 might be the record date, not necessarily the incident date.\n\nThe rules say: answer only from memory; if memory doesn't contain the answer, reply exactly \"I don't know\".\n\nThe memory doesn't explicitly state the date INC-2025-011 happened. The valid-from date is when the entry is valid, not necessarily the incident date. However, one could argue the incident occurred around 2025-05-30. But strictly, the memory doesn't say when the incident happened. Following the strict rule, I should reply \"I don't know\".\n\nHmm, but the pattern: the entry recorded by incident-review/INC-2025-011 valid from 2025-05-30. For other incidents like INC-2025-017: \"During incident INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now]\". So validity start (2025-08-07) is the review date, not the incident date (2025-08-02). So for INC-2025-011, valid from 2025-05-30 is likely the review date, not incident date. The memory does not contain the incident date.\n\nAnswer: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1263,
+   "completion_tokens": 512,
+   "total_tokens": 1775,
+   "cost": 0.000211205,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000211205,
+    "upstream_inference_prompt_cost": 8.3205e-05,
+    "upstream_inference_completions_cost": 0.000128
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 506,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.6668840409838594,
+ "fetched_at": "2026-09-05T10:30:42Z"
+}

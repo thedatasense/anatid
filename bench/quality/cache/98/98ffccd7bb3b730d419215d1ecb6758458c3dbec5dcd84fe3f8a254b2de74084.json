@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What is the deploy window of the service that reporting depends on?\nGold answer: on Thursdays between 07:00 and 09:00 UTC\nAlso accepted: Thursdays 07:00-09:00 UTC\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong.\n\nAnswer to grade: Thursdays between 07:00 and 09:00 UTC (the event bus)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788597894-wCa7DVuJ1KIPM1S5cxCd",
+  "object": "chat.completion",
+  "created": 1788597894,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Venice",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names the gold deploy window (Thursdays between 07:00 and 09:00 UTC); the parenthetical merely identifies the service, not an extra list item.\"}",
+     "refusal": null,
+     "reasoning": "The answer names the gold window; extra parenthetical \"the event bus\" is the service name, not an extra item in a list. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer names the gold window; extra parenthetical \"the event bus\" is the service name, not an extra item in a list. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 220,
+   "completion_tokens": 81,
+   "total_tokens": 301,
+   "cost": 7.35e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 7.35e-05,
+    "upstream_inference_prompt_cost": 3.3e-05,
+    "upstream_inference_completions_cost": 4.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 31,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 27.472348875016905,
+ "fetched_at": "2026-09-05T08:45:22Z"
+}

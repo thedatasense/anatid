@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: notifier\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 1 services.\n\nAnswer to grade: Scheduler, reports pipeline, notification service."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788605573-SM2RaNUaOmMcLYQTftSS",
+  "object": "chat.completion",
+  "created": 1788605573,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The gold has exactly 1 service (notifier), but the answer names three services (Scheduler, reports pipeline, notification service), including extra items, so it does not match the gold.\"}",
+     "refusal": null,
+     "reasoning": "The question asks which services Dune owns now. Gold answer is \"notifier\". The answer to grade says \"Scheduler, reports pipeline, notification service.\"\n\nThe grading rule: Correct if the final answer names the gold. Where the gold is a list, every item must be named and no extra item. The gold has 1 service: notifier.\n\nThe answer names \"notification service\" — is that the same as \"notifier\"? Hmm. \"notification service\" could be considered an alternative phrasing of \"notifier\". The gold is \"notifier\". \"notification service\" is essentially the same thing. But the rule says apply literally. The accepted alternative phrasings are \"(none)\". So strictly, \"notifier\" must be named. \"notification service\" is a reasonable phrasing but not listed as accepted. However, graders often accept semantic equivalence. The rule says \"names the gold\". \"notification service\" arguably names notifier semantically.\n\nBut the answer also includes extra items: Scheduler, reports pipeline. The rule about \"no extra item\" applies \"Where the gold is a list\". The gold has 1 service. Hmm, the gold is a single item, not a list. But does the answer naming extra services make it wrong? The rule says \"Correct if the final answer names the gold\". If the answer lists multiple services and one of them matches, does that count? The rule says where the gold is a list, every item must be named and no extra item. The gold here has 1 service, so arguably the answer should name exactly \"notifier\" and no extra items.\n\nThe answer includes \"Scheduler, reports pipeline\" which are extra. That would make it incorrect under a strict reading — the gold has 1 service, and the answer names 3.\n\nBut is \"notification service\" = \"notifier\"? If we consider it a match, then the answer contains the gold plus extras. Since gold is essentially a list of one, extra items would be wrong.\n\nI'll grade as incorrect because the answer includes extra services beyond the single gold service.\n\nActually, let me reconsider. The rule: \"Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 1 services.\"\n\nThe gold has 1 service. So treating it as a list of one: every item (notifier) must be named and no extra item. The answer names 3 items, two of which are extra. So incorrect.\n\nEven if \"notification service\" counts as \"notifier\", the extras make it wrong. If \"notification service\" doesn't count as \"notifier\", then the gold isn't named at all, also wrong.\n\nAnswer: incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Dune owns now. Gold answer is \"notifier\". The answer to grade says \"Scheduler, reports pipeline, notification service.\"\n\nThe grading rule: Correct if the final answer names the gold. Where the gold is a list, every item must be named and no extra item. The gold has 1 service: notifier.\n\nThe answer names \"notification service\" — is that the same as \"notifier\"? Hmm. \"notification service\" could be considered an alternative phrasing of \"notifier\". The gold is \"notifier\". \"notification service\" is essentially the same thing. But the rule says apply literally. The accepted alternative phrasings are \"(none)\". So strictly, \"notifier\" must be named. \"notification service\" is a reasonable phrasing but not listed as accepted. However, graders often accept semantic equivalence. The rule says \"names the gold\". \"notification service\" arguably names notifier semantically.\n\nBut the answer also includes extra items: Scheduler, reports pipeline. The rule about \"no extra item\" applies \"Where the gold is a list\". The gold has 1 service. Hmm, the gold is a single item, not a list. But does the answer naming extra services make it wrong? The rule says \"Correct if the final answer names the gold\". If the answer lists multiple services and one of them matches, does that count? The rule says where the gold is a list, every item must be named and no extra item. The gold here has 1 service, so arguably the answer should name exactly \"notifier\" and no extra items.\n\nThe answer includes \"Scheduler, reports pipeline\" which are extra. That would make it incorrect under a strict reading — the gold has 1 service, and the answer names 3.\n\nBut is \"notification service\" = \"notifier\"? If we consider it a match, then the answer contains the gold plus extras. Since gold is essentially a list of one, extra items would be wrong.\n\nI'll grade as incorrect because the answer includes extra services beyond the single gold service.\n\nActually, let me reconsider. The rule: \"Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 1 services.\"\n\nThe gold has 1 service. So treating it as a list of one: every item (notifier) must be named and no extra item. The answer names 3 items, two of which are extra. So incorrect.\n\nEven if \"notification service\" counts as \"notifier\", the extras make it wrong. If \"notification service\" doesn't count as \"notifier\", then the gold isn't named at all, also wrong.\n\nAnswer: incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 243,
+   "completion_tokens": 625,
+   "total_tokens": 868,
+   "cost": 0.000174475,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000174475,
+    "upstream_inference_prompt_cost": 1.8225e-05,
+    "upstream_inference_completions_cost": 0.00015625
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 575,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 14.532406958984211,
+ "fetched_at": "2026-09-05T10:53:07Z"
+}

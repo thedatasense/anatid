@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Reindex jobs will page on failure. [decision; valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- As of 2026-05-29, for anything related to the Ember team, page Oskar this cycle, not Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, for anything related to the Ember team, page Diego this cycle, not Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, for anything related to the Ember team, page Oskar Lind for anything this cycle, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, for anything related to the Ember team, page Diego, the primary on-call; Oskar is off rotation. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n    earlier: For anything related to the Ember team, page Oskar. [decision; valid 2025-03-31 to 2026-01-15; recorded by standup/ember/2025-03-31]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- Marcus took over the Boreal team on-call shift from Lena on 2025-05-07. [decision; valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07]\n- The product catalog deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- As of 2026-03-02, Oskar Lind is on the Ember team's on-call rotation. [valid 2026-03-02 to now; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Oskar is off the Ember team's on-call rotation. [valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- Yuki Tanaka is on the Cinder team. [valid 2025-01-08 to now; recorded by standup/cinder/2025-01-08]\n- INC-2025-011 was a ledger service incident on 2025-05-24. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- Team Dune sits on the fourth floor. [valid 2025-07-24 to now; recorded by standup/dune/2025-07-24]\n- The Ember team runs its planning on Fridays. [valid 2025-07-21 to now; recorded by standup/ember/2025-07-21]\n- As of 2025-11-27, Diego is on the Ember team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on the Cinder team. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- The Cinder team runs its planning on Mondays. [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: As of 2025-06-19, Tomasz is the primary on-call for the Atlas team and Priya Raman is no longer the primary on-call. [decision; valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: As of 2025-05-13, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Priya Raman is no longer the primary on-call for the Atlas team; Tomasz is the primary on-call for the Atlas team this cycle as of 2025-04-03. [decision; valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12; Tomasz is off rotation. [decision; valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz takes the first on-call rotation for the Atlas team. [decision; valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n\nQuestion: Why do reindex jobs page on failure?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595972-TAJDrn0PudLBbWySCcKT",
+  "object": "chat.completion",
+  "created": 1788595972,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "DeepInfra",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Because a reindex job failed silently on a full disk (INC-2025-023).",
+     "refusal": null,
+     "reasoning": "Root cause of INC-2025-023: silent failure on full disk.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Root cause of INC-2025-023: silent failure on full disk.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1689,
+   "completion_tokens": 39,
+   "total_tokens": 1728,
+   "cost": 0.000136425,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000136425,
+    "upstream_inference_prompt_cost": 0.000126675,
+    "upstream_inference_completions_cost": 9.75e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 14,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 0.7362690420122817,
+ "fetched_at": "2026-09-05T08:12:53Z"
+}

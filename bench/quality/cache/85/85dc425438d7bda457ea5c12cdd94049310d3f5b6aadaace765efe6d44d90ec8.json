@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-03-17 the Atlas team decided that the image resizer will keep original uploads for 90 days only, because storage for originals doubled in six months. [decision; valid 2026-03-17 to now; recorded by standup/atlas/2026-03-17]\n- The product catalog calls the image resizer for thumbnails. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- The product catalog still relies on the image resizer. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- The image resizer is owned by the Atlas team as of 2025-11-26, having moved from the Ember team. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The image resizer is owned by the Ember team as of 2025-03-20. [valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: The Dune team owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- The image resizer is a hard dependency of the product catalog. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- On 2025-10-15 the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-10-15 to now; recorded by standup/atlas/2025-10-15]\n- Dashboards and alerts for the image resizer are being repointed as of the 2025-11-26 handover. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n- On 2026-06-09 the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- On 2026-03-20 the Boreal team noticed that the product catalog's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- On 2025-08-19 the Dune team observed that the resizer's cold start time tripled after the runtime upgrade. [valid 2025-08-19 to now; recorded by standup/dune/2025-08-19-2]\n- The product catalog keeps image metadata in a separate table because the joined writes were locking product updates for seconds at a time. [valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n- On 2025-12-25 the Atlas team noticed that the reports pipeline's disk usage jumped 30 percent after the retention change and flagged it because it is not their service. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- In INC-2025-023, the indexer served stale results for two days starting 2025-10-03 because a reindex job failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- The product catalog will keep image metadata in a separate table. [decision; valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n- On 2026-06-04 the Boreal team noticed that the product catalog's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- Following the INC-2025-017 review, certificate expiry will alert 30 days ahead. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- On 2025-09-02 the Atlas team decided that clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- Incremental index updates left stale entries behind after failed writes. [valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- On 2025-03-26 the Dune team observed that the notification service's memory use grew steadily for a week after the cache change. [valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- On 2026-04-16 the Atlas team noticed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it because it is not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n\nQuestion: Why does image-resizer keep original uploads for only 90 days?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604203-tLGcAD7FjM7MWk0Bnhcv",
+  "object": "chat.completion",
+  "created": 1788604203,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Storage for originals doubled in six months.",
+     "refusal": null,
+     "reasoning": "The memory says: \"On 2026-03-17 the Atlas team decided that the image resizer will keep original uploads for 90 days only, because storage for originals doubled in six months.\"\n\nSo the reason: storage for originals doubled in six months.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"On 2026-03-17 the Atlas team decided that the image resizer will keep original uploads for 90 days only, because storage for originals doubled in six months.\"\n\nSo the reason: storage for originals doubled in six months.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1365,
+   "completion_tokens": 63,
+   "total_tokens": 1428,
+   "cost": 0.00023625,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00023625,
+    "upstream_inference_prompt_cost": 0.00020475,
+    "upstream_inference_completions_cost": 3.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 53,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.6057176670292392,
+ "fetched_at": "2026-09-05T10:30:06Z"
+}

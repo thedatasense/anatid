@@ -1,0 +1,54 @@
+{
+ "qid": "q058",
+ "system": "hybrid",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2026-04-13] standup/dune/2026-04-13: On-call rotation: Tomasz is primary for Dune starting today; Farah is off rotation.\n- [2026-03-10] standup/dune/2026-03-10: On-call rotation: Farah is primary for Dune starting today; Tomasz Nowak is off rotation.\n- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.\n- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.\n- [2026-03-10] standup/dune/2026-03-10-2: Observation from team Dune: after Tuesday's deploy, the reporting service's p99 latency doubled. The webhook dispatcher deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2026-06-08] standup/dune/2026-06-08: Rotation day for Dune: Tomasz hands the pager to Farah.\n- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-03-24] standup/dune/2025-03-24: Reminder that the product catalog only ships on Mondays to Thursdays between 09:00 and 17:00 UTC. Farah still has the Dune pager.\n- [2025-04-08] standup/dune/2025-04-08: Reminder that the reporting service depends on the ledger.\n- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.\n- [2025-04-09] standup/cinder/2025-04-09: On-call rotation: Yuki Tanaka is primary for the Cinder team starting today; Diego Alvarez is off rotation.\n- [2026-03-19] standup/ember/2026-03-19: No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2026-02-23] standup/dune/2026-02-23: The job scheduler deploy window (unchanged): on weekday mornings before 11:00 UTC.\n- [2026-05-18] standup/ember/2026-05-18: Oskar Lind picked up the Ember on-call shift from Diego today.\n- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.\n- [2025-07-04] handover/2025-07-04-webhooks-correction: Fixing an error in the 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2025-03-20] handover/2025-03-20-catalog: From today the pager for the catalog service rings Dune, not the Cinder team. Ownership transferred.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2026-03-03] standup/dune/2026-03-03: Image-resizer will keep original uploads for 90 days only. Rationale: storage for originals doubled in six months.\n- [2025-12-15] standup/dune/2025-12-15: Rotation day for Dune: Tomasz hands the pager to Farah.\n- [2026-03-12] standup/boreal/2026-03-12: For anything Boreal-related, page Lena.\n- [2025-07-30] standup/dune/2025-07-30: Rotation day for team Dune: Farah Haddad hands the pager to Tomasz Nowak.\n- [2025-10-27] standup/dune/2025-10-27: Reminder from Dune: page Tomasz for anything this cycle, not Farah.\n- [2025-05-09] standup/dune/2025-05-09-2: The Dune team has switched to a monthly game day.\n- [2025-03-10] standup/dune/2025-03-10: The reports pipeline depends on the ledger service for the nightly balance export.\n- [2026-02-12] standup/ember/2026-02-12: Ember on-call swapped this morning. Oskar carries the phone until the next rotation. Heads-up from team Ember: the search indexer's p99 latency doubled after Tuesday's deploy.\n- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2026-04-16] standup/ember/2026-04-16: The ledger service's deploy window changes today: it is now on Mondays and Wednesdays between 14:00 and 16:00 UTC. The old slot (Wednesdays 09:00-11:00 UTC) is retired.\n- [2025-01-20] standup/dune/2025-01-20: The resizer lives with Dune.\n\nQuestion: Who was on call for Dune on 2026-04-03?"
+  }
+ ],
+ "contexts": [
+  "- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.",
+  "- [2026-04-13] standup/dune/2026-04-13: On-call rotation: Tomasz is primary for Dune starting today; Farah is off rotation.",
+  "- [2026-03-10] standup/dune/2026-03-10: On-call rotation: Farah is primary for Dune starting today; Tomasz Nowak is off rotation.",
+  "- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.",
+  "- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.",
+  "- [2026-03-10] standup/dune/2026-03-10-2: Observation from team Dune: after Tuesday's deploy, the reporting service's p99 latency doubled. The webhook dispatcher deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.",
+  "- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.",
+  "- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.",
+  "- [2026-06-08] standup/dune/2026-06-08: Rotation day for Dune: Tomasz hands the pager to Farah.",
+  "- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.",
+  "- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.",
+  "- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-03-24] standup/dune/2025-03-24: Reminder that the product catalog only ships on Mondays to Thursdays between 09:00 and 17:00 UTC. Farah still has the Dune pager.",
+  "- [2025-04-08] standup/dune/2025-04-08: Reminder that the reporting service depends on the ledger.",
+  "- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.",
+  "- [2025-04-09] standup/cinder/2025-04-09: On-call rotation: Yuki Tanaka is primary for the Cinder team starting today; Diego Alvarez is off rotation.",
+  "- [2026-03-19] standup/ember/2026-03-19: No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.",
+  "- [2026-02-23] standup/dune/2026-02-23: The job scheduler deploy window (unchanged): on weekday mornings before 11:00 UTC.",
+  "- [2026-05-18] standup/ember/2026-05-18: Oskar Lind picked up the Ember on-call shift from Diego today.",
+  "- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.",
+  "- [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.",
+  "- [2025-07-04] handover/2025-07-04-webhooks-correction: Fixing an error in the 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.",
+  "- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.",
+  "- [2025-03-20] handover/2025-03-20-catalog: From today the pager for the catalog service rings Dune, not the Cinder team. Ownership transferred.",
+  "- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.",
+  "- [2026-03-03] standup/dune/2026-03-03: Image-resizer will keep original uploads for 90 days only. Rationale: storage for originals doubled in six months.",
+  "- [2025-12-15] standup/dune/2025-12-15: Rotation day for Dune: Tomasz hands the pager to Farah.",
+  "- [2026-03-12] standup/boreal/2026-03-12: For anything Boreal-related, page Lena.",
+  "- [2025-07-30] standup/dune/2025-07-30: Rotation day for team Dune: Farah Haddad hands the pager to Tomasz Nowak.",
+  "- [2025-10-27] standup/dune/2025-10-27: Reminder from Dune: page Tomasz for anything this cycle, not Farah.",
+  "- [2025-05-09] standup/dune/2025-05-09-2: The Dune team has switched to a monthly game day.",
+  "- [2025-03-10] standup/dune/2025-03-10: The reports pipeline depends on the ledger service for the nightly balance export.",
+  "- [2026-02-12] standup/ember/2026-02-12: Ember on-call swapped this morning. Oskar carries the phone until the next rotation. Heads-up from team Ember: the search indexer's p99 latency doubled after Tuesday's deploy.",
+  "- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.",
+  "- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.",
+  "- [2026-04-16] standup/ember/2026-04-16: The ledger service's deploy window changes today: it is now on Mondays and Wednesdays between 14:00 and 16:00 UTC. The old slot (Wednesdays 09:00-11:00 UTC) is retired.",
+  "- [2025-01-20] standup/dune/2025-01-20: The resizer lives with Dune."
+ ],
+ "answer": "Farah"
+}

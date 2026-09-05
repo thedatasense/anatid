@@ -1,0 +1,69 @@
+{
+  "mode": "glm",
+  "notes": 178,
+  "build_seconds": 2906.6245895000175,
+  "reused": false,
+  "episodes": 178,
+  "memories_created": 251,
+  "memories_closed": 88,
+  "corrections": 88,
+  "relations_opened": 85,
+  "relations_closed": 30,
+  "aliases": 130,
+  "downgraded_corrections": 0,
+  "dedupe_drops": 23,
+  "parser_notes": 0,
+  "empty_patches": 11,
+  "extraction_failures": 0,
+  "apply_failures": 0,
+  "model": {
+    "cache": {
+      "calls": 178,
+      "hits": 0,
+      "misses": 178,
+      "live_seconds": 2813.6040147862514,
+      "recorded_seconds": 2813.6040147862514,
+      "hit_rate": 0.0
+    },
+    "live": {
+      "calls": 178,
+      "prompt_tokens": 423102,
+      "completion_tokens": 231879,
+      "reasoning_tokens": 193294,
+      "cost_usd": 0.13666874500000004,
+      "cost_known": 178
+    },
+    "recorded": {
+      "calls": 178,
+      "prompt_tokens": 423102,
+      "completion_tokens": 231879,
+      "reasoning_tokens": 193294,
+      "cost_usd": 0.13666874500000004,
+      "cost_known": 178
+    }
+  },
+  "embeddings": {
+    "calls": 428,
+    "hits": 180,
+    "misses": 248,
+    "live_seconds": 76.8886572055053,
+    "recorded_seconds": 131.61617499252316,
+    "hit_rate": 0.4205607476635514,
+    "requests": 248,
+    "model": "openai/text-embedding-3-small",
+    "dim": 1536
+  },
+  "graph": {
+    "memories": 251,
+    "entities": 48,
+    "episodes": 178,
+    "edges_about": 562,
+    "edges_relates": 85,
+    "edges_supersedes": 88,
+    "anatid_audit": 88,
+    "memory_versions": 339,
+    "current_memories": 163,
+    "tenant_id": 1,
+    "expand_path": "sql"
+  }
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Cinder own now?\nGold answer: reporting and feature-flags\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 2 services.\n\nAnswer to grade: Reports pipeline and feature flags."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616530-EV7cqrknxIMXm46eNCR5",
+  "object": "chat.completion",
+  "created": 1788616530,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names both gold services—'Reports pipeline' corresponds to 'reporting' and 'feature flags' to 'feature-flags'—with no extra items.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"reporting and feature-flags\" (2 services). The answer to grade: \"Reports pipeline and feature flags.\"\n\nDoes \"Reports pipeline\" name the \"reporting\" service? \"Reports pipeline\" vs \"reporting\" — these are similar phrasings. The grading rule says: Correct if the final answer names the gold. Where the gold is a list, every item must be named and no extra item.\n\n\"Reports pipeline\" — is that naming \"reporting\"? It's a plausible paraphrase. \"Reports pipeline\" could be considered naming the reporting service. Hmm. The rule says apply literally. \"Reports pipeline\" names \"reporting\" in a paraphrased way? The accepted alternative is \"(none)\", so only the gold phrasing is accepted. But the rule says \"names the gold\" — the answer must name the gold. \"Reports pipeline\" is a reasonable paraphrase of \"reporting\"? It's borderline.\n\nTypically in these grading tasks, \"Reports pipeline\" would be considered as naming \"reporting\" service — \"reports\" is essentially the same as \"reporting\". \"feature flags\" matches \"feature-flags\". So the answer names both items with no extras. I'd say correct: true.\n\nBut wait — \"Reports pipeline\" might be a different service than \"reporting\". Without more context, the safest interpretation: \"Reports pipeline\" ≈ \"reporting\". The grader should apply the rule literally: every item must be named. \"Reports pipeline\" names reporting? I think yes, it's a reasonable naming. \"Feature flags\" clearly names \"feature-flags\".\n\nI'll go with correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"reporting and feature-flags\" (2 services). The answer to grade: \"Reports pipeline and feature flags.\"\n\nDoes \"Reports pipeline\" name the \"reporting\" service? \"Reports pipeline\" vs \"reporting\" — these are similar phrasings. The grading rule says: Correct if the final answer names the gold. Where the gold is a list, every item must be named and no extra item.\n\n\"Reports pipeline\" — is that naming \"reporting\"? It's a plausible paraphrase. \"Reports pipeline\" could be considered naming the reporting service. Hmm. The rule says apply literally. \"Reports pipeline\" names \"reporting\" in a paraphrased way? The accepted alternative is \"(none)\", so only the gold phrasing is accepted. But the rule says \"names the gold\" — the answer must name the gold. \"Reports pipeline\" is a reasonable paraphrase of \"reporting\"? It's borderline.\n\nTypically in these grading tasks, \"Reports pipeline\" would be considered as naming \"reporting\" service — \"reports\" is essentially the same as \"reporting\". \"feature flags\" matches \"feature-flags\". So the answer names both items with no extras. I'd say correct: true.\n\nBut wait — \"Reports pipeline\" might be a different service than \"reporting\". Without more context, the safest interpretation: \"Reports pipeline\" ≈ \"reporting\". The grader should apply the rule literally: every item must be named. \"Reports pipeline\" names reporting? I think yes, it's a reasonable naming. \"Feature flags\" clearly names \"feature-flags\".\n\nI'll go with correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 244,
+   "completion_tokens": 388,
+   "total_tokens": 632,
+   "cost": 0.0001153,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001153,
+    "upstream_inference_prompt_cost": 1.83e-05,
+    "upstream_inference_completions_cost": 9.7e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 342,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 11.451860750035848,
+ "fetched_at": "2026-09-05T13:55:42Z"
+}

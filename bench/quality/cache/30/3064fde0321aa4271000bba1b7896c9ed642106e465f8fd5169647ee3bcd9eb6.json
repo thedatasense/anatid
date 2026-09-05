@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The scheduler deploys on weekday mornings before 11:00 UTC. [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n    earlier: The scheduler deploys on weekdays after 15:00 UTC and at no other time. [constraint; valid 2025-03-19 to 2025-10-27; recorded by standup/ember/2025-03-19]\n- On 2025-08-01, it was decided that certificate expiry will alert 30 days ahead. [decision; valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- As of 2025-06-16, Team Boreal owns the catalog service, having taken it over from Team Dune. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: As of 2025-03-20, Team Dune owns the catalog service. [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Team Cinder owns the catalog service. [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- As of 2025-06-16, dashboards and alerts for the catalog service are being repointed. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy and flagged it because the service is not theirs. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder. [valid 2025-03-20 to now; recorded by handover/2025-03-20-catalog]\n- The catalog service's joined writes were locking product updates for seconds at a time. [valid 2025-04-04 to now; recorded by standup/dune/2025-04-04]\n- On 2025-05-08, Team Boreal flagged that the catalog service's memory use grew steadily for a week following the cache change, noting the catalog service is not their service. [valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk, leaving stale results for two days. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- On 2025-07-28, Team Cinder reported that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- On 2026-02-12, the Ember team reported that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- There is a deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n\nQuestion: What was the deploy window for the catalog before it changed?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614620-prDsKImub5LoF4JlmpDp",
+  "object": "chat.completion",
+  "created": 1788614620,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"What was the deploy window for the catalog before it changed?\"\n\nLooking at the memory, I see entries about the scheduler deploy windows, not the catalog service. The scheduler deploys on weekday mornings before 11:00 UTC (valid 2025-10-27 to now), earlier: weekdays after 15:00 UTC (valid 2025-03-19 to 2025-10-27).\n\nBut the question asks about the catalog service's deploy window. The memory doesn't mention any deploy window for the catalog service. There's no entry about catalog deploy windows at all.\n\nThe rules say: answer only from memory; if the memory does not contain the answer, reply exactly \"I don't know\".\n\nSo the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"What was the deploy window for the catalog before it changed?\"\n\nLooking at the memory, I see entries about the scheduler deploy windows, not the catalog service. The scheduler deploys on weekday mornings before 11:00 UTC (valid 2025-10-27 to now), earlier: weekdays after 15:00 UTC (valid 2025-03-19 to 2025-10-27).\n\nBut the question asks about the catalog service's deploy window. The memory doesn't mention any deploy window for the catalog service. There's no entry about catalog deploy windows at all.\n\nThe rules say: answer only from memory; if the memory does not contain the answer, reply exactly \"I don't know\".\n\nSo the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1388,
+   "completion_tokens": 166,
+   "total_tokens": 1554,
+   "cost": 0.00013792,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013792,
+    "upstream_inference_prompt_cost": 9.642e-05,
+    "upstream_inference_completions_cost": 4.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 160,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.9065149590023793,
+ "fetched_at": "2026-09-05T13:23:43Z"
+}

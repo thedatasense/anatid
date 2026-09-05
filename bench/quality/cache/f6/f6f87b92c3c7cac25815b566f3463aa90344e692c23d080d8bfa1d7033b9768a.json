@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-03-17] standup/boreal/2025-03-17: Reminder that webhooks only ships on Mondays between 10:00 and 12:00 UTC.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.\n- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-05-23] standup/ember/2025-05-23: The Ember team saw that the webhooks service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-02-25] standup/boreal/2025-02-25: Webhooks still relies on the bus; keep that in mind for the maintenance.\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2025-07-04] handover/2025-07-04-webhooks-correction: Fixing an error in the 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-10-22] standup/dune/2025-10-22: We agreed today that webhooks will sign payloads with rotating keys. The reason is that a partner asked for key rotation in their security review.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2026-01-22] incident-review/INC-2026-003: Incident review INC-2026-003. Webhooks delivered some events twice on 2026-01-17. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2026-02-12] standup/ember/2026-02-12: Ember on-call swapped this morning. Oskar carries the phone until the next rotation. Heads-up from team Ember: the search indexer's p99 latency doubled after Tuesday's deploy.\n- [2025-01-17] standup/boreal/2025-01-17: The notification service depends on the bus for delivery events. If the event bus is down, the webhook dispatcher is down: it relies on it for outbound events.\n- [2026-03-10] standup/dune/2026-03-10-2: Observation from team Dune: after Tuesday's deploy, the reporting service's p99 latency doubled. The webhook dispatcher deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2026-03-19] standup/ember/2026-03-19-2: Team Ember noticed that the job scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-01-14] standup/ember/2025-01-14: Oskar Lind is on call for the Ember team to start the year.\n- [2025-01-20] standup/ember/2025-01-20: For the record, scheduler is owned by the Ember team.\n- [2026-05-18] standup/ember/2026-05-18: Oskar Lind picked up the Ember on-call shift from Diego today.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.\n- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.\n- [2025-12-16] standup/ember/2025-12-16: The ledger service deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-06-13] standup/ember/2025-06-13-2: Team Ember planning meeting is every Friday.\n\nQuestion: Who is on call for the team that owns webhooks?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608697-lfHVtNZEQZ9p9DMZzRWP",
+  "object": "chat.completion",
+  "created": 1788608697,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tomasz Nowak",
+     "refusal": null,
+     "reasoning": "The question: who is on call for the team that owns webhooks?\n\nOwnership history:\n- 2025-01-09: Boreal\n- 2025-03-28: Atlas\n- 2025-06-20: Ember (corrected 2025-07-04: Dune, Ember never held it)\n- So as of 2025-07-04: Dune.\n- 2026-02-04: webhooks owned by team Dune.\n- 2026-03-04: webhook dispatcher remains a team Dune service.\n\nSo today (2026-06-30), webhooks is owned by Dune.\n\nDune on-call: 2026-02-04: Tomasz Nowak carries phone. But 2025-09-22: Farah Haddad primary for Dune; Tomasz off rotation. Wait, 2025-09-22 is earlier than 2026-02-04. So latest Dune on-call entry is 2026-02-04: Tomasz Nowak. Check other Dune entries: 2026-02-04-2 (no on-call), 2026-03-04, 2026-03-10-2 (no on-call). So latest is Tomasz Nowak (2026-02-04).\n\nAnswer: Tomasz Nowak.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: who is on call for the team that owns webhooks?\n\nOwnership history:\n- 2025-01-09: Boreal\n- 2025-03-28: Atlas\n- 2025-06-20: Ember (corrected 2025-07-04: Dune, Ember never held it)\n- So as of 2025-07-04: Dune.\n- 2026-02-04: webhooks owned by team Dune.\n- 2026-03-04: webhook dispatcher remains a team Dune service.\n\nSo today (2026-06-30), webhooks is owned by Dune.\n\nDune on-call: 2026-02-04: Tomasz Nowak carries phone. But 2025-09-22: Farah Haddad primary for Dune; Tomasz off rotation. Wait, 2025-09-22 is earlier than 2026-02-04. So latest Dune on-call entry is 2026-02-04: Tomasz Nowak. Check other Dune entries: 2026-02-04-2 (no on-call), 2026-03-04, 2026-03-10-2 (no on-call). So latest is Tomasz Nowak (2026-02-04).\n\nAnswer: Tomasz Nowak.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1618,
+   "completion_tokens": 294,
+   "total_tokens": 1912,
+   "cost": 0.00018717,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00018717,
+    "upstream_inference_prompt_cost": 0.00011367,
+    "upstream_inference_completions_cost": 7.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 287,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.224211541994009,
+ "fetched_at": "2026-09-05T11:45:02Z"
+}

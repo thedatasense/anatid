@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The monthly cost review is run by Yuki. [valid 2025-10-13 to now; recorded by standup/cinder/2025-10-13]\n- As of 2025-10-27, Yuki is the primary on-call for Team Cinder, having taken over from Diego. [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n    earlier: As of 2025-08-29, Diego is the primary on-call for Team Cinder, having taken over from Yuki. [valid 2025-08-29 to 2025-10-27; recorded by standup/cinder/2025-08-29]\n    earlier: As of 2025-07-10, Yuki is the primary on-call for Team Cinder until the next rotation. [valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: As of 2025-05-19, Diego is the primary on-call for Team Cinder. [valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-09, Yuki is the primary on-call for Team Cinder. [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n- Yuki handed the Team Cinder pager to Diego on 2025-02-21. [valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- On 2025-05-19, Yuki handed the Team Cinder pager to Diego. [valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19]\n- Team Cinder consists of Yuki; Diego Alvarez left the team on 2025-12-05. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n    earlier: Team Cinder consists of Yuki and Diego. [valid 2025-01-08 to 2025-12-05; recorded by standup/cinder/2025-01-08]\n- Yuki takes the first Team Cinder on-call shift of the year. [valid 2025-01-14 to now; recorded by standup/cinder/2025-01-14]\n- As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Atlas, which took it over from the Ember team. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder, which took it over from the Ember team. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- As of 2025-12-08, the indexer is owned by Team Dune, which took it over from Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2025-11-20, the event bus is owned by Team Boreal, which took it over from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is owned by Team Cinder, which took it over from Team Atlas. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n- As of 2025-12-01, the resizer is owned by Team Dune, which took it over from the Ember team. [valid 2025-12-01 to now; recorded by handover/2025-12-01-image-resizer]\n    earlier: As of 2025-04-29, the resizer is owned by the Ember team. [valid 2025-04-29 to 2025-12-01; recorded by handover/2025-04-29-image-resizer]\n    earlier: The resizer lives with Team Dune. [valid 2025-01-20 to 2025-04-29; recorded by standup/dune/2025-01-20]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas, which took it over from Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n\nQuestion: Which team is Yuki on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614448-iwvkvSP7jSp6Fn3uO7PC",
+  "object": "chat.completion",
+  "created": 1788614448,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Cinder",
+     "refusal": null,
+     "reasoning": "The question asks which team Yuki is on. From the memory: \"Team Cinder consists of Yuki; Diego Alvarez left the team on 2025-12-05.\" [valid 2025-12-05 to now]. So Yuki is on Team Cinder.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Yuki is on. From the memory: \"Team Cinder consists of Yuki; Diego Alvarez left the team on 2025-12-05.\" [valid 2025-12-05 to now]. So Yuki is on Team Cinder.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1848,
+   "completion_tokens": 60,
+   "total_tokens": 1908,
+   "cost": 0.00014592,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014592,
+    "upstream_inference_prompt_cost": 0.00013092,
+    "upstream_inference_completions_cost": 1.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 56,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.7906642500311136,
+ "fetched_at": "2026-09-05T13:20:50Z"
+}

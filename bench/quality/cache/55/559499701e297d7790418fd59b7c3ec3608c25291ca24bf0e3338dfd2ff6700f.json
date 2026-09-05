@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.\n- [2025-01-06] standup/atlas/2025-01-06: The Atlas team this year is Priya Raman and Tomasz.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-06-19] standup/atlas/2025-06-19: Rotation day for team Atlas: Priya hands the pager to Tomasz.\n- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.\n- [2026-01-16] standup/dune/2026-01-16: On-call rotation: Farah Haddad is primary for team Dune starting today; Tomasz is off rotation.\n- [2026-04-14] standup/dune/2026-04-14: Rotation day for the Dune team: Tomasz hands the pager to Farah.\n- [2025-12-10] standup/dune/2025-12-10: Tomasz Nowak has the Dune pager this cycle, taking over from Farah.\n- [2026-03-11] standup/dune/2026-03-11: Tomasz has the Dune pager this cycle, taking over from Farah.\n- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.\n- [2026-05-22] standup/dune/2026-05-22: Tomasz picked up the Dune on-call shift from Farah today.\n- [2025-10-15] standup/dune/2025-10-15: Farah has the Dune pager this cycle, taking over from Tomasz Nowak.\n- [2026-04-01] handover/2026-04-01-search-indexer: From today the pager for the search indexer rings the Boreal team, not team Atlas. Ownership transferred.\n- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.\n- [2025-05-20] handover/2025-05-20-search-indexer: Team Atlas is taking over search-indexer from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2025-03-07] handover/2025-03-07-billing-api: Billing-api has a new home: the Ember team. Team Atlas kept it until today.\n- [2025-01-10] standup/ember/2025-01-10: The Ember team is a one-person team at the moment: Oskar.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2025-11-27] standup/cinder/2025-11-27: As of today Diego Alvarez is on the Ember team; Cinder loses a pair of hands. Yuki takes the Cinder pager from Diego, who is leaving the team.\n- [2025-11-06] handover/2025-11-06-feature-flags: Quick one: feature-flags belongs to team Ember starting today. Thanks to team Atlas for running it until now.\n- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.\n- [2025-03-03] handover/2025-03-03-webhooks: From today the pager for webhooks rings the Ember team, not team Boreal. Ownership transferred.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-11-26] handover/2025-11-26-image-resizer: The Atlas team is taking over the image resizer from the Ember team, effective today. Dashboards and alerts are being repointed.\n- [2025-10-13] handover/2025-10-13-ledger: From today the pager for the ledger rings Cinder, not team Atlas. Ownership transferred.\n- [2026-01-12] handover/2026-01-12-billing-api: Quick one: billing-api belongs to the Ember team starting today. Thanks to the Atlas team for running it until now.\n- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.\n- [2025-02-12] standup/boreal/2025-02-12: Rotation day for the Boreal team: Lena hands the pager to Marcus.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2025-05-15] handover/2025-05-15-webhooks: Handover: as of today the webhook dispatcher moves from team Ember to the Boreal team. Oskar walked Lena through the runbook this morning.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n\nQuestion: Which team is Tomasz on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620164-97Fkt4A3ZlDhu9V651gR",
+  "object": "chat.completion",
+  "created": 1788620164,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Dune",
+     "refusal": null,
+     "reasoning": "The question asks: Which team is Tomasz on now? Today is 2026-06-30.\n\nLooking at the memory:\n- 2025-07-30: Tomasz leaves team Atlas and joins team Dune, effective today.\n- Later entries show Tomasz involved with Dune on-call rotations: 2025-09-04, 2025-10-15, 2025-12-10, 2026-03-11, 2026-04-14, 2026-05-22 — all Dune standups.\n\nSo as of now, Tomasz is on team Dune. The last relevant team-change entry is 2025-07-30 (joined Dune), and no later entry says he left Dune. So answer: Dune.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which team is Tomasz on now? Today is 2026-06-30.\n\nLooking at the memory:\n- 2025-07-30: Tomasz leaves team Atlas and joins team Dune, effective today.\n- Later entries show Tomasz involved with Dune on-call rotations: 2025-09-04, 2025-10-15, 2025-12-10, 2026-03-11, 2026-04-14, 2026-05-22 — all Dune standups.\n\nSo as of now, Tomasz is on team Dune. The last relevant team-change entry is 2025-07-30 (joined Dune), and no later entry says he left Dune. So answer: Dune.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1691,
+   "completion_tokens": 170,
+   "total_tokens": 1861,
+   "cost": 0.000169325,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000169325,
+    "upstream_inference_prompt_cost": 0.000126825,
+    "upstream_inference_completions_cost": 4.25e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 166,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.1361452499986626,
+ "fetched_at": "2026-09-05T14:56:07Z"
+}

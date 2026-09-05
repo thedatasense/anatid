@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What is the deploy window of the service that the ledger depends on?\nGold answer: on weekdays between 08:00 and 10:00 UTC, never on Fridays\nAlso accepted: weekdays 08:00-10:00 UTC except Fridays\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong.\n\nAnswer to grade: Weekdays between 08:00 and 10:00 UTC, never on Fridays (auth gateway)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616614-jtGp4MnvFOrYyO8EilFt",
+  "object": "chat.completion",
+  "created": 1788616614,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names the gold deploy window exactly (weekdays 08:00–10:00 UTC, never Fridays), with the parenthetical only identifying the dependent service rather than altering the window.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"Weekdays between 08:00 and 10:00 UTC, never on Fridays (auth gateway).\"\n\nGold: \"on weekdays between 08:00 and 10:00 UTC, never on Fridays\"\n\nThe answer matches the gold exactly, plus adds \"(auth gateway)\" which identifies the service. The grading rule says correct if the final answer names the gold. The extra parenthetical is naming the intermediate hop's service, but it doesn't add wrong information to the window itself. The window matches: weekdays, 08:00-10:00 UTC, never Fridays. All items named, no extra items regarding the window.\n\nSo correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"Weekdays between 08:00 and 10:00 UTC, never on Fridays (auth gateway).\"\n\nGold: \"on weekdays between 08:00 and 10:00 UTC, never on Fridays\"\n\nThe answer matches the gold exactly, plus adds \"(auth gateway)\" which identifies the service. The grading rule says correct if the final answer names the gold. The extra parenthetical is naming the intermediate hop's service, but it doesn't add wrong information to the window itself. The window matches: weekdays, 08:00-10:00 UTC, never Fridays. All items named, no extra items regarding the window.\n\nSo correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 281,
+   "completion_tokens": 192,
+   "total_tokens": 473,
+   "cost": 6.9075e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 6.9075e-05,
+    "upstream_inference_prompt_cost": 2.1075e-05,
+    "upstream_inference_completions_cost": 4.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 140,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.943088124971837,
+ "fetched_at": "2026-09-05T13:57:01Z"
+}

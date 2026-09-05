@@ -1,0 +1,19 @@
+{
+  "mode": "glm",
+  "anatid": "0.4.0",
+  "tenant": 1,
+  "id_base": 1000000,
+  "notes": 178,
+  "notes_sha": "e81184d845a695290334a281b9f6c822b8db4479ac39d404b1d8d2c8038f3695",
+  "patches_sha": null,
+  "embed_model": "openai/text-embedding-3-small",
+  "dim": 1536,
+  "model": "z-ai/glm-5.3-flash",
+  "system_prompt_sha": "13b4bc933b0d6b9ce75563259d8645c017a59106e56d212ffb5a1e1fac610b64",
+  "extractor": {
+    "temperature": 0.0,
+    "response_format": "json_object",
+    "max_existing": 40,
+    "extra_body": null
+  }
+}

@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000966\": On 2026-02-12, the Ember team reported that the indexer's p99 latency doubled after Tuesday's deploy.  (about: Ember team, indexer)\n- memory_id \"1000952\" [preference]: As of 2026-02-04, for the current Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah.  (about: Tomasz Nowak, Farah, Team Dune)\n- memory_id \"1000876\" [decision]: On 2025-12-17, Team Dune decided that the indexer will rebuild the index nightly instead of on every catalog write.  (about: Team Dune, indexer)\n- memory_id \"1000855\": As of 2025-12-08, the pager for the indexer rings Team Dune instead of Team Cinder.  (about: Team Cinder, Team Dune, indexer)\n- memory_id \"1000831\": On 2025-11-21, Team Dune reported that the billing service's queue depth hit 50,000 after the marketing send.  (about: billing service, Team Dune)\n- memory_id \"1000813\": As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune.  (about: Team Dune, Ember team, reporting service)\n- memory_id \"1000787\": Team Dune's planning meeting is every Wednesday.  (about: Team Dune)\n- memory_id \"1000783\": On 2025-11-06, Team Dune reported that the indexer's queue depth hit 50,000 after the marketing send.  (about: Team Dune, indexer)\n- memory_id \"1000780\" [constraint]: There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season.  (about: billing service)\n- memory_id \"1000765\" [constraint]: The scheduler deploys on weekday mornings before 11:00 UTC.  (about: scheduler)\n- memory_id \"1000739\" [decision]: On 2025-10-22, Team Dune decided that the webhooks service will sign payloads with rotating keys.  (about: Team Dune, webhooks service)\n- memory_id \"1000719\": As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas.  (about: Team Atlas, Team Dune, scheduler)\n- memory_id \"1000715\": As of 2025-10-15, the pager for the scheduler rings Team Dune instead of Team Atlas.  (about: Team Atlas, Team Dune, scheduler)\n- memory_id \"1000455\": As of 2025-06-19, the notifier lives with Team Dune.  (about: Team Dune, notifier)\n- memory_id \"1000439\": The scheduler's previous single fixed node turned every restart into a missed run.  (about: scheduler)\n- memory_id \"1000436\" [decision]: On 2025-06-13, the Ember team decided the scheduler will use leader election instead of a single fixed node.  (about: Ember team, scheduler)\n- memory_id \"1000391\" [decision]: As of 2025-05-09, Team Dune has switched to a monthly game day.  (about: Team Dune)\n- memory_id \"1000367\" [constraint]: The billing service only ships on Tuesdays and Fridays between 09:00 and 10:30 UTC.  (about: billing service)\n- memory_id \"1000278\": The scheduler pulls per-job kill switches from the feature-flags service on every run.  (about: feature-flags service, scheduler)\n- memory_id \"1000237\" [constraint]: The webhooks service only ships on Mondays between 10:00 and 12:00 UTC.  (about: webhooks service)\nExisting entity names: Ember team, indexer, Tomasz Nowak, Farah, Team Dune, Team Cinder, billing service, reporting service, scheduler, webhooks service, Team Atlas, notifier, feature-flags service\n\nThe note:\n\n[2026-02-23] standup/dune/2026-02-23: The job scheduler deploy window (unchanged): on weekday mornings before 11:00 UTC."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788612694-ynwE0Lg0PQNprvyGpBfm",
+  "object": "chat.completion",
+  "created": 1788612694,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\": [], \"corrections\": [], \"add_relations\": [], \"remove_relations\": [], \"entity_aliases\": [{\"name\": \"job scheduler\", \"canonical\": \"scheduler\", \"evidence\": \"The job scheduler deploy window (unchanged)\"}]}",
+     "refusal": null,
+     "reasoning": "The note says: \"[2026-02-23] standup/dune/2026-02-23: The job scheduler deploy window (unchanged): on weekday mornings before 11:00 UTC.\"\n\nExisting fact: memory_id \"1000765\" [constraint]: The scheduler deploys on weekday mornings before 11:00 UTC.\n\nThe note confirms the existing constraint is unchanged. It says \"job scheduler\" — this is an alias for \"scheduler\". The note states the deploy window is unchanged, so no correction needed — it's a restatement. Should we add a fact? The note says \"(unchanged)\" — it's confirming existing info. Adding a duplicate fact would be redundant. The instruction: \"Do not invent anything the note does not say.\" The note says the deploy window is unchanged. This is a confirmation, not new durable info. However, \"job scheduler\" is a name used for the existing entity \"scheduler\" — could add an alias.\n\nOptions:\n1. Empty arrays (nothing durable new).\n2. Add alias \"job scheduler\" -> \"scheduler\".\n\nThe alias seems appropriate: \"A name the note uses for an entity that already exists under another name.\" The note uses \"job scheduler\" for \"scheduler\". Evidence: \"The job scheduler deploy window\".\n\nShould we add a fact restating the constraint? Since it's unchanged, no new fact needed. The existing fact already covers it. Adding a duplicate would be bad. So the patch: entity_aliases with one entry.\n\nOutput JSON only, no code fence per system prompt? Wait — the first system prompt says \"Ensure you always end your code block with ```\" but the second says \"one JSON object and nothing else, no prose, no code fence\". The more specific instruction for this task says no code fence. The schema instruction says output one JSON object and nothing else, no code fence. I'll follow the memory patch instruction: raw JSON.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: \"[2026-02-23] standup/dune/2026-02-23: The job scheduler deploy window (unchanged): on weekday mornings before 11:00 UTC.\"\n\nExisting fact: memory_id \"1000765\" [constraint]: The scheduler deploys on weekday mornings before 11:00 UTC.\n\nThe note confirms the existing constraint is unchanged. It says \"job scheduler\" — this is an alias for \"scheduler\". The note states the deploy window is unchanged, so no correction needed — it's a restatement. Should we add a fact? The note says \"(unchanged)\" — it's confirming existing info. Adding a duplicate fact would be redundant. The instruction: \"Do not invent anything the note does not say.\" The note says the deploy window is unchanged. This is a confirmation, not new durable info. However, \"job scheduler\" is a name used for the existing entity \"scheduler\" — could add an alias.\n\nOptions:\n1. Empty arrays (nothing durable new).\n2. Add alias \"job scheduler\" -> \"scheduler\".\n\nThe alias seems appropriate: \"A name the note uses for an entity that already exists under another name.\" The note uses \"job scheduler\" for \"scheduler\". Evidence: \"The job scheduler deploy window\".\n\nShould we add a fact restating the constraint? Since it's unchanged, no new fact needed. The existing fact already covers it. Adding a duplicate would be bad. So the patch: entity_aliases with one entry.\n\nOutput JSON only, no code fence per system prompt? Wait — the first system prompt says \"Ensure you always end your code block with ```\" but the second says \"one JSON object and nothing else, no prose, no code fence\". The more specific instruction for this task says no code fence. The schema instruction says output one JSON object and nothing else, no code fence. I'll follow the memory patch instruction: raw JSON.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2326,
+   "completion_tokens": 450,
+   "total_tokens": 2776,
+   "cost": 0.00028311,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00028311,
+    "upstream_inference_prompt_cost": 0.00017061,
+    "upstream_inference_completions_cost": 0.0001125
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 394,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 20.819933582970407,
+ "fetched_at": "2026-09-05T12:51:55Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.\n- [2025-02-27] standup/cinder/2025-02-27: Yuki has the Cinder pager this cycle, taking over from Diego.\n- [2025-10-24] standup/cinder/2025-10-24: Diego has the Cinder pager this cycle, taking over from Yuki.\n- [2025-10-16] standup/cinder/2025-10-16: The Cinder team has moved to the third floor.\n- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.\n- [2026-03-03] standup/cinder/2026-03-03: The auth gateway deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-04-24] standup/cinder/2025-04-24: Rotation day for the Cinder team: Yuki hands the pager to Diego.\n- [2025-12-29] standup/cinder/2025-12-29: Reminder: auth-gateway deploys only on Mondays between 10:00 and 12:00 UTC.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-07-17] standup/cinder/2025-07-17: Rotation day for the Cinder team: Yuki Tanaka hands the pager to Diego Alvarez.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki Tanaka and Diego are on Cinder.\n- [2025-10-13] handover/2025-10-13-ledger: From today the pager for the ledger rings Cinder, not team Atlas. Ownership transferred.\n- [2025-06-06] standup/cinder/2025-06-06: Yuki has the Cinder pager this cycle, taking over from Diego Alvarez.\n- [2026-04-03] standup/cinder/2026-04-03: Cinder runs its planning on Mondays.\n- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.\n- [2025-09-03] standup/cinder/2025-09-03: New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Mon-Thu 09:00-17:00 UTC slot.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.\n- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.\n- [2025-11-27] standup/cinder/2025-11-27: As of today Diego Alvarez is on the Ember team; Cinder loses a pair of hands. Yuki takes the Cinder pager from Diego, who is leaving the team.\n- [2025-09-03] standup/cinder/2025-09-03-2: Heads-up from the Cinder team: the auth gateway's cold start time tripled after the runtime upgrade.\n- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.\n- [2025-02-12] standup/boreal/2025-02-12: Rotation day for the Boreal team: Lena hands the pager to Marcus.\n- [2025-12-10] standup/dune/2025-12-10: Tomasz Nowak has the Dune pager this cycle, taking over from Farah.\n- [2025-05-14] standup/cinder/2025-05-14-2: Cinder adopted trunk-based development.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.\n- [2026-03-11] standup/cinder/2026-03-11-2: The Cinder team noticed that billing-api's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2025-10-15] standup/dune/2025-10-15: Farah has the Dune pager this cycle, taking over from Tomasz Nowak.\n- [2025-02-18] standup/ember/2025-02-18: Per the change policy, auth-gateway deploys on Mondays between 10:00 and 12:00 UTC.\n- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.\n- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.\n- [2026-02-10] standup/boreal/2026-02-10-2: Team Boreal noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-02-06] standup/ember/2025-02-06: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time.\n\nQuestion: Who was on call for Cinder on 2025-02-10?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620211-hg3AQmtYdCa1q16sZ4ds",
+  "object": "chat.completion",
+  "created": 1788620211,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Diego",
+     "refusal": null,
+     "reasoning": "The question asks: Who was on call for Cinder on 2025-02-10?\n\nLooking at memory entries around that date:\n- [2025-01-09] Diego is on call for Cinder to start the year.\n- [2025-02-27] Yuki has the Cinder pager this cycle, taking over from Diego.\n\nOn 2025-02-10, the latest entry before that date is 2025-01-09: Diego is on call for Cinder. The 2025-02-27 entry says Yuki took over from Diego, but that was after 2025-02-10. So on 2025-02-10, Diego was on call.\n\nAnswer: Diego.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Who was on call for Cinder on 2025-02-10?\n\nLooking at memory entries around that date:\n- [2025-01-09] Diego is on call for Cinder to start the year.\n- [2025-02-27] Yuki has the Cinder pager this cycle, taking over from Diego.\n\nOn 2025-02-10, the latest entry before that date is 2025-01-09: Diego is on call for Cinder. The 2025-02-27 entry says Yuki took over from Diego, but that was after 2025-02-10. So on 2025-02-10, Diego was on call.\n\nAnswer: Diego.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1724,
+   "completion_tokens": 153,
+   "total_tokens": 1877,
+   "cost": 0.00015987,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015987,
+    "upstream_inference_prompt_cost": 0.00012162,
+    "upstream_inference_completions_cost": 3.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 149,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.196410084026866,
+ "fetched_at": "2026-09-05T14:56:56Z"
+}

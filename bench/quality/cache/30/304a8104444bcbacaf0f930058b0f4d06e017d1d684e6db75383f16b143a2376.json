@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-03-03, the auth gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2026-03-03 to now; recorded by standup/cinder/2026-03-03]\n- On 2026-05-22, team Dune noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- The ledger service depends on the auth gateway for service tokens. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- As of 2026-01-30, the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- Changes to the billing API need a rollback plan attached to the pull request. [constraint; valid 2025-04-02 to now; recorded by standup/ember/2025-04-02]\n- The Cinder team observed that the auth gateway's cold start time tripled after the runtime upgrade. [valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03-2]\n- On 2025-09-16, the Ember team handed the authentication gateway over to the Cinder team. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it as not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- INC-2025-017 was an incident where the auth gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- The ledger service's memory use grew steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- Boreal noticed the ledger service's memory use growth after the cache change and pinged the ledger service's owners. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- Per policy, every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-07-29 to now; recorded by standup/ember/2025-07-29]\n- Ledger service migrations will ship with a reviewed query plan. [decision; valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- INC-2025-011 was a ledger service incident on 2025-05-24. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- Per the change policy, the authentication gateway deploys only on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-12-29 to now; recorded by standup/cinder/2025-12-29]\n    earlier: Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-18 to 2025-12-29; recorded by standup/ember/2025-02-18]\n- The authentication gateway's error rate crept up to 2 percent after the dependency bump. [valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07-2]\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- The ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, covering the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- On 2026-05-28, the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n\nQuestion: What does a change to auth-gateway need before it can merge?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595554-coyJOE1fjdJCCctwisi0",
+  "object": "chat.completion",
+  "created": 1788595554,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Together",
+  "system_fingerprint": "default",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Two reviewer approvals and a security sign-off.",
+     "refusal": null,
+     "reasoning": "The question asks what a change to auth-gateway needs before it can merge. Looking at memory:\n\n- \"Per policy, every authentication gateway change requires two reviewer approvals and a security sign-off.\" [constraint; valid 2025-07-29 to now]\n\nThat's the answer: two reviewer approvals and a security sign-off.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks what a change to auth-gateway needs before it can merge. Looking at memory:\n\n- \"Per policy, every authentication gateway change requires two reviewer approvals and a security sign-off.\" [constraint; valid 2025-07-29 to now]\n\nThat's the answer: two reviewer approvals and a security sign-off.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1295,
+   "completion_tokens": 78,
+   "total_tokens": 1373,
+   "cost": 0.00023325,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00023325,
+    "upstream_inference_prompt_cost": 0.00019425,
+    "upstream_inference_completions_cost": 3.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 67,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1449759590323083,
+ "fetched_at": "2026-09-05T08:05:56Z"
+}

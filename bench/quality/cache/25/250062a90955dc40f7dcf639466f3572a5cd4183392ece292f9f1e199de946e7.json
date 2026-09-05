@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000177\" [constraint]: The job scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC and at no other time.  (about: job scheduler)\n- memory_id \"1000277\" [constraint]: The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC.  (about: reporting service)\n- memory_id \"1000308\" [constraint]: The webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC per the change policy.  (about: webhook dispatcher)\n- memory_id \"1000265\" [constraint]: The catalog service can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception.  (about: catalog service)\n- memory_id \"1000216\" [constraint]: The authentication gateway deploys on Mondays between 10:00 and 12:00 UTC per the change policy.  (about: authentication gateway)\n- memory_id \"1000057\": The Boreal team looks after the bus.  (about: Boreal team, the bus)\n- memory_id \"1000188\": The notifier depends on the bus for delivery events.  (about: the bus, notifier)\n- memory_id \"1000107\" [constraint]: The ledger service only ships on weekday mornings before 11:00 UTC.  (about: ledger service)\n- memory_id \"1000193\": The webhook dispatcher depends on the bus for outbound events.  (about: the bus, webhook dispatcher)\n- memory_id \"1000198\" [constraint]: The billing API only ships on weekdays after 15:00 UTC.  (about: billing API)\n- memory_id \"1000227\": The ledger service's memory use grew steadily for a week after the cache change, and the Boreal team noticed and pinged the owners.  (about: Boreal team, ledger service)\n- memory_id \"1000063\": The Boreal team owns the notifier.  (about: Boreal team, notifier)\n- memory_id \"1000167\": The notifier missed alerts for 40 minutes on 2025-02-01 during incident INC-2025-004.  (about: notifier, INC-2025-004)\n- memory_id \"1000295\" [decision]: Tomasz is the primary on-call for the Atlas team as of 2025-04-03, and Priya Raman is off rotation.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000011\": The Boreal team consists of Lena and Marcus.  (about: Boreal team, Lena, Marcus)\n- memory_id \"1000258\" [decision]: Lena takes the pager rotation for the Boreal team as of 2025-03-17, taking over from Marcus.  (about: Boreal team, Lena, Marcus)\n- memory_id \"1000328\": The catalog service's joined writes were locking product updates for seconds at a time.  (about: catalog service)\n- memory_id \"1000292\" [constraint]: Changes to the billing API need a rollback plan attached to the pull request.  (about: billing API)\n- memory_id \"1000287\" [decision]: For anything related to the Ember team, page Oskar.  (about: Ember team, Oskar)\n- memory_id \"1000103\" [decision]: Oskar takes the first on-call shift of the year for the Ember team.  (about: Ember team, Oskar)\nExisting entity names: job scheduler, reporting service, webhook dispatcher, catalog service, authentication gateway, Boreal team, the bus, notifier, ledger service, billing API, INC-2025-004, Atlas team, Priya Raman, Tomasz, Lena, Marcus, Ember team, Oskar\n\nThe note:\n\n[2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788598682-VcfqjUsEE99LgXANXk8T",
+  "object": "chat.completion",
+  "created": 1788598682,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"The bus deploys on Thursdays between 07:00 and 09:00 UTC and at no other time.\",\n   \"entities\": [\n    \"the bus\"\n   ],\n   \"kind\": \"constraint\",\n   \"confidence\": 0.95,\n   \"evidence\": \"Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [],\n \"remove_relations\": [],\n \"entity_aliases\": [\n  {\n   \"name\": \"the event bus\",\n   \"canonical\": \"the bus\",\n   \"evidence\": \"Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\"\n  }\n ]\n}",
+     "refusal": null,
+     "reasoning": "The note says: \"Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\"\n\nThe existing entity \"the bus\" is mentioned. The note uses \"the event bus\" — this is likely an alias for \"the bus\". So add an entity alias: name \"the event bus\" → canonical \"the bus\".\n\nNew fact: \"The event bus deploys on Thursdays between 07:00 and 09:00 UTC and at no other time.\" This is a constraint about the bus.\n\nEntities: the bus (using canonical name). The fact content should name its subjects — \"The event bus deploys...\" but we should use existing entity names when possible. The instruction: \"Use the existing entity names given with the note whenever the note refers to the same thing.\" So the fact content should say \"The bus deploys on Thursdays between 07:00 and 09:00 UTC and at no other time.\" Hmm, but the note says \"event bus\". The alias maps \"the event bus\" to \"the bus\". For the fact content, I think using the canonical name \"the bus\" is appropriate. Actually, the fact content should be a standalone declarative sentence naming its subjects. Using \"the bus\" is fine.\n\nKind: constraint. Evidence: \"Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\"\n\nNo corrections, no relations, no removals.\n\nOutput JSON only.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: \"Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\"\n\nThe existing entity \"the bus\" is mentioned. The note uses \"the event bus\" — this is likely an alias for \"the bus\". So add an entity alias: name \"the event bus\" → canonical \"the bus\".\n\nNew fact: \"The event bus deploys on Thursdays between 07:00 and 09:00 UTC and at no other time.\" This is a constraint about the bus.\n\nEntities: the bus (using canonical name). The fact content should name its subjects — \"The event bus deploys...\" but we should use existing entity names when possible. The instruction: \"Use the existing entity names given with the note whenever the note refers to the same thing.\" So the fact content should say \"The bus deploys on Thursdays between 07:00 and 09:00 UTC and at no other time.\" Hmm, but the note says \"event bus\". The alias maps \"the event bus\" to \"the bus\". For the fact content, I think using the canonical name \"the bus\" is appropriate. Actually, the fact content should be a standalone declarative sentence naming its subjects. Using \"the bus\" is fine.\n\nKind: constraint. Evidence: \"Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\"\n\nNo corrections, no relations, no removals.\n\nOutput JSON only.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2201,
+   "completion_tokens": 496,
+   "total_tokens": 2697,
+   "cost": 0.00057815,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00057815,
+    "upstream_inference_prompt_cost": 0.00033015,
+    "upstream_inference_completions_cost": 0.000248
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 316,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.86295608303044,
+ "fetched_at": "2026-09-05T08:58:09Z"
+}

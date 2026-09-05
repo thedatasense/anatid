@@ -1,0 +1,10 @@
+{"qid": "q001", "answer": "Two reviewer approvals and a security sign-off."}
+{"qid": "q002", "answer": "A rollback plan attached to the pull request."}
+{"qid": "q003", "answer": "Because the fixed node turned every restart into a missed run."}
+{"qid": "q004", "answer": "Because a silent reindex failure left stale results for two days in INC-2025-023."}
+{"qid": "q005", "answer": "Because storage for originals doubled in six months."}
+{"qid": "q006", "answer": "The auth gateway"}
+{"qid": "q007", "answer": "The event bus"}
+{"qid": "q008", "answer": "2025-11-24 to 2025-12-02, because of the peak season."}
+{"qid": "q009", "answer": "2026-03-30 to 2026-04-03, because of the fiscal year close."}
+{"qid": "q010", "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC"}

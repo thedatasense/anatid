@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: webhooks, billing, indexer, scheduler, notifier, resizer"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616611-q031NGC62v5tBiA7DuOI",
+  "object": "chat.completion",
+  "created": 1788616611,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names all six gold services (billing, indexer, resizer being recognizable shorthands for billing-api, search-indexer, image-resizer) with no extra items.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer lists services: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks.\n\nThe answer to grade: webhooks, billing, indexer, scheduler, notifier, resizer\n\nGrading rule: \"Correct if the final answer names the gold; ... Where the gold is a list, every item must be named and no extra item.\"\n\nThe question is whether \"billing\" names \"billing-api\", \"indexer\" names \"search-indexer\", \"resizer\" names \"image-resizer\". These are shortened forms, not exact names. The rule says \"names the gold\" — every item must be named and no extra item. The shortened forms are arguably recognizable as referring to the same services: billing → billing-api, indexer → search-indexer, resizer → image-resizer. But strictly, the gold names are billing-api, search-indexer, image-resizer. The answer says \"billing\", \"indexer\", \"resizer\" which are ambiguous shorthands but in context likely refer to the same services.\n\nThe grading rule is strict: \"every item must be named and no extra item\". The answer names 6 items, matching in count. The shortened forms — are they \"naming\" the gold items? In many grading contexts, close variants like \"billing\" vs \"billing-api\" would be accepted as naming the same service. However, \"indexer\" vs \"search-indexer\" — \"indexer\" could be a different thing. \"resizer\" vs \"image-resizer\" — could be different.\n\nGiven the strictness, I'd say these shorthands plausibly refer to the same services; there are exactly 6 items, one-to-one correspondence: webhooks↔webhooks, billing↔billing-api, indexer↔search-indexer, scheduler↔scheduler, notifier↔notifier, resizer↔image-resizer.\n\nI think a reasonable grader would accept this as naming the gold services, since the shorthands unambiguously map to the gold names given the context (there's only one candidate service each could refer to). The rule says \"names the gold\" — the gold items are named (in shorthand). I'll mark correct.\n\nBut one could argue strictness: exact names required. Hmm. The rule emphasizes \"every item must be named and no extra item\" — the concern is about completeness and no hallucinated extra items. The shorthands match one-to-one. I'll go with correct = true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer lists services: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks.\n\nThe answer to grade: webhooks, billing, indexer, scheduler, notifier, resizer\n\nGrading rule: \"Correct if the final answer names the gold; ... Where the gold is a list, every item must be named and no extra item.\"\n\nThe question is whether \"billing\" names \"billing-api\", \"indexer\" names \"search-indexer\", \"resizer\" names \"image-resizer\". These are shortened forms, not exact names. The rule says \"names the gold\" — every item must be named and no extra item. The shortened forms are arguably recognizable as referring to the same services: billing → billing-api, indexer → search-indexer, resizer → image-resizer. But strictly, the gold names are billing-api, search-indexer, image-resizer. The answer says \"billing\", \"indexer\", \"resizer\" which are ambiguous shorthands but in context likely refer to the same services.\n\nThe grading rule is strict: \"every item must be named and no extra item\". The answer names 6 items, matching in count. The shortened forms — are they \"naming\" the gold items? In many grading contexts, close variants like \"billing\" vs \"billing-api\" would be accepted as naming the same service. However, \"indexer\" vs \"search-indexer\" — \"indexer\" could be a different thing. \"resizer\" vs \"image-resizer\" — could be different.\n\nGiven the strictness, I'd say these shorthands plausibly refer to the same services; there are exactly 6 items, one-to-one correspondence: webhooks↔webhooks, billing↔billing-api, indexer↔search-indexer, scheduler↔scheduler, notifier↔notifier, resizer↔image-resizer.\n\nI think a reasonable grader would accept this as naming the gold services, since the shorthands unambiguously map to the gold names given the context (there's only one candidate service each could refer to). The rule says \"names the gold\" — the gold items are named (in shorthand). I'll mark correct.\n\nBut one could argue strictness: exact names required. Hmm. The rule emphasizes \"every item must be named and no extra item\" — the concern is about completeness and no hallucinated extra items. The shorthands match one-to-one. I'll go with correct = true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 264,
+   "completion_tokens": 563,
+   "total_tokens": 827,
+   "cost": 0.00016055,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016055,
+    "upstream_inference_prompt_cost": 1.98e-05,
+    "upstream_inference_completions_cost": 0.00014075
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 509,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 12.67982145800488,
+ "fetched_at": "2026-09-05T13:57:03Z"
+}

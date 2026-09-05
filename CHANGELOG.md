@@ -61,6 +61,12 @@ are refused with a socket, each with the reason: all three need the file's own c
 
 ### Added
 
+- `bench/quality`: the answer-quality benchmark. Eleven memory systems (a Markdown file, BM25,
+  vectors, their fusion, vectors with one feedback round, anatid with every arm and with each arm
+  alone, and anatid built from gold patches as an oracle) answer the same 150 questions with the
+  same model, prompt and 1,200-token memory budget, judged blind; every model call is cached so
+  `python -m bench.quality.run` reproduces every number. `docs/quality.md` has the method, the
+  tables for two seeds, the ablations and the losses next to the wins.
 - `Anatid.correct` and `CorrectionReceipt`; the function form `anatid.verbs.correct`; `correct`
   on `AnatidClient` and in the server's verb table, with the receipt registered in the wire codec.
 - Agents SDK tools `anatid_relate`, `anatid_unrelate`, `anatid_correct` and, with an extractor,

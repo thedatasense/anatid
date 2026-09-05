@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- Team Dune observed that the indexer's disk usage jumped 30 percent after the retention change. (since 2026-06-09; source standup/dune/2026-06-09)\n- [decision] As of 2026-06-04, Priya Raman has the Atlas team pager this cycle, taking over from Marcus. (since 2026-06-04; source standup/atlas/2026-06-04)\n- The Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. (since 2026-05-27; source standup/atlas/2026-05-27)\n- [decision] As of 2026-05-27, the bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. (since 2026-05-27; source standup/atlas/2026-05-27)\n- The Dune team planning meeting is every Wednesday. (since 2026-05-22; source standup/dune/2026-05-22-4)\n  - earlier: The Atlas team planning meeting is every Tuesday. (held 2025-09-30 to 2026-05-22; source standup/atlas/2025-09-30)\n- The Dune team planning meeting is every Wednesday. (since 2026-05-22; source standup/dune/2026-05-22-4)\n- As of 2026-05-22, the job scheduler's error rate crept up to 2 percent after the dependency bump, per a heads-up from team Dune. (since 2026-05-22; source standup/dune/2026-05-22-3)\n- Team Dune noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the auth gateway's owners. (since 2026-05-22; source standup/dune/2026-05-22-2)\n- As of 2026-05-22, Tomasz is the primary on-call for team Dune, having taken over from Farah. (since 2026-05-22; source standup/dune/2026-05-22)\n  - earlier: As of 2026-04-14, Farah is the primary on-call for team Dune, having taken over from Tomasz. (held 2026-04-14 to 2026-05-22; source standup/dune/2026-04-14)\n  - earlier: As of 2026-03-11, Tomasz is the primary on-call for team Dune, having taken over from Farah. (held 2026-03-11 to 2026-04-14; source standup/dune/2026-03-11)\n  - earlier: As of 2026-01-16, Farah is the primary on-call for team Dune. (held 2026-01-16 to 2026-03-11; source standup/dune/2026-01-16)\n- As of 2026-05-22, Tomasz holds the Dune pager for team Dune this cycle, having taken over from Farah. (since 2026-05-22; source standup/dune/2026-05-22)\n  - earlier: As of 2026-04-14, Farah holds the Dune pager for team Dune this cycle, having taken over from Tomasz. (held 2026-04-14 to 2026-05-22; source standup/dune/2026-04-14)\n- The ledger service is not the Atlas team's service, so the Atlas team flagged the ledger service. (since 2026-04-16; source standup/atlas/2026-04-16)\n- The Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change. (since 2026-04-16; source standup/atlas/2026-04-16)\n- Farah is the release captain for Q3 2025. (since 2026-04-14; source standup/dune/2026-04-14-3)\n- Team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the reporting service's owners. (since 2026-04-14; source standup/dune/2026-04-14-2)\n- The reporting service is owned by the Ember team. (since 2026-04-13; source standup/ember/2026-04-13-2)\n- As of 2026-04-13, the Ember team still owns the reporting service. (since 2026-04-13; source standup/ember/2026-04-13-2)\n- [preference] As of 2026-04-08, for anything Atlas team-related this cycle, page Marcus, not Priya Raman. (since 2026-04-08; source standup/atlas/2026-04-08)\n- webhooks is not the Atlas team's service, so the Atlas team flagged webhooks. (since 2026-04-08; source standup/atlas/2026-04-08)\n- The Atlas team noticed that webhooks' request volume halved following the client rollout. (since 2026-04-08; source standup/atlas/2026-04-08)\n- [constraint] As of 2026-04-01, the indexer is owned by the Boreal team, taking over from the Atlas team. (since 2026-04-01; source handover/2026-04-01-search-indexer)\n\nQuestion: Which service does the notifier depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608298-ik61Pf1C0nVNVJ9TztIa",
+  "object": "chat.completion",
+  "created": 1788608298,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The user asks: \"Which service does the notifier depend on?\"\n\nLooking through the memory, I see entries about indexer, bus, auth gateway, ledger service, reporting service, webhooks. No mention of a \"notifier\" or its dependencies. So the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"Which service does the notifier depend on?\"\n\nLooking through the memory, I see entries about indexer, bus, auth gateway, ledger service, reporting service, webhooks. No mention of a \"notifier\" or its dependencies. So the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1482,
+   "completion_tokens": 66,
+   "total_tokens": 1548,
+   "cost": 0.00011613,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00011613,
+    "upstream_inference_prompt_cost": 9.963e-05,
+    "upstream_inference_completions_cost": 1.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 60,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.06044195801951,
+ "fetched_at": "2026-09-05T11:38:20Z"
+}

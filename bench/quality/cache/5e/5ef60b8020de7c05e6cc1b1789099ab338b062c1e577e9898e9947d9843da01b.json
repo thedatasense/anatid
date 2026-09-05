@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-08] standup/dune/2025-04-08: Reminder that the reporting service depends on the ledger.\n- [2025-03-10] standup/atlas/2025-03-10: Dependency map update: the billing service needs the ledger (invoice postings).\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-03-17] standup/atlas/2025-03-17: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2025-03-10] standup/dune/2025-03-10: The reports pipeline depends on the ledger service for the nightly balance export.\n- [2025-09-15] standup/dune/2025-09-15: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from reporting.\n- [2025-12-16] standup/ember/2025-12-16: The ledger service deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-01-15] standup/ember/2026-01-15: For newcomers: the deploy window for the ledger service is still on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2025-07-28] standup/cinder/2025-07-28-2: Heads-up from Cinder: the ledger's p99 latency doubled after Tuesday's deploy. Observation from team Cinder: after the dependency bump, the billing API's error rate crept up to 2 percent.\n- [2025-09-12] standup/atlas/2025-09-12: Do not upgrade the ledger service past Postgres 14 until the partitioning work finishes.\n- [2025-12-29] standup/ember/2025-12-29-2: Observation from team Ember: after the traffic shift, the auth gateway's CPU sat at 90 percent. The ledger remains a Ember service.\n- [2025-04-28] incident-review/INC-2025-011: INC-2025-011 review. What happened: the ledger service saw write latency spike tenfold for an hour on 2025-04-26. Why: an index missing after the schema migration. Follow-up decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2026-04-16] standup/ember/2026-04-16: The ledger service's deploy window changes today: it is now on Mondays and Wednesdays between 14:00 and 16:00 UTC. The old slot (Wednesdays 09:00-11:00 UTC) is retired.\n- [2025-01-20] standup/ember/2025-01-20: For the record, scheduler is owned by the Ember team.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2026-01-13] standup/atlas/2026-01-13: The Atlas team noticed that Ledger's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2025-04-18] standup/atlas/2025-04-18: Per the change policy, Ledger deploys on Wednesdays between 09:00 and 11:00 UTC.\n\nQuestion: Who is on call for the team that owns the service the ledger depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618025-HKDvfiIWJ6smUerK8uoy",
+  "object": "chat.completion",
+  "created": 1788618025,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Marcus",
+     "refusal": null,
+     "reasoning": "The question: \"Who is on call for the team that owns the service the ledger depends on?\"\n\nFirst, what service does the ledger depend on? From memory: [2025-03-17] \"If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\" So the ledger depends on the auth gateway.\n\nThe auth gateway is owned by team Boreal (per [2025-03-31] handover: auth gateway now sits with Boreal team; Ember no longer owns it).\n\nWho is on call for Boreal? Latest entry: [2025-09-08] standup/boreal/2025-09-08: Marcus carries the phone until the next rotation. Earlier [2025-02-27] also says Marcus Oyelaran. So answer: Marcus.\n\nCheck for any later Boreal on-call updates — none after 2025-09-08. So Marcus.\n\nAnswer in one short line: Marcus.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Who is on call for the team that owns the service the ledger depends on?\"\n\nFirst, what service does the ledger depend on? From memory: [2025-03-17] \"If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\" So the ledger depends on the auth gateway.\n\nThe auth gateway is owned by team Boreal (per [2025-03-31] handover: auth gateway now sits with Boreal team; Ember no longer owns it).\n\nWho is on call for Boreal? Latest entry: [2025-09-08] standup/boreal/2025-09-08: Marcus carries the phone until the next rotation. Earlier [2025-02-27] also says Marcus Oyelaran. So answer: Marcus.\n\nCheck for any later Boreal on-call updates — none after 2025-09-08. So Marcus.\n\nAnswer in one short line: Marcus.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1382,
+   "completion_tokens": 204,
+   "total_tokens": 1586,
+   "cost": 0.00014697,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014697,
+    "upstream_inference_prompt_cost": 9.597e-05,
+    "upstream_inference_completions_cost": 5.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 201,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.952196832979098,
+ "fetched_at": "2026-09-05T14:20:27Z"
+}

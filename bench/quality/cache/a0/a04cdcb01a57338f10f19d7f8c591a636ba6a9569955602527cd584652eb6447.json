@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-03-31] standup/boreal/2025-03-31: The event bus remains a Boreal service.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2026-05-04] standup/boreal/2026-05-04: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. Boreal still owns the catalog service, in case anyone asks.\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.\n- [2026-03-12] standup/boreal/2026-03-12: For anything Boreal-related, page Lena.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-11-12] standup/boreal/2025-11-12: The Boreal team holds planning on Thursdays.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-06-27] standup/boreal/2025-06-27-2: Boreal adopted a weekly dependency update day.\n- [2025-01-13] standup/boreal/2025-01-13: Lena takes the first Boreal on-call shift of the year.\n- [2026-02-24] handover/2026-02-24-feature-flags: Quick one: the flags service belongs to the Cinder team starting today. Thanks to the Boreal team for running it until now.\n- [2025-05-05] standup/boreal/2025-05-05: Reminder that the billing service only ships on Tuesdays and Fridays between 09:00 and 10:30 UTC.\n- [2025-11-07] handover/2025-11-07-reporting: Handover: as of today the reporting service moves from team Dune to Boreal. Farah walked Marcus through the runbook this morning.\n- [2025-10-31] standup/boreal/2025-10-31: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2026-02-19] standup/boreal/2026-02-19-2: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-01-17] standup/boreal/2025-01-17: The notification service depends on the bus for delivery events. If the event bus is down, the webhook dispatcher is down: it relies on it for outbound events.\n\nQuestion: Which services does Boreal own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618318-kfmn7xmleSkl7NAv1CxK",
+  "object": "chat.completion",
+  "created": 1788618318,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Auth gateway, notifier, and catalog service.",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which services does Boreal own now?\" Today is 2026-06-30. So I need to figure out which services Boreal currently owns, based on the memory entries, taking into account the latest entries on each subject.\n\nLet me go through all services mentioned:\n\n1. Event bus:\n- 2025-01-09: owned by Boreal.\n- 2025-03-31 standup: event bus remains a Boreal service.\n- 2025-04-03 handover: event bus now sits with Atlas team. Boreal no longer owns it.\n- 2025-06-27: Boreal flagged bus' volume; \"not their service\".\n- Latest: Atlas owns it. Not Boreal.\n\n2. Auth gateway:\n- 2025-03-31: auth gateway now with Boreal team; Ember no longer owns it.\n- No later change mentioned. So Boreal owns the auth gateway.\n\n3. Billing-api:\n- 2026-05-26: billing-api now with Dune team. Boreal no longer owns it. (Implies Boreal owned it before.)\n- So not Boreal.\n\n4. Webhooks service:\n- 2025-01-09-2: webhooks lives with Boreal.\n- 2025-03-28: pager for webhooks rings Atlas team, not Boreal. Ownership transferred.\n- So not Boreal.\n\n5. Notifier:\n- 2025-01-09-2: notifier lives with Boreal. No later change. So Boreal owns the notifier.\n\n6. Catalog service:\n- 2025-01-17: Team Cinder owns the catalog service.\n- 2025-06-16: Boreal taking over catalog from team Dune, effective today.\n- 2026-05-04: \"Boreal still owns the catalog service, in case anyone asks.\"\n- So Boreal owns the catalog service.\n\n7. Flags service:\n- 2025-02-27: Boreal noticed flags service queue depth; pinged the owners (implies not theirs? Actually they \"pinged the owners\" — could be theirs or not, but the handover says Boreal ran it until now).\n- 2026-02-24: flags service belongs to Cinder team starting today. \"Thanks to the Boreal team for running it until now.\"\n- So not Boreal now.\n\n8. Reporting service:\n- 2025-01-20: Dune owns reporting service.\n- 2025-11-07: reporting service moves from Dune to Boreal.\n- 2025-11-17 correction: The 2025-11-07 note named the wrong team. Ember took it over on that date; Boreal did not.\n- So Boreal does not own reporting. Ember does.\n\n9. Scheduler:\n- 2025-08-29: scheduler now with team Cinder. Ember no longer owns it. Not Boreal.\n\nSo services Boreal owns now (as of 2026-06-30): auth gateway, notifier, catalog service.\n\nLet me double-check the auth gateway: 2025-03-31 handover: \"the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\" No later entry about auth gateway. So yes, Boreal owns it.\n\nNotifier: only entry 2025-01-09-2: \"The notifier lives with Boreal.\" No change. Yes.\n\nCatalog: 2026-05-04 explicitly: \"Boreal still owns the catalog service, in case anyone asks.\" Yes.\n\nAny other services? Notification service depends on bus — not ownership. Billing service shipping windows — that's a schedule; billing-api went to Dune. The billing service and billing-api might be the same; the 2026-05-26 entry says Boreal no longer owns it.\n\nSo the answer: the auth gateway, the notifier, and the catalog service.\n\nThe instructions say \"reply in one short line with just the value asked for\". So: \"Auth gateway, notifier, and catalog service.\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which services does Boreal own now?\" Today is 2026-06-30. So I need to figure out which services Boreal currently owns, based on the memory entries, taking into account the latest entries on each subject.\n\nLet me go through all services mentioned:\n\n1. Event bus:\n- 2025-01-09: owned by Boreal.\n- 2025-03-31 standup: event bus remains a Boreal service.\n- 2025-04-03 handover: event bus now sits with Atlas team. Boreal no longer owns it.\n- 2025-06-27: Boreal flagged bus' volume; \"not their service\".\n- Latest: Atlas owns it. Not Boreal.\n\n2. Auth gateway:\n- 2025-03-31: auth gateway now with Boreal team; Ember no longer owns it.\n- No later change mentioned. So Boreal owns the auth gateway.\n\n3. Billing-api:\n- 2026-05-26: billing-api now with Dune team. Boreal no longer owns it. (Implies Boreal owned it before.)\n- So not Boreal.\n\n4. Webhooks service:\n- 2025-01-09-2: webhooks lives with Boreal.\n- 2025-03-28: pager for webhooks rings Atlas team, not Boreal. Ownership transferred.\n- So not Boreal.\n\n5. Notifier:\n- 2025-01-09-2: notifier lives with Boreal. No later change. So Boreal owns the notifier.\n\n6. Catalog service:\n- 2025-01-17: Team Cinder owns the catalog service.\n- 2025-06-16: Boreal taking over catalog from team Dune, effective today.\n- 2026-05-04: \"Boreal still owns the catalog service, in case anyone asks.\"\n- So Boreal owns the catalog service.\n\n7. Flags service:\n- 2025-02-27: Boreal noticed flags service queue depth; pinged the owners (implies not theirs? Actually they \"pinged the owners\" — could be theirs or not, but the handover says Boreal ran it until now).\n- 2026-02-24: flags service belongs to Cinder team starting today. \"Thanks to the Boreal team for running it until now.\"\n- So not Boreal now.\n\n8. Reporting service:\n- 2025-01-20: Dune owns reporting service.\n- 2025-11-07: reporting service moves from Dune to Boreal.\n- 2025-11-17 correction: The 2025-11-07 note named the wrong team. Ember took it over on that date; Boreal did not.\n- So Boreal does not own reporting. Ember does.\n\n9. Scheduler:\n- 2025-08-29: scheduler now with team Cinder. Ember no longer owns it. Not Boreal.\n\nSo services Boreal owns now (as of 2026-06-30): auth gateway, notifier, catalog service.\n\nLet me double-check the auth gateway: 2025-03-31 handover: \"the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\" No later entry about auth gateway. So yes, Boreal owns it.\n\nNotifier: only entry 2025-01-09-2: \"The notifier lives with Boreal.\" No change. Yes.\n\nCatalog: 2026-05-04 explicitly: \"Boreal still owns the catalog service, in case anyone asks.\" Yes.\n\nAny other services? Notification service depends on bus — not ownership. Billing service shipping windows — that's a schedule; billing-api went to Dune. The billing service and billing-api might be the same; the 2026-05-26 entry says Boreal no longer owns it.\n\nSo the answer: the auth gateway, the notifier, and the catalog service.\n\nThe instructions say \"reply in one short line with just the value asked for\". So: \"Auth gateway, notifier, and catalog service.\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1364,
+   "completion_tokens": 862,
+   "total_tokens": 2226,
+   "cost": 0.00031012,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00031012,
+    "upstream_inference_prompt_cost": 9.462e-05,
+    "upstream_inference_completions_cost": 0.0002155
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 851,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 10.427627375000156,
+ "fetched_at": "2026-09-05T14:25:28Z"
+}

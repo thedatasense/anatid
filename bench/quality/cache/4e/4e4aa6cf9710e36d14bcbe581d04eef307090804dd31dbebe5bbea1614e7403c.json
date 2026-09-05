@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-25, Marcus is the primary on-call for Team Atlas, having taken over from Priya. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, Priya is the primary on-call for Team Atlas, having taken over from Marcus. [valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Marcus Oyelaran is the primary on-call for Team Atlas. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- As of 2026-05-25, for the Team Atlas on-call cycle, page Marcus for anything instead of Priya. [preference; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, for the Team Atlas on-call cycle, page Priya for anything instead of Marcus. [preference; valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, for the Team Atlas on-call cycle, page Marcus Oyelaran for anything instead of Priya. [preference; valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n    earlier: As of 2025-07-03, for the current Team Atlas on-call cycle, page Priya for anything instead of Tomasz Nowak. [preference; valid 2025-07-03 to 2026-03-09; recorded by standup/atlas/2025-07-03]\n    earlier: As of 2025-05-09, for the current Team Atlas on-call cycle, page Tomasz Nowak for anything instead of Priya. [preference; valid 2025-05-09 to 2025-07-03; recorded by standup/atlas/2025-05-09]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- As of 2026-02-19, Marcus Oyelaran has transferred from Team Boreal to Team Atlas. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19]\n- On 2026-01-13, Team Atlas noticed that the ledger's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2026-02-19, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: As of 2025-12-26, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: As of 2025-10-31, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n    earlier: As of 2025-09-08, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-09-08 to 2025-10-31; recorded by standup/boreal/2025-09-08]\n    earlier: As of 2025-08-01, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2025-08-01 to 2025-09-08; recorded by standup/boreal/2025-08-01]\n    earlier: As of 2025-06-05, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n    earlier: As of the 2025-04-16 rotation, Lena carries the Team Boreal on-call pager. [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: As of the 2025-02-27 on-call swap, Marcus carries the Team Boreal on-call phone until the next rotation. [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n- On 2025-12-23, Team Atlas noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2025-12-23 to now; recorded by standup/atlas/2025-12-23]\n- On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas, which took it over from Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- On 2026-03-09, Team Atlas observed that the scheduler's cold start time tripled after the runtime upgrade. [valid 2026-03-09 to now; recorded by standup/atlas/2026-03-09-2]\n- On 2026-05-18, the Ember team noticed that the auth gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n\nQuestion: Which note recorded Marcus's move to Atlas, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614073-3uOmgKm5gZWpQrvSjUhh",
+  "object": "chat.completion",
+  "created": 1788614073,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/boreal/2026-02-19, recorded 2026-02-19.",
+     "refusal": null,
+     "reasoning": "The question asks: Which note recorded Marcus's move to Atlas, and when?\n\nThe memory entry: \"As of 2026-02-19, Marcus Oyelaran has transferred from Team Boreal to Team Atlas. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19]\"\n\nSo the note is standup/boreal/2026-02-19, on 2026-02-19.\n\nAnswer in one short line: \"standup/boreal/2026-02-19 on 2026-02-19\" — something like that.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which note recorded Marcus's move to Atlas, and when?\n\nThe memory entry: \"As of 2026-02-19, Marcus Oyelaran has transferred from Team Boreal to Team Atlas. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19]\"\n\nSo the note is standup/boreal/2026-02-19, on 2026-02-19.\n\nAnswer in one short line: \"standup/boreal/2026-02-19 on 2026-02-19\" — something like that.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1817,
+   "completion_tokens": 152,
+   "total_tokens": 1969,
+   "cost": 0.000166595,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000166595,
+    "upstream_inference_prompt_cost": 0.000128595,
+    "upstream_inference_completions_cost": 3.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 129,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.68656129098963,
+ "fetched_at": "2026-09-05T13:14:35Z"
+}

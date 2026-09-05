@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Farah takes the first on-call rotation for team Dune. [decision; valid 2025-01-13 to now; recorded by standup/dune/2025-01-13]\n- As of 2025-08-19, deploys to the job scheduler happen only on Tuesdays and Fridays between 09:00 and 10:30 UTC; the old Tuesday 13:00-15:00 UTC window is retired. [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: Deploys to the job scheduler happen only on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- Oskar takes the first on-call shift of the year for the Ember team. [decision; valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- As of 2025-12-19, the Atlas team owns the product catalog, which the Cinder team owned until then. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: The Cinder team owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- The product catalog deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The product catalog depends on the image resizer for thumbnails. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- On 2026-06-04, the Boreal team noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- On 2026-05-27, the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager; on 2026-04-14 he handed the pager to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Tomasz is off the on-call rotation for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager; on 2026-04-14 Tomasz handed the pager back to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is the primary on-call for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- On 2026-04-14, team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- In the product catalog, joined writes were locking product updates for seconds at a time. [valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n- On 2026-05-28, the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- On 2026-02-16, team Dune noticed that the product catalog's request volume halved after the client rollout and pinged the owners. [valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- feature-flags' p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n\nQuestion: Which note first recorded the deploy window for the catalog, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596335-VpLraAeNxn2ea57XzBtq",
+  "object": "chat.completion",
+  "created": 1788596335,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Phala",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/cinder/2025-03-17, on 2025-03-17.",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which note first recorded the deploy window for the catalog, and when?\"\n\nLooking at memory entries about the product catalog deploy window:\n\n- \"The product catalog deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\"\n\nThe first (earliest) record of the catalog deploy window is standup/cinder/2025-03-17, recorded for 2025-03-17.\n\nAnswer: standup/cinder/2025-03-17, on 2025-03-17.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which note first recorded the deploy window for the catalog, and when?\"\n\nLooking at memory entries about the product catalog deploy window:\n\n- \"The product catalog deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\"\n\nThe first (earliest) record of the catalog deploy window is standup/cinder/2025-03-17, recorded for 2025-03-17.\n\nAnswer: standup/cinder/2025-03-17, on 2025-03-17.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1698,
+   "completion_tokens": 231,
+   "total_tokens": 1929,
+   "cost": 0.0003702,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003702,
+    "upstream_inference_prompt_cost": 0.0002547,
+    "upstream_inference_completions_cost": 0.0001155
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 208,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.011770375014748,
+ "fetched_at": "2026-09-05T08:19:01Z"
+}

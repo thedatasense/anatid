@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Changes to the billing service need a rollback plan attached to the pull request. [constraint; valid 2025-09-09 to now; recorded by standup/boreal/2025-09-09]\n- As of 2025-09-08, billing-api has a new dependency on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Tomasz Nowak wrote the billing-api handover doc for Marcus on 2025-03-17. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- Billing-api will gate the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- On 2025-07-28, Team Cinder observed that the billing service's error rate crept up to 2 percent after the dependency bump. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- As of 2025-03-19, the Ember team does pairing on every production change. [decision; valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- The nightly ledger scans were blocking billing runs. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- Changes to the auth gateway require two reviewer approvals and a security sign-off. [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- The billing service only ships on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-05-05 to now; recorded by standup/boreal/2025-05-05]\n- On 2025-11-21, Team Dune reported that the billing service's queue depth hit 50,000 after the marketing send. [valid 2025-11-21 to now; recorded by standup/dune/2025-11-21]\n- Per the change policy, the auth gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\n- On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- On 2026-01-13, Team Atlas noticed that the ledger's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- On 2026-01-05, Team Cinder observed that the ledger's disk usage jumped 30 percent after the retention change. [valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- On 2025-06-23, Team Cinder observed that the reports pipeline's disk usage jumped 30 percent after the retention change. [valid 2025-06-23 to now; recorded by standup/cinder/2025-06-23]\n- On 2025-12-23, Team Atlas noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2025-12-23 to now; recorded by standup/atlas/2025-12-23]\n- The reporting service can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n\nQuestion: What does a change to billing-api need before it can merge?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788613639-80lvPwARPQX0OiYeN0tZ",
+  "object": "chat.completion",
+  "created": 1788613639,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "A rollback plan attached to the pull request.",
+     "refusal": null,
+     "reasoning": "The question asks: What does a change to billing-api need before it can merge?\n\nMemory says: \"Changes to the billing service need a rollback plan attached to the pull request.\" That's the constraint. So answer: a rollback plan attached to the pull request.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: What does a change to billing-api need before it can merge?\n\nMemory says: \"Changes to the billing service need a rollback plan attached to the pull request.\" That's the constraint. So answer: a rollback plan attached to the pull request.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1351,
+   "completion_tokens": 64,
+   "total_tokens": 1415,
+   "cost": 0.000117325,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000117325,
+    "upstream_inference_prompt_cost": 0.000101325,
+    "upstream_inference_completions_cost": 1.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 53,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 13.105378708976787,
+ "fetched_at": "2026-09-05T13:07:32Z"
+}

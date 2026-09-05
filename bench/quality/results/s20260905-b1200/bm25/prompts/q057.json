@@ -1,0 +1,54 @@
+{
+ "qid": "q057",
+ "system": "bm25",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.\n- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.\n- [2025-07-17] standup/atlas/2025-07-17: The ledger remains a Atlas service.\n- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.\n- [2025-04-07] standup/ember/2025-04-07: Per the change policy, the webhooks service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. Heads-up from the Ember team: the notifier's request volume halved after the client rollout.\n- [2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\n- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-03-07] handover/2025-03-07-billing-api: Billing-api has a new home: the Ember team. Team Atlas kept it until today.\n- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-11-04] standup/atlas/2025-11-04: Reminder that the billing API depends on the ledger.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2026-06-04] standup/atlas/2026-06-04: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2025-07-03] handover/2025-07-03-billing-api-correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it.\n- [2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2026-04-08] standup/atlas/2026-04-08: Reminder from the Atlas team: page Marcus for anything this cycle, not Priya. The Atlas team saw that webhooks' request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-04-16] standup/atlas/2026-04-16: The Atlas team saw that the ledger service's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-07-21] standup/ember/2025-07-21: Ember runs its planning on Fridays.\n- [2025-07-24] standup/dune/2025-07-24: The Dune team sits on the fourth floor.\n- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.\n- [2026-04-01] handover/2026-04-01-search-indexer: From today the pager for the search indexer rings the Boreal team, not team Atlas. Ownership transferred.\n- [2025-07-29] standup/ember/2025-07-29: Policy: every auth-gateway change requires two reviewer approvals and a security sign-off.\n- [2025-07-17] standup/cinder/2025-07-17: Rotation day for the Cinder team: Yuki Tanaka hands the pager to Diego Alvarez.\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.\n- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.\n- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.\n- [2025-04-21] standup/dune/2025-04-21: The Dune team adopted a monthly game day.\n- [2025-04-29] standup/ember/2025-04-29: The scheduler still relies on the feature flag service; keep that in mind for the maintenance.\n- [2025-04-02] standup/ember/2025-04-02: Changes to the billing API need a rollback plan attached to the pull request.\n- [2026-04-14] standup/dune/2026-04-14-3: Release captain for Q3 2025: Farah.\n- [2025-04-24] standup/cinder/2025-04-24: Rotation day for the Cinder team: Yuki hands the pager to Diego.\n- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.\n- [2025-04-15] standup/dune/2025-04-15: The reports pipeline must stay on Python 3.11 until the pandas 3 upgrade lands.\n- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.\n\nQuestion: Who was on call for Atlas on 2025-07-04?"
+  }
+ ],
+ "contexts": [
+  "- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.",
+  "- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.",
+  "- [2025-07-17] standup/atlas/2025-07-17: The ledger remains a Atlas service.",
+  "- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.",
+  "- [2025-04-07] standup/ember/2025-04-07: Per the change policy, the webhooks service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. Heads-up from the Ember team: the notifier's request volume halved after the client rollout.",
+  "- [2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.",
+  "- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.",
+  "- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.",
+  "- [2025-03-07] handover/2025-03-07-billing-api: Billing-api has a new home: the Ember team. Team Atlas kept it until today.",
+  "- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.",
+  "- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.",
+  "- [2025-11-04] standup/atlas/2025-11-04: Reminder that the billing API depends on the ledger.",
+  "- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.",
+  "- [2026-06-04] standup/atlas/2026-06-04: Priya Raman has the Atlas pager this cycle, taking over from Marcus.",
+  "- [2025-07-03] handover/2025-07-03-billing-api-correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it.",
+  "- [2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.",
+  "- [2026-04-08] standup/atlas/2026-04-08: Reminder from the Atlas team: page Marcus for anything this cycle, not Priya. The Atlas team saw that webhooks' request volume halved following the client rollout; not their service, so they flagged it.",
+  "- [2026-04-16] standup/atlas/2026-04-16: The Atlas team saw that the ledger service's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.",
+  "- [2025-07-21] standup/ember/2025-07-21: Ember runs its planning on Fridays.",
+  "- [2025-07-24] standup/dune/2025-07-24: The Dune team sits on the fourth floor.",
+  "- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.",
+  "- [2026-04-01] handover/2026-04-01-search-indexer: From today the pager for the search indexer rings the Boreal team, not team Atlas. Ownership transferred.",
+  "- [2025-07-29] standup/ember/2025-07-29: Policy: every auth-gateway change requires two reviewer approvals and a security sign-off.",
+  "- [2025-07-17] standup/cinder/2025-07-17: Rotation day for the Cinder team: Yuki Tanaka hands the pager to Diego Alvarez.",
+  "- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).",
+  "- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.",
+  "- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.",
+  "- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.",
+  "- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.",
+  "- [2025-04-21] standup/dune/2025-04-21: The Dune team adopted a monthly game day.",
+  "- [2025-04-29] standup/ember/2025-04-29: The scheduler still relies on the feature flag service; keep that in mind for the maintenance.",
+  "- [2025-04-02] standup/ember/2025-04-02: Changes to the billing API need a rollback plan attached to the pull request.",
+  "- [2026-04-14] standup/dune/2026-04-14-3: Release captain for Q3 2025: Farah.",
+  "- [2025-04-24] standup/cinder/2025-04-24: Rotation day for the Cinder team: Yuki hands the pager to Diego.",
+  "- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.",
+  "- [2025-04-15] standup/dune/2025-04-15: The reports pipeline must stay on Python 3.11 until the pandas 3 upgrade lands.",
+  "- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy."
+ ],
+ "answer": "Priya"
+}

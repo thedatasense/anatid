@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000952\" [preference]: As of 2026-02-04, for the current Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah.  (about: Tomasz Nowak, Farah, Team Dune)\n- memory_id \"1000933\" [decision]: On 2026-01-22, Team Atlas decided that auth gateway tokens will expire after 15 minutes instead of an hour.  (about: Team Atlas, auth gateway)\n- memory_id \"1000928\": On 2026-01-13, Team Atlas noticed that the ledger's memory use grew steadily for a week after the cache change and pinged the owners.  (about: Team Atlas, ledger)\n- memory_id \"1000899\": As of 2025-12-26, Marcus is the Team Boreal on-call primary instead of Lena.  (about: Team Boreal, Lena, Marcus)\n- memory_id \"1000887\": As of 2025-12-23, the auth gateway is owned by Team Atlas, which took it over from Team Boreal.  (about: Team Atlas, Team Boreal, auth gateway)\n- memory_id \"1000883\": As of 2025-12-23, the pager for the auth gateway rings Team Atlas instead of Team Boreal.  (about: Team Atlas, Team Boreal, auth gateway)\n- memory_id \"1000823\": As of 2025-11-20, the event bus is owned by Team Boreal, which took it over from Team Cinder.  (about: Team Boreal, Team Cinder, event bus)\n- memory_id \"1000805\": As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas.  (about: Team Atlas, ledger, Ember team)\n- memory_id \"1000802\": Team Boreal holds its planning meeting on Thursdays.  (about: Team Boreal)\n- memory_id \"1000790\": On 2025-11-07, Farah walked Marcus through the reporting service runbook.  (about: Marcus, Farah, reporting service)\n- memory_id \"1000719\": As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas.  (about: Team Atlas, Team Dune, scheduler)\n- memory_id \"1000715\": As of 2025-10-15, the pager for the scheduler rings Team Dune instead of Team Atlas.  (about: Team Atlas, Team Dune, scheduler)\n- memory_id \"1000701\": As of 2025-09-29, the feature-flags service belongs to Team Boreal, which took it over from Team Cinder.  (about: Team Boreal, Team Cinder, feature-flags service)\n- memory_id \"1000667\": On 2025-09-08, Team Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners.  (about: Team Boreal, notifier)\n- memory_id \"1000582\": As of 2025-08-01, Lena is back on the Team Boreal on-call rotation.  (about: Team Boreal, Lena)\n- memory_id \"1000504\" [preference]: As of 2025-07-03, for the current Team Atlas on-call cycle, page Priya for anything instead of Tomasz Nowak.  (about: Team Atlas, Priya, Tomasz Nowak)\n- memory_id \"1000496\": As of 2025-07-02, Team Atlas consists of Priya only, after Tomasz Nowak transferred to Team Dune.  (about: Team Atlas, Priya, Tomasz Nowak)\n- memory_id \"1000492\": As of 2025-07-02, Tomasz Nowak has transferred from Team Atlas to Team Dune.  (about: Team Atlas, Tomasz Nowak, Team Dune)\n- memory_id \"1000489\" [decision]: Team Boreal adopted a weekly dependency update day.  (about: Team Boreal)\n- memory_id \"1000485\": On 2025-06-27, Team Boreal observed that the event bus's request volume halved following the client rollout, noting the event bus is not their service.  (about: Team Boreal, event bus)\n- memory_id \"1000447\": As of 2025-06-16, Team Boreal owns the catalog service, having taken it over from Team Dune.  (about: Team Boreal, Team Dune, catalog service)\n- memory_id \"1000379\": As of 2025-05-09, Tomasz Nowak is the Team Atlas on-call contact for this cycle instead of Priya.  (about: Team Atlas, Priya, Tomasz Nowak)\n- memory_id \"1000371\": On 2025-05-08, Team Boreal flagged that the catalog service's memory use grew steadily for a week following the cache change, noting the catalog service is not their service.  (about: Team Boreal, catalog service)\n- memory_id \"1000267\": As of 2025-03-28, the pager for the webhooks service rings Team Atlas instead of Team Boreal.  (about: Team Atlas, Team Boreal, webhooks service)\n- memory_id \"1000225\": As of 2025-03-17, the billing service lives with Team Boreal.  (about: Team Boreal, billing service)\n- memory_id \"1000222\": Tomasz Nowak wrote the billing-api handover doc for Marcus on 2025-03-17.  (about: Tomasz Nowak, Marcus)\n- memory_id \"1000196\": On 2025-02-27, Team Boreal noticed the feature-flags service's queue depth hit 50,000 after the marketing send and pinged the owners.  (about: Team Boreal, feature-flags service)\n- memory_id \"1000082\": Lena takes the first Boreal on-call shift of the year.  (about: Team Boreal, Lena)\n- memory_id \"1000011\": As of January 2025, the Boreal team consists of Lena and Marcus.  (about: Team Boreal, Lena, Marcus)\nExisting entity names: Tomasz Nowak, Farah, Team Dune, Team Atlas, auth gateway, ledger, Team Boreal, Lena, Marcus, Team Cinder, event bus, Ember team, reporting service, scheduler, feature-flags service, notifier, Priya, catalog service, webhooks service, billing service\n\nThe note:\n\n[2026-02-19] standup/boreal/2026-02-19: As of today Marcus Oyelaran is on the Atlas team; team Boreal loses a pair of hands."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788612660-U4xe28w07owciBMvkrBz",
+  "object": "chat.completion",
+  "created": 1788612660,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\":[{\"content\":\"As of 2026-02-19, Marcus Oyelaran has transferred from Team Boreal to Team Atlas.\",\"entities\":[\"Marcus\",\"Team Boreal\",\"Team Atlas\"],\"kind\":\"fact\",\"confidence\":1,\"evidence\":\"As of today Marcus Oyelaran is on the Atlas team; team Boreal loses a pair of hands.\"}],\"corrections\":[],\"add_relations\":[{\"src\":\"Marcus\",\"dst\":\"Team Atlas\",\"rel_kind\":\"member_of\",\"evidence\":\"Marcus Oyelaran is on the Atlas team\"}],\"remove_relations\":[{\"src\":\"Marcus\",\"dst\":\"Team Boreal\",\"rel_kind\":\"member_of\",\"evidence\":\"team Boreal loses a pair of hands\"}],\"entity_aliases\":[{\"name\":\"Marcus Oyelaran\",\"canonical\":\"Marcus\",\"evidence\":\"Marcus Oyelaran is on the Atlas team\"},{\"name\":\"Atlas team\",\"canonical\":\"Team Atlas\",\"evidence\":\"Marcus Oyelaran is on the Atlas team\"}]}",
+     "refusal": null,
+     "reasoning": "Marcus Oyelaran alias Marcus; transfer from Team Boreal to Team Atlas as of 2026-02-19.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Marcus Oyelaran alias Marcus; transfer from Team Boreal to Team Atlas as of 2026-02-19.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2801,
+   "completion_tokens": 223,
+   "total_tokens": 3024,
+   "cost": 0.00035815,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00035815,
+    "upstream_inference_prompt_cost": 0.0002801,
+    "upstream_inference_completions_cost": 7.805e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 26,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 10.083191042009275,
+ "fetched_at": "2026-09-05T12:51:10Z"
+}

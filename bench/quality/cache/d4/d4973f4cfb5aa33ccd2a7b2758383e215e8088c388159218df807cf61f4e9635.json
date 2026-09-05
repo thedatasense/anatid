@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- There is a deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- As of 2025-10-15, the pager for the scheduler rings Team Dune instead of Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n- As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Atlas, which took it over from the Ember team. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder, which took it over from the Ember team. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- Lena is the release captain for Q1 2026. [valid 2025-06-05 to now; recorded by standup/boreal/2025-06-05-2]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy and flagged it because the service is not theirs. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- Oskar is the only engineer on the Ember team for now. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- The scheduler deploys on weekday mornings before 11:00 UTC. [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n    earlier: The scheduler deploys on weekdays after 15:00 UTC and at no other time. [constraint; valid 2025-03-19 to 2025-10-27; recorded by standup/ember/2025-03-19]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- As of 2025-10-22, Farah is Team Dune's release captain for Q3 2025. [valid 2025-10-22 to now; recorded by standup/dune/2025-10-22-2]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- On 2025-07-28, Team Cinder reported that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- On 2026-02-12, the Ember team reported that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- On 2026-03-10, Team Dune observed that the reporting service's p99 latency doubled after Tuesday's deploy. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- As of 2025-10-27, Yuki is the primary on-call for Team Cinder, having taken over from Diego. [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n    earlier: As of 2025-08-29, Diego is the primary on-call for Team Cinder, having taken over from Yuki. [valid 2025-08-29 to 2025-10-27; recorded by standup/cinder/2025-08-29]\n    earlier: As of 2025-07-10, Yuki is the primary on-call for Team Cinder until the next rotation. [valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: As of 2025-05-19, Diego is the primary on-call for Team Cinder. [valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-09, Yuki is the primary on-call for Team Cinder. [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n- As of 2026-05-25, Marcus is the primary on-call for Team Atlas, having taken over from Priya. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, Priya is the primary on-call for Team Atlas, having taken over from Marcus. [valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Marcus Oyelaran is the primary on-call for Team Atlas. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n\nQuestion: What is the current deploy window for the scheduler?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614546-5wdU7bUuNqTRmzC1boA1",
+  "object": "chat.completion",
+  "created": 1788614546,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Weekday mornings before 11:00 UTC.",
+     "refusal": null,
+     "reasoning": "The question asks about the current deploy window for the scheduler. Today is 2026-06-30.\n\nMemory entries:\n- \"The scheduler deploys on weekday mornings before 11:00 UTC.\" [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n- earlier: \"The scheduler deploys on weekdays after 15:00 UTC and at no other time.\" [constraint; valid 2025-03-19 to 2025-10-27]\n\nThe later entry (valid 2025-10-27 to now) supersedes the earlier one. So the current deploy window is: weekday mornings before 11:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the current deploy window for the scheduler. Today is 2026-06-30.\n\nMemory entries:\n- \"The scheduler deploys on weekday mornings before 11:00 UTC.\" [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n- earlier: \"The scheduler deploys on weekdays after 15:00 UTC and at no other time.\" [constraint; valid 2025-03-19 to 2025-10-27]\n\nThe later entry (valid 2025-10-27 to now) supersedes the earlier one. So the current deploy window is: weekday mornings before 11:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1767,
+   "completion_tokens": 163,
+   "total_tokens": 1930,
+   "cost": 0.000165595,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000165595,
+    "upstream_inference_prompt_cost": 0.000124845,
+    "upstream_inference_completions_cost": 4.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 151,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.621465749980416,
+ "fetched_at": "2026-09-05T13:22:29Z"
+}

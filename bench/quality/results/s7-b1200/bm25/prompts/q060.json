@@ -1,0 +1,53 @@
+{
+ "qid": "q060",
+ "system": "bm25",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-02-25] standup/dune/2025-02-25: Reporting can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-06-23] standup/cinder/2025-06-23: Observation from the Cinder team: after the retention change, the reports pipeline's disk usage jumped 30 percent.\n- [2025-02-25] standup/boreal/2025-02-25: Webhooks still relies on the bus; keep that in mind for the maintenance.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2025-11-07] handover/2025-11-07-reporting: Handover: as of today the reporting service moves from team Dune to Boreal. Farah walked Marcus through the runbook this morning.\n- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.\n- [2025-06-13] standup/ember/2025-06-13-2: Team Ember planning meeting is every Friday.\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz Nowak.\n- [2025-01-20] standup/ember/2025-01-20: For the record, scheduler is owned by the Ember team.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-06-05] standup/boreal/2025-06-05: On-call rotation: Marcus Oyelaran is primary for team Boreal starting today; Lena is off rotation.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-11-06] standup/dune/2025-11-06: Heads-up from the Dune team: search-indexer's queue depth hit 50,000 after the marketing send.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.\n- [2025-09-15] standup/dune/2025-09-15: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from reporting.\n- [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.\n- [2025-06-23] standup/atlas/2025-06-23: The quarterly capacity review is run by Priya.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2025-06-27] standup/boreal/2025-06-27-2: Boreal adopted a weekly dependency update day.\n- [2025-06-05] standup/boreal/2025-06-05-2: Lena Fischer is the release captain for Q1 2026.\n- [2025-04-08] standup/dune/2025-04-08: Reminder that the reporting service depends on the ledger.\n- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.\n- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-03-10] standup/dune/2025-03-10: The reports pipeline depends on the ledger service for the nightly balance export.\n- [2026-06-16] standup/ember/2026-06-16: The weekly architecture review is run by Oskar.\n\nQuestion: Which team owned reporting on 2025-06-25?"
+  }
+ ],
+ "contexts": [
+  "- [2025-02-25] standup/dune/2025-02-25: Reporting can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception.",
+  "- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.",
+  "- [2025-06-23] standup/cinder/2025-06-23: Observation from the Cinder team: after the retention change, the reports pipeline's disk usage jumped 30 percent.",
+  "- [2025-02-25] standup/boreal/2025-02-25: Webhooks still relies on the bus; keep that in mind for the maintenance.",
+  "- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.",
+  "- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.",
+  "- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.",
+  "- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.",
+  "- [2025-11-07] handover/2025-11-07-reporting: Handover: as of today the reporting service moves from team Dune to Boreal. Farah walked Marcus through the runbook this morning.",
+  "- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.",
+  "- [2025-06-13] standup/ember/2025-06-13-2: Team Ember planning meeting is every Friday.",
+  "- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz Nowak.",
+  "- [2025-01-20] standup/ember/2025-01-20: For the record, scheduler is owned by the Ember team.",
+  "- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.",
+  "- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.",
+  "- [2025-06-05] standup/boreal/2025-06-05: On-call rotation: Marcus Oyelaran is primary for team Boreal starting today; Lena is off rotation.",
+  "- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.",
+  "- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.",
+  "- [2025-11-06] standup/dune/2025-11-06: Heads-up from the Dune team: search-indexer's queue depth hit 50,000 after the marketing send.",
+  "- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.",
+  "- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.",
+  "- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.",
+  "- [2025-09-15] standup/dune/2025-09-15: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from reporting.",
+  "- [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.",
+  "- [2025-06-23] standup/atlas/2025-06-23: The quarterly capacity review is run by Priya.",
+  "- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.",
+  "- [2025-06-27] standup/boreal/2025-06-27-2: Boreal adopted a weekly dependency update day.",
+  "- [2025-06-05] standup/boreal/2025-06-05-2: Lena Fischer is the release captain for Q1 2026.",
+  "- [2025-04-08] standup/dune/2025-04-08: Reminder that the reporting service depends on the ledger.",
+  "- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.",
+  "- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.",
+  "- [2026-02-04] standup/dune/2026-02-04-2: As before, the webhook dispatcher needs the event bus to work. Reminder: webhooks is owned by team Dune.",
+  "- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.",
+  "- [2025-03-10] standup/dune/2025-03-10: The reports pipeline depends on the ledger service for the nightly balance export.",
+  "- [2026-06-16] standup/ember/2026-06-16: The weekly architecture review is run by Oskar."
+ ],
+ "answer": "Dune"
+}

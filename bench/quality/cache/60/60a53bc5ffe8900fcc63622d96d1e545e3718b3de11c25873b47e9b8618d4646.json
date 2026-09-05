@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Why do reindex jobs page on failure?\nGold answer: a silent reindex failure left stale results for two days in INC-2025-023\nAlso accepted: (none)\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: A reindex job failed silently on a full disk (INC-2025-023)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788608357-ekYnGADB9bwePVGqdNxv",
+  "object": "chat.completion",
+  "created": 1788608357,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer correctly identifies the gold fact that a silent reindex failure in INC-2025-023 is why reindex jobs page on failure, with the full disk detail being additional context that does not contradict the gold answer.\"}",
+     "refusal": null,
+     "reasoning": "The question asks: \"Why do reindex jobs page on failure?\"\n\nGold answer: \"a silent reindex failure left stale results for two days in INC-2025-023\"\n\nAnswer to grade: \"A reindex job failed silently on a full disk (INC-2025-023).\"\n\nThe gold answer says the reason is that a silent reindex failure left stale results for two days in INC-2025-023. The answer to grade adds \"on a full disk\" which is extra detail not in the gold. The grading rule says \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\"\n\nThe answer to grade states \"A reindex job failed silently\" — this captures part of the gold fact (\"a silent reindex failure\") and references INC-2025-023. But does it state \"left stale results for two days\"? No. The core reason is the silent failure leaving stale results for two days. The answer includes the silent failure and the incident ID, plus an extra detail \"on a full disk\" which is not in the gold.\n\nIs \"on a full disk\" an incorrect claim or extra context? The rule says extra correct context is fine. We don't know if \"full disk\" is correct — it's not verifiable against gold. The grading rule says a different value is wrong. The answer gives a different root cause (\"full disk\") vs gold (\"left stale results for two days\").\n\nHmm, this is tricky. The answer does state \"a reindex job failed silently\" and \"(INC-2025-023)\" — it references the incident. But it attributes the failure to a full disk, which is not stated in the gold. The gold fact is that the silent failure left stale results for two days.\n\nDoes the answer capture the gold fact? Partially. It mentions the silent reindex failure and the incident ID. The key distinguishing detail — \"left stale results for two days\" — is missing. Also, it adds \"on a full disk\" which may be a hallucinated cause.\n\nStrictly applying the rule: \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine.\" The answer must state the gold fact. The gold fact is that a silent reindex failure left stale results for two days in INC-2025-023. The answer states a silent reindex failure occurred in INC-2025-023 but attributes it to a full disk and omits the stale results for two days.\n\nIs omitting \"left stale results for two days\" enough to be wrong? The core of the gold fact could be considered \"silent reindex failure in INC-2025-023\". The \"left stale results for two days\" is the consequence detail. The question is \"why do reindex jobs page on failure?\" — the answer is because a silent failure left stale results for two days (i.e., the failure went unnoticed). The answer says the job failed silently on a full disk, referencing the incident. It captures the \"silent failure\" aspect which is the essence of why paging exists (to avoid silent failures). But it introduces \"full disk\" as the cause, which is unverified/extra.\n\nI think the answer captures the essential gold fact: silent reindex failure tied to INC-2025-023. The \"full disk\" is extra context — but the rule says \"extra correct context is fine\" — is the full disk detail correct? We don't know. If it's a different value (wrong cause), it would be wrong. But the cause in the gold isn't a cause; the gold explains the consequence (stale results for two days). The answer's \"full disk\" might be a plausible detail of the incident.\n\nGrading strictly: the answer does state the gold fact in essence — \"A reindex job failed silently\" + \"(INC-2025-023)\". The missing \"left stale results for two days\" — is that essential? The gold fact's key identifier is the silent failure in the incident. I'd lean toward correct, since the answer includes the silent failure and the incident ID, and adds extra detail about full disk.\n\nHowever, a strict grader might say: the answer gives a different value — the failure was on a full disk, but gold says the reason is stale results for two days. The question is \"why do reindex jobs page on failure?\" The gold: because a silent failure left stale results for two days. The answer: because a job failed silently on a full disk. The answer doesn't mention the stale results consequence, and asserts a cause not in gold.\n\nHmm. Which way to lean? The grading rule: \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value... is wrong.\"\n\nThe answer does state \"a reindex job failed silently\" and \"(INC-2025-023)\" — these match the gold's \"a silent reindex failure... in INC-2025-023\". The extra \"on a full disk\" — we cannot verify; it may be correct context from the incident. The rule permits extra correct context. The omission of \"left stale results for two days\" — partial match. The core fact (silent failure in INC-2025-023 necessitating paging) is stated.\n\nI'll grade it as correct, since the essential gold fact — silent reindex failure in INC-2025-023 — is present, and the full-disk detail is extra context that doesn't contradict the gold (gold doesn't state a different cause). The gold doesn't say \"not on a full disk\", so \"full disk\" is additional uncontradicted detail.\n\nActually, let me reconsider. \"A different value, or 'I don't know', is wrong.\" Is \"full disk\" a different value? The question is why reindex jobs page on failure. The answer to that question: because of INC-2025-023 where a silent failure left stale results for two days. The answer given: a job failed silently on a full disk (INC-2025-023). The \"full disk\" is an explanation of why the job failed, not why it pages. The reason it pages is the silent failure + incident — which the answer captures. So the \"different value\" would be if the answer gave a different reason for paging. It doesn't; it gives the same core reason with extra detail.\n\nI'll say correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Why do reindex jobs page on failure?\"\n\nGold answer: \"a silent reindex failure left stale results for two days in INC-2025-023\"\n\nAnswer to grade: \"A reindex job failed silently on a full disk (INC-2025-023).\"\n\nThe gold answer says the reason is that a silent reindex failure left stale results for two days in INC-2025-023. The answer to grade adds \"on a full disk\" which is extra detail not in the gold. The grading rule says \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\"\n\nThe answer to grade states \"A reindex job failed silently\" — this captures part of the gold fact (\"a silent reindex failure\") and references INC-2025-023. But does it state \"left stale results for two days\"? No. The core reason is the silent failure leaving stale results for two days. The answer includes the silent failure and the incident ID, plus an extra detail \"on a full disk\" which is not in the gold.\n\nIs \"on a full disk\" an incorrect claim or extra context? The rule says extra correct context is fine. We don't know if \"full disk\" is correct — it's not verifiable against gold. The grading rule says a different value is wrong. The answer gives a different root cause (\"full disk\") vs gold (\"left stale results for two days\").\n\nHmm, this is tricky. The answer does state \"a reindex job failed silently\" and \"(INC-2025-023)\" — it references the incident. But it attributes the failure to a full disk, which is not stated in the gold. The gold fact is that the silent failure left stale results for two days.\n\nDoes the answer capture the gold fact? Partially. It mentions the silent reindex failure and the incident ID. The key distinguishing detail — \"left stale results for two days\" — is missing. Also, it adds \"on a full disk\" which may be a hallucinated cause.\n\nStrictly applying the rule: \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine.\" The answer must state the gold fact. The gold fact is that a silent reindex failure left stale results for two days in INC-2025-023. The answer states a silent reindex failure occurred in INC-2025-023 but attributes it to a full disk and omits the stale results for two days.\n\nIs omitting \"left stale results for two days\" enough to be wrong? The core of the gold fact could be considered \"silent reindex failure in INC-2025-023\". The \"left stale results for two days\" is the consequence detail. The question is \"why do reindex jobs page on failure?\" — the answer is because a silent failure left stale results for two days (i.e., the failure went unnoticed). The answer says the job failed silently on a full disk, referencing the incident. It captures the \"silent failure\" aspect which is the essence of why paging exists (to avoid silent failures). But it introduces \"full disk\" as the cause, which is unverified/extra.\n\nI think the answer captures the essential gold fact: silent reindex failure tied to INC-2025-023. The \"full disk\" is extra context — but the rule says \"extra correct context is fine\" — is the full disk detail correct? We don't know. If it's a different value (wrong cause), it would be wrong. But the cause in the gold isn't a cause; the gold explains the consequence (stale results for two days). The answer's \"full disk\" might be a plausible detail of the incident.\n\nGrading strictly: the answer does state the gold fact in essence — \"A reindex job failed silently\" + \"(INC-2025-023)\". The missing \"left stale results for two days\" — is that essential? The gold fact's key identifier is the silent failure in the incident. I'd lean toward correct, since the answer includes the silent failure and the incident ID, and adds extra detail about full disk.\n\nHowever, a strict grader might say: the answer gives a different value — the failure was on a full disk, but gold says the reason is stale results for two days. The question is \"why do reindex jobs page on failure?\" The gold: because a silent failure left stale results for two days. The answer: because a job failed silently on a full disk. The answer doesn't mention the stale results consequence, and asserts a cause not in gold.\n\nHmm. Which way to lean? The grading rule: \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value... is wrong.\"\n\nThe answer does state \"a reindex job failed silently\" and \"(INC-2025-023)\" — these match the gold's \"a silent reindex failure... in INC-2025-023\". The extra \"on a full disk\" — we cannot verify; it may be correct context from the incident. The rule permits extra correct context. The omission of \"left stale results for two days\" — partial match. The core fact (silent failure in INC-2025-023 necessitating paging) is stated.\n\nI'll grade it as correct, since the essential gold fact — silent reindex failure in INC-2025-023 — is present, and the full-disk detail is extra context that doesn't contradict the gold (gold doesn't state a different cause). The gold doesn't say \"not on a full disk\", so \"full disk\" is additional uncontradicted detail.\n\nActually, let me reconsider. \"A different value, or 'I don't know', is wrong.\" Is \"full disk\" a different value? The question is why reindex jobs page on failure. The answer to that question: because of INC-2025-023 where a silent failure left stale results for two days. The answer given: a job failed silently on a full disk (INC-2025-023). The \"full disk\" is an explanation of why the job failed, not why it pages. The reason it pages is the silent failure + incident — which the answer captures. So the \"different value\" would be if the answer gave a different reason for paging. It doesn't; it gives the same core reason with extra detail.\n\nI'll say correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 264,
+   "completion_tokens": 1418,
+   "total_tokens": 1682,
+   "cost": 0.00036278,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00036278,
+    "upstream_inference_prompt_cost": 8.28e-06,
+    "upstream_inference_completions_cost": 0.0003545
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1360,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 20.602101667027455,
+ "fetched_at": "2026-09-05T11:39:37Z"
+}

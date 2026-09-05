@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-29, for anything related to the Ember team, page Oskar this cycle, not Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, for anything related to the Ember team, page Diego this cycle, not Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, for anything related to the Ember team, page Oskar Lind for anything this cycle, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, for anything related to the Ember team, page Diego, the primary on-call; Oskar is off rotation. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n    earlier: For anything related to the Ember team, page Oskar. [decision; valid 2025-03-31 to 2026-01-15; recorded by standup/ember/2025-03-31]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, having taken over from Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, Diego is the primary on-call for the Ember team, having taken over from Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, Oskar Lind is the primary on-call for the Ember team, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, Diego is off the Ember team's on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- On 2026-05-28, the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- On 2026-04-14, team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- On 2026-03-11, the Cinder team observed that the billing API's cold start time tripled after the runtime upgrade. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- As of 2026-02-11, feature-flags is owned by the Atlas team, which the Ember team owned until then. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, feature-flags is owned by team Dune, which the Ember team owned until then. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, feature-flags is owned by the Ember team, which the Atlas team owned until then. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: feature-flags is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- As of 2026-03-02, Oskar Lind is on the Ember team's on-call rotation. [valid 2026-03-02 to now; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Oskar is off the Ember team's on-call rotation. [valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- The webhook dispatcher will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-003 was an incident in which the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- On 2026-02-11, Oskar wrote the feature-flags handover document for Farah. [valid 2026-02-11 to now; recorded by handover/2026-02-11-feature-flags]\n\nQuestion: What did reporting depend on before it switched to the event-bus?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788597010-RAg6gdab9q9SwhYHfW7N",
+  "object": "chat.completion",
+  "created": 1788597010,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"What did reporting depend on before it switched to the event-bus?\"\n\nLooking through the memory, I see entries about the reporting service:\n- On 2026-04-14, team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy.\n- As of 2026-04-13, the Ember team still owns the reporting service.\n\nThere's no information about what reporting depended on before switching to the event-bus. The memory doesn't mention any dependency of reporting on anything, nor a switch to event-bus.\n\nSo the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"What did reporting depend on before it switched to the event-bus?\"\n\nLooking through the memory, I see entries about the reporting service:\n- On 2026-04-14, team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy.\n- As of 2026-04-13, the Ember team still owns the reporting service.\n\nThere's no information about what reporting depended on before switching to the event-bus. The memory doesn't mention any dependency of reporting on anything, nor a switch to event-bus.\n\nSo the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1620,
+   "completion_tokens": 133,
+   "total_tokens": 1753,
+   "cost": 5.875e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1600,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.875e-05,
+    "upstream_inference_prompt_cost": 2.55e-05,
+    "upstream_inference_completions_cost": 3.325e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 127,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7731674590031616,
+ "fetched_at": "2026-09-05T08:30:13Z"
+}

@@ -1,0 +1,52 @@
+{
+ "seconds": 9.184076500008814,
+ "llm": {
+  "calls": 610,
+  "cache_hits": 610,
+  "network_calls": 0,
+  "chat_calls": 178,
+  "embed_calls": 432,
+  "embed_texts": 432,
+  "prompt_tokens": 421737,
+  "completion_tokens": 217087,
+  "embed_tokens": 13651,
+  "cost_usd": 0.13765354617999748,
+  "cost_usd_charged": 0.0,
+  "cost_known": false,
+  "wall_s": 0.0,
+  "recorded_wall_s": 3229.574485888488,
+  "hit_rate": 1.0
+ },
+ "report": {
+  "notes": 178,
+  "extractor": "llm",
+  "memories_created": 259,
+  "memories_closed": 80,
+  "relations_opened": 86,
+  "relations_closed": 29,
+  "dedupe_drops": 17,
+  "downgraded_corrections": 0,
+  "parser_notes": 0,
+  "empty_patches": 6,
+  "extraction_failures": 1,
+  "failed_notes": [
+   {
+    "note_id": "n155",
+    "error": "the model returned no content"
+   }
+  ],
+  "store": {
+   "memories": 259,
+   "entities": 48,
+   "episodes": 178,
+   "edges_about": 577,
+   "edges_relates": 86,
+   "edges_supersedes": 80,
+   "anatid_audit": 80,
+   "memory_versions": 339,
+   "current_memories": 179,
+   "tenant_id": 1,
+   "expand_path": "sql"
+  }
+ }
+}

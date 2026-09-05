@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-09-16] handover/2025-09-16-auth-gateway: The Ember team handed the authentication gateway to Cinder today; Oskar Lind wrote up the handover doc for Diego.\n- [2025-07-29] standup/ember/2025-07-29: Policy: every auth-gateway change requires two reviewer approvals and a security sign-off.\n- [2025-02-18] standup/ember/2025-02-18: Per the change policy, auth-gateway deploys on Mondays between 10:00 and 12:00 UTC.\n- [2025-09-03] standup/cinder/2025-09-03-2: Heads-up from the Cinder team: the auth gateway's cold start time tripled after the runtime upgrade.\n- [2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2026-05-22] standup/dune/2026-05-22-2: The Dune team noticed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2025-12-29] standup/cinder/2025-12-29: Reminder: auth-gateway deploys only on Mondays between 10:00 and 12:00 UTC.\n- [2026-03-03] standup/cinder/2026-03-03: The auth gateway deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2026-01-30] standup/cinder/2026-01-30: We agreed today that auth-gateway tokens will expire after 15 minutes instead of an hour. The reason is that the security audit flagged long-lived tokens.\n- [2025-08-07] incident-review/INC-2025-017: INC-2025-017 review. What happened: auth-gateway rejected every login for 12 minutes on 2025-08-02. Why: an expired intermediate certificate. Follow-up decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\n- [2025-01-20] standup/dune/2025-01-20: The Dune team owns the image resizer.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-01-10] standup/ember/2025-01-10: The Ember team is a one-person team at the moment: Oskar.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-02-06] standup/ember/2025-02-06-2: Team Ember now does pairing on every production change.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.\n- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2026-03-02] standup/ember/2026-03-02: Reminder from the Ember team: page Oskar Lind for anything this cycle, not Diego.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.\n- [2025-11-04] standup/ember/2025-11-04: The Ember team saw that the billing service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n- [2025-03-07] handover/2025-03-07-billing-api: Billing-api has a new home: the Ember team. Team Atlas kept it until today.\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n- [2025-03-03] handover/2025-03-03-webhooks: From today the pager for webhooks rings the Ember team, not team Boreal. Ownership transferred.\n\nQuestion: Which team owned auth-gateway before Ember?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788592220-NBmpm2xVws1d7XcrioYr",
+  "object": "chat.completion",
+  "created": 1788592220,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "Before Ember handed it to Cinder on 2025-09-16, Ember owned it. Before Ember? No earlier entry. Question asks \"before Ember\" — ambiguous; Ember owned it from at least 2025-01-20, handed to Cinder. So \"before Ember\" has no answer unless meaning \"after Ember\" = Cinder. Memory doesn't say team before Ember. I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Before Ember handed it to Cinder on 2025-09-16, Ember owned it. Before Ember? No earlier entry. Question asks \"before Ember\" — ambiguous; Ember owned it from at least 2025-01-20, handed to Cinder. So \"before Ember\" has no answer unless meaning \"after Ember\" = Cinder. Memory doesn't say team before Ember. I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1696,
+   "completion_tokens": 89,
+   "total_tokens": 1785,
+   "cost": 0.00019051,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00019051,
+    "upstream_inference_prompt_cost": 0.00015936,
+    "upstream_inference_completions_cost": 3.115e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 84,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.5592694579972886,
+ "fetched_at": "2026-09-05T07:10:26Z"
+}

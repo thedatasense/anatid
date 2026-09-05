@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-05-30] incident-review/INC-2025-011: Review of INC-2025-011 (Ledger, 2025-05-24). The root cause was an index missing after the schema migration. We decided that ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-08-07] incident-review/INC-2025-017: INC-2025-017 review. What happened: auth-gateway rejected every login for 12 minutes on 2025-08-02. Why: an expired intermediate certificate. Follow-up decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\n- [2025-10-07] incident-review/INC-2025-023: Incident review INC-2025-023. The indexer served stale results for two days on 2025-10-03. Root cause: a reindex job that failed silently on a full disk. Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2025-07-29] standup/ember/2025-07-29: Policy: every auth-gateway change requires two reviewer approvals and a security sign-off.\n- [2026-02-26] incident-review/INC-2026-003: INC-2026-003 review. What happened: the webhooks service delivered some events twice on 2026-02-20. Why: a retry loop that ignored idempotency keys. Follow-up decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-02-05] incident-review/INC-2025-004: Incident review INC-2025-004. The notifier missed alerts for 40 minutes on 2025-02-01. Root cause: a consumer offset stuck after a broker restart. Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004.\n- [2026-05-19] incident-review/INC-2026-009: Incident review INC-2026-009. The scheduler ran the nightly jobs twice on 2026-05-16. Root cause: two leaders elected during a network partition. Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2025-01-29] standup/ember/2025-01-29: The weekly architecture review is run by Oskar.\n- [2026-03-20] standup/atlas/2026-03-20: Priya runs the quarterly capacity review.\n- [2025-06-27] standup/cinder/2025-06-27: The monthly cost review is run by Yuki.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-04-02] standup/ember/2025-04-02: Changes to the billing API need a rollback plan attached to the pull request.\n- [2025-11-03] standup/boreal/2025-11-03: Decided in today's standup: webhooks will sign payloads with rotating keys, since a partner asked for key rotation in their security review.\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-09-30] standup/atlas/2025-09-30: Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. The billing API now depends on the feature flag service. The Atlas team planning meeting is every Tuesday.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2025-05-22] standup/boreal/2025-05-22: Lena Fischer is the release captain for Q1 2026.\n- [2026-03-11] standup/cinder/2026-03-11: No deploys to Ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2025-01-09] standup/atlas/2025-01-09-2: Dependency map update: billing-api needs Ledger (invoice postings).\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n- [2025-07-03] handover/2025-07-03-billing-api-correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n\nQuestion: On what date was the review of INC-2025-023 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788592693-BKAJsNYLCcTdGT7YbzL7",
+  "object": "chat.completion",
+  "created": 1788592693,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-10-07",
+     "refusal": null,
+     "reasoning": "The memory entry: [2025-10-07] incident-review/INC-2025-023. The review was recorded on 2025-10-07.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory entry: [2025-10-07] incident-review/INC-2025-023. The review was recorded on 2025-10-07.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1576,
+   "completion_tokens": 44,
+   "total_tokens": 1620,
+   "cost": 0.00011,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00011,
+    "upstream_inference_prompt_cost": 9.9e-05,
+    "upstream_inference_completions_cost": 1.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 36,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.66093345801346,
+ "fetched_at": "2026-09-05T07:18:15Z"
+}

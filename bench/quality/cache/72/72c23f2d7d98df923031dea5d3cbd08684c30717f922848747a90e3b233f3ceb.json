@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-12-19, the Atlas team owns the product catalog, which the Cinder team owned until then. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: The Cinder team owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of 2025-11-26, the image resizer is owned by the Atlas team, which the Ember team owned until then. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The image resizer is owned by the Ember team. [valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: team Dune owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- As of 2026-01-12, the billing API is owned by the Ember team, which the Atlas team owned until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: From 2025-06-09, the billing API is owned by the Atlas team. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: From 2025-06-09, the billing API is owned by the Boreal team. [valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: Since 2025-03-07, the billing API is owned by the Ember team. [valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- As of 2026-02-11, feature-flags is owned by the Atlas team, which the Ember team owned until then. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, feature-flags is owned by team Dune, which the Ember team owned until then. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, feature-flags is owned by the Ember team, which the Atlas team owned until then. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: feature-flags is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- As of 2025-11-24, the Atlas team looks after the bus, which the Boreal team looked after until then. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- As of 2025-09-23, the Cinder team owns the job scheduler; team Dune owned it until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, team Dune still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2026-06-04, Priya Raman holds the Atlas team pager this cycle, taking over from Marcus. [decision; valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: As of 2026-04-08, page Marcus for anything Atlas-related this cycle, not Priya Raman. [decision; valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: As of 2026-03-17, Priya Raman is the person to page for anything Atlas-related. [decision; valid 2026-03-17 to 2026-04-08; recorded by standup/atlas/2026-03-17]\n- As of 2025-06-11, team Dune owns the notifier, which the Boreal team owned until then. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: As of 2025-06-11, the Cinder team owns the notifier, which the Boreal team owned until then. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it as not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- As of 2025-09-23, the Cinder team owns the job scheduler, which team Dune owned until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n\nQuestion: Which team owned the catalog before Atlas took it over?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595691-izxzrH09TTdWn4gmW364",
+  "object": "chat.completion",
+  "created": 1788595691,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Together",
+  "system_fingerprint": "default",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The Cinder team",
+     "refusal": null,
+     "reasoning": "The question asks which team owned the catalog before Atlas took it over. Memory says: \"As of 2025-12-19, the Atlas team owns the product catalog, which the Cinder team owned until then.\" So the answer is the Cinder team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owned the catalog before Atlas took it over. Memory says: \"As of 2025-12-19, the Atlas team owns the product catalog, which the Cinder team owned until then.\" So the answer is the Cinder team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1759,
+   "completion_tokens": 57,
+   "total_tokens": 1816,
+   "cost": 0.00029235,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00029235,
+    "upstream_inference_prompt_cost": 0.00026385,
+    "upstream_inference_completions_cost": 2.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 52,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.1459495829767548,
+ "fetched_at": "2026-09-05T08:08:12Z"
+}

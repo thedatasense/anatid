@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n- [2026-06-01] standup/ember/2026-06-01: For newcomers: the deploy window for the reporting service is still on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2025-03-26] standup/dune/2025-03-26: Reminder that the reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. Observation from team Dune: after the cache change, the notification service's memory use grew steadily for a week.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2026-04-14] standup/dune/2026-04-14-2: The Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-06-24] standup/dune/2025-06-24: Reporting still relies on Ledger; keep that in mind for the maintenance.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2026-05-28] standup/ember/2026-05-28: Ember noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-04-15] standup/dune/2025-04-15: The reports pipeline must stay on Python 3.11 until the pandas 3 upgrade lands.\n- [2025-04-29] standup/ember/2025-04-29: The scheduler still relies on the feature flag service; keep that in mind for the maintenance.\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2025-04-07] standup/ember/2025-04-07: Per the change policy, the webhooks service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. Heads-up from the Ember team: the notifier's request volume halved after the client rollout.\n- [2025-11-04] standup/ember/2025-11-04: The Ember team saw that the billing service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it.\n- [2025-02-18] standup/ember/2025-02-18: Per the change policy, auth-gateway deploys on Mondays between 10:00 and 12:00 UTC.\n- [2025-07-21] standup/ember/2025-07-21: Ember runs its planning on Fridays.\n- [2025-03-17] standup/cinder/2025-03-17: The catalog service can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception.\n- [2025-02-11] standup/boreal/2025-02-11: If the event bus is down, the notification service is down: it relies on it for delivery events.\n- [2025-02-06] standup/ember/2025-02-06: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time.\n- [2025-12-25] standup/atlas/2025-12-25: Atlas saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it. Atlas has moved to the second floor.\n- [2026-03-20] standup/boreal/2026-03-20-2: Observation from the Boreal team: after the retention change, the catalog service's disk usage jumped 30 percent. The Boreal team runs its planning on Thursdays.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-08-19] standup/dune/2025-08-19: The job scheduler's deploy window changes today: it is now on Tuesdays and Fridays between 09:00 and 10:30 UTC. The old slot (Tuesdays 13:00-15:00 UTC) is retired.\n- [2026-03-03] standup/cinder/2026-03-03: The auth gateway deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-12-29] standup/dune/2025-12-29: Observation from team Dune: after the client rollout, the event-bus' request volume halved.\n- [2025-01-29] standup/ember/2025-01-29: The weekly architecture review is run by Oskar.\n- [2025-07-17] standup/atlas/2025-07-17: The ledger remains a Atlas service.\n- [2025-01-09] standup/atlas/2025-01-09-2: Dependency map update: billing-api needs Ledger (invoice postings).\n- [2025-02-06] standup/ember/2025-02-06-2: Team Ember now does pairing on every production change.\n- [2025-01-30] standup/cinder/2025-01-30: If the catalog service is down, the search indexer is down: it relies on it for product documents.\n- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.\n\nQuestion: Which service does reporting depend on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620878-Dv8jaCpa6BmBcQNi0YvV",
+  "object": "chat.completion",
+  "created": 1788620878,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The bus",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service does reporting depend on now?\"\n\nMemory entries about reporting dependencies:\n- 2025-01-21: reporting needs the ledger service (nightly balance export)\n- 2025-06-24: Reporting still relies on Ledger\n- 2025-09-23: Reporting switches from Ledger to the bus as its source. Reporting no longer depends on Ledger.\n\nThe latest entry (2025-09-23) says reporting switched to \"the bus\" as its source. So reporting depends on the bus now. The service name is \"event bus\" per other entries (2025-02-11: \"the event bus\"). But the 2025-09-23 entry says \"the bus\". Answer: the bus (event bus). Answer in one short line: \"The bus\" or \"the event bus\". The entry says \"switches from Ledger to the bus as its source\". So answer: the bus.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service does reporting depend on now?\"\n\nMemory entries about reporting dependencies:\n- 2025-01-21: reporting needs the ledger service (nightly balance export)\n- 2025-06-24: Reporting still relies on Ledger\n- 2025-09-23: Reporting switches from Ledger to the bus as its source. Reporting no longer depends on Ledger.\n\nThe latest entry (2025-09-23) says reporting switched to \"the bus\" as its source. So reporting depends on the bus now. The service name is \"event bus\" per other entries (2025-02-11: \"the event bus\"). But the 2025-09-23 entry says \"the bus\". Answer: the bus (event bus). Answer in one short line: \"The bus\" or \"the event bus\". The entry says \"switches from Ledger to the bus as its source\". So answer: the bus.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1640,
+   "completion_tokens": 200,
+   "total_tokens": 1840,
+   "cost": 0.00016532,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016532,
+    "upstream_inference_prompt_cost": 0.00011532,
+    "upstream_inference_completions_cost": 5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 196,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.627928083005827,
+ "fetched_at": "2026-09-05T15:08:02Z"
+}

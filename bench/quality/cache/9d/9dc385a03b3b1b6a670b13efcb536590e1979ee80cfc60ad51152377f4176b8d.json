@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n\nQuestion: Which service does the ledger depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608295-02T9sKea3osc9Ihh4Kp7",
+  "object": "chat.completion",
+  "created": 1788608295,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service does the ledger depend on?\"\n\nLooking at the memory provided... The memory section appears to be empty or just contains the header description. There are no actual facts listed.\n\nThe memory says \"Memory: Memory: one remembered fact per line, with the dates it held and the note that recorded it. An indented 'earlier' line is a version of the fact above it that was later corrected.\"\n\nThere are no actual memory entries about a ledger or any service dependencies. So I should reply exactly: \"I don't know\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service does the ledger depend on?\"\n\nLooking at the memory provided... The memory section appears to be empty or just contains the header description. There are no actual facts listed.\n\nThe memory says \"Memory: Memory: one remembered fact per line, with the dates it held and the note that recorded it. An indented 'earlier' line is a version of the fact above it that was later corrected.\"\n\nThere are no actual memory entries about a ledger or any service dependencies. So I should reply exactly: \"I don't know\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 234,
+   "completion_tokens": 119,
+   "total_tokens": 353,
+   "cost": 3.578e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.578e-05,
+    "upstream_inference_prompt_cost": 6.03e-06,
+    "upstream_inference_completions_cost": 2.975e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 113,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.8342757920036092,
+ "fetched_at": "2026-09-05T11:38:18Z"
+}

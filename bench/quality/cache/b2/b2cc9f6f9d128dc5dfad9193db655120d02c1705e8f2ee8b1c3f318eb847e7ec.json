@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Priya runs the quarterly capacity review. [valid 2025-06-23 to now; recorded by standup/atlas/2025-06-23]\n- Oskar runs the weekly architecture review. [valid 2026-06-16 to now; recorded by standup/ember/2026-06-16]\n- The monthly cost review is run by Yuki. [valid 2025-10-13 to now; recorded by standup/cinder/2025-10-13]\n- The nightly ledger scans were blocking billing runs. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- Team Atlas runs its planning on Tuesdays. [valid 2025-10-31 to now; recorded by standup/atlas/2025-10-31]\n- Farah runs Team Dune solo until the next hire lands. [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- Team Dune decided the webhooks service will sign payloads with rotating keys because a partner asked for key rotation in their security review. [valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- The Ember team never owned the webhooks service. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- On 2026-03-19, the Ember team noticed that the scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- On 2026-05-18, the Ember team noticed that the auth gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- On 2025-05-23, the Ember team flagged that the webhooks service's request volume halved following the client rollout. [valid 2025-06-20 to now; recorded by handover/2025-06-20-webhooks]\n    earlier: On 2025-05-23, the Ember team flagged that the webhooks service's request volume halved following the client rollout, noting the webhooks service is not their service. [valid 2025-05-23 to 2025-06-20; recorded by standup/ember/2025-05-23]\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- On 2025-12-29, the Ember team observed that the auth gateway's CPU sat at 90 percent after the traffic shift. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n\nQuestion: Who runs the quarterly capacity review?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614433-QRxzGp1bdzv1bNc2rQd3",
+  "object": "chat.completion",
+  "created": 1788614433,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Priya",
+     "refusal": null,
+     "reasoning": "The memory says: \"Priya runs the quarterly capacity review. [valid 2025-06-23 to now]\". Question asks who runs it — answer: Priya.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"Priya runs the quarterly capacity review. [valid 2025-06-23 to now]\". Question asks who runs it — answer: Priya.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1233,
+   "completion_tokens": 41,
+   "total_tokens": 1274,
+   "cost": 9.5045e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.5045e-05,
+    "upstream_inference_prompt_cost": 8.4795e-05,
+    "upstream_inference_completions_cost": 1.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 37,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.925593250023667,
+ "fetched_at": "2026-09-05T13:20:38Z"
+}

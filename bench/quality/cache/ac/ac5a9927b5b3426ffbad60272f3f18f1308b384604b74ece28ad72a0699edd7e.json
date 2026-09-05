@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-03-17, the image resizer keeps original uploads for only 90 days. [decision; valid 2026-03-17 to now; recorded by standup/atlas/2026-03-17]\n- The image resizer's storage for original uploads doubled in six months. [valid 2026-03-17 to now; recorded by standup/atlas/2026-03-17]\n- As of 2026-05-27, the bus retains messages for seven days, since replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2025-10-15, the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the image resizer's owners. [valid 2025-10-15 to now; recorded by standup/atlas/2025-10-15]\n- As of 2025-11-26, the image resizer is owned by the Atlas team, which the Ember team owned until then. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The image resizer is owned by the Ember team. [valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: team Dune owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- The product catalog depends on the image resizer for thumbnails. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- On 2026-06-09, team Dune observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- Team Dune observed that the image resizer's cold start time tripled after the runtime upgrade. [valid 2025-08-19 to now; recorded by standup/dune/2025-08-19-2]\n- On 2026-06-04, the Boreal team noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- The product catalog will keep image metadata in a separate table. [decision; valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n- On 2026-03-20, the Boreal team observed that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it as not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- As of 2025-09-02, clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- On 2026-05-27, the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2026-02-03, the Atlas team does a no-deploy Friday. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- On 2025-12-25, the Atlas team observed that the reports pipeline's disk usage jumped 30 percent following the retention change. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- As of 2026-04-01, the indexer is owned by the Boreal team. [constraint; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team. [constraint; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by the Cinder team. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n\nQuestion: Why does image-resizer keep original uploads for only 90 days?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595560-GNbRh7ikklv2hWah0csM",
+  "object": "chat.completion",
+  "created": 1788595560,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks why the image resizer keeps original uploads for only 90 days. The memory says: \"As of 2026-03-17, the image resizer keeps original uploads for only 90 days. [decision...]\". There's also \"The image resizer's storage for original uploads doubled in six months.\"\n\nDoes the memory state a reason for the 90-day retention? The entry itself doesn't include a \"since...\" clause, unlike the bus retention entry (\"since replaying a full week has covered every incident recovery so far\"). The storage doubling is a related fact but not stated as the reason for the 90-day decision.\n\nThe rules say answer only from memory; if no answer, \"I don't know\". The memory does not explicitly give a reason. Should I infer that the storage doubling is the reason? That would be guessing. The bus entry has an explicit reason; the image resizer entry does not. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks why the image resizer keeps original uploads for only 90 days. The memory says: \"As of 2026-03-17, the image resizer keeps original uploads for only 90 days. [decision...]\". There's also \"The image resizer's storage for original uploads doubled in six months.\"\n\nDoes the memory state a reason for the 90-day retention? The entry itself doesn't include a \"since...\" clause, unlike the bus retention entry (\"since replaying a full week has covered every incident recovery so far\"). The storage doubling is a related fact but not stated as the reason for the 90-day decision.\n\nThe rules say answer only from memory; if no answer, \"I don't know\". The memory does not explicitly give a reason. Should I infer that the storage doubling is the reason? That would be guessing. The bus entry has an explicit reason; the image resizer entry does not. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1460,
+   "completion_tokens": 207,
+   "total_tokens": 1667,
+   "cost": 0.00016125,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016125,
+    "upstream_inference_prompt_cost": 0.0001095,
+    "upstream_inference_completions_cost": 5.175e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 201,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.1973873340175487,
+ "fetched_at": "2026-09-05T08:06:03Z"
+}

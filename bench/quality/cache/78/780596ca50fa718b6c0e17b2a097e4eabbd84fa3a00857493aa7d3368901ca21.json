@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-02-11, feature-flags is owned by the Atlas team, which the Ember team owned until then. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, feature-flags is owned by team Dune, which the Ember team owned until then. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, feature-flags is owned by the Ember team, which the Atlas team owned until then. [valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: feature-flags is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- feature-flags' p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- As of 2025-09-02, clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- On 2026-02-11, Oskar wrote the feature-flags handover document for Farah. [valid 2026-02-11 to now; recorded by handover/2026-02-11-feature-flags]\n- On 2025-12-31, the Atlas team saw that feature-flags' queue depth hit 50,000 following the marketing send and flagged it as not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- The job scheduler depends on feature-flags for per-job kill switches. [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- feature-flags saw 40,000 requests per second at peak, and most of them were identical. [valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- The billing API gates the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager; on 2026-04-14 Tomasz handed the pager back to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is the primary on-call for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- As of 2026-06-04, Priya Raman holds the Atlas team pager this cycle, taking over from Marcus. [decision; valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: As of 2026-04-08, page Marcus for anything Atlas-related this cycle, not Priya Raman. [decision; valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: As of 2026-03-17, Priya Raman is the person to page for anything Atlas-related. [decision; valid 2026-03-17 to 2026-04-08; recorded by standup/atlas/2026-03-17]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager; on 2026-04-14 he handed the pager to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Tomasz is off the on-call rotation for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- Marcus took over the Boreal team on-call shift from Lena on 2025-05-07. [decision; valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07]\n- On 2025-09-16, the Ember team handed the authentication gateway over to the Cinder team. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- As of 2025-08-15, Marcus has the Boreal team pager this cycle, taking over from Lena. [decision; valid 2025-08-15 to now; recorded by standup/boreal/2025-08-15]\n    earlier: As of 2025-06-27, Lena has the Boreal team pager this cycle, taking over from Marcus. [decision; valid 2025-06-27 to 2025-08-15; recorded by standup/boreal/2025-06-27]\n\nQuestion: When did Atlas take over feature-flags?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596102-AoHJnW6oUvo3DpMRPdi9",
+  "object": "chat.completion",
+  "created": 1788596102,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2026-03-09",
+     "refusal": null,
+     "reasoning": "The question asks when Atlas took over feature-flags. Let me trace the ownership history:\n\n- 2025-01-08 to 2025-11-06: Atlas owned it (standup 2025-01-08)\n- 2025-11-06 to 2026-02-11: Ember owned it (handover 2025-11-06)\n- 2026-02-11 to 2026-03-09: team Dune owned it (handover 2026-02-11) — but this was later corrected\n- 2026-03-09 to now: Atlas owns it (handover correction 2026-03-09)\n\nThe correction says: \"As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it.\"\n\nSo the question \"When did Atlas take over feature-flags?\" — The most recent handover to Atlas was on 2026-03-09, per the correction note. The correction note says the 2026-02-11 handover note that said Dune was written against the wrong team. So it seems the 2026-02-11 handover was actually a handover to Atlas but mislabeled as Dune. Hmm.\n\nActually, there are two possible answers:\n1. 2026-03-09 — when the correction was recorded saying Atlas owns it.\n2. 2026-02-11 — the handover date, which was written against the wrong team (Dune), but actually the handover was to Atlas.\n\nThe question asks \"When did Atlas take over feature-flags?\" The memory has multiple entries. The latest entry says \"As of 2026-03-09, feature-flags is owned by the Atlas team\" and that the 2026-02-11 note saying Dune was written against the wrong team.\n\nInterpretation: The 2026-02-11 handover was actually a handover to Atlas, but the note mislabeled the team as Dune. So Atlas took over on 2026-02-11? Or the correction as of 2026-03-09?\n\nThe safest answer based on the memory: the correction states \"As of 2026-03-09, feature-flags is owned by the Atlas team.\" So Atlas took over as of 2026-03-09 per the correction. But it also implies the 2026-02-11 handover was actually to Atlas (wrong team name written). Hmm.\n\nThe question wants a single value. Given the correction entry, the answer would be 2026-03-09. But the note says the handover document (written 2026-02-11 by Oskar for Farah) said Dune was wrong. So the actual handover was on 2026-02-11 to Atlas.\n\nHmm, tricky. \"the 2026-02-11 handover note that said team Dune was written against the wrong team\" — meaning the note named the wrong team. So the real team that received it was Atlas? That would suggest Atlas took over on 2026-02-11. But the correction entry says \"As of 2026-03-09, feature-flags is owned by the Atlas team\" — the \"as of\" date is when it's stated, not necessarily when the takeover happened.\n\nBut wait — also earlier, Atlas owned feature-flags from 2025-01-08 to 2025-11-06, then Ember took over on 2025-11-06. Then on 2026-02-11 Ember handed over (to whom?). The handover said Dune but was wrong; correction says Atlas owns it as of 2026-03-09.\n\nThe question \"When did Atlas take over feature-flags?\" — if the handover actually happened 2026-02-11 but was documented as Dune by mistake, and the correction on 2026-03-09 clarified it's Atlas... The memory's most direct statement: \"As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note ... was written against the wrong team.\"\n\nI think the answer expected is 2026-03-09, per the correction entry, since that's the date the memory gives for Atlas ownership resuming. Alternatively, 2026-02-11 if we consider the handover itself.\n\nGiven \"Treat a later entry as superseding an earlier one on the same subject\" — the later entry (2026-03-09 correction) supersedes. It says \"As of 2026-03-09, feature-flags is owned by the Atlas team\". So the answer: 2026-03-09.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Atlas took over feature-flags. Let me trace the ownership history:\n\n- 2025-01-08 to 2025-11-06: Atlas owned it (standup 2025-01-08)\n- 2025-11-06 to 2026-02-11: Ember owned it (handover 2025-11-06)\n- 2026-02-11 to 2026-03-09: team Dune owned it (handover 2026-02-11) — but this was later corrected\n- 2026-03-09 to now: Atlas owns it (handover correction 2026-03-09)\n\nThe correction says: \"As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it.\"\n\nSo the question \"When did Atlas take over feature-flags?\" — The most recent handover to Atlas was on 2026-03-09, per the correction note. The correction note says the 2026-02-11 handover note that said Dune was written against the wrong team. So it seems the 2026-02-11 handover was actually a handover to Atlas but mislabeled as Dune. Hmm.\n\nActually, there are two possible answers:\n1. 2026-03-09 — when the correction was recorded saying Atlas owns it.\n2. 2026-02-11 — the handover date, which was written against the wrong team (Dune), but actually the handover was to Atlas.\n\nThe question asks \"When did Atlas take over feature-flags?\" The memory has multiple entries. The latest entry says \"As of 2026-03-09, feature-flags is owned by the Atlas team\" and that the 2026-02-11 note saying Dune was written against the wrong team.\n\nInterpretation: The 2026-02-11 handover was actually a handover to Atlas, but the note mislabeled the team as Dune. So Atlas took over on 2026-02-11? Or the correction as of 2026-03-09?\n\nThe safest answer based on the memory: the correction states \"As of 2026-03-09, feature-flags is owned by the Atlas team.\" So Atlas took over as of 2026-03-09 per the correction. But it also implies the 2026-02-11 handover was actually to Atlas (wrong team name written). Hmm.\n\nThe question wants a single value. Given the correction entry, the answer would be 2026-03-09. But the note says the handover document (written 2026-02-11 by Oskar for Farah) said Dune was wrong. So the actual handover was on 2026-02-11 to Atlas.\n\nHmm, tricky. \"the 2026-02-11 handover note that said team Dune was written against the wrong team\" — meaning the note named the wrong team. So the real team that received it was Atlas? That would suggest Atlas took over on 2026-02-11. But the correction entry says \"As of 2026-03-09, feature-flags is owned by the Atlas team\" — the \"as of\" date is when it's stated, not necessarily when the takeover happened.\n\nBut wait — also earlier, Atlas owned feature-flags from 2025-01-08 to 2025-11-06, then Ember took over on 2025-11-06. Then on 2026-02-11 Ember handed over (to whom?). The handover said Dune but was wrong; correction says Atlas owns it as of 2026-03-09.\n\nThe question \"When did Atlas take over feature-flags?\" — if the handover actually happened 2026-02-11 but was documented as Dune by mistake, and the correction on 2026-03-09 clarified it's Atlas... The memory's most direct statement: \"As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note ... was written against the wrong team.\"\n\nI think the answer expected is 2026-03-09, per the correction entry, since that's the date the memory gives for Atlas ownership resuming. Alternatively, 2026-02-11 if we consider the handover itself.\n\nGiven \"Treat a later entry as superseding an earlier one on the same subject\" — the later entry (2026-03-09 correction) supersedes. It says \"As of 2026-03-09, feature-flags is owned by the Atlas team\". So the answer: 2026-03-09.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1709,
+   "completion_tokens": 1044,
+   "total_tokens": 2753,
+   "cost": 0.000366135,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 384,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000366135,
+    "upstream_inference_prompt_cost": 0.000105135,
+    "upstream_inference_completions_cost": 0.000261
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1036,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 11.078139957971871,
+ "fetched_at": "2026-09-05T08:15:13Z"
+}

@@ -1,0 +1,68 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000644\" [constraint]: As of 2025-08-19, deploys to the job scheduler happen on Tuesdays and Fridays between 09:00 and 10:30 UTC; the previous Tuesdays 13:00-15:00 UTC slot is retired.  (about: job scheduler)\n- memory_id \"1000600\": The Atlas team in 2025 consists of Priya Raman (Tomasz left the Atlas team on 2025-07-30 to join the Dune team).  (about: Atlas team, Priya Raman, Tomasz, Dune team)\n- memory_id \"1000582\": As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation, taking over from Tomasz.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000578\": As of 2025-07-30, Tomasz leaves the Atlas team and joins the Dune team.  (about: Atlas team, Tomasz, Dune team)\n- memory_id \"1000571\": The Dune team sits on the fourth floor.  (about: Dune team)\n- memory_id \"1000557\": Diego has the Cinder pager as of 2025-07-17, taking over from Yuki Tanaka.  (about: Yuki Tanaka, Cinder, Diego)\n- memory_id \"1000514\": The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it.  (about: Cinder, Dune team, notifier)\n- memory_id \"1000506\": The job scheduler is owned by the Dune team as of 2025-06-25, having moved from the Ember team.  (about: Dune team, Ember team, job scheduler)\n- memory_id \"1000456\": The job scheduler's single fixed node turned every restart into a missed run.  (about: job scheduler)\n- memory_id \"1000424\" [decision]: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder.  (about: Atlas team, Cinder, indexer)\n- memory_id \"1000404\": On 2025-05-14 the Cinder team observed that webhooks' memory use grew steadily for a week after the cache change.  (about: Cinder, webhooks)\n- memory_id \"1000364\": As of 2025-04-24, the Cinder team reported that the feature-flags service's p99 latency doubled after Tuesday's deploy.  (about: Cinder, feature-flags)\n- memory_id \"1000349\" [decision]: The Dune team adopted a monthly game day.  (about: Dune team)\n- memory_id \"1000346\" [constraint]: Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.  (about: the bus)\n- memory_id \"1000321\": As of 2025-04-07, the Ember team reported that the notifier's request volume halved after the client rollout.  (about: notifier, Ember team)\n- memory_id \"1000286\": On 2025-03-26 the Dune team observed that the notification service's memory use grew steadily for a week after the cache change.  (about: Dune team, notification service)\n- memory_id \"1000227\": On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change.  (about: Boreal team, ledger service)\n- memory_id \"1000130\": The reporting service is owned by the Dune team.  (about: Dune team, reporting service)\n- memory_id \"1000101\": Farah has the first on-call rotation for the Dune team.  (about: Farah, Dune team)\n- memory_id \"1000050\": Farah runs the Dune team solo until the next hire lands.  (about: Farah, Dune team)\nExisting entity names: job scheduler, Atlas team, Priya Raman, Tomasz, Dune team, Yuki Tanaka, Cinder, Diego, notifier, Ember team, indexer, webhooks, feature-flags, the bus, notification service, Boreal team, ledger service, reporting service, Farah\n\nThe note:\n\n[2025-08-19] standup/dune/2025-08-19-2: Observation from the Dune team: after the runtime upgrade, the resizer's cold start time tripled."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788601150-RkYgIAzgctOBa4bpMiFK",
+  "object": "chat.completion",
+  "created": 1788601150,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Morph",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\":[{\"content\":\"On 2025-08-19 the Dune team observed that the resizer's cold start time tripled after the runtime upgrade.\",\"entities\":[\"Dune team\",\"resizer\"],\"kind\":\"fact\",\"confidence\":1,\"evidence\":\"after the runtime upgrade, the resizer's cold start time tripled\"}],\"corrections\":[],\"add_relations\":[],\"remove_relations\":[],\"entity_aliases\":[]}",
+     "refusal": null,
+     "reasoning": null
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2330,
+   "completion_tokens": 88,
+   "total_tokens": 2418,
+   "cost": 0.000255886,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000255886,
+    "upstream_inference_prompt_cost": 0.00022601,
+    "upstream_inference_completions_cost": 2.9876e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 0,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.0668237500358373,
+ "fetched_at": "2026-09-05T09:39:11Z"
+}

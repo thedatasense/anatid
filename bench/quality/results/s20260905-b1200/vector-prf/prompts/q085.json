@@ -1,0 +1,55 @@
+{
+ "qid": "q085",
+ "system": "vector-prf",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.\n- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.\n- [2026-01-15] standup/ember/2026-01-15: On-call rotation: Diego is primary for Ember starting today; Oskar is off rotation.\n- [2025-07-17] standup/cinder/2025-07-17: Rotation day for the Cinder team: Yuki Tanaka hands the pager to Diego Alvarez.\n- [2025-04-24] standup/cinder/2025-04-24: Rotation day for the Cinder team: Yuki hands the pager to Diego.\n- [2026-04-13] standup/ember/2026-04-13: Diego has the Ember pager this cycle, taking over from Oskar.\n- [2025-11-27] standup/cinder/2025-11-27: As of today Diego Alvarez is on the Ember team; Cinder loses a pair of hands. Yuki takes the Cinder pager from Diego, who is leaving the team.\n- [2025-10-24] standup/cinder/2025-10-24: Diego has the Cinder pager this cycle, taking over from Yuki.\n- [2026-03-02] standup/ember/2026-03-02: Reminder from the Ember team: page Oskar Lind for anything this cycle, not Diego.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki Tanaka and Diego are on Cinder.\n- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.\n- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.\n- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.\n- [2025-02-27] standup/cinder/2025-02-27: Yuki has the Cinder pager this cycle, taking over from Diego.\n- [2025-06-06] standup/cinder/2025-06-06: Yuki has the Cinder pager this cycle, taking over from Diego Alvarez.\n- [2026-01-16] standup/dune/2026-01-16: On-call rotation: Farah Haddad is primary for team Dune starting today; Tomasz is off rotation.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-09-16] handover/2025-09-16-auth-gateway: The Ember team handed the authentication gateway to Cinder today; Oskar Lind wrote up the handover doc for Diego.\n- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.\n- [2026-05-22] standup/dune/2026-05-22: Tomasz picked up the Dune on-call shift from Farah today.\n- [2025-06-25] handover/2025-06-25-scheduler: Handover: as of today scheduler moves from the Ember team to the Dune team. Oskar walked Farah Haddad through the runbook this morning.\n- [2025-01-10] standup/ember/2025-01-10: The Ember team is a one-person team at the moment: Oskar.\n- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.\n- [2026-04-14] standup/dune/2026-04-14: Rotation day for the Dune team: Tomasz hands the pager to Farah.\n- [2025-05-15] handover/2025-05-15-webhooks: Handover: as of today the webhook dispatcher moves from team Ember to the Boreal team. Oskar walked Lena through the runbook this morning.\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n- [2025-02-12] standup/boreal/2025-02-12: Rotation day for the Boreal team: Lena hands the pager to Marcus.\n- [2025-06-19] standup/atlas/2025-06-19: Rotation day for team Atlas: Priya hands the pager to Tomasz.\n- [2026-06-01] standup/ember/2026-06-01: For newcomers: the deploy window for the reporting service is still on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-10-15] standup/dune/2025-10-15: Farah has the Dune pager this cycle, taking over from Tomasz Nowak.\n- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.\n- [2025-12-10] standup/dune/2025-12-10: Tomasz Nowak has the Dune pager this cycle, taking over from Farah.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-05-20] handover/2025-05-20-search-indexer: Team Atlas is taking over search-indexer from team Cinder, effective today. Dashboards and alerts are being repointed.\n\nQuestion: Who is on call for Diego's team right now?"
+  }
+ ],
+ "contexts": [
+  "- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.",
+  "- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.",
+  "- [2026-01-15] standup/ember/2026-01-15: On-call rotation: Diego is primary for Ember starting today; Oskar is off rotation.",
+  "- [2025-07-17] standup/cinder/2025-07-17: Rotation day for the Cinder team: Yuki Tanaka hands the pager to Diego Alvarez.",
+  "- [2025-04-24] standup/cinder/2025-04-24: Rotation day for the Cinder team: Yuki hands the pager to Diego.",
+  "- [2026-04-13] standup/ember/2026-04-13: Diego has the Ember pager this cycle, taking over from Oskar.",
+  "- [2025-11-27] standup/cinder/2025-11-27: As of today Diego Alvarez is on the Ember team; Cinder loses a pair of hands. Yuki takes the Cinder pager from Diego, who is leaving the team.",
+  "- [2025-10-24] standup/cinder/2025-10-24: Diego has the Cinder pager this cycle, taking over from Yuki.",
+  "- [2026-03-02] standup/ember/2026-03-02: Reminder from the Ember team: page Oskar Lind for anything this cycle, not Diego.",
+  "- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki Tanaka and Diego are on Cinder.",
+  "- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.",
+  "- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.",
+  "- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.",
+  "- [2025-02-27] standup/cinder/2025-02-27: Yuki has the Cinder pager this cycle, taking over from Diego.",
+  "- [2025-06-06] standup/cinder/2025-06-06: Yuki has the Cinder pager this cycle, taking over from Diego Alvarez.",
+  "- [2026-01-16] standup/dune/2026-01-16: On-call rotation: Farah Haddad is primary for team Dune starting today; Tomasz is off rotation.",
+  "- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.",
+  "- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.",
+  "- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.",
+  "- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.",
+  "- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.",
+  "- [2025-09-16] handover/2025-09-16-auth-gateway: The Ember team handed the authentication gateway to Cinder today; Oskar Lind wrote up the handover doc for Diego.",
+  "- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.",
+  "- [2026-05-22] standup/dune/2026-05-22: Tomasz picked up the Dune on-call shift from Farah today.",
+  "- [2025-06-25] handover/2025-06-25-scheduler: Handover: as of today scheduler moves from the Ember team to the Dune team. Oskar walked Farah Haddad through the runbook this morning.",
+  "- [2025-01-10] standup/ember/2025-01-10: The Ember team is a one-person team at the moment: Oskar.",
+  "- [2025-09-23] handover/2025-09-23-scheduler: From today the pager for the job scheduler rings the Cinder team, not team Dune. Ownership transferred.",
+  "- [2026-04-14] standup/dune/2026-04-14: Rotation day for the Dune team: Tomasz hands the pager to Farah.",
+  "- [2025-05-15] handover/2025-05-15-webhooks: Handover: as of today the webhook dispatcher moves from team Ember to the Boreal team. Oskar walked Lena through the runbook this morning.",
+  "- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.",
+  "- [2025-02-12] standup/boreal/2025-02-12: Rotation day for the Boreal team: Lena hands the pager to Marcus.",
+  "- [2025-06-19] standup/atlas/2025-06-19: Rotation day for team Atlas: Priya hands the pager to Tomasz.",
+  "- [2026-06-01] standup/ember/2026-06-01: For newcomers: the deploy window for the reporting service is still on Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+  "- [2025-10-15] standup/dune/2025-10-15: Farah has the Dune pager this cycle, taking over from Tomasz Nowak.",
+  "- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.",
+  "- [2025-12-10] standup/dune/2025-12-10: Tomasz Nowak has the Dune pager this cycle, taking over from Farah.",
+  "- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.",
+  "- [2025-05-20] handover/2025-05-20-search-indexer: Team Atlas is taking over search-indexer from team Cinder, effective today. Dashboards and alerts are being repointed."
+ ],
+ "answer": "Oskar"
+}

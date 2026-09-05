@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n- [2026-04-14] standup/dune/2026-04-14-2: The Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-12-05] handover/2025-12-05-reporting: From today the pager for reporting rings the Ember team, not the Dune team. Ownership transferred.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2026-06-01] standup/ember/2026-06-01: For newcomers: the deploy window for the reporting service is still on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-03-26] standup/dune/2025-03-26: Reminder that the reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. Observation from team Dune: after the cache change, the notification service's memory use grew steadily for a week.\n- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-12-25] standup/atlas/2025-12-25: Atlas saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it. Atlas has moved to the second floor.\n- [2025-09-30] standup/atlas/2025-09-30: Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. The billing API now depends on the feature flag service. The Atlas team planning meeting is every Tuesday.\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.\n- [2026-01-15] standup/ember/2026-01-15: On-call rotation: Diego is primary for Ember starting today; Oskar is off rotation.\n- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.\n- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2026-01-16] standup/dune/2026-01-16: On-call rotation: Farah Haddad is primary for team Dune starting today; Tomasz is off rotation.\n- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.\n\nQuestion: Who is on call for the team that owns the service reporting depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620271-beRsiqG5AOeUKeDweIN8",
+  "object": "chat.completion",
+  "created": 1788620271,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "Let me work through this carefully.\n\nThe question: \"Who is on call for the team that owns the service reporting depends on?\"\n\nFirst: what service does reporting depend on? There's history:\n- 2025-01-21: reporting needs the ledger service.\n- 2025-09-23: Reporting switches from Ledger to the bus as its source. Reporting no longer depends on Ledger.\n\nSo as of the latest information, reporting depends on \"the bus\". Who owns the bus? Hmm. Looking through memory... I don't see any note about who owns \"the bus\" service. Let me scan all entries:\n\n- Ember owns reporting service.\n- Dune owned reporting earlier.\n- Atlas owns ledger, billing-api, feature-flags (corrected 2026-03-09).\n- Boreal owns webhook dispatcher, notifier (notifier correction went to Dune? No wait: 2025-06-27 correction: notification service went to Dune team, not Cinder. But 2025-01-09 says Boreal team owns the notifier. Hmm, those conflict—2025-06-27 says notification service went to Dune team, not Cinder. But that's about handover of 2025-06-11 vs Boreal owning notifier in 2025-01-09. Confusing but not needed here.)\n- Cinder: Diego on call 2025-01-09.\n- Resizer is hard dependency of catalog; catalog calls resizer.\n\nNo entry says who owns \"the bus\". So the chain \"reporting depends on the bus → bus owner\" cannot be completed from memory.\n\nAlternatively, if the question intends the dependency at some past time: ledger owned by Atlas; on-call for Atlas latest: 2026-03-20 says Marcus moves from Boreal to Atlas team today. But who is on-call for Atlas? Priya carries the phone until next rotation (2025-05-13); then Priya primary 2025-02-12... Actually 2025-05-13 says Priya carries until next rotation. 2025-09-30 no on-call. 2025-12-25 no on-call. 2026-03-20: Marcus moves to Atlas. On-call for Boreal passes from Marcus to Lena. Does that mean Marcus takes on-call for Atlas? It doesn't say Marcus is on-call for Atlas. So we don't know Atlas on-call currently.\n\nBut the key question is: what does reporting currently depend on? Latest (2025-09-23): the bus. No owner recorded for the bus. So the answer would be \"I don't know\".\n\nUnless the question expects the interpretation that reporting depends on... maybe some other service? Let me re-check: \"Dependency map update: reporting needs the ledger service (the nightly balance export)\" — 2025-01-21. Then 2025-09-23 supersedes: reporting switches to the bus, no longer depends on Ledger.\n\nSince today is 2026-06-30, current state: reporting depends on the bus. The bus owner is not recorded. On-call for that team unknown.\n\nSo answer: \"I don't know\".\n\nWait, but maybe the question intends a temporal reading: \"the service reporting depends on\" — the memory contains multiple dependencies over time. Without a stated moment, answer for now. Now: bus. Owner unknown. So I don't know.\n\nAnswer exactly: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Let me work through this carefully.\n\nThe question: \"Who is on call for the team that owns the service reporting depends on?\"\n\nFirst: what service does reporting depend on? There's history:\n- 2025-01-21: reporting needs the ledger service.\n- 2025-09-23: Reporting switches from Ledger to the bus as its source. Reporting no longer depends on Ledger.\n\nSo as of the latest information, reporting depends on \"the bus\". Who owns the bus? Hmm. Looking through memory... I don't see any note about who owns \"the bus\" service. Let me scan all entries:\n\n- Ember owns reporting service.\n- Dune owned reporting earlier.\n- Atlas owns ledger, billing-api, feature-flags (corrected 2026-03-09).\n- Boreal owns webhook dispatcher, notifier (notifier correction went to Dune? No wait: 2025-06-27 correction: notification service went to Dune team, not Cinder. But 2025-01-09 says Boreal team owns the notifier. Hmm, those conflict—2025-06-27 says notification service went to Dune team, not Cinder. But that's about handover of 2025-06-11 vs Boreal owning notifier in 2025-01-09. Confusing but not needed here.)\n- Cinder: Diego on call 2025-01-09.\n- Resizer is hard dependency of catalog; catalog calls resizer.\n\nNo entry says who owns \"the bus\". So the chain \"reporting depends on the bus → bus owner\" cannot be completed from memory.\n\nAlternatively, if the question intends the dependency at some past time: ledger owned by Atlas; on-call for Atlas latest: 2026-03-20 says Marcus moves from Boreal to Atlas team today. But who is on-call for Atlas? Priya carries the phone until next rotation (2025-05-13); then Priya primary 2025-02-12... Actually 2025-05-13 says Priya carries until next rotation. 2025-09-30 no on-call. 2025-12-25 no on-call. 2026-03-20: Marcus moves to Atlas. On-call for Boreal passes from Marcus to Lena. Does that mean Marcus takes on-call for Atlas? It doesn't say Marcus is on-call for Atlas. So we don't know Atlas on-call currently.\n\nBut the key question is: what does reporting currently depend on? Latest (2025-09-23): the bus. No owner recorded for the bus. So the answer would be \"I don't know\".\n\nUnless the question expects the interpretation that reporting depends on... maybe some other service? Let me re-check: \"Dependency map update: reporting needs the ledger service (the nightly balance export)\" — 2025-01-21. Then 2025-09-23 supersedes: reporting switches to the bus, no longer depends on Ledger.\n\nSince today is 2026-06-30, current state: reporting depends on the bus. The bus owner is not recorded. On-call for that team unknown.\n\nSo answer: \"I don't know\".\n\nWait, but maybe the question intends a temporal reading: \"the service reporting depends on\" — the memory contains multiple dependencies over time. Without a stated moment, answer for now. Now: bus. Owner unknown. So I don't know.\n\nAnswer exactly: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1605,
+   "completion_tokens": 722,
+   "total_tokens": 2327,
+   "cost": 0.000300875,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000300875,
+    "upstream_inference_prompt_cost": 0.000120375,
+    "upstream_inference_completions_cost": 0.0001805
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 716,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.944058416993357,
+ "fetched_at": "2026-09-05T14:58:01Z"
+}

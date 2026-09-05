@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- On 2026-04-01, ownership of the indexer transferred from the Atlas team to the Boreal team. [valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- The indexer is pinned to OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- On 2026-05-27 the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-02-10 the Boreal team noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10-2]\n- The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- The ledger service is owned by the Atlas team. [valid 2025-01-08 to now; recorded by standup/atlas/2025-01-08]\n- As of 2025-07-17, the ledger service remains owned by the Atlas team. [valid 2025-07-17 to now; recorded by standup/atlas/2025-07-17]\n- On 2026-06-09 the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- On 2025-12-18 the Atlas team decided that the indexer will rebuild the index nightly instead of on every product catalog write, because incremental updates left stale entries behind after failed writes. [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- In INC-2025-023, the indexer served stale results for two days starting 2025-10-03 because a reindex job failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- The reporting service is owned by the Ember team as of 2025-12-05, having moved from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is owned by the Dune team. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- As of 2025-10-07, reindex jobs will page on failure. [decision; valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team, having moved from the Ember team; the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team, having moved from the Ember team. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- The product catalog is owned by the Atlas team as of 2025-12-19, having moved from Cinder. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of 2025-09-05, the Dune team still owned the job scheduler; ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, the Dune team still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2025-10-13, ownership of the ledger service transferred to Cinder from the Atlas team. [decision; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- On 2026-06-04 the Boreal team noticed that the product catalog's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n\nQuestion: Which team owns the service that search-indexer depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604465-cK8RUaXrgn0aV2f6NAHO",
+  "object": "chat.completion",
+  "created": 1788604465,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Atlas team",
+     "refusal": null,
+     "reasoning": "The question asks: which team owns the service that search-indexer depends on?\n\nThe memory says: \"The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down.\" So the indexer depends on the product catalog.\n\nThe product catalog is owned by the Atlas team as of 2025-12-19, having moved from Cinder. Valid 2025-12-19 to now. Today is 2026-06-30, so the Atlas team owns the product catalog.\n\nAnswer: Atlas team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which team owns the service that search-indexer depends on?\n\nThe memory says: \"The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down.\" So the indexer depends on the product catalog.\n\nThe product catalog is owned by the Atlas team as of 2025-12-19, having moved from Cinder. Valid 2025-12-19 to now. Today is 2026-06-30, so the Atlas team owns the product catalog.\n\nAnswer: Atlas team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1624,
+   "completion_tokens": 116,
+   "total_tokens": 1740,
+   "cost": 0.0001508,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001508,
+    "upstream_inference_prompt_cost": 0.0001218,
+    "upstream_inference_completions_cost": 2.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 112,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.6326257920009084,
+ "fetched_at": "2026-09-05T10:34:29Z"
+}

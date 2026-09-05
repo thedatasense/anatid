@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- As of 2025-12-05, the Ember team owns reporting, which team Dune owned until then. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- As of 2025-06-11, team Dune owns the notifier, which the Boreal team owned until then. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: As of 2025-06-11, the Cinder team owns the notifier, which the Boreal team owned until then. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- As of 2025-09-23, the Cinder team owns the job scheduler; team Dune owned it until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, team Dune still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2025-09-23, the Cinder team owns the job scheduler, which team Dune owned until then. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- As of 2025-12-19, the Atlas team owns the product catalog, which the Cinder team owned until then. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: The Cinder team owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of 2025-05-15, the webhook dispatcher is owned by the Boreal team. [decision; valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- As of 2026-04-14, Farah holds the Dune pager this cycle, taking over from Tomasz, who held it as of 2026-03-11. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune pager this cycle, taking over from Farah. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n- A partner asked for webhook key rotation in their security review. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- The Boreal team decided that the webhook dispatcher will sign payloads with rotating keys. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. [constraint; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- As of 2026-01-12, the billing API is owned by the Ember team, which the Atlas team owned until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: From 2025-06-09, the billing API is owned by the Atlas team. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: From 2025-06-09, the billing API is owned by the Boreal team. [valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: Since 2025-03-07, the billing API is owned by the Ember team. [valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- From 2025-03-03, the pager for the webhook dispatcher rings the Ember team. [valid 2025-03-03 to now; recorded by handover/2025-03-03-webhooks]\n- The webhook dispatcher will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- The webhook dispatcher relies on the bus for outbound events, so the webhook dispatcher is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- The authentication gateway is owned by the Ember team. [valid 2025-01-20 to now; recorded by standup/ember/2025-01-20]\n- The Cinder team observed that the webhook dispatcher's memory use grew steadily for a week after the cache change. [valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n\nQuestion: Who owns webhooks today?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595634-lNEqMBWU2VePN4LmeZbS",
+  "object": "chat.completion",
+  "created": 1788595634,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The Boreal team",
+     "refusal": null,
+     "reasoning": "The question asks \"Who owns webhooks today?\" Today is 2026-06-30.\n\nLooking at memory entries about webhook dispatcher ownership:\n- As of 2025-05-15, the webhook dispatcher is owned by the Boreal team. [decision; valid 2025-05-15 to now]\n\nThere are earlier entries (Ember, Boreal), but the latest valid entry as of 2025-05-15 says Boreal team owns it, valid to now. So the answer is the Boreal team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks \"Who owns webhooks today?\" Today is 2026-06-30.\n\nLooking at memory entries about webhook dispatcher ownership:\n- As of 2025-05-15, the webhook dispatcher is owned by the Boreal team. [decision; valid 2025-05-15 to now]\n\nThere are earlier entries (Ember, Boreal), but the latest valid entry as of 2025-05-15 says Boreal team owns it, valid to now. So the answer is the Boreal team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1703,
+   "completion_tokens": 116,
+   "total_tokens": 1819,
+   "cost": 0.000149045,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000149045,
+    "upstream_inference_prompt_cost": 0.000120045,
+    "upstream_inference_completions_cost": 2.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 110,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.290618875005748,
+ "fetched_at": "2026-09-05T08:07:16Z"
+}

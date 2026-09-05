@@ -1,0 +1,54 @@
+{
+ "qid": "q054",
+ "system": "hybrid",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-03-20] handover/2025-03-20-catalog: From today the pager for the catalog service rings Dune, not the Cinder team. Ownership transferred.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-03-24] standup/dune/2025-03-24: Reminder that the product catalog only ships on Mondays to Thursdays between 09:00 and 17:00 UTC. Farah still has the Dune pager.\n- [2025-05-05] standup/dune/2025-05-05: For newcomers: the deploy window for the catalog is still on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-04-04] standup/dune/2025-04-04: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.\n- [2025-01-20] standup/dune/2025-01-20: The resizer lives with Dune.\n- [2025-12-17] standup/dune/2025-12-17: Decided in today's standup: search-indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes.\n- [2025-04-15] standup/dune/2025-04-15: If image-resizer is down, the product catalog is down: it relies on it for thumbnails.\n- [2025-10-27] standup/dune/2025-10-27: Reminder from Dune: page Tomasz for anything this cycle, not Farah.\n- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.\n- [2026-06-08] standup/dune/2026-06-08: Rotation day for Dune: Tomasz hands the pager to Farah.\n- [2025-04-29] handover/2025-04-29-image-resizer: The Ember team is taking over the image resizer from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-11-06] standup/dune/2025-11-06: Heads-up from the Dune team: search-indexer's queue depth hit 50,000 after the marketing send.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-05-09] standup/dune/2025-05-09-2: The Dune team has switched to a monthly game day.\n- [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.\n- [2025-11-21] standup/dune/2025-11-21: Heads-up from team Dune: billing-api's queue depth hit 50,000 after the marketing send.\n- [2025-12-15] standup/dune/2025-12-15: Rotation day for Dune: Tomasz hands the pager to Farah.\n- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.\n- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.\n- [2026-04-13] standup/dune/2026-04-13: On-call rotation: Tomasz is primary for Dune starting today; Farah is off rotation.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2026-03-10] standup/dune/2026-03-10: On-call rotation: Farah is primary for Dune starting today; Tomasz Nowak is off rotation.\n- [2025-04-08] standup/cinder/2025-04-08: Reminder that the indexer depends on the catalog.\n- [2025-08-29] standup/cinder/2025-08-29: Diego has the Cinder pager this cycle, taking over from Yuki.\n- [2025-01-09] standup/dune/2025-01-09: Farah runs team Dune solo until the next hire lands.\n- [2025-08-29] standup/atlas/2025-08-29: Observation from Atlas: after the client rollout, the product catalog's request volume halved.\n- [2025-10-31] standup/boreal/2025-10-31: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2025-12-08] handover/2025-12-08-search-indexer: From today the pager for the indexer rings Dune, not the Cinder team. Ownership transferred.\n- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.\n- [2025-04-18] standup/atlas/2025-04-18-2: Heads-up from the Atlas team: the catalog service's disk usage jumped 30 percent after the retention change.\n- [2025-10-13] standup/cinder/2025-10-13: The monthly cost review is run by Yuki. Reminder that the search indexer depends on the catalog.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2025-02-28] standup/cinder/2025-02-28: Dependency map update: search-indexer needs the product catalog (product documents). Cinder holds planning on Mondays.\n- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.\n- [2025-07-30] standup/dune/2025-07-30: Rotation day for team Dune: Farah Haddad hands the pager to Tomasz Nowak.\n\nQuestion: When did Dune take over the catalog?"
+  }
+ ],
+ "contexts": [
+  "- [2025-03-20] handover/2025-03-20-catalog: From today the pager for the catalog service rings Dune, not the Cinder team. Ownership transferred.",
+  "- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.",
+  "- [2025-03-24] standup/dune/2025-03-24: Reminder that the product catalog only ships on Mondays to Thursdays between 09:00 and 17:00 UTC. Farah still has the Dune pager.",
+  "- [2025-05-05] standup/dune/2025-05-05: For newcomers: the deploy window for the catalog is still on Mondays to Thursdays between 09:00 and 17:00 UTC.",
+  "- [2025-04-04] standup/dune/2025-04-04: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.",
+  "- [2025-01-20] standup/dune/2025-01-20: The resizer lives with Dune.",
+  "- [2025-12-17] standup/dune/2025-12-17: Decided in today's standup: search-indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes.",
+  "- [2025-04-15] standup/dune/2025-04-15: If image-resizer is down, the product catalog is down: it relies on it for thumbnails.",
+  "- [2025-10-27] standup/dune/2025-10-27: Reminder from Dune: page Tomasz for anything this cycle, not Farah.",
+  "- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.",
+  "- [2026-06-08] standup/dune/2026-06-08: Rotation day for Dune: Tomasz hands the pager to Farah.",
+  "- [2025-04-29] handover/2025-04-29-image-resizer: The Ember team is taking over the image resizer from team Dune, effective today. Dashboards and alerts are being repointed.",
+  "- [2025-11-06] standup/dune/2025-11-06: Heads-up from the Dune team: search-indexer's queue depth hit 50,000 after the marketing send.",
+  "- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.",
+  "- [2025-05-09] standup/dune/2025-05-09-2: The Dune team has switched to a monthly game day.",
+  "- [2025-11-06] standup/dune/2025-11-06-2: Dune planning meeting is every Wednesday.",
+  "- [2025-11-21] standup/dune/2025-11-21: Heads-up from team Dune: billing-api's queue depth hit 50,000 after the marketing send.",
+  "- [2025-12-15] standup/dune/2025-12-15: Rotation day for Dune: Tomasz hands the pager to Farah.",
+  "- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.",
+  "- [2026-03-04] standup/dune/2026-03-04: The webhook dispatcher remains a team Dune service.",
+  "- [2026-04-13] standup/dune/2026-04-13: On-call rotation: Tomasz is primary for Dune starting today; Farah is off rotation.",
+  "- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.",
+  "- [2026-03-10] standup/dune/2026-03-10: On-call rotation: Farah is primary for Dune starting today; Tomasz Nowak is off rotation.",
+  "- [2025-04-08] standup/cinder/2025-04-08: Reminder that the indexer depends on the catalog.",
+  "- [2025-08-29] standup/cinder/2025-08-29: Diego has the Cinder pager this cycle, taking over from Yuki.",
+  "- [2025-01-09] standup/dune/2025-01-09: Farah runs team Dune solo until the next hire lands.",
+  "- [2025-08-29] standup/atlas/2025-08-29: Observation from Atlas: after the client rollout, the product catalog's request volume halved.",
+  "- [2025-10-31] standup/boreal/2025-10-31: Lena has the Boreal pager this cycle, taking over from Marcus.",
+  "- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.",
+  "- [2025-12-08] handover/2025-12-08-search-indexer: From today the pager for the indexer rings Dune, not the Cinder team. Ownership transferred.",
+  "- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.",
+  "- [2025-04-18] standup/atlas/2025-04-18-2: Heads-up from the Atlas team: the catalog service's disk usage jumped 30 percent after the retention change.",
+  "- [2025-10-13] standup/cinder/2025-10-13: The monthly cost review is run by Yuki. Reminder that the search indexer depends on the catalog.",
+  "- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.",
+  "- [2025-02-28] standup/cinder/2025-02-28: Dependency map update: search-indexer needs the product catalog (product documents). Cinder holds planning on Mondays.",
+  "- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.",
+  "- [2025-07-30] standup/dune/2025-07-30: Rotation day for team Dune: Farah Haddad hands the pager to Tomasz Nowak."
+ ],
+ "answer": "2025-03-20"
+}

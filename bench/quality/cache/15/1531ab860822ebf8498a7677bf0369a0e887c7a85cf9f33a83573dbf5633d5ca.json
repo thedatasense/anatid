@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-01-20] standup/ember/2025-01-20: For the record, scheduler is owned by the Ember team.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2025-01-10] standup/ember/2025-01-10: Oskar is the only engineer on the Ember team for now.\n- [2026-02-12] standup/ember/2026-02-12: Ember on-call swapped this morning. Oskar carries the phone until the next rotation. Heads-up from team Ember: the search indexer's p99 latency doubled after Tuesday's deploy.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-05-23] standup/ember/2025-05-23: The Ember team saw that the webhooks service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-11-07] handover/2025-11-07-reporting: Handover: as of today the reporting service moves from team Dune to Boreal. Farah walked Marcus through the runbook this morning.\n- [2025-01-14] standup/ember/2025-01-14: Oskar Lind is on call for the Ember team to start the year.\n- [2025-06-13] standup/ember/2025-06-13-2: Team Ember planning meeting is every Friday.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2026-03-31] standup/ember/2026-03-31: Diego Alvarez has the Ember pager this cycle, taking over from Oskar. Ember saw that the feature flag service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-12-29] standup/ember/2025-12-29: Rotation day for the Ember team: Oskar hands the pager to Diego.\n- [2025-12-29] standup/ember/2025-12-29-2: Observation from team Ember: after the traffic shift, the auth gateway's CPU sat at 90 percent. The ledger remains a Ember service.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-04-29] handover/2025-04-29-image-resizer: The Ember team is taking over the image resizer from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2026-03-19] standup/ember/2026-03-19-2: Team Ember noticed that the job scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-12-05] standup/cinder/2025-12-05: Team change: Diego Alvarez leaves team Cinder and joins Ember, effective today.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2026-05-18] standup/ember/2026-05-18-2: The Ember team noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2026-05-18] standup/ember/2026-05-18: Oskar Lind picked up the Ember on-call shift from Diego today.\n\nQuestion: Which team owned reporting before Ember took it over?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788617957-m57douQmKmWIIL4sYz3h",
+  "object": "chat.completion",
+  "created": 1788617957,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Dune",
+     "refusal": null,
+     "reasoning": "The question asks: which team owned reporting before Ember took it over?\n\nLet me trace the reporting service ownership history:\n- 2025-01-20: Dune team owns reporting service\n- 2025-11-07: reporting service moves from team Dune to Boreal\n- 2025-11-17 correction: The 2025-11-07 note named the wrong team. The Ember team took it over on that date; team Boreal did not.\n\nSo on 2025-11-07, reporting moved from Dune to Ember (per the correction). Before Ember took it over, the owner was Dune.\n\nThen 2026-02-10: reports pipeline moved to Cinder team, Ember kept it until today.\n\nSo before Ember took it over: Dune.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which team owned reporting before Ember took it over?\n\nLet me trace the reporting service ownership history:\n- 2025-01-20: Dune team owns reporting service\n- 2025-11-07: reporting service moves from team Dune to Boreal\n- 2025-11-17 correction: The 2025-11-07 note named the wrong team. The Ember team took it over on that date; team Boreal did not.\n\nSo on 2025-11-07, reporting moved from Dune to Ember (per the correction). Before Ember took it over, the owner was Dune.\n\nThen 2026-02-10: reports pipeline moved to Cinder team, Ember kept it until today.\n\nSo before Ember took it over: Dune.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1359,
+   "completion_tokens": 169,
+   "total_tokens": 1528,
+   "cost": 0.000136495,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000136495,
+    "upstream_inference_prompt_cost": 9.4245e-05,
+    "upstream_inference_completions_cost": 4.225e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 165,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4842560840188526,
+ "fetched_at": "2026-09-05T14:19:19Z"
+}

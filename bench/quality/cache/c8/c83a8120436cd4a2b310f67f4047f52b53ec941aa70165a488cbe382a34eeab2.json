@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What is the deploy window of the service that reporting depends on?\nGold answer: on Tuesdays and Thursdays between 10:00 and 12:00 UTC\nAlso accepted: Tue/Thu 10:00-12:00 UTC\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong.\n\nAnswer to grade: Tuesdays and Thursdays between 10:00 and 12:00 UTC (the event bus, which reporting reads from)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616454-kD5dBXsi3MU9E2f5QiDF",
+  "object": "chat.completion",
+  "created": 1788616454,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names the gold deploy window (Tuesdays and Thursdays between 10:00 and 12:00 UTC), and the extra parenthetical about the event bus is just an unstated intermediate hop, which the rule permits.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade: \"Tuesdays and Thursdays between 10:00 and 12:00 UTC (the event bus, which reporting reads from).\"\n\nGold: \"on Tuesdays and Thursdays between 10:00 and 12:00 UTC\"\n\nThe answer names the gold window. The intermediate hop (event bus) is extra info but the rule says intermediate hops need not be stated; extra info about the intermediate hop shouldn't make it wrong. The final answer names the gold. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade: \"Tuesdays and Thursdays between 10:00 and 12:00 UTC (the event bus, which reporting reads from).\"\n\nGold: \"on Tuesdays and Thursdays between 10:00 and 12:00 UTC\"\n\nThe answer names the gold window. The intermediate hop (event bus) is extra info but the rule says intermediate hops need not be stated; extra info about the intermediate hop shouldn't make it wrong. The final answer names the gold. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 293,
+   "completion_tokens": 168,
+   "total_tokens": 461,
+   "cost": 5.6295e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.6295e-05,
+    "upstream_inference_prompt_cost": 1.4295e-05,
+    "upstream_inference_completions_cost": 4.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 107,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.05943775002379,
+ "fetched_at": "2026-09-05T13:54:21Z"
+}

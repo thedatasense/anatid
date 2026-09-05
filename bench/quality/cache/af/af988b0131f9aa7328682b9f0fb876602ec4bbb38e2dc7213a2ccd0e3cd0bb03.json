@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-07-17, the ledger service remains owned by the Atlas team. [valid 2025-07-17 to now; recorded by standup/atlas/2025-07-17]\n- The ledger service must stay on Postgres 14 until the partitioning work finishes. [constraint; valid 2025-01-31 to now; recorded by standup/atlas/2025-01-31]\n- As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to now; recorded by standup/dune/2025-06-24]\n- As of 2026-03-11, the ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n- As of 2025-10-13, ownership of the ledger service transferred to Cinder from the Atlas team. [decision; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- As of 2025-08-25, the ledger service only ships on Wednesdays between 09:00 and 11:00 UTC; the previous weekday mornings before 11:00 UTC slot is retired. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- The ledger service is owned by the Atlas team. [valid 2025-01-08 to now; recorded by standup/atlas/2025-01-08]\n- On 2025-02-21 the Boreal team pinged the owners of the ledger service about the memory growth. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- As of 2025-10-13, the pager for the ledger service rings Cinder instead of the Atlas team. [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus because nightly ledger scans were blocking billing runs. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- On 2026-05-28 the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- On 2026-04-16 the Atlas team noticed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it because it is not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- The ledger service relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- Ledger migrations will ship with a reviewed query plan. [decision; valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- The indexer is pinned to OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n\nQuestion: Which version is the ledger pinned to, and until when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604255-uAWErgWuPjEH0cBxEcfu",
+  "object": "chat.completion",
+  "created": 1788604255,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Postgres 14, until the partitioning work finishes.",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which version is the ledger pinned to, and until when?\"\n\nLooking at memory: \"The ledger service must stay on Postgres 14 until the partitioning work finishes. [constraint; valid 2025-01-31 to now]\"\n\nSo the ledger is pinned to Postgres 14 until the partitioning work finishes.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which version is the ledger pinned to, and until when?\"\n\nLooking at memory: \"The ledger service must stay on Postgres 14 until the partitioning work finishes. [constraint; valid 2025-01-31 to now]\"\n\nSo the ledger is pinned to Postgres 14 until the partitioning work finishes.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1430,
+   "completion_tokens": 85,
+   "total_tokens": 1515,
+   "cost": 0.00012082,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012082,
+    "upstream_inference_prompt_cost": 9.957e-05,
+    "upstream_inference_completions_cost": 2.125e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 71,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.4266896250192076,
+ "fetched_at": "2026-09-05T10:30:59Z"
+}

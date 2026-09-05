@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-29, Oskar is on the Ember team on-call rotation as the primary on-call. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- Oskar takes the first on-call shift of the year for the Ember team. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- For anything Ember-related, page Oskar. [constraint; valid 2025-03-31 to now; recorded by standup/ember/2025-03-31]\n- As of 2025-03-03, the pager for the webhook dispatcher rings the Ember team instead of the Boreal team. [valid 2025-03-03 to now; recorded by handover/2025-03-03-webhooks]\n- The billing API was owned by the Atlas team from 2025-06-09, having moved from the Ember team, until ownership transferred to the Ember team on 2026-01-12. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: The billing API is owned by the Atlas team as of 2025-06-09, having moved from the Ember team; the Boreal team was recorded by mistake and never held it. [valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: The billing API is owned by the Boreal team as of 2025-06-09, having moved from the Ember team. [valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: The billing API is owned by the Ember team as of 2025-03-07. [valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- The job scheduler was owned by the Dune team from 2025-06-25, having moved from the Ember team, until ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The job scheduler is owned by the Dune team as of 2025-06-25, having moved from the Ember team. [valid 2025-06-25 to 2025-09-23; recorded by handover/2025-06-25-scheduler]\n    earlier: The job scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team instead of the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- Priya Raman holds the first on-call rotation for the Atlas team as of 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-07-30; recorded by standup/atlas/2025-01-09]\n- The Ember team runs its planning on Fridays. [valid 2025-07-21 to now; recorded by standup/ember/2025-07-21]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- As of 2026-05-29, Oskar has the Ember pager for the cycle, taking over from Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, Diego has the Ember pager for the cycle, taking over from Oskar. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n\nQuestion: Who was on call for Ember on 2026-03-13?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603320-5JxmNz2bRDaeJi199vpM",
+  "object": "chat.completion",
+  "created": 1788603320,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Diego",
+     "refusal": null,
+     "reasoning": "The question asks who was on call for Ember on 2026-03-13.\n\nLet me look at the memory entries:\n\n1. Oskar on Ember on-call as primary on-call: valid 2026-05-29 to now.\n2. Oskar off the Ember on-call rotation: valid 2026-01-15 to 2026-05-29.\n3. Diego is the primary on-call for Ember: valid 2026-01-15 to 2026-05-29.\n4. Diego has the Ember pager for the cycle: valid 2026-04-13 to 2026-05-29.\n5. Oskar has the Ember pager for the cycle: valid 2026-05-29 to now.\n6. Oskar takes first on-call shift of the year for Ember: valid 2025-01-14 to now (this is about first shift of the year, 2025).\n7. For anything Ember-related, page Oskar: valid 2025-03-31 to now (constraint).\n\nOn 2026-03-13:\n- The entry \"As of 2026-01-15, Diego is the primary on-call for the Ember team\" is valid 2026-01-15 to 2026-05-29. 2026-03-13 falls within this range. So Diego was primary on-call.\n- Also \"Oskar is off the Ember team on-call rotation\" valid 2026-01-15 to 2026-05-29 — consistent.\n- Diego has the Ember pager for the cycle valid 2026-04-13 to 2026-05-29 — starts after 2026-03-13, so not applicable, but the primary on-call entry covers it.\n\nSo the answer is Diego.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was on call for Ember on 2026-03-13.\n\nLet me look at the memory entries:\n\n1. Oskar on Ember on-call as primary on-call: valid 2026-05-29 to now.\n2. Oskar off the Ember on-call rotation: valid 2026-01-15 to 2026-05-29.\n3. Diego is the primary on-call for Ember: valid 2026-01-15 to 2026-05-29.\n4. Diego has the Ember pager for the cycle: valid 2026-04-13 to 2026-05-29.\n5. Oskar has the Ember pager for the cycle: valid 2026-05-29 to now.\n6. Oskar takes first on-call shift of the year for Ember: valid 2025-01-14 to now (this is about first shift of the year, 2025).\n7. For anything Ember-related, page Oskar: valid 2025-03-31 to now (constraint).\n\nOn 2026-03-13:\n- The entry \"As of 2026-01-15, Diego is the primary on-call for the Ember team\" is valid 2026-01-15 to 2026-05-29. 2026-03-13 falls within this range. So Diego was primary on-call.\n- Also \"Oskar is off the Ember team on-call rotation\" valid 2026-01-15 to 2026-05-29 — consistent.\n- Diego has the Ember pager for the cycle valid 2026-04-13 to 2026-05-29 — starts after 2026-03-13, so not applicable, but the primary on-call entry covers it.\n\nSo the answer is Diego.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1450,
+   "completion_tokens": 389,
+   "total_tokens": 1839,
+   "cost": 0.000206,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000206,
+    "upstream_inference_prompt_cost": 0.00010875,
+    "upstream_inference_completions_cost": 9.725e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 384,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.775231624953449,
+ "fetched_at": "2026-09-05T10:15:28Z"
+}

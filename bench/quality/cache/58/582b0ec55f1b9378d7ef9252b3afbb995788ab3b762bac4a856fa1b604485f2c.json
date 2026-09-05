@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Diego is on call for Ember [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: Oskar is on call for Ember [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: Diego is on call for Ember [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: Oskar is on call for Ember [valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: Diego is on call for Ember [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n    earlier: Oskar is on call for Ember [valid 2025-01-14 to 2025-12-29; recorded by standup/ember/2025-01-14]\n- Ember owns the ledger [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: Atlas owns the ledger [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- Diego is a member of Ember [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n    earlier: Diego is a member of Cinder [valid 2025-01-08 to 2025-12-05; recorded by standup/cinder/2025-01-08]\n- Ember noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- Ember noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- Ember noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- Ember noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- The handover note of 2025-06-20 wrongly recorded Ember as the owner of webhooks [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- Ember holds its planning meeting on Fridays [valid 2025-06-13 to now; recorded by standup/ember/2025-06-13-2]\n- Ember noticed that auth-gateway's CPU sat at 90 percent after the traffic shift [observation; valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- Oskar is a member of Ember [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- Ember adopted pairing on every production change [valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- Ember noticed that webhooks's request volume halved after the client rollout [observation; valid 2025-05-23 to now; recorded by standup/ember/2025-05-23]\n- Dune owns billing-api [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: Boreal owns billing-api [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: Atlas owns billing-api [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- Oskar runs the weekly architecture review [valid 2026-06-16 to now; recorded by standup/ember/2026-06-16]\n- Cinder noticed that the ledger's disk usage jumped 30 percent after the retention change [observation; valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- Atlas owns auth-gateway [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: Boreal owns auth-gateway [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- Cinder noticed that billing-api's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- The ledger deploys only on Mondays and Wednesdays between 14:00 and 16:00 UTC [constraint; valid 2026-04-16 to now; recorded by standup/ember/2026-04-16]\n    earlier: The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC [constraint; valid 2025-04-18 to 2026-04-16; recorded by standup/atlas/2025-04-18]\n- Cinder noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n\nQuestion: Which services does Ember own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788616105-DJypdGjuWkJCHKElqhV3",
+  "object": "chat.completion",
+  "created": 1788616105,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger",
+     "refusal": null,
+     "reasoning": "The question asks which services Ember owns now (today is 2026-06-30).\n\nLooking at ownership entries:\n- Ember owns the ledger [valid 2025-11-13 to now]\n- Atlas owns the ledger earlier — superseded.\n- Dune owns billing-api (not Ember)\n- Atlas owns auth-gateway (not Ember; earlier Ember owned auth-gateway until 2025-03-31)\n- The handover note of 2025-06-20 wrongly recorded Ember as the owner of webhooks — so Ember does NOT own webhooks.\n\nSo Ember owns only the ledger now.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Ember owns now (today is 2026-06-30).\n\nLooking at ownership entries:\n- Ember owns the ledger [valid 2025-11-13 to now]\n- Atlas owns the ledger earlier — superseded.\n- Dune owns billing-api (not Ember)\n- Atlas owns auth-gateway (not Ember; earlier Ember owned auth-gateway until 2025-03-31)\n- The handover note of 2025-06-20 wrongly recorded Ember as the owner of webhooks — so Ember does NOT own webhooks.\n\nSo Ember owns only the ledger now.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1530,
+   "completion_tokens": 129,
+   "total_tokens": 1659,
+   "cost": 0.000147,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000147,
+    "upstream_inference_prompt_cost": 0.00011475,
+    "upstream_inference_completions_cost": 3.225e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 125,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.104017167002894,
+ "fetched_at": "2026-09-05T13:48:30Z"
+}

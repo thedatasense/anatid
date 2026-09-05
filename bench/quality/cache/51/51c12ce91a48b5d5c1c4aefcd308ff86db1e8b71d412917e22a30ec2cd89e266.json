@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Per the 2026-04-14 Dune team standup, Farah is release captain for Q3 2025. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- On 2025-06-25 Oskar walked Farah through the job scheduler runbook. [valid 2025-06-25 to now; recorded by handover/2025-06-25-scheduler]\n- As of 2025-09-04, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n    earlier: Farah has the first on-call rotation for the Dune team. [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n- As of 2026-05-22, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- Farah runs the Dune team solo until the next hire lands. [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- As of 2026-04-14, Farah holds the Dune team pager, taking over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is the primary on-call for the Dune team, taking over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah is the primary on-call for the Dune team. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- As of 2025-10-15, Farah holds the Dune team pager this cycle, taking over from Tomasz. [valid 2025-10-15 to now; recorded by standup/dune/2025-10-15]\n- As of 2025-12-10, Tomasz holds the Dune team pager this cycle, taking over from Farah. [valid 2025-12-10 to now; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still holds the Dune team pager. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n- Oskar wrote up the handover doc for the feature-flags service handover to the Atlas team for Farah. [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: Oskar wrote up the handover doc for the feature-flags service handover to the Dune team for Farah. [valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- As of 2025-11-27, Diego is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on Cinder. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- As of 2025-12-25, the Atlas team is located on the second floor. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- As of 2026-05-29, Oskar is on the Ember team on-call rotation as the primary on-call. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- Yuki Tanaka is on Cinder. [valid 2025-01-08 to now; recorded by standup/cinder/2025-01-08]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- The Atlas team planning meeting is every Tuesday. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- The Ember team is a one-person team consisting of Oskar. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- The notifier relies on the bus for delivery events, so if the bus is down the notifier is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n\nQuestion: Which team is Farah on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603722-ZEaJhUq39Hf9nvnzKCHE",
+  "object": "chat.completion",
+  "created": 1788603722,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Dune",
+     "refusal": null,
+     "reasoning": "The question asks which team Farah is on. Looking at the memory, Farah is associated with the Dune team in many entries: \"Per the 2026-04-14 Dune team standup, Farah is release captain\", \"Farah runs the Dune team solo until the next hire lands\", \"Farah holds the Dune team pager\", etc.\n\nThe answer should be one short line with just the value: Dune.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Farah is on. Looking at the memory, Farah is associated with the Dune team in many entries: \"Per the 2026-04-14 Dune team standup, Farah is release captain\", \"Farah runs the Dune team solo until the next hire lands\", \"Farah holds the Dune team pager\", etc.\n\nThe answer should be one short line with just the value: Dune.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1600,
+   "completion_tokens": 96,
+   "total_tokens": 1696,
+   "cost": 0.00013632,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013632,
+    "upstream_inference_prompt_cost": 0.00011232,
+    "upstream_inference_completions_cost": 2.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 92,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.314670459018089,
+ "fetched_at": "2026-09-05T10:22:04Z"
+}

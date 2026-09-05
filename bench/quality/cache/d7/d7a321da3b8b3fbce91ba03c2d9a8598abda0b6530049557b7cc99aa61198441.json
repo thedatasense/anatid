@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000122\": team Dune owns the image resizer.  (about: team Dune, image resizer)\n- memory_id \"1000128\": The reporting service is owned by team Dune.  (about: team Dune, reporting service)\n- memory_id \"1000099\" [decision]: Farah takes the first on-call rotation for team Dune.  (about: Farah, team Dune)\n- memory_id \"1000050\": Farah runs team Dune solo until the next hire lands.  (about: Farah, team Dune)\n- memory_id \"1000251\": As of 2025-03-07, the billing API is owned by the Ember team.  (about: billing API, Ember team)\n- memory_id \"1000239\": The webhook dispatcher is owned by the Ember team.  (about: webhook dispatcher, Ember team)\n- memory_id \"1000180\" [decision]: The Ember team does pairing on every production change.  (about: Ember team)\n- memory_id \"1000134\": The job scheduler is owned by the Ember team.  (about: Ember team, job scheduler)\n- memory_id \"1000138\": The authentication gateway is owned by the Ember team.  (about: Ember team, authentication gateway)\n- memory_id \"1000227\": The ledger service's memory use grew steadily for a week after the cache change, and the Boreal team noticed and pinged the owners.  (about: Boreal team, ledger service)\n- memory_id \"1000092\": The Ember team is currently a one-person team consisting of Oskar.  (about: Ember team, Oskar)\n- memory_id \"1000216\" [constraint]: The authentication gateway deploys on Mondays between 10:00 and 12:00 UTC per the change policy.  (about: authentication gateway)\n- memory_id \"1000177\" [constraint]: The job scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC and at no other time.  (about: job scheduler)\n- memory_id \"1000103\" [decision]: Oskar takes the first on-call shift of the year for the Ember team.  (about: Ember team, Oskar)\n- memory_id \"1000057\": The Boreal team looks after the bus.  (about: Boreal team, the bus)\n- memory_id \"1000246\": The ledger service depends on the authentication gateway for service tokens.  (about: ledger service, authentication gateway)\n- memory_id \"1000043\": feature-flags is owned by the Atlas team.  (about: Atlas team, feature-flags)\n- memory_id \"1000033\": The ledger service is owned by the Atlas team.  (about: Atlas team, ledger service)\n- memory_id \"1000193\": The webhook dispatcher depends on the bus for outbound events.  (about: the bus, webhook dispatcher)\n- memory_id \"1000150\": Oskar runs the weekly architecture review.  (about: Oskar, the weekly architecture review)\nExisting entity names: team Dune, image resizer, reporting service, Farah, billing API, Ember team, webhook dispatcher, job scheduler, authentication gateway, Boreal team, ledger service, Oskar, the bus, Atlas team, feature-flags, the weekly architecture review\n\nThe note:\n\n[2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788598496-42jerNuZWZm4cap1PjoH",
+  "object": "chat.completion",
+  "created": 1788598496,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Together",
+  "system_fingerprint": "default",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [],\n \"corrections\": [\n  {\n   \"old_memory_id\": \"1000122\",\n   \"old_text\": \"team Dune owns the image resizer.\",\n   \"new_content\": \"The image resizer is owned by the Ember team.\",\n   \"entities\": [\n    \"image resizer\",\n    \"Ember team\"\n   ],\n   \"kind\": \"fact\",\n   \"confidence\": 1,\n   \"evidence\": \"the image resizer now sits with team Ember\"\n  }\n ],\n \"add_relations\": [\n  {\n   \"src\": \"Ember team\",\n   \"dst\": \"image resizer\",\n   \"rel_kind\": \"owns\",\n   \"evidence\": \"the image resizer now sits with team Ember\"\n  }\n ],\n \"remove_relations\": [\n  {\n   \"src\": \"team Dune\",\n   \"dst\": \"image resizer\",\n   \"rel_kind\": \"owns\",\n   \"evidence\": \"Team Dune no longer owns it\"\n  }\n ],\n \"entity_aliases\": [\n  {\n   \"name\": \"team Ember\",\n   \"canonical\": \"Ember team\",\n   \"evidence\": \"the image resizer now sits with team Ember\"\n  }\n ]\n}",
+     "refusal": null,
+     "reasoning": "The note says: ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n\nExisting facts:\n- memory_id \"1000122\": team Dune owns the image resizer. (about: team Dune, image resizer)\n\nThis is a correction. The note changes this fact. So I should add a correction with old_memory_id \"1000122\", new_content: \"The image resizer is owned by the Ember team.\" Entities: image resizer, Ember team.\n\nAlso relations: remove_relations: team Dune owns image resizer. add_relations: image resizer owned by Ember team — relation src Ember team, dst image resizer, rel_kind \"owns\". Evidence: \"the image resizer now sits with team Ember\".\n\nNote uses \"team Ember\" while existing entity name is \"Ember team\". So add entity_aliases: name \"team Ember\", canonical \"Ember team\", evidence: \"the image resizer now sits with team Ember\".\n\nShould I also add a fact? The correction handles the fact change. The instructions say use corrections instead of adding a contradicting fact. So corrections: one entry.\n\nCorrection new_content: \"The image resizer is owned by the Ember team.\" Entities: [\"image resizer\", \"Ember team\"]. Kind: \"fact\". Confidence: 1. Evidence: \"the image resizer now sits with team Ember. Team Dune no longer owns it.\" Shortest quote: \"the image resizer now sits with team Ember\".\n\nremove_relations: src \"team Dune\", dst \"image resizer\", rel_kind \"owns\", evidence \"Team Dune no longer owns it.\"\n\nadd_relations: src \"Ember team\", dst \"image resizer\", rel_kind \"owns\", evidence \"the image resizer now sits with team Ember\".\n\nentity_aliases: name \"team Ember\", canonical \"Ember team\", evidence \"the image resizer now sits with team Ember\".\n\nOutput one JSON object, no prose.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n\nExisting facts:\n- memory_id \"1000122\": team Dune owns the image resizer. (about: team Dune, image resizer)\n\nThis is a correction. The note changes this fact. So I should add a correction with old_memory_id \"1000122\", new_content: \"The image resizer is owned by the Ember team.\" Entities: image resizer, Ember team.\n\nAlso relations: remove_relations: team Dune owns image resizer. add_relations: image resizer owned by Ember team — relation src Ember team, dst image resizer, rel_kind \"owns\". Evidence: \"the image resizer now sits with team Ember\".\n\nNote uses \"team Ember\" while existing entity name is \"Ember team\". So add entity_aliases: name \"team Ember\", canonical \"Ember team\", evidence: \"the image resizer now sits with team Ember\".\n\nShould I also add a fact? The correction handles the fact change. The instructions say use corrections instead of adding a contradicting fact. So corrections: one entry.\n\nCorrection new_content: \"The image resizer is owned by the Ember team.\" Entities: [\"image resizer\", \"Ember team\"]. Kind: \"fact\". Confidence: 1. Evidence: \"the image resizer now sits with team Ember. Team Dune no longer owns it.\" Shortest quote: \"the image resizer now sits with team Ember\".\n\nremove_relations: src \"team Dune\", dst \"image resizer\", rel_kind \"owns\", evidence \"Team Dune no longer owns it.\"\n\nadd_relations: src \"Ember team\", dst \"image resizer\", rel_kind \"owns\", evidence \"the image resizer now sits with team Ember\".\n\nentity_aliases: name \"team Ember\", canonical \"Ember team\", evidence \"the image resizer now sits with team Ember\".\n\nOutput one JSON object, no prose.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2087,
+   "completion_tokens": 667,
+   "total_tokens": 2754,
+   "cost": 0.00064655,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00064655,
+    "upstream_inference_prompt_cost": 0.00031305,
+    "upstream_inference_completions_cost": 0.0003335
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 409,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 11.117690458020661,
+ "fetched_at": "2026-09-05T08:55:07Z"
+}

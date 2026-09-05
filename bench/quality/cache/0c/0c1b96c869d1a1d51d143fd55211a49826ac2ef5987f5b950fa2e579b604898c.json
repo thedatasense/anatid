@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Oskar is the only engineer on the Ember team for now. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- As of 2025-03-19, the Ember team does pairing on every production change. [decision; valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- As of 2025-12-01, the resizer is owned by Team Dune, which took it over from the Ember team. [valid 2025-12-01 to now; recorded by handover/2025-12-01-image-resizer]\n    earlier: As of 2025-04-29, the resizer is owned by the Ember team. [valid 2025-04-29 to 2025-12-01; recorded by handover/2025-04-29-image-resizer]\n    earlier: The resizer lives with Team Dune. [valid 2025-01-20 to 2025-04-29; recorded by standup/dune/2025-01-20]\n- As of 2026-02-10, the reports pipeline is owned by Team Cinder, which took it over from the Ember team. [decision; valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- The Ember team never owned the webhooks service. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- As of 2026-06-18, for anything Ember-related, page Diego. [preference; valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of 2026-05-18, for anything Ember-related, page Oskar. [preference; valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of 2026-03-31, for anything Ember-related, page Diego. [preference; valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: As of 2026-02-12, for anything Ember-related, page Oskar. [preference; valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: As of 2025-12-29, for anything Ember-related, page Diego. [preference; valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n    earlier: As of 2025-03-19, for anything Ember-related, page Oskar. [preference; valid 2025-03-19 to 2025-12-29; recorded by standup/ember/2025-03-19-3]\n- The Ember team holds its planning meeting every Friday. [valid 2025-06-13 to now; recorded by standup/ember/2025-06-13-2]\n- INC-2025-017's root cause was an expired intermediate certificate, which took logins down. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- As of 2025-06-20, the webhooks service lives with Team Dune, which took it over from Team Atlas. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n    earlier: As of 2025-06-20, the webhooks service lives with the Ember team, which took it over from Team Atlas. [valid 2025-06-20 to 2025-07-04; recorded by handover/2025-06-20-webhooks]\n    earlier: As of 2025-03-28, the webhooks service lives with Team Atlas. [valid 2025-03-28 to 2025-06-20; recorded by handover/2025-03-28-webhooks]\n    earlier: The webhooks service lives with Team Boreal. [valid 2025-01-09 to 2025-03-28; recorded by standup/boreal/2025-01-09-2]\n- As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Atlas, which took it over from the Ember team. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder, which took it over from the Ember team. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n\nQuestion: Which services does Ember own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614743-QsIi0LbdH1oGtHASN9Qv",
+  "object": "chat.completion",
+  "created": 1788614743,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger and the reporting service.",
+     "refusal": null,
+     "reasoning": "The question asks which services Ember owns now (today is 2026-06-30).\n\nLet me go through the memory:\n\n1. Ledger: As of 2025-11-13, owned by Ember team (took over from Team Atlas). Valid to now. → Ember owns ledger now.\n\n2. Reporting service: As of 2025-11-07, belongs to Ember team (from Team Dune). Valid 2025-11-17 to now. → Ember owns reporting service now.\n\n3. Resizer: As of 2025-12-01, owned by Team Dune (took from Ember). Valid to now. → Not Ember.\n\n4. Reports pipeline: As of 2026-02-10, owned by Team Cinder (took from Ember). Valid to now. → Not Ember.\n\n5. Webhooks: Ember never owned; currently Team Dune. → Not Ember.\n\n6. Scheduler: As of 2025-10-15, owned by Team Dune (took from Atlas). Valid to now. → Not Ember.\n\nSo Ember owns: the ledger and the reporting service.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Ember owns now (today is 2026-06-30).\n\nLet me go through the memory:\n\n1. Ledger: As of 2025-11-13, owned by Ember team (took over from Team Atlas). Valid to now. → Ember owns ledger now.\n\n2. Reporting service: As of 2025-11-07, belongs to Ember team (from Team Dune). Valid 2025-11-17 to now. → Ember owns reporting service now.\n\n3. Resizer: As of 2025-12-01, owned by Team Dune (took from Ember). Valid to now. → Not Ember.\n\n4. Reports pipeline: As of 2026-02-10, owned by Team Cinder (took from Ember). Valid to now. → Not Ember.\n\n5. Webhooks: Ember never owned; currently Team Dune. → Not Ember.\n\n6. Scheduler: As of 2025-10-15, owned by Team Dune (took from Atlas). Valid to now. → Not Ember.\n\nSo Ember owns: the ledger and the reporting service.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1775,
+   "completion_tokens": 239,
+   "total_tokens": 2014,
+   "cost": 0.000177515,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000177515,
+    "upstream_inference_prompt_cost": 0.000117765,
+    "upstream_inference_completions_cost": 5.975e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 230,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.887703832995612,
+ "fetched_at": "2026-09-05T13:25:46Z"
+}

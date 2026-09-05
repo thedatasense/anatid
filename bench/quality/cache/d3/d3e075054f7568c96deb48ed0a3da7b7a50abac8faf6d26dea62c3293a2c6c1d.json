@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-02-12, the Ember team reported that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- On 2026-03-10, Team Dune observed that the reporting service's p99 latency doubled after Tuesday's deploy. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- On 2025-12-17, Team Dune decided that the indexer will rebuild the index nightly instead of on every catalog write. [decision; valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n- There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy and flagged it because the service is not theirs. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- As of 2026-03-16, the catalog service deploys on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16]\n    earlier: The catalog service only ships on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- On 2026-01-01, Team Cinder noticed that the indexer's disk usage jumped 30 percent after the retention change and pinged the owners. [valid 2026-01-01 to now; recorded by standup/cinder/2026-01-01]\n- As of 2025-12-08, the indexer is owned by Team Dune, which took it over from Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- On 2025-11-06, Team Dune reported that the indexer's queue depth hit 50,000 after the marketing send. [valid 2025-11-06 to now; recorded by standup/dune/2025-11-06]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- As of 2025-12-08, the pager for the indexer rings Team Dune instead of Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n- On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- As of 2026-06-08, Farah is on the Team Dune on-call rotation. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Farah is off the Team Dune on-call rotation. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, Farah is the primary on-call for Team Dune. [valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n- On 2025-07-28, Team Cinder reported that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- The indexer's incremental updates left stale entries behind after failed writes. [valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n- As of 2026-03-04, the webhooks service remains a Team Dune service. [valid 2026-03-04 to now; recorded by standup/dune/2026-03-04]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n\nQuestion: What is the deploy window of the service that search-indexer depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614010-hjjYiRIqmZ1BEqwO7aTS",
+  "object": "chat.completion",
+  "created": 1788614010,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tuesdays between 13:00 and 15:00 UTC.",
+     "refusal": null,
+     "reasoning": "The indexer depends on the catalog service. The catalog service deploy window: as of 2026-03-16, deploys on Tuesdays between 13:00 and 15:00 UTC. Today is 2026-06-30, so use the current one: Tuesdays 13:00–15:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The indexer depends on the catalog service. The catalog service deploy window: as of 2026-03-16, deploys on Tuesdays between 13:00 and 15:00 UTC. Today is 2026-06-30, so use the current one: Tuesdays 13:00–15:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1575,
+   "completion_tokens": 86,
+   "total_tokens": 1661,
+   "cost": 0.000139625,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000139625,
+    "upstream_inference_prompt_cost": 0.000118125,
+    "upstream_inference_completions_cost": 2.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 69,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.2224261250230484,
+ "fetched_at": "2026-09-05T13:13:33Z"
+}

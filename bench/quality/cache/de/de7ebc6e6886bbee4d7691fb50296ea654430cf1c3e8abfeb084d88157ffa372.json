@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-29, Oskar is on the Ember team on-call rotation as the primary on-call. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2025-11-27, Yuki Tanaka holds the Cinder pager, taking over from Diego, who is leaving the team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego holds the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- As of 2026-02-10, Marcus has the Boreal team on-call shift, taking over from Lena. [valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, Lena has the Boreal team on-call shift, taking over from Marcus. [valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: As of 2025-11-06, Marcus has the Boreal team on-call shift, taking over from Lena. [valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: As of 2025-09-23, Lena has the Boreal team on-call shift, taking over from Marcus. [valid 2025-09-23 to 2025-11-06; recorded by standup/boreal/2025-09-23]\n    earlier: As of 2025-08-15, Marcus has the Boreal team on-call shift, taking over from Lena. [valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n    earlier: Lena has the Boreal team on-call shift as of 2025-06-27, taking over from Marcus. [valid 2025-06-27 to 2025-08-15; recorded by standup/boreal/2025-06-27]\n    earlier: Marcus has the Boreal team on-call shift as of 2025-05-07, taking over from Lena. [valid 2025-05-07 to 2025-06-27; recorded by standup/boreal/2025-05-07]\n- Oskar takes the first on-call shift of the year for the Ember team. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- Priya Raman holds the first on-call rotation for the Atlas team as of 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-07-30; recorded by standup/atlas/2025-01-09]\n- The notifier relies on the bus for delivery events, so if the bus is down the notifier is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- As of 2026-02-10, page Marcus for anything Boreal-related, not Lena. [constraint; valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, page Lena for anything Boreal-related, not Marcus. [constraint; valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: As of 2025-11-06, page Marcus for anything Boreal-related this cycle, not Lena. [constraint; valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: As of 2025-09-23, page Lena for anything Boreal-related this cycle, not Marcus. [constraint; valid 2025-09-23 to 2025-11-06; recorded by standup/boreal/2025-09-23]\n    earlier: As of 2025-08-15, page Marcus for anything Boreal-related this cycle, not Lena. [constraint; valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n    earlier: As of 2025-06-27, page Lena for anything Boreal-related. [constraint; valid 2025-06-27 to 2025-08-15; recorded by standup/boreal/2025-06-27]\n    earlier: As of 2025-05-29, page Marcus for anything Boreal-related. [constraint; valid 2025-05-29 to 2025-06-27; recorded by standup/boreal/2025-05-29]\n- Lena is the release captain for Q1 2026. [valid 2025-05-22 to now; recorded by standup/boreal/2025-05-22]\n- The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The webhook dispatcher relies on the bus for outbound events, so if the bus is down the webhook dispatcher is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- On 2025-12-01 the Boreal team flagged the job scheduler's cold start regression because the job scheduler is not their service. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n\nQuestion: Who is the secondary on-call for Boreal?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604133-5QR02HrMLzngdXeNo2I0",
+  "object": "chat.completion",
+  "created": 1788604133,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Who is the secondary on-call for Boreal?\n\nLooking through the memory, I see entries about Boreal on-call shifts (Marcus, Lena), but these mention \"on-call shift\" without specifying primary or secondary. There's no mention of a \"secondary on-call\" for Boreal anywhere in the memory.\n\nThe memory says \"As of 2026-02-10, Marcus has the Boreal team on-call shift\" - but this doesn't specify primary vs secondary.\n\nSince the memory doesn't contain the answer, I should reply: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Who is the secondary on-call for Boreal?\n\nLooking through the memory, I see entries about Boreal on-call shifts (Marcus, Lena), but these mention \"on-call shift\" without specifying primary or secondary. There's no mention of a \"secondary on-call\" for Boreal anywhere in the memory.\n\nThe memory says \"As of 2026-02-10, Marcus has the Boreal team on-call shift\" - but this doesn't specify primary vs secondary.\n\nSince the memory doesn't contain the answer, I should reply: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1829,
+   "completion_tokens": 123,
+   "total_tokens": 1952,
+   "cost": 0.000160245,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000160245,
+    "upstream_inference_prompt_cost": 0.000129495,
+    "upstream_inference_completions_cost": 3.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 117,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.505779125029221,
+ "fetched_at": "2026-09-05T10:28:55Z"
+}

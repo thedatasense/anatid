@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-30] standup/cinder/2025-01-30: If the catalog service is down, the search indexer is down: it relies on it for product documents.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.\n- [2026-03-20] standup/boreal/2026-03-20-2: Observation from the Boreal team: after the retention change, the catalog service's disk usage jumped 30 percent. The Boreal team runs its planning on Thursdays.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-03-17] standup/cinder/2025-03-17: The catalog service can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception.\n- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-12-19] handover/2025-12-19-catalog: Atlas is taking over the product catalog from the Cinder team, effective today. Dashboards and alerts are being repointed.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2026-02-16] standup/dune/2026-02-16: The Dune team noticed that the product catalog's request volume halved after the client rollout and pinged the owners.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2026-01-22] standup/atlas/2026-01-22: The product catalog deploy window (unchanged): on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n- [2025-04-17] standup/cinder/2025-04-17: Decision: the catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-09-03] standup/cinder/2025-09-03: New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Mon-Thu 09:00-17:00 UTC slot.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2026-05-27] standup/atlas/2026-05-27: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. The Atlas team noticed that search-indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. The catalog still relies on the resizer; keep that in mind for the maintenance.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-09-30] standup/atlas/2025-09-30: Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. The billing API now depends on the feature flag service. The Atlas team planning meeting is every Tuesday.\n- [2026-04-16] standup/atlas/2026-04-16: The Atlas team saw that the ledger service's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n\nQuestion: Who is on call for the team that owns the service the catalog depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788620281-1CrL8ulfQkcFb2Uqjwgi",
+  "object": "chat.completion",
+  "created": 1788620281,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The catalog depends on the resizer (per 2025-04-14 entry and reaffirmed 2026-05-27). Who owns the resizer? Let me scan the memory for resizer ownership... I don't see any entry stating who owns the resizer. The catalog also relies on catalog service? Wait, the catalog service relies on search indexer? No, the search indexer relies on the catalog service.\n\nCatalog dependencies mentioned:\n- resizer (hard dependency) — owner not stated.\n- search indexer? No, the search indexer relies on the catalog service.\n\nSo the catalog depends on the resizer. Who owns the resizer? Memory doesn't say. So answer: I don't know.\n\nWait, but maybe the question intends the search indexer? No — the search indexer relies on the catalog, not the other way. The catalog depends on the resizer. Resizer ownership is not in memory. So answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The catalog depends on the resizer (per 2025-04-14 entry and reaffirmed 2026-05-27). Who owns the resizer? Let me scan the memory for resizer ownership... I don't see any entry stating who owns the resizer. The catalog also relies on catalog service? Wait, the catalog service relies on search indexer? No, the search indexer relies on the catalog service.\n\nCatalog dependencies mentioned:\n- resizer (hard dependency) — owner not stated.\n- search indexer? No, the search indexer relies on the catalog service.\n\nSo the catalog depends on the resizer. Who owns the resizer? Memory doesn't say. So answer: I don't know.\n\nWait, but maybe the question intends the search indexer? No — the search indexer relies on the catalog, not the other way. The catalog depends on the resizer. Resizer ownership is not in memory. So answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1583,
+   "completion_tokens": 201,
+   "total_tokens": 1784,
+   "cost": 0.000161295,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000161295,
+    "upstream_inference_prompt_cost": 0.000111045,
+    "upstream_inference_completions_cost": 5.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 195,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 12.343113709008321,
+ "fetched_at": "2026-09-05T14:58:13Z"
+}

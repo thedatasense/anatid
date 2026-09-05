@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which team owned billing-api before Atlas took it over?\nGold answer: Ember\nAlso accepted: the Ember team; team Ember\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: Boreal"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788605635-5zk2mxAQMcaMnD57hDrj",
+  "object": "chat.completion",
+  "created": 1788605635,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer 'Boreal' does not match the gold answer 'Ember' or any accepted alternative phrasing.\"}`",
+     "refusal": null,
+     "reasoning": "The question asks which team owned billing-api before Atlas took it over. Gold answer is Ember. The answer to grade is Boreal, which is not Ember or any accepted alternative. So it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owned billing-api before Atlas took it over. Gold answer is Ember. The answer to grade is Boreal, which is not Ember or any accepted alternative. So it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 243,
+   "completion_tokens": 77,
+   "total_tokens": 320,
+   "cost": 2.5955e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.5955e-05,
+    "upstream_inference_prompt_cost": 6.705e-06,
+    "upstream_inference_completions_cost": 1.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 41,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2553737080306746,
+ "fetched_at": "2026-09-05T10:53:57Z"
+}

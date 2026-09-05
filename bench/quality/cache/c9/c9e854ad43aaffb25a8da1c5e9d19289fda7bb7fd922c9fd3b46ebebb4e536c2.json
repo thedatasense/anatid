@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note corrected the recorded owner of feature-flags, and when?\nGold answer: handover/2026-03-09-feature-flags-correction (2026-03-09)\nAlso accepted: handover/2026-03-09-feature-flags-correction; 2026-03-09; 9 March 2026; March 9, 2026; the handover message of 2026-03-09; the handover message of 9 March 2026; the handover message of March 9, 2026\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: handover/2026-03-09-feature-flags-correction, on 2026-03-09"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788598013-baI2X6SsGhOTRrisMl1X",
+  "object": "chat.completion",
+  "created": 1788598013,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the exact gold note label handover/2026-03-09-feature-flags-correction and its date 2026-03-09.\"}`",
+     "refusal": null,
+     "reasoning": "The question asks which note corrected the recorded owner of feature-flags and when. Gold answer: handover/2026-03-09-feature-flags-correction (2026-03-09). Answer to grade: \"handover/2026-03-09-feature-flags-correction, on 2026-03-09\" — exactly matches. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which note corrected the recorded owner of feature-flags and when. Gold answer: handover/2026-03-09-feature-flags-correction (2026-03-09). Answer to grade: \"handover/2026-03-09-feature-flags-correction, on 2026-03-09\" — exactly matches. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 357,
+   "completion_tokens": 122,
+   "total_tokens": 479,
+   "cost": 3.8075e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.8075e-05,
+    "upstream_inference_prompt_cost": 7.575e-06,
+    "upstream_inference_completions_cost": 3.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 76,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1269092499860562,
+ "fetched_at": "2026-09-05T08:46:55Z"
+}

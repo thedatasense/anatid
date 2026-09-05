@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- Team Dune observed that the indexer's disk usage jumped 30 percent after the retention change. (since 2026-06-09; source standup/dune/2026-06-09)\n- The Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. (since 2026-05-27; source standup/atlas/2026-05-27)\n- [constraint] As of 2026-04-01, the indexer is owned by the Boreal team, taking over from the Atlas team. (since 2026-04-01; source handover/2026-04-01-search-indexer)\n  - earlier: [constraint] The indexer is owned by the Atlas team. (held 2025-05-20 to 2026-04-01; source handover/2025-05-20-search-indexer)\n  - earlier: The indexer is owned by the Cinder team. (held 2025-01-17 to 2025-05-20; source standup/cinder/2025-01-17-2)\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. (since 2026-04-01; source handover/2026-04-01-search-indexer)\n- The Boreal team noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the indexer's owners. (since 2026-02-10; source standup/boreal/2026-02-10-2)\n- [decision] As of 2025-12-18, the indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes. (since 2025-12-18; source standup/atlas/2025-12-18)\n- [decision] Reindex jobs will page on failure. (since 2025-10-07; source incident-review/INC-2025-023)\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. (since 2025-10-07; source incident-review/INC-2025-023)\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. (since 2025-10-07; source incident-review/INC-2025-023)\n- [constraint] The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. (since 2025-04-22; source standup/cinder/2025-04-22)\n- The indexer depends on the product catalog for product documents. (since 2025-01-30; source standup/cinder/2025-01-30)\n\nQuestion: Why do reindex jobs page on failure?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608288-GDjvgM4XexzU2Wme6w4W",
+  "object": "chat.completion",
+  "created": 1788608288,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Because of INC-2025-023: a reindex job failed silently on a full disk, leaving the indexer serving stale results for two days.",
+     "refusal": null,
+     "reasoning": "The question asks: \"Why do reindex jobs page on failure?\"\n\nLooking at memory:\n- [decision] Reindex jobs will page on failure. (since 2025-10-07; source incident-review/INC-2025-023)\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk.\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days.\n\nThe decision to page on failure came from INC-2025-023, where the reindex job failed silently on a full disk, causing stale results for two days. So the reason: the incident INC-2025-023 — a reindex job failed silently on a full disk, causing stale results for two days.\n\nAnswer in one short line with just the value/reason asked. The reason: because INC-2025-023 (a reindex job failed silently on a full disk, serving stale results for two days).\n\nKeep it short: \"A reindex job failed silently on a full disk in INC-2025-023, serving stale results for two days.\" That's the reason.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Why do reindex jobs page on failure?\"\n\nLooking at memory:\n- [decision] Reindex jobs will page on failure. (since 2025-10-07; source incident-review/INC-2025-023)\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk.\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days.\n\nThe decision to page on failure came from INC-2025-023, where the reindex job failed silently on a full disk, causing stale results for two days. So the reason: the incident INC-2025-023 — a reindex job failed silently on a full disk, causing stale results for two days.\n\nAnswer in one short line with just the value/reason asked. The reason: because INC-2025-023 (a reindex job failed silently on a full disk, serving stale results for two days).\n\nKeep it short: \"A reindex job failed silently on a full disk in INC-2025-023, serving stale results for two days.\" That's the reason.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 859,
+   "completion_tokens": 287,
+   "total_tokens": 1146,
+   "cost": 0.000124655,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000124655,
+    "upstream_inference_prompt_cost": 5.2905e-05,
+    "upstream_inference_completions_cost": 7.175e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 254,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.040973750001285,
+ "fetched_at": "2026-09-05T11:38:12Z"
+}

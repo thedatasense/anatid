@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- As of 2025-11-27, Yuki Tanaka holds the Cinder pager, taking over from Diego, who is leaving the team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego holds the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n- As of 2026-05-29, the Ember team's pager contact is Oskar, not Diego. [constraint; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, the Ember team's pager contact is Diego, not Oskar, for this cycle. [constraint; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, the Ember team reminded everyone to page Oskar, not Diego, for anything this cycle. [constraint; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n- As of 2026-05-29, Oskar is on the Ember team on-call rotation as the primary on-call. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2025-11-27, Diego is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on Cinder. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- On 2025-09-16 Oskar wrote the authentication gateway handover doc for Diego. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- Oskar takes the first on-call shift of the year for the Ember team. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- Priya Raman holds the first on-call rotation for the Atlas team as of 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-07-30; recorded by standup/atlas/2025-01-09]\n- As of 2026-05-29, Oskar has the Ember pager for the cycle, taking over from Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, Diego has the Ember pager for the cycle, taking over from Oskar. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n- As of 2025-09-04, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n    earlier: Farah has the first on-call rotation for the Dune team. [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n- As of 2026-02-10, Marcus has the Boreal team on-call shift, taking over from Lena. [valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, Lena has the Boreal team on-call shift, taking over from Marcus. [valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: As of 2025-11-06, Marcus has the Boreal team on-call shift, taking over from Lena. [valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: As of 2025-09-23, Lena has the Boreal team on-call shift, taking over from Marcus. [valid 2025-09-23 to 2025-11-06; recorded by standup/boreal/2025-09-23]\n    earlier: As of 2025-08-15, Marcus has the Boreal team on-call shift, taking over from Lena. [valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n    earlier: Lena has the Boreal team on-call shift as of 2025-06-27, taking over from Marcus. [valid 2025-06-27 to 2025-08-15; recorded by standup/boreal/2025-06-27]\n    earlier: Marcus has the Boreal team on-call shift as of 2025-05-07, taking over from Lena. [valid 2025-05-07 to 2025-06-27; recorded by standup/boreal/2025-05-07]\n- As of 2026-05-22, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n\nQuestion: Who is on call for Diego's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603934-0qvJNJK8DsMMtE1eXqFA",
+  "object": "chat.completion",
+  "created": 1788603934,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Oskar",
+     "refusal": null,
+     "reasoning": "Diego's team: As of 2025-11-27, Diego is on the Ember team, having left Cinder. Later entries say \"As of 2026-05-29, Diego is off the Ember team on-call rotation\" — but he's still on the Ember team? The entry says off the on-call rotation, not off the team. So Diego's team is Ember.\n\nRight now (2026-06-30): Ember primary on-call is Oskar as of 2026-05-29.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Diego's team: As of 2025-11-27, Diego is on the Ember team, having left Cinder. Later entries say \"As of 2026-05-29, Diego is off the Ember team on-call rotation\" — but he's still on the Ember team? The entry says off the on-call rotation, not off the team. So Diego's team is Ember.\n\nRight now (2026-06-30): Ember primary on-call is Oskar as of 2026-05-29.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1781,
+   "completion_tokens": 114,
+   "total_tokens": 1895,
+   "cost": 0.000154395,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000154395,
+    "upstream_inference_prompt_cost": 0.000125895,
+    "upstream_inference_completions_cost": 2.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 109,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.883932625001762,
+ "fetched_at": "2026-09-05T10:25:36Z"
+}

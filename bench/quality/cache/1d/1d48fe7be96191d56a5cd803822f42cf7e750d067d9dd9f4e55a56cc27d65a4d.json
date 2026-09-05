@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000754\": As of 2025-09-23, the reporting service no longer depends on the ledger service.  (about: ledger service, reporting service)\n- memory_id \"1000750\" [decision]: As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus because nightly ledger scans were blocking billing runs.  (about: ledger service, the bus, reporting service)\n- memory_id \"1000669\" [constraint]: The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays; the previous Mon-Thu 09:00-17:00 UTC window no longer applies.  (about: product catalog)\n- memory_id \"1000656\" [constraint]: As of 2025-08-25, the ledger service only ships on Wednesdays between 09:00 and 11:00 UTC; the previous weekday mornings before 11:00 UTC slot is retired.  (about: ledger service)\n- memory_id \"1000654\" [constraint]: As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC.  (about: ledger service)\n- memory_id \"1000644\" [constraint]: As of 2025-08-19, deploys to the job scheduler happen on Tuesdays and Fridays between 09:00 and 10:30 UTC; the previous Tuesdays 13:00-15:00 UTC slot is retired.  (about: job scheduler)\n- memory_id \"1000564\": As of 2025-07-17, the ledger service remains owned by the Atlas team.  (about: Atlas team, ledger service)\n- memory_id \"1000548\": The billing API is owned by the Atlas team as of 2025-06-09, having moved from the Ember team; the Boreal team was recorded by mistake and never held it.  (about: Atlas team, Boreal team, billing API, Ember team)\n- memory_id \"1000497\": As of 2025-06-24, the reporting service still relies on the ledger service.  (about: ledger service, reporting service)\n- memory_id \"1000364\": As of 2025-04-24, the Cinder team reported that the feature-flags service's p99 latency doubled after Tuesday's deploy.  (about: Cinder, feature-flags)\n- memory_id \"1000346\" [constraint]: Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.  (about: the bus)\n- memory_id \"1000319\" [constraint]: Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC.  (about: webhook dispatcher)\n- memory_id \"1000284\" [constraint]: The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC.  (about: reporting service)\n- memory_id \"1000253\": The ledger service relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down.  (about: ledger service, auth gateway)\n- memory_id \"1000230\": On 2025-02-21 the Boreal team pinged the owners of the ledger service about the memory growth.  (about: Boreal team, ledger service)\n- memory_id \"1000227\": On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change.  (about: Boreal team, ledger service)\n- memory_id \"1000216\" [constraint]: Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC.  (about: authentication gateway)\n- memory_id \"1000198\" [constraint]: The billing API only ships on weekdays after 15:00 UTC.  (about: billing API)\n- memory_id \"1000160\" [constraint]: The ledger service must stay on Postgres 14 until the partitioning work finishes.  (about: ledger service, Postgres 14)\n- memory_id \"1000033\": The ledger service is owned by the Atlas team.  (about: Atlas team, ledger service)\nExisting entity names: ledger service, reporting service, the bus, product catalog, job scheduler, Atlas team, Boreal team, billing API, Ember team, Cinder, feature-flags, webhook dispatcher, auth gateway, authentication gateway, Postgres 14\n\nThe note:\n\n[2025-09-24] standup/atlas/2025-09-24: Ledger deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788601321-ytKabRGJLH3M0y46DXEv",
+  "object": "chat.completion",
+  "created": 1788601321,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\":[],\"corrections\":[],\"add_relations\":[],\"remove_relations\":[],\"entity_aliases\":[]}",
+     "refusal": null,
+     "reasoning": "The note is a standup note from 2025-09-24 stating: \"Ledger deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\"\n\nThis confirms the existing facts 1000656 and 1000654. It's a confirmation, not a change. Should I add a fact? The note says the window is unchanged. The existing facts already state this. Adding a duplicate fact would be redundant. The instruction says \"New durable facts the note states\" — the note states the ledger deploy window is Wednesdays 09:00-11:00 UTC, which is already in memory. Since it's unchanged, there's nothing new to add, no corrections, no relations.\n\nThe guidance: \"If the note contains nothing durable, return an object whose arrays are empty.\" This note contains durable info but it's already captured. Adding a duplicate would be bad. The best answer is an empty patch — no new facts, no corrections (nothing changed), no relations.\n\nActually, could I add a fact confirming as of 2025-09-24 the window remains? That would be a new dated fact. But it duplicates existing facts. The memory system likely prefers not to duplicate. The note explicitly says \"(unchanged)\", so it's a confirmation. I'll return empty arrays.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note is a standup note from 2025-09-24 stating: \"Ledger deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\"\n\nThis confirms the existing facts 1000656 and 1000654. It's a confirmation, not a change. Should I add a fact? The note says the window is unchanged. The existing facts already state this. Adding a duplicate fact would be redundant. The instruction says \"New durable facts the note states\" — the note states the ledger deploy window is Wednesdays 09:00-11:00 UTC, which is already in memory. Since it's unchanged, there's nothing new to add, no corrections, no relations.\n\nThe guidance: \"If the note contains nothing durable, return an object whose arrays are empty.\" This note contains durable info but it's already captured. Adding a duplicate would be bad. The best answer is an empty patch — no new facts, no corrections (nothing changed), no relations.\n\nActually, could I add a fact confirming as of 2025-09-24 the window remains? That would be a new dated fact. But it duplicates existing facts. The memory system likely prefers not to duplicate. The note explicitly says \"(unchanged)\", so it's a confirmation. I'll return empty arrays.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2365,
+   "completion_tokens": 300,
+   "total_tokens": 2665,
+   "cost": 0.00050475,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00050475,
+    "upstream_inference_prompt_cost": 0.00035475,
+    "upstream_inference_completions_cost": 0.00015
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 276,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.989030042022932,
+ "fetched_at": "2026-09-05T09:42:07Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Cinder own now?\nGold answer: reporting and feature-flags\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 2 services.\n\nAnswer to grade: Flags service, notifier, event bus, reports pipeline, and the search indexer."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788619980-6Bj5ImPmWGg8aHcxVlTP",
+  "object": "chat.completion",
+  "created": 1788619980,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer includes extra services (notifier, event bus, search indexer) beyond the gold's two services, and the rule forbids extra items in a list.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"reporting and feature-flags\" - 2 services.\n\nThe answer to grade: \"Flags service, notifier, event bus, reports pipeline, and the search indexer.\"\n\nLet me check: does the answer name \"reporting\" and \"feature-flags\"?\n\n- \"Flags service\" - is this \"feature-flags\"? It's close but \"Flags service\" could be considered naming the feature-flags service. Hmm, the grading rule says the final answer must name the gold items. \"Flags service\" - arguably refers to feature-flags service.\n- \"reports pipeline\" - is this \"reporting\"? Possibly.\n\nBut the answer also includes extra items: notifier, event bus, search indexer. The rule says: \"Where the gold is a list, every item must be named and no extra item.\"\n\nThe answer lists 5 services: Flags service, notifier, event bus, reports pipeline, search indexer. The gold has 2 services. The answer includes extra items (notifier, event bus, search indexer) which are not in the gold. So it's incorrect due to extra items.\n\nEven if \"Flags service\" matches feature-flags and \"reports pipeline\" matches reporting, the extra items make it wrong per the rule \"no extra item.\"\n\nSo correct: false.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"reporting and feature-flags\" - 2 services.\n\nThe answer to grade: \"Flags service, notifier, event bus, reports pipeline, and the search indexer.\"\n\nLet me check: does the answer name \"reporting\" and \"feature-flags\"?\n\n- \"Flags service\" - is this \"feature-flags\"? It's close but \"Flags service\" could be considered naming the feature-flags service. Hmm, the grading rule says the final answer must name the gold items. \"Flags service\" - arguably refers to feature-flags service.\n- \"reports pipeline\" - is this \"reporting\"? Possibly.\n\nBut the answer also includes extra items: notifier, event bus, search indexer. The rule says: \"Where the gold is a list, every item must be named and no extra item.\"\n\nThe answer lists 5 services: Flags service, notifier, event bus, reports pipeline, search indexer. The gold has 2 services. The answer includes extra items (notifier, event bus, search indexer) which are not in the gold. So it's incorrect due to extra items.\n\nEven if \"Flags service\" matches feature-flags and \"reports pipeline\" matches reporting, the extra items make it wrong per the rule \"no extra item.\"\n\nSo correct: false.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 262,
+   "completion_tokens": 309,
+   "total_tokens": 571,
+   "cost": 8.922e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 8.922e-05,
+    "upstream_inference_prompt_cost": 1.197e-05,
+    "upstream_inference_completions_cost": 7.725e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 264,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.231179084046744,
+ "fetched_at": "2026-09-05T14:53:04Z"
+}

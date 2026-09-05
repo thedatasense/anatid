@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-11-11, the billing API has a deploy freeze from 2025-11-24 to 2025-12-02 for the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- On 2025-12-01 the Boreal team flagged the job scheduler's cold start regression because the job scheduler is not their service. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n- As of 2026-03-11, the ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- The job scheduler depends on the feature-flags service for per-job kill switches. [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- As of 2025-09-23, the pager for the job scheduler rings Cinder instead of the Dune team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- The product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays; the previous Mon-Thu 09:00-17:00 UTC window no longer applies. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- Lena is the release captain for Q1 2026. [valid 2025-05-22 to now; recorded by standup/boreal/2025-05-22]\n- As of 2026-02-03, the Atlas team has a no-deploy Friday. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- As of 2025-08-19, deploys to the job scheduler happen on Tuesdays and Fridays between 09:00 and 10:30 UTC; the previous Tuesdays 13:00-15:00 UTC slot is retired. [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time. [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- Per the 2026-04-14 Dune team standup, Farah is release captain for Q3 2025. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- The notifier relies on the bus for delivery events, so if the bus is down the notifier is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The webhook dispatcher relies on the bus for outbound events, so if the bus is down the webhook dispatcher is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- On 2025-06-25 Oskar walked Farah through the job scheduler runbook. [valid 2025-06-25 to now; recorded by handover/2025-06-25-scheduler]\n- The ledger service relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- As of 2025-04-24, the Cinder team reported that the feature-flags service's p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- On 2026-05-27 the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2025-04-29, the job scheduler still relies on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- During incident INC-2026-009, the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n\nQuestion: What is the current deploy window for the scheduler?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603815-1IFgZasW0kvtzGSQ5xYX",
+  "object": "chat.completion",
+  "created": 1788603815,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "NextBit",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tuesdays and Fridays between 09:00 and 10:30 UTC.",
+     "refusal": null,
+     "reasoning": "The question asks about the current deploy window for the scheduler (job scheduler). Memory says: \"As of 2025-08-19, deploys to the job scheduler happen on Tuesdays and Fridays between 09:00 and 10:30 UTC; the previous Tuesdays 13:00-15:00 UTC slot is retired.\" Valid to now. So answer: Tuesdays and Fridays 09:00-10:30 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the current deploy window for the scheduler (job scheduler). Memory says: \"As of 2025-08-19, deploys to the job scheduler happen on Tuesdays and Fridays between 09:00 and 10:30 UTC; the previous Tuesdays 13:00-15:00 UTC slot is retired.\" Valid to now. So answer: Tuesdays and Fridays 09:00-10:30 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1489,
+   "completion_tokens": 110,
+   "total_tokens": 1599,
+   "cost": 0.00027835,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00027835,
+    "upstream_inference_prompt_cost": 0.00022335,
+    "upstream_inference_completions_cost": 5.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 91,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.8954231660463847,
+ "fetched_at": "2026-09-05T10:23:38Z"
+}

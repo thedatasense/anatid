@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-03-10] standup/atlas/2025-03-10-2: The Atlas team sits on the second floor.\n- [2025-10-31] standup/atlas/2025-10-31: Team Atlas runs its planning on Tuesdays.\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz Nowak.\n- [2025-07-02] standup/atlas/2025-07-02: Tomasz has transferred to Dune. Team Atlas continues without them.\n- [2025-01-14] standup/atlas/2025-01-14: Atlas pager: Priya has it first.\n- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2025-05-09] standup/atlas/2025-05-09: Reminder from Atlas: page Tomasz for anything this cycle, not Priya.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2025-07-03] standup/atlas/2025-07-03: Reminder from Atlas: page Priya for anything this cycle, not Tomasz Nowak.\n- [2025-02-19] standup/atlas/2025-02-19: Reminder from Atlas: page Tomasz Nowak for anything this cycle, not Priya Raman.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2025-01-14] standup/cinder/2025-01-14: Yuki takes the first team Cinder on-call shift of the year.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-12-23] standup/atlas/2025-12-23: The Atlas team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n- [2026-04-13] standup/dune/2026-04-13: On-call rotation: Tomasz is primary for Dune starting today; Farah is off rotation.\n- [2025-04-09] standup/cinder/2025-04-09: On-call rotation: Yuki Tanaka is primary for the Cinder team starting today; Diego Alvarez is off rotation.\n- [2026-03-10] standup/dune/2026-03-10: On-call rotation: Farah is primary for Dune starting today; Tomasz Nowak is off rotation.\n- [2025-01-13] standup/boreal/2025-01-13: Lena takes the first Boreal on-call shift of the year.\n- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.\n- [2025-01-14] standup/ember/2025-01-14: Oskar Lind is on call for the Ember team to start the year.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n\nQuestion: Who is on call for Atlas right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788617822-SezGHreR32Rtw6hiViVK",
+  "object": "chat.completion",
+  "created": 1788617822,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Marcus",
+     "refusal": null,
+     "reasoning": "The question asks who is on call for Atlas right now (today is 2026-06-30).\n\nLet me look at the Atlas on-call entries chronologically:\n- 2025-04-07: Priya carries the phone\n- 2025-01-14: Atlas pager: Priya has it first\n- 2025-05-09: page Tomasz this cycle\n- 2025-07-03: page Priya this cycle\n- 2025-02-19: page Tomasz Nowak\n- 2026-03-09: Marcus Oyelaran is primary for team Atlas starting today; Priya off rotation\n- 2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus\n- 2026-05-25: Marcus picked up the Atlas on-call shift from Priya today\n\nThe latest entry is 2026-05-25: Marcus picked up the Atlas on-call shift from Priya. So right now (2026-06-30), Marcus is on call for Atlas.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who is on call for Atlas right now (today is 2026-06-30).\n\nLet me look at the Atlas on-call entries chronologically:\n- 2025-04-07: Priya carries the phone\n- 2025-01-14: Atlas pager: Priya has it first\n- 2025-05-09: page Tomasz this cycle\n- 2025-07-03: page Priya this cycle\n- 2025-02-19: page Tomasz Nowak\n- 2026-03-09: Marcus Oyelaran is primary for team Atlas starting today; Priya off rotation\n- 2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus\n- 2026-05-25: Marcus picked up the Atlas on-call shift from Priya today\n\nThe latest entry is 2026-05-25: Marcus picked up the Atlas on-call shift from Priya. So right now (2026-06-30), Marcus is on call for Atlas.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1375,
+   "completion_tokens": 230,
+   "total_tokens": 1605,
+   "cost": 0.000160625,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000160625,
+    "upstream_inference_prompt_cost": 0.000103125,
+    "upstream_inference_completions_cost": 5.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 227,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.661166583013255,
+ "fetched_at": "2026-09-05T14:17:05Z"
+}

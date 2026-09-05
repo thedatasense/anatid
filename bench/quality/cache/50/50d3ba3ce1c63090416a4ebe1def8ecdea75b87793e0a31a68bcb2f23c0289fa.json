@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Tomasz left the Atlas team and joined team Dune on 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n- As of 2026-05-22, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah. [decision; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager; on 2026-04-14 he handed the pager to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Tomasz is off the on-call rotation for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- As of 2026-04-14, Farah holds the Dune on-call shift for team Dune, taking over from Tomasz; Tomasz held it as of 2026-03-11, and Farah held it as of 2026-01-16. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah; as of 2026-01-16 Farah held it. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad holds the Dune on-call shift for team Dune; Tomasz is off rotation. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz holds the Dune on-call shift for team Dune, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n    earlier: As of 2025-10-15, Farah holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-10-15 to 2025-11-17; recorded by standup/dune/2025-10-15]\n    earlier: As of 2025-09-04, Tomasz holds the Dune on-call shift, having picked it up from Farah. [valid 2025-09-04 to 2025-10-15; recorded by standup/dune/2025-09-04]\n- Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager; on 2026-04-14 Tomasz handed the pager back to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is the primary on-call for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- As of 2026-04-14, Farah holds the Dune pager this cycle, taking over from Tomasz, who held it as of 2026-03-11. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune pager this cycle, taking over from Farah. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n- As of 2025-06-11, team Dune owns the notifier, which the Boreal team owned until then. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: As of 2025-06-11, the Cinder team owns the notifier, which the Boreal team owned until then. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- Team Dune sits on the fourth floor. [valid 2025-07-24 to now; recorded by standup/dune/2025-07-24]\n- The team Dune planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- As of 2025-07-30, Priya Raman holds the Atlas team pager instead of Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: As of 2025-06-19, Tomasz holds the Atlas team pager instead of Priya Raman. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: As of 2025-05-13, Priya Raman holds the Atlas team pager instead of Tomasz. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: As of 2025-04-03, Tomasz holds the Atlas team pager instead of Priya Raman. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: As of 2025-03-28, Priya Raman still holds the Atlas team pager. [valid 2025-03-28 to 2025-04-03; recorded by standup/atlas/2025-03-28]\n- Team Dune adopted a monthly game day. [valid 2025-04-21 to now; recorded by standup/dune/2025-04-21]\n\nQuestion: Which note recorded Tomasz's move to Dune, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596760-xNlWArHYCWCiUdivXNxa",
+  "object": "chat.completion",
+  "created": 1788596760,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/atlas/2025-07-30, on 2025-07-30.",
+     "refusal": null,
+     "reasoning": "The question asks: Which note recorded Tomasz's move to Dune, and when?\n\nLooking at the memory: \"Tomasz left the Atlas team and joined team Dune on 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\"\n\nSo the note is standup/atlas/2025-07-30, and the move happened on 2025-07-30.\n\nThe question asks for two values: the note that recorded the move, and when. Answer in one short line: standup/atlas/2025-07-30, on 2025-07-30.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which note recorded Tomasz's move to Dune, and when?\n\nLooking at the memory: \"Tomasz left the Atlas team and joined team Dune on 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\"\n\nSo the note is standup/atlas/2025-07-30, and the move happened on 2025-07-30.\n\nThe question asks for two values: the note that recorded the move, and when. Answer in one short line: standup/atlas/2025-07-30, on 2025-07-30.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1895,
+   "completion_tokens": 168,
+   "total_tokens": 2063,
+   "cost": 0.000176445,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000176445,
+    "upstream_inference_prompt_cost": 0.000134445,
+    "upstream_inference_completions_cost": 4.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 145,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.281445500033442,
+ "fetched_at": "2026-09-05T08:26:02Z"
+}

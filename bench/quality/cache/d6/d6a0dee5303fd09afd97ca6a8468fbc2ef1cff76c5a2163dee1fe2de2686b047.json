@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-06-20, the webhooks service lives with Team Dune, which took it over from Team Atlas. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n    earlier: As of 2025-06-20, the webhooks service lives with the Ember team, which took it over from Team Atlas. [valid 2025-06-20 to 2025-07-04; recorded by handover/2025-06-20-webhooks]\n    earlier: As of 2025-03-28, the webhooks service lives with Team Atlas. [valid 2025-03-28 to 2025-06-20; recorded by handover/2025-03-28-webhooks]\n    earlier: The webhooks service lives with Team Boreal. [valid 2025-01-09 to 2025-03-28; recorded by standup/boreal/2025-01-09-2]\n- As of 2026-03-04, the webhooks service remains a Team Dune service. [valid 2026-03-04 to now; recorded by standup/dune/2026-03-04]\n- On 2025-10-22, Team Dune decided that the webhooks service will sign payloads with rotating keys. [decision; valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n- Team Dune decided the webhooks service will sign payloads with rotating keys because a partner asked for key rotation in their security review. [valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n- As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Atlas, which took it over from the Ember team. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder, which took it over from the Ember team. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- The webhooks service only ships on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-17 to now; recorded by standup/boreal/2025-03-17]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- On 2025-05-23, the Ember team flagged that the webhooks service's request volume halved following the client rollout. [valid 2025-06-20 to now; recorded by handover/2025-06-20-webhooks]\n    earlier: On 2025-05-23, the Ember team flagged that the webhooks service's request volume halved following the client rollout, noting the webhooks service is not their service. [valid 2025-05-23 to 2025-06-20; recorded by standup/ember/2025-05-23]\n- As of 2025-12-08, the indexer is owned by Team Dune, which took it over from Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- The Ember team never owned the webhooks service. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- As of 2025-12-01, the resizer is owned by Team Dune, which took it over from the Ember team. [valid 2025-12-01 to now; recorded by handover/2025-12-01-image-resizer]\n    earlier: As of 2025-04-29, the resizer is owned by the Ember team. [valid 2025-04-29 to 2025-12-01; recorded by handover/2025-04-29-image-resizer]\n    earlier: The resizer lives with Team Dune. [valid 2025-01-20 to 2025-04-29; recorded by standup/dune/2025-01-20]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- As of 2025-06-19, the notifier lives with Team Dune. [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: As of 2025-04-04, the notifier lives with Team Cinder. [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: The notifier lives with Team Boreal. [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n\nQuestion: When did Dune take over webhooks?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788613829-avcID6ZileZYp1KJ97ZF",
+  "object": "chat.completion",
+  "created": 1788613829,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-06-20",
+     "refusal": null,
+     "reasoning": "The question asks: \"When did Dune take over webhooks?\"\n\nLooking at memory:\n- \"As of 2025-06-20, the webhooks service lives with Team Dune, which took it over from Team Atlas.\" [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n\nSo the handover says as of 2025-06-20, Team Dune took over webhooks from Team Atlas. The correction entry is valid from 2025-07-04 to now, but the \"as of\" date is 2025-06-20.\n\nThere's an earlier entry saying Ember took it over as of 2025-06-20, but that was superseded by the correction on 2025-07-04, which says Team Dune took it over as of 2025-06-20.\n\nSo the answer is 2025-06-20.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"When did Dune take over webhooks?\"\n\nLooking at memory:\n- \"As of 2025-06-20, the webhooks service lives with Team Dune, which took it over from Team Atlas.\" [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n\nSo the handover says as of 2025-06-20, Team Dune took over webhooks from Team Atlas. The correction entry is valid from 2025-07-04 to now, but the \"as of\" date is 2025-06-20.\n\nThere's an earlier entry saying Ember took it over as of 2025-06-20, but that was superseded by the correction on 2025-07-04, which says Team Dune took it over as of 2025-06-20.\n\nSo the answer is 2025-06-20.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1672,
+   "completion_tokens": 209,
+   "total_tokens": 1881,
+   "cost": 0.00016997,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016997,
+    "upstream_inference_prompt_cost": 0.00011772,
+    "upstream_inference_completions_cost": 5.225e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 201,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.6467519580037333,
+ "fetched_at": "2026-09-05T13:10:33Z"
+}

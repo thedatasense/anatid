@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- [decision] Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 (since 2026-05-19; source incident-review/INC-2026-009)\n- [observation] Dune noticed that the scheduler's error rate crept up to 2 percent after the dependency bump (since 2026-05-22; source standup/dune/2026-05-22-3)\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-16; the root cause was two leaders elected during a network partition (since 2026-05-19; source incident-review/INC-2026-009)\n- [decision] Decision: the scheduler will use leader election instead of a single fixed node, because the fixed node turned every restart into a missed run (since 2025-06-06; source standup/ember/2025-06-06)\n- Cinder owns the scheduler (since 2025-09-23; source handover/2025-09-23-scheduler)\n  - earlier: Dune owns the scheduler (held 2025-06-25 to 2025-09-23; source handover/2025-06-25-scheduler)\n  - earlier: Ember owns the scheduler (held 2025-01-20 to 2025-06-25; source standup/ember/2025-01-20)\n- [observation] Boreal noticed that the scheduler's cold start time tripled after the runtime upgrade (since 2025-12-01; source standup/boreal/2025-12-01-2)\n- [decision] Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs (since 2025-09-23; source standup/dune/2025-09-23)\n- [constraint] The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC (since 2025-08-19; source standup/dune/2025-08-19)\n  - earlier: [constraint] The scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC (held 2025-02-06 to 2025-08-19; source standup/ember/2025-02-06)\n- [decision] Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch (since 2025-09-30; source standup/atlas/2025-09-30)\n- [decision] Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011 (since 2025-05-30; source incident-review/INC-2025-011)\n- The handover note of 2025-06-11 wrongly recorded Cinder as the owner of the notifier (since 2025-06-27; source handover/2025-06-27-notifier-correction)\n- [observation] Ember noticed that the ledger's p99 latency doubled after Tuesday's deploy (since 2026-05-28; source standup/ember/2026-05-28)\n- [constraint] No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close (since 2026-03-11; source standup/cinder/2026-03-11)\n- Cinder owns the ledger (since 2025-10-13; source handover/2025-10-13-ledger)\n  - earlier: Atlas owns the ledger (held 2025-01-08 to 2025-10-13; source standup/atlas/2025-01-08)\n- [observation] Atlas noticed that search-indexer's p99 latency doubled after Tuesday's deploy (since 2026-05-27; source standup/atlas/2026-05-27)\n- [observation] Dune noticed that auth-gateway's CPU sat at 90 percent after the traffic shift (since 2026-05-22; source standup/dune/2026-05-22-2)\n- [decision] Decision: auth-gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens (since 2026-01-30; source standup/cinder/2026-01-30)\n- The scheduler depends on feature-flags (since 2025-02-07; source standup/ember/2025-02-07)\n- [constraint] No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season (since 2025-11-11; source standup/atlas/2025-11-11)\n- Marcus is a member of Atlas (since 2026-03-20; source standup/boreal/2026-03-20)\n  - earlier: Marcus is a member of Boreal (held 2025-01-07 to 2026-03-20; source standup/boreal/2025-01-07)\n\nQuestion: Why did the scheduler switch to leader election instead of a single fixed node?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608334-TQlVkY35eRMNRIbOgfDm",
+  "object": "chat.completion",
+  "created": 1788608334,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Because the fixed node turned every restart into a missed run.",
+     "refusal": null,
+     "reasoning": "The question asks why the scheduler switched to leader election instead of a single fixed node. The memory says: \"[decision] Decision: the scheduler will use leader election instead of a single fixed node, because the fixed node turned every restart into a missed run (since 2025-06-06; source standup/ember/2025-06-06)\"\n\nAnswer: the fixed node turned every restart into a missed run.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks why the scheduler switched to leader election instead of a single fixed node. The memory says: \"[decision] Decision: the scheduler will use leader election instead of a single fixed node, because the fixed node turned every restart into a missed run (since 2025-06-06; source standup/ember/2025-06-06)\"\n\nAnswer: the fixed node turned every restart into a missed run.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1379,
+   "completion_tokens": 100,
+   "total_tokens": 1479,
+   "cost": 0.000116905,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000116905,
+    "upstream_inference_prompt_cost": 9.1905e-05,
+    "upstream_inference_completions_cost": 2.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 86,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.243367249961011,
+ "fetched_at": "2026-09-05T11:38:56Z"
+}

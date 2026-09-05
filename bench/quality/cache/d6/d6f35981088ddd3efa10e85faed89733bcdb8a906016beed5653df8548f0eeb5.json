@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- The job scheduler depends on the feature-flags service for per-job kill switches. [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- As of 2026-05-29, Oskar is on the Ember team on-call rotation as the primary on-call. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- The indexer relies on the product catalog for product documents, so if the product catalog is down the indexer is down. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- As of 2025-11-27, Yuki Tanaka holds the Cinder pager, taking over from Diego, who is leaving the team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego holds the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- The ledger service relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- Oskar takes the first on-call shift of the year for the Ember team. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- Priya Raman holds the first on-call rotation for the Atlas team as of 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-07-30; recorded by standup/atlas/2025-01-09]\n- On 2026-06-04 the Boreal team noticed that the product catalog's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: As of 2025-08-15, the Boreal team still owns the bus. [valid 2025-08-15 to 2025-11-24; recorded by standup/boreal/2025-08-15-2]\n- On 2025-12-31 the Atlas team noticed that the feature-flags service's queue depth hit 50,000 following the marketing send and flagged it because it is not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- On 2026-04-16 the Atlas team noticed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it because it is not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- On 2026-03-20 the Boreal team noticed that the product catalog's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- On 2025-03-26 the Dune team observed that the notification service's memory use grew steadily for a week after the cache change. [valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- As of 2025-12-19, the Atlas team is taking over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n\nQuestion: Who is on call for the team that owns the service the catalog depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603907-vNAXrizpkpJ5uSpWVCd5",
+  "object": "chat.completion",
+  "created": 1788603907,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "Let me work through this carefully.\n\nQuestion: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nStep 1: What does the catalog (product catalog) depend on? Looking at memory entries:\n- The indexer relies on the product catalog for product documents... (that's the indexer depending on the catalog, not the catalog depending on something)\n- I don't see any entry saying the product catalog depends on some service. There are entries about the product catalog's memory use, disk usage, ownership... but nothing about what the product catalog depends on.\n\nWait, let me re-read. \"the service the catalog depends on\" — the catalog is the product catalog. Do we have any dependency of the product catalog on another service?\n\nDependencies mentioned:\n- billing API → ledger service\n- job scheduler → feature-flags service\n- reporting service → no longer depends on ledger (as of 2025-09-23)\n- indexer → product catalog\n- ledger service → auth gateway\n\nNo entry says the product catalog depends on any service. So the memory does not contain the answer.\n\nHmm, but maybe \"the catalog\" could be interpreted as the product catalog, and the indexer depends on it... no, that's the reverse direction.\n\nSo the answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Let me work through this carefully.\n\nQuestion: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nStep 1: What does the catalog (product catalog) depend on? Looking at memory entries:\n- The indexer relies on the product catalog for product documents... (that's the indexer depending on the catalog, not the catalog depending on something)\n- I don't see any entry saying the product catalog depends on some service. There are entries about the product catalog's memory use, disk usage, ownership... but nothing about what the product catalog depends on.\n\nWait, let me re-read. \"the service the catalog depends on\" — the catalog is the product catalog. Do we have any dependency of the product catalog on another service?\n\nDependencies mentioned:\n- billing API → ledger service\n- job scheduler → feature-flags service\n- reporting service → no longer depends on ledger (as of 2025-09-23)\n- indexer → product catalog\n- ledger service → auth gateway\n\nNo entry says the product catalog depends on any service. So the memory does not contain the answer.\n\nHmm, but maybe \"the catalog\" could be interpreted as the product catalog, and the indexer depends on it... no, that's the reverse direction.\n\nSo the answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1535,
+   "completion_tokens": 271,
+   "total_tokens": 1806,
+   "cost": 0.00036575,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00036575,
+    "upstream_inference_prompt_cost": 0.00023025,
+    "upstream_inference_completions_cost": 0.0001355
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 265,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.558236874989234,
+ "fetched_at": "2026-09-05T10:25:11Z"
+}

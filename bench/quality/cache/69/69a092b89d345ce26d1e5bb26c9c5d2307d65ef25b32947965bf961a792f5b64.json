@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- On 2026-03-10, Team Dune observed that the reporting service's p99 latency doubled after Tuesday's deploy. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- During INC-2025-011, the ledger saw write latency spike tenfold for an hour on 2025-04-26. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- During INC-2025-004, a stuck offset went unnoticed for 40 minutes. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- As of 2025-11-20, dashboards and alerts for the event bus are being repointed. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- The reporting service can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk, leaving stale results for two days. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy and flagged it because the service is not theirs. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- On 2025-09-08, Team Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- As of 2026-02-10, the reports pipeline is owned by Team Cinder, which took it over from the Ember team. [decision; valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- On 2025-07-28, Team Cinder reported that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- On 2025-06-12, Team Dune noticed the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-06-12 to now; recorded by standup/dune/2025-06-12]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- INC-2026-009 happened because two leaders were elected on the scheduler during a network partition. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n\nQuestion: Who was responsible for reporting on 2025-11-26?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615160-X6a7DFwV0v0XRsqyLjdi",
+  "object": "chat.completion",
+  "created": 1788615160,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The Ember team",
+     "refusal": null,
+     "reasoning": "The question asks: Who was responsible for reporting on 2025-11-26?\n\nLooking at the memory entries about the reporting service ownership:\n- Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07]\n- As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now]\n\nOn 2025-11-26, the valid entry is the one valid from 2025-11-17 to now: the Ember team.\n\nWait, but there's also the reports pipeline owned by Team Cinder as of 2026-02-10. That's the \"reports pipeline\" — different from \"reporting service\". The question asks about \"reporting\" on 2025-11-26. The reporting service on 2025-11-26 belongs to the Ember team (per the corrected handover entry valid 2025-11-17 to now).\n\nSo the answer: the Ember team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Who was responsible for reporting on 2025-11-26?\n\nLooking at the memory entries about the reporting service ownership:\n- Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07]\n- As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now]\n\nOn 2025-11-26, the valid entry is the one valid from 2025-11-17 to now: the Ember team.\n\nWait, but there's also the reports pipeline owned by Team Cinder as of 2026-02-10. That's the \"reports pipeline\" — different from \"reporting service\". The question asks about \"reporting\" on 2025-11-26. The reporting service on 2025-11-26 belongs to the Ember team (per the corrected handover entry valid 2025-11-17 to now).\n\nSo the answer: the Ember team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1431,
+   "completion_tokens": 277,
+   "total_tokens": 1708,
+   "cost": 0.000176575,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000176575,
+    "upstream_inference_prompt_cost": 0.000107325,
+    "upstream_inference_completions_cost": 6.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 273,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.48548595799366,
+ "fetched_at": "2026-09-05T13:32:48Z"
+}

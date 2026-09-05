@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Farah takes the first on-call rotation for team Dune. [decision; valid 2025-01-13 to now; recorded by standup/dune/2025-01-13]\n- As of 2026-05-22, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah. [decision; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager; on 2026-04-14 he handed the pager to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz was off the on-call rotation for team Dune until 2026-03-11, when he took the Dune pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Tomasz is off the on-call rotation for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- As of 2026-04-14, Farah holds the Dune on-call shift for team Dune, taking over from Tomasz; Tomasz held it as of 2026-03-11, and Farah held it as of 2026-01-16. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah; as of 2026-01-16 Farah held it. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad holds the Dune on-call shift for team Dune; Tomasz is off rotation. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz holds the Dune on-call shift for team Dune, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n    earlier: As of 2025-10-15, Farah holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-10-15 to 2025-11-17; recorded by standup/dune/2025-10-15]\n    earlier: As of 2025-09-04, Tomasz holds the Dune on-call shift, having picked it up from Farah. [valid 2025-09-04 to 2025-10-15; recorded by standup/dune/2025-09-04]\n- Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager; on 2026-04-14 Tomasz handed the pager back to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is the primary on-call for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- The team Dune planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- As of 2026-04-14, Farah holds the Dune pager this cycle, taking over from Tomasz, who held it as of 2026-03-11. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune pager this cycle, taking over from Farah. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n- As of 2025-11-27, Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-09-05 to 2025-10-24; recorded by standup/cinder/2025-09-05]\n    earlier: Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-07-17 to 2025-09-05; recorded by standup/cinder/2025-07-17]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-06-06 to 2025-07-17; recorded by standup/cinder/2025-06-06]\n    earlier: Diego is on call for the Cinder team this cycle, taking over from Yuki Tanaka. [decision; valid 2025-04-24 to 2025-06-06; recorded by standup/cinder/2025-04-24]\n    earlier: Yuki Tanaka is on call for the Cinder team this cycle, taking over from Diego. [decision; valid 2025-02-27 to 2025-04-24; recorded by standup/cinder/2025-02-27]\n    earlier: Diego is on call for the Cinder team to start the year. [decision; valid 2025-01-09 to 2025-02-27; recorded by standup/cinder/2025-01-09]\n\nQuestion: Who is on call for Dune right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595611-rmaDTYdXrGxWrBMjM2pv",
+  "object": "chat.completion",
+  "created": 1788595611,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tomasz",
+     "refusal": null,
+     "reasoning": "The question asks who is on call for Dune right now (today is 2026-06-30).\n\nLooking at the memory entries:\n- The latest entries valid \"to now\" say: \"As of 2026-05-22, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah.\" [valid 2026-05-22 to now]\n- But also: \"As of 2026-04-14, Farah holds the Dune on-call shift for team Dune, taking over from Tomasz\" [valid 2026-04-14 to now]\n\nBoth are marked valid to now, but the 2026-05-22 entry is later and supersedes the earlier one on the same subject. So Tomasz holds the Dune on-call shift as of 2026-05-22, which is the most recent entry.\n\nAnswer: Tomasz",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who is on call for Dune right now (today is 2026-06-30).\n\nLooking at the memory entries:\n- The latest entries valid \"to now\" say: \"As of 2026-05-22, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah.\" [valid 2026-05-22 to now]\n- But also: \"As of 2026-04-14, Farah holds the Dune on-call shift for team Dune, taking over from Tomasz\" [valid 2026-04-14 to now]\n\nBoth are marked valid to now, but the 2026-05-22 entry is later and supersedes the earlier one on the same subject. So Tomasz holds the Dune on-call shift as of 2026-05-22, which is the most recent entry.\n\nAnswer: Tomasz",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1823,
+   "completion_tokens": 197,
+   "total_tokens": 2020,
+   "cost": 0.00037195,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00037195,
+    "upstream_inference_prompt_cost": 0.00027345,
+    "upstream_inference_completions_cost": 9.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 192,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.0123871670220979,
+ "fetched_at": "2026-09-05T08:06:51Z"
+}

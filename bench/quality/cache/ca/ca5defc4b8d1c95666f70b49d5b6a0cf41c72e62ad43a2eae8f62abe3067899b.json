@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Dune owns image-resizer [valid 2025-12-01 to now; recorded by handover/2025-12-01-image-resizer]\n    earlier: Ember owns image-resizer [valid 2025-04-29 to 2025-12-01; recorded by handover/2025-04-29-image-resizer]\n    earlier: Dune owns image-resizer [valid 2025-01-20 to 2025-04-29; recorded by standup/dune/2025-01-20]\n- Decision: image-resizer will keep original uploads for 90 days only, because storage for originals doubled in six months [decision; valid 2026-03-03 to now; recorded by standup/dune/2026-03-03]\n- The catalog deploys only on Tuesdays between 13:00 and 15:00 UTC [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n- The catalog depends on image-resizer [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- Atlas noticed that image-resizer's cold start time tripled after the runtime upgrade [observation; valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03-2]\n- Cinder noticed that image-resizer's queue depth hit 50,000 after the marketing send [observation; valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19-2]\n- Search-indexer depends on the catalog [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- The handover note of 2025-11-07 wrongly recorded Boreal as the owner of reporting [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n- Atlas noticed that the catalog's request volume halved after the client rollout [observation; valid 2025-08-29 to now; recorded by standup/atlas/2025-08-29]\n- Decision: search-indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes [decision; valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n- The handover note of 2025-08-29 wrongly recorded Cinder as the owner of the scheduler [valid 2025-09-05 to now; recorded by handover/2025-09-05-scheduler-correction]\n- Ember noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- Cinder noticed that search-indexer's disk usage jumped 30 percent after the retention change [observation; valid 2026-01-01 to now; recorded by standup/cinder/2026-01-01]\n- Atlas noticed that the scheduler's cold start time tripled after the runtime upgrade [observation; valid 2026-03-09 to now; recorded by standup/atlas/2026-03-09-2]\n- Atlas noticed that webhooks's memory use grew steadily for a week after the cache change [observation; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Atlas noticed that the catalog's disk usage jumped 30 percent after the retention change [observation; valid 2025-04-18 to now; recorded by standup/atlas/2025-04-18-2]\n- Decision: the catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time [decision; valid 2025-04-04 to now; recorded by standup/dune/2025-04-04]\n- Boreal noticed that the catalog's memory use grew steadily for a week after the cache change [observation; valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- The handover note of 2025-06-20 wrongly recorded Ember as the owner of webhooks [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- Boreal noticed that the notifier's request volume halved after the client rollout [observation; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n\nQuestion: Which note first recorded that the catalog depends on image-resizer, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788616142-ruqrkPoAHCO70VZvzmRC",
+  "object": "chat.completion",
+  "created": 1788616142,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/dune/2025-04-15, on 2025-04-15.",
+     "refusal": null,
+     "reasoning": "The user asks: \"Which note first recorded that the catalog depends on image-resizer, and when?\"\n\nMemory: \"- The catalog depends on image-resizer [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\"\n\nThere's only one entry for that fact, recorded by standup/dune/2025-04-15. So the answer: standup/dune/2025-04-15, recorded 2025-04-15.\n\nThe question asks \"which note first recorded ... and when\" — the note is standup/dune/2025-04-15, date 2025-04-15.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"Which note first recorded that the catalog depends on image-resizer, and when?\"\n\nMemory: \"- The catalog depends on image-resizer [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\"\n\nThere's only one entry for that fact, recorded by standup/dune/2025-04-15. So the answer: standup/dune/2025-04-15, recorded 2025-04-15.\n\nThe question asks \"which note first recorded ... and when\" — the note is standup/dune/2025-04-15, date 2025-04-15.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1273,
+   "completion_tokens": 166,
+   "total_tokens": 1439,
+   "cost": 0.000136975,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000136975,
+    "upstream_inference_prompt_cost": 9.5475e-05,
+    "upstream_inference_completions_cost": 4.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 143,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.6874314580345526,
+ "fetched_at": "2026-09-05T13:49:05Z"
+}

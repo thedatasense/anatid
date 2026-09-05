@@ -1,0 +1,69 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded that the catalog depends on image-resizer, and when?\nGold answer: standup/dune/2025-04-15 (2025-04-15)\nAlso accepted: standup/dune/2025-04-15; 2025-04-15; 15 April 2025; April 15, 2025; the standup note of 2025-04-15; the standup note of 15 April 2025; the standup note of April 15, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/dune/2025-04-15, recorded on 2025-04-15"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788619984-OqLScsq1xOdlr2wNk0Cx",
+  "object": "chat.completion",
+  "created": 1788619984,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies both the gold note's source label (standup/dune/2025-04-15) and its date (2025-04-15).\"}",
+     "refusal": null,
+     "reasoning": null
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 290,
+   "completion_tokens": 46,
+   "total_tokens": 336,
+   "cost": 4.51e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.51e-05,
+    "upstream_inference_prompt_cost": 2.9e-05,
+    "upstream_inference_completions_cost": 1.61e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.948268249980174,
+ "fetched_at": "2026-09-05T14:53:07Z"
+}

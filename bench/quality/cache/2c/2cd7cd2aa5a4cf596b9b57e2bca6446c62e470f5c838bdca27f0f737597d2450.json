@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-09-08, billing-api has a new dependency on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- Tomasz Nowak wrote the billing-api handover doc for Marcus on 2025-03-17. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- On 2025-07-28, Team Cinder observed that the billing service's error rate crept up to 2 percent after the dependency bump. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- Changes to the billing service need a rollback plan attached to the pull request. [constraint; valid 2025-09-09 to now; recorded by standup/boreal/2025-09-09]\n- The billing service only ships on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-05-05 to now; recorded by standup/boreal/2025-05-05]\n- Billing-api will gate the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- The nightly ledger scans were blocking billing runs. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- On 2025-11-21, Team Dune reported that the billing service's queue depth hit 50,000 after the marketing send. [valid 2025-11-21 to now; recorded by standup/dune/2025-11-21]\n- On 2025-12-23, Team Atlas noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2025-12-23 to now; recorded by standup/atlas/2025-12-23]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- As of 2025-06-16, dashboards and alerts for the catalog service are being repointed. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n- On 2025-08-29, Team Atlas observed that the catalog service's request volume halved after the client rollout. [valid 2025-08-29 to now; recorded by standup/atlas/2025-08-29]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- On 2025-05-23, the Ember team flagged that the webhooks service's request volume halved following the client rollout. [valid 2025-06-20 to now; recorded by handover/2025-06-20-webhooks]\n    earlier: On 2025-05-23, the Ember team flagged that the webhooks service's request volume halved following the client rollout, noting the webhooks service is not their service. [valid 2025-05-23 to 2025-06-20; recorded by standup/ember/2025-05-23]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n\nQuestion: Which services does billing-api depend on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615028-V5tR0w5pZDAWTY45ZbJn",
+  "object": "chat.completion",
+  "created": 1788615028,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Io Net",
+  "system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp8-a201f1db",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The feature-flags service",
+     "refusal": null,
+     "reasoning": "The question asks which services billing-api depends on now.\n\nLooking at memory:\n- \"As of 2025-09-08, billing-api has a new dependency on the feature-flags service. [valid 2025-09-08 to now]\"\n- \"The billing service depends on the ledger for invoice postings.\" — that's the billing service, not billing-api. Are they the same? The memory distinguishes \"billing service\" and \"billing-api\". The question asks about billing-api specifically. The only entry mentioning billing-api dependencies is the feature-flags one.\n\nAlso \"Billing-api will gate the new invoice flow behind the feature-flags service\" — that's a decision, consistent with dependency on feature-flags.\n\nSo answer: the feature-flags service.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services billing-api depends on now.\n\nLooking at memory:\n- \"As of 2025-09-08, billing-api has a new dependency on the feature-flags service. [valid 2025-09-08 to now]\"\n- \"The billing service depends on the ledger for invoice postings.\" — that's the billing service, not billing-api. Are they the same? The memory distinguishes \"billing service\" and \"billing-api\". The question asks about billing-api specifically. The only entry mentioning billing-api dependencies is the feature-flags one.\n\nAlso \"Billing-api will gate the new invoice flow behind the feature-flags service\" — that's a decision, consistent with dependency on feature-flags.\n\nSo answer: the feature-flags service.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1416,
+   "completion_tokens": 163,
+   "total_tokens": 1579,
+   "cost": 0.0002939,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002939,
+    "upstream_inference_prompt_cost": 0.0002124,
+    "upstream_inference_completions_cost": 8.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 180,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 24.373965082981158,
+ "fetched_at": "2026-09-05T13:30:53Z"
+}

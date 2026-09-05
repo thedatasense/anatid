@@ -1,0 +1,1088 @@
+{
+  "seed": 20260905,
+  "start": "2025-01-06",
+  "end": "2026-06-26",
+  "now": "2026-06-30",
+  "people": {
+    "Priya": "Priya Raman",
+    "Tomasz": "Tomasz Nowak",
+    "Lena": "Lena Fischer",
+    "Marcus": "Marcus Oyelaran",
+    "Yuki": "Yuki Tanaka",
+    "Diego": "Diego Alvarez",
+    "Farah": "Farah Haddad",
+    "Oskar": "Oskar Lind"
+  },
+  "teams": [
+    "Atlas",
+    "Boreal",
+    "Cinder",
+    "Dune",
+    "Ember"
+  ],
+  "services": {
+    "ledger": {
+      "display": "the ledger",
+      "forms": [
+        "the ledger",
+        "the ledger service",
+        "Ledger"
+      ]
+    },
+    "billing-api": {
+      "display": "billing-api",
+      "forms": [
+        "billing-api",
+        "the billing API",
+        "the billing service"
+      ]
+    },
+    "notifier": {
+      "display": "the notifier",
+      "forms": [
+        "the notifier",
+        "the notification service",
+        "notifier"
+      ]
+    },
+    "search-indexer": {
+      "display": "search-indexer",
+      "forms": [
+        "search-indexer",
+        "the search indexer",
+        "the indexer"
+      ]
+    },
+    "auth-gateway": {
+      "display": "auth-gateway",
+      "forms": [
+        "auth-gateway",
+        "the auth gateway",
+        "the authentication gateway"
+      ]
+    },
+    "catalog": {
+      "display": "the catalog",
+      "forms": [
+        "the catalog",
+        "the catalog service",
+        "the product catalog"
+      ]
+    },
+    "image-resizer": {
+      "display": "image-resizer",
+      "forms": [
+        "image-resizer",
+        "the image resizer",
+        "the resizer"
+      ]
+    },
+    "event-bus": {
+      "display": "the event-bus",
+      "forms": [
+        "the event-bus",
+        "the event bus",
+        "the bus"
+      ]
+    },
+    "reporting": {
+      "display": "reporting",
+      "forms": [
+        "reporting",
+        "the reporting service",
+        "the reports pipeline"
+      ]
+    },
+    "scheduler": {
+      "display": "the scheduler",
+      "forms": [
+        "the scheduler",
+        "the job scheduler",
+        "scheduler"
+      ]
+    },
+    "webhooks": {
+      "display": "webhooks",
+      "forms": [
+        "webhooks",
+        "the webhooks service",
+        "the webhook dispatcher"
+      ]
+    },
+    "feature-flags": {
+      "display": "feature-flags",
+      "forms": [
+        "feature-flags",
+        "the flags service",
+        "the feature flag service"
+      ]
+    }
+  },
+  "owner": {
+    "ledger": [
+      {
+        "from": "2025-01-08",
+        "to": "2025-10-13",
+        "value": "Atlas",
+        "event": 9
+      },
+      {
+        "from": "2025-10-13",
+        "to": null,
+        "value": "Cinder",
+        "event": 33
+      }
+    ],
+    "billing-api": [
+      {
+        "from": "2025-01-08",
+        "to": "2025-03-07",
+        "value": "Atlas",
+        "event": 10
+      },
+      {
+        "from": "2025-03-07",
+        "to": "2025-06-09",
+        "value": "Ember",
+        "event": 22
+      },
+      {
+        "from": "2025-06-09",
+        "to": "2026-01-12",
+        "value": "Atlas",
+        "event": 26
+      },
+      {
+        "from": "2026-01-12",
+        "to": null,
+        "value": "Ember",
+        "event": 39
+      }
+    ],
+    "notifier": [
+      {
+        "from": "2025-01-09",
+        "to": "2025-06-11",
+        "value": "Boreal",
+        "event": 13
+      },
+      {
+        "from": "2025-06-11",
+        "to": null,
+        "value": "Dune",
+        "event": 28
+      }
+    ],
+    "search-indexer": [
+      {
+        "from": "2025-01-17",
+        "to": "2025-05-20",
+        "value": "Cinder",
+        "event": 16
+      },
+      {
+        "from": "2025-05-20",
+        "to": "2026-04-01",
+        "value": "Atlas",
+        "event": 25
+      },
+      {
+        "from": "2026-04-01",
+        "to": null,
+        "value": "Boreal",
+        "event": 42
+      }
+    ],
+    "auth-gateway": [
+      {
+        "from": "2025-01-20",
+        "to": "2025-09-16",
+        "value": "Ember",
+        "event": 20
+      },
+      {
+        "from": "2025-09-16",
+        "to": null,
+        "value": "Cinder",
+        "event": 31
+      }
+    ],
+    "catalog": [
+      {
+        "from": "2025-01-17",
+        "to": "2025-12-19",
+        "value": "Cinder",
+        "event": 15
+      },
+      {
+        "from": "2025-12-19",
+        "to": null,
+        "value": "Atlas",
+        "event": 38
+      }
+    ],
+    "image-resizer": [
+      {
+        "from": "2025-01-20",
+        "to": "2025-03-20",
+        "value": "Dune",
+        "event": 17
+      },
+      {
+        "from": "2025-03-20",
+        "to": "2025-11-26",
+        "value": "Ember",
+        "event": 23
+      },
+      {
+        "from": "2025-11-26",
+        "to": null,
+        "value": "Atlas",
+        "event": 36
+      }
+    ],
+    "event-bus": [
+      {
+        "from": "2025-01-09",
+        "to": "2025-11-24",
+        "value": "Boreal",
+        "event": 12
+      },
+      {
+        "from": "2025-11-24",
+        "to": null,
+        "value": "Atlas",
+        "event": 35
+      }
+    ],
+    "reporting": [
+      {
+        "from": "2025-01-20",
+        "to": "2025-12-05",
+        "value": "Dune",
+        "event": 18
+      },
+      {
+        "from": "2025-12-05",
+        "to": null,
+        "value": "Ember",
+        "event": 37
+      }
+    ],
+    "scheduler": [
+      {
+        "from": "2025-01-20",
+        "to": "2025-06-25",
+        "value": "Ember",
+        "event": 19
+      },
+      {
+        "from": "2025-06-25",
+        "to": "2025-09-23",
+        "value": "Dune",
+        "event": 30
+      },
+      {
+        "from": "2025-09-23",
+        "to": null,
+        "value": "Cinder",
+        "event": 32
+      }
+    ],
+    "webhooks": [
+      {
+        "from": "2025-01-09",
+        "to": "2025-03-03",
+        "value": "Boreal",
+        "event": 14
+      },
+      {
+        "from": "2025-03-03",
+        "to": "2025-05-15",
+        "value": "Ember",
+        "event": 21
+      },
+      {
+        "from": "2025-05-15",
+        "to": null,
+        "value": "Boreal",
+        "event": 24
+      }
+    ],
+    "feature-flags": [
+      {
+        "from": "2025-01-08",
+        "to": "2025-11-06",
+        "value": "Atlas",
+        "event": 11
+      },
+      {
+        "from": "2025-11-06",
+        "to": "2026-02-11",
+        "value": "Ember",
+        "event": 34
+      },
+      {
+        "from": "2026-02-11",
+        "to": null,
+        "value": "Atlas",
+        "event": 40
+      }
+    ]
+  },
+  "recorded_owner": {
+    "ledger": [
+      {
+        "from": "2025-01-08",
+        "to": "2025-10-13",
+        "value": "Atlas",
+        "event": 9
+      },
+      {
+        "from": "2025-10-13",
+        "to": null,
+        "value": "Cinder",
+        "event": 33
+      }
+    ],
+    "billing-api": [
+      {
+        "from": "2025-01-08",
+        "to": "2025-03-07",
+        "value": "Atlas",
+        "event": 10
+      },
+      {
+        "from": "2025-03-07",
+        "to": "2025-06-09",
+        "value": "Ember",
+        "event": 22
+      },
+      {
+        "from": "2025-06-09",
+        "to": "2025-07-03",
+        "value": "Boreal",
+        "event": 26
+      },
+      {
+        "from": "2025-07-03",
+        "to": "2026-01-12",
+        "value": "Atlas",
+        "event": 27
+      },
+      {
+        "from": "2026-01-12",
+        "to": null,
+        "value": "Ember",
+        "event": 39
+      }
+    ],
+    "notifier": [
+      {
+        "from": "2025-01-09",
+        "to": "2025-06-11",
+        "value": "Boreal",
+        "event": 13
+      },
+      {
+        "from": "2025-06-11",
+        "to": "2025-06-27",
+        "value": "Cinder",
+        "event": 28
+      },
+      {
+        "from": "2025-06-27",
+        "to": null,
+        "value": "Dune",
+        "event": 29
+      }
+    ],
+    "search-indexer": [
+      {
+        "from": "2025-01-17",
+        "to": "2025-05-20",
+        "value": "Cinder",
+        "event": 16
+      },
+      {
+        "from": "2025-05-20",
+        "to": "2026-04-01",
+        "value": "Atlas",
+        "event": 25
+      },
+      {
+        "from": "2026-04-01",
+        "to": null,
+        "value": "Boreal",
+        "event": 42
+      }
+    ],
+    "auth-gateway": [
+      {
+        "from": "2025-01-20",
+        "to": "2025-09-16",
+        "value": "Ember",
+        "event": 20
+      },
+      {
+        "from": "2025-09-16",
+        "to": null,
+        "value": "Cinder",
+        "event": 31
+      }
+    ],
+    "catalog": [
+      {
+        "from": "2025-01-17",
+        "to": "2025-12-19",
+        "value": "Cinder",
+        "event": 15
+      },
+      {
+        "from": "2025-12-19",
+        "to": null,
+        "value": "Atlas",
+        "event": 38
+      }
+    ],
+    "image-resizer": [
+      {
+        "from": "2025-01-20",
+        "to": "2025-03-20",
+        "value": "Dune",
+        "event": 17
+      },
+      {
+        "from": "2025-03-20",
+        "to": "2025-11-26",
+        "value": "Ember",
+        "event": 23
+      },
+      {
+        "from": "2025-11-26",
+        "to": null,
+        "value": "Atlas",
+        "event": 36
+      }
+    ],
+    "event-bus": [
+      {
+        "from": "2025-01-09",
+        "to": "2025-11-24",
+        "value": "Boreal",
+        "event": 12
+      },
+      {
+        "from": "2025-11-24",
+        "to": null,
+        "value": "Atlas",
+        "event": 35
+      }
+    ],
+    "reporting": [
+      {
+        "from": "2025-01-20",
+        "to": "2025-12-05",
+        "value": "Dune",
+        "event": 18
+      },
+      {
+        "from": "2025-12-05",
+        "to": null,
+        "value": "Ember",
+        "event": 37
+      }
+    ],
+    "scheduler": [
+      {
+        "from": "2025-01-20",
+        "to": "2025-06-25",
+        "value": "Ember",
+        "event": 19
+      },
+      {
+        "from": "2025-06-25",
+        "to": "2025-09-23",
+        "value": "Dune",
+        "event": 30
+      },
+      {
+        "from": "2025-09-23",
+        "to": null,
+        "value": "Cinder",
+        "event": 32
+      }
+    ],
+    "webhooks": [
+      {
+        "from": "2025-01-09",
+        "to": "2025-03-03",
+        "value": "Boreal",
+        "event": 14
+      },
+      {
+        "from": "2025-03-03",
+        "to": "2025-05-15",
+        "value": "Ember",
+        "event": 21
+      },
+      {
+        "from": "2025-05-15",
+        "to": null,
+        "value": "Boreal",
+        "event": 24
+      }
+    ],
+    "feature-flags": [
+      {
+        "from": "2025-01-08",
+        "to": "2025-11-06",
+        "value": "Atlas",
+        "event": 11
+      },
+      {
+        "from": "2025-11-06",
+        "to": "2026-02-11",
+        "value": "Ember",
+        "event": 34
+      },
+      {
+        "from": "2026-02-11",
+        "to": "2026-03-09",
+        "value": "Dune",
+        "event": 40
+      },
+      {
+        "from": "2026-03-09",
+        "to": null,
+        "value": "Atlas",
+        "event": 41
+      }
+    ]
+  },
+  "member": {
+    "Priya": [
+      {
+        "from": "2025-01-06",
+        "to": null,
+        "value": "Atlas",
+        "event": 1
+      }
+    ],
+    "Tomasz": [
+      {
+        "from": "2025-01-06",
+        "to": "2025-07-30",
+        "value": "Atlas",
+        "event": 1
+      },
+      {
+        "from": "2025-07-30",
+        "to": null,
+        "value": "Dune",
+        "event": 6
+      }
+    ],
+    "Lena": [
+      {
+        "from": "2025-01-07",
+        "to": null,
+        "value": "Boreal",
+        "event": 2
+      }
+    ],
+    "Marcus": [
+      {
+        "from": "2025-01-07",
+        "to": "2026-03-20",
+        "value": "Boreal",
+        "event": 2
+      },
+      {
+        "from": "2026-03-20",
+        "to": null,
+        "value": "Atlas",
+        "event": 8
+      }
+    ],
+    "Yuki": [
+      {
+        "from": "2025-01-08",
+        "to": null,
+        "value": "Cinder",
+        "event": 3
+      }
+    ],
+    "Diego": [
+      {
+        "from": "2025-01-08",
+        "to": "2025-11-27",
+        "value": "Cinder",
+        "event": 3
+      },
+      {
+        "from": "2025-11-27",
+        "to": null,
+        "value": "Ember",
+        "event": 7
+      }
+    ],
+    "Farah": [
+      {
+        "from": "2025-01-09",
+        "to": null,
+        "value": "Dune",
+        "event": 4
+      }
+    ],
+    "Oskar": [
+      {
+        "from": "2025-01-10",
+        "to": null,
+        "value": "Ember",
+        "event": 5
+      }
+    ]
+  },
+  "oncall": {
+    "Atlas": [
+      {
+        "from": "2025-01-09",
+        "to": "2025-02-12",
+        "value": "Tomasz",
+        "event": 43
+      },
+      {
+        "from": "2025-02-12",
+        "to": "2025-04-03",
+        "value": "Priya",
+        "event": 44
+      },
+      {
+        "from": "2025-04-03",
+        "to": "2025-05-13",
+        "value": "Tomasz",
+        "event": 45
+      },
+      {
+        "from": "2025-05-13",
+        "to": "2025-06-19",
+        "value": "Priya",
+        "event": 46
+      },
+      {
+        "from": "2025-06-19",
+        "to": "2025-07-30",
+        "value": "Tomasz",
+        "event": 47
+      },
+      {
+        "from": "2025-07-30",
+        "to": "2026-04-08",
+        "value": "Priya",
+        "event": 48
+      },
+      {
+        "from": "2026-04-08",
+        "to": "2026-06-04",
+        "value": "Marcus",
+        "event": 49
+      },
+      {
+        "from": "2026-06-04",
+        "to": null,
+        "value": "Priya",
+        "event": 50
+      }
+    ],
+    "Boreal": [
+      {
+        "from": "2025-01-09",
+        "to": "2025-02-12",
+        "value": "Lena",
+        "event": 51
+      },
+      {
+        "from": "2025-02-12",
+        "to": "2025-03-17",
+        "value": "Marcus",
+        "event": 52
+      },
+      {
+        "from": "2025-03-17",
+        "to": "2025-05-07",
+        "value": "Lena",
+        "event": 53
+      },
+      {
+        "from": "2025-05-07",
+        "to": "2025-06-27",
+        "value": "Marcus",
+        "event": 54
+      },
+      {
+        "from": "2025-06-27",
+        "to": "2025-08-15",
+        "value": "Lena",
+        "event": 55
+      },
+      {
+        "from": "2025-08-15",
+        "to": "2025-09-23",
+        "value": "Marcus",
+        "event": 56
+      },
+      {
+        "from": "2025-09-23",
+        "to": "2025-11-06",
+        "value": "Lena",
+        "event": 57
+      },
+      {
+        "from": "2025-11-06",
+        "to": "2025-12-18",
+        "value": "Marcus",
+        "event": 58
+      },
+      {
+        "from": "2025-12-18",
+        "to": "2026-02-10",
+        "value": "Lena",
+        "event": 59
+      },
+      {
+        "from": "2026-02-10",
+        "to": "2026-03-20",
+        "value": "Marcus",
+        "event": 60
+      },
+      {
+        "from": "2026-03-20",
+        "to": null,
+        "value": "Lena",
+        "event": 61
+      }
+    ],
+    "Cinder": [
+      {
+        "from": "2025-01-09",
+        "to": "2025-02-27",
+        "value": "Diego",
+        "event": 62
+      },
+      {
+        "from": "2025-02-27",
+        "to": "2025-04-24",
+        "value": "Yuki",
+        "event": 63
+      },
+      {
+        "from": "2025-04-24",
+        "to": "2025-06-06",
+        "value": "Diego",
+        "event": 64
+      },
+      {
+        "from": "2025-06-06",
+        "to": "2025-07-17",
+        "value": "Yuki",
+        "event": 65
+      },
+      {
+        "from": "2025-07-17",
+        "to": "2025-09-05",
+        "value": "Diego",
+        "event": 66
+      },
+      {
+        "from": "2025-09-05",
+        "to": "2025-10-24",
+        "value": "Yuki",
+        "event": 67
+      },
+      {
+        "from": "2025-10-24",
+        "to": "2025-11-27",
+        "value": "Diego",
+        "event": 68
+      },
+      {
+        "from": "2025-11-27",
+        "to": null,
+        "value": "Yuki",
+        "event": 69
+      }
+    ],
+    "Dune": [
+      {
+        "from": "2025-01-13",
+        "to": "2025-09-04",
+        "value": "Farah",
+        "event": 70
+      },
+      {
+        "from": "2025-09-04",
+        "to": "2025-10-15",
+        "value": "Tomasz",
+        "event": 71
+      },
+      {
+        "from": "2025-10-15",
+        "to": "2025-12-10",
+        "value": "Farah",
+        "event": 72
+      },
+      {
+        "from": "2025-12-10",
+        "to": "2026-01-16",
+        "value": "Tomasz",
+        "event": 73
+      },
+      {
+        "from": "2026-01-16",
+        "to": "2026-03-11",
+        "value": "Farah",
+        "event": 74
+      },
+      {
+        "from": "2026-03-11",
+        "to": "2026-04-14",
+        "value": "Tomasz",
+        "event": 75
+      },
+      {
+        "from": "2026-04-14",
+        "to": "2026-05-22",
+        "value": "Farah",
+        "event": 76
+      },
+      {
+        "from": "2026-05-22",
+        "to": null,
+        "value": "Tomasz",
+        "event": 77
+      }
+    ],
+    "Ember": [
+      {
+        "from": "2025-01-14",
+        "to": "2026-01-15",
+        "value": "Oskar",
+        "event": 78
+      },
+      {
+        "from": "2026-01-15",
+        "to": "2026-03-02",
+        "value": "Diego",
+        "event": 79
+      },
+      {
+        "from": "2026-03-02",
+        "to": "2026-04-13",
+        "value": "Oskar",
+        "event": 80
+      },
+      {
+        "from": "2026-04-13",
+        "to": "2026-05-29",
+        "value": "Diego",
+        "event": 81
+      },
+      {
+        "from": "2026-05-29",
+        "to": null,
+        "value": "Oskar",
+        "event": 82
+      }
+    ]
+  },
+  "deps": {
+    "ledger": [
+      {
+        "dep": "auth-gateway",
+        "from": "2025-03-04",
+        "to": null
+      }
+    ],
+    "billing-api": [
+      {
+        "dep": "ledger",
+        "from": "2025-01-09",
+        "to": null
+      },
+      {
+        "dep": "feature-flags",
+        "from": "2025-09-30",
+        "to": null
+      }
+    ],
+    "notifier": [
+      {
+        "dep": "event-bus",
+        "from": "2025-02-11",
+        "to": null
+      }
+    ],
+    "search-indexer": [
+      {
+        "dep": "catalog",
+        "from": "2025-01-30",
+        "to": null
+      }
+    ],
+    "auth-gateway": [],
+    "catalog": [
+      {
+        "dep": "image-resizer",
+        "from": "2025-04-14",
+        "to": null
+      }
+    ],
+    "image-resizer": [],
+    "event-bus": [],
+    "reporting": [
+      {
+        "dep": "ledger",
+        "from": "2025-01-21",
+        "to": "2025-09-23"
+      },
+      {
+        "dep": "event-bus",
+        "from": "2025-09-23",
+        "to": null
+      }
+    ],
+    "scheduler": [
+      {
+        "dep": "feature-flags",
+        "from": "2025-02-07",
+        "to": null
+      }
+    ],
+    "webhooks": [
+      {
+        "dep": "event-bus",
+        "from": "2025-02-11",
+        "to": null
+      }
+    ],
+    "feature-flags": []
+  },
+  "window": {
+    "ledger": [
+      {
+        "from": "2025-01-14",
+        "to": "2025-08-25",
+        "value": "on weekday mornings before 11:00 UTC",
+        "event": 93
+      },
+      {
+        "from": "2025-08-25",
+        "to": null,
+        "value": "on Wednesdays between 09:00 and 11:00 UTC",
+        "event": 101
+      }
+    ],
+    "billing-api": [
+      {
+        "from": "2025-02-11",
+        "to": null,
+        "value": "on weekdays after 15:00 UTC",
+        "event": 94
+      }
+    ],
+    "auth-gateway": [
+      {
+        "from": "2025-02-18",
+        "to": null,
+        "value": "on Mondays between 10:00 and 12:00 UTC",
+        "event": 95
+      }
+    ],
+    "event-bus": [
+      {
+        "from": "2025-04-18",
+        "to": null,
+        "value": "on Thursdays between 07:00 and 09:00 UTC",
+        "event": 96
+      }
+    ],
+    "catalog": [
+      {
+        "from": "2025-03-17",
+        "to": "2025-09-03",
+        "value": "on Mondays to Thursdays between 09:00 and 17:00 UTC",
+        "event": 97
+      },
+      {
+        "from": "2025-09-03",
+        "to": null,
+        "value": "on weekdays between 08:00 and 10:00 UTC, never on Fridays",
+        "event": 102
+      }
+    ],
+    "reporting": [
+      {
+        "from": "2025-03-26",
+        "to": null,
+        "value": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+        "event": 98
+      }
+    ],
+    "scheduler": [
+      {
+        "from": "2025-02-06",
+        "to": "2025-08-19",
+        "value": "on Tuesdays between 13:00 and 15:00 UTC",
+        "event": 99
+      },
+      {
+        "from": "2025-08-19",
+        "to": null,
+        "value": "on Tuesdays and Fridays between 09:00 and 10:30 UTC",
+        "event": 103
+      }
+    ],
+    "webhooks": [
+      {
+        "from": "2025-04-07",
+        "to": null,
+        "value": "on Mondays and Wednesdays between 14:00 and 16:00 UTC",
+        "event": 100
+      }
+    ]
+  },
+  "wrong_records": [
+    {
+      "service": "billing-api",
+      "old": "Ember",
+      "wrong": "Boreal",
+      "truth": "Atlas",
+      "wrong_date": "2025-06-09",
+      "fix_date": "2025-07-03",
+      "wrong_event": 26,
+      "fix_event": 27
+    },
+    {
+      "service": "notifier",
+      "old": "Boreal",
+      "wrong": "Cinder",
+      "truth": "Dune",
+      "wrong_date": "2025-06-11",
+      "fix_date": "2025-06-27",
+      "wrong_event": 28,
+      "fix_event": 29
+    },
+    {
+      "service": "feature-flags",
+      "old": "Ember",
+      "wrong": "Dune",
+      "truth": "Atlas",
+      "wrong_date": "2026-02-11",
+      "fix_date": "2026-03-09",
+      "wrong_event": 40,
+      "fix_event": 41
+    }
+  ],
+  "events": 193
+}

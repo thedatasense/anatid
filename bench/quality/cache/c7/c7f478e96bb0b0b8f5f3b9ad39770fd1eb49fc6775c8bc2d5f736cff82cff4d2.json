@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- As of 2025-06-16, Team Boreal owns the catalog service, having taken it over from Team Dune. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: As of 2025-03-20, Team Dune owns the catalog service. [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Team Cinder owns the catalog service. [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas, which took it over from Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- As of 2026-03-12, for anything Boreal-related, page Lena. [preference; valid 2026-03-12 to now; recorded by standup/boreal/2026-03-12]\n- As of January 2025, the Boreal team consists of Lena and Marcus. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- As of 2025-11-20, the event bus is owned by Team Boreal, which took it over from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is owned by Team Cinder, which took it over from Team Atlas. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n- As of 2026-02-24, the feature-flags service belongs to Team Cinder, which took it over from Team Boreal. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the feature-flags service belongs to Team Boreal, which took it over from Team Cinder. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the feature-flags service belongs to Team Cinder, which took it over from Team Atlas. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n    earlier: The feature-flags service lives with Team Atlas. [valid 2025-01-08 to 2025-07-09; recorded by standup/atlas/2025-01-08-2]\n- As of 2026-02-19, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: As of 2025-12-26, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: As of 2025-10-31, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n    earlier: As of 2025-09-08, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-09-08 to 2025-10-31; recorded by standup/boreal/2025-09-08]\n    earlier: As of 2025-08-01, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2025-08-01 to 2025-09-08; recorded by standup/boreal/2025-08-01]\n    earlier: As of 2025-06-05, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n    earlier: As of the 2025-04-16 rotation, Lena carries the Team Boreal on-call pager. [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: As of the 2025-02-27 on-call swap, Marcus carries the Team Boreal on-call phone until the next rotation. [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n- As of 2025-08-01, Lena is back on the Team Boreal on-call rotation. [valid 2025-08-01 to now; recorded by standup/boreal/2025-08-01]\n    earlier: As of 2025-06-05, Lena is off the Team Boreal on-call rotation. [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n\nQuestion: Which services does Boreal own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615260-FA10Q9Bq6ddcmBPDp1wL",
+  "object": "chat.completion",
+  "created": 1788615260,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Novita",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Catalog service, event bus",
+     "refusal": null,
+     "reasoning": "The user asks which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the services:\n\n1. Catalog service: As of 2026-05-04, Team Boreal still owns the catalog service. Valid to now. → Boreal owns.\n\n2. Billing service: As of 2026-05-26, billing owned by Team Dune (took from Boreal). → Not Boreal.\n\n3. Auth gateway: As of 2025-12-23, owned by Team Atlas. → Not Boreal.\n\n4. Event bus: As of 2025-11-20, owned by Team Boreal, valid to now. → Boreal owns.\n\n5. Feature-flags: As of 2026-02-24, belongs to Team Cinder. → Not Boreal.\n\nSo Boreal owns: catalog service, event bus.\n\nAnswer in one short line with just the values: \"Catalog service, event bus\" or similar.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the services:\n\n1. Catalog service: As of 2026-05-04, Team Boreal still owns the catalog service. Valid to now. → Boreal owns.\n\n2. Billing service: As of 2026-05-26, billing owned by Team Dune (took from Boreal). → Not Boreal.\n\n3. Auth gateway: As of 2025-12-23, owned by Team Atlas. → Not Boreal.\n\n4. Event bus: As of 2025-11-20, owned by Team Boreal, valid to now. → Boreal owns.\n\n5. Feature-flags: As of 2026-02-24, belongs to Team Cinder. → Not Boreal.\n\nSo Boreal owns: catalog service, event bus.\n\nAnswer in one short line with just the values: \"Catalog service, event bus\" or similar.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1813,
+   "completion_tokens": 211,
+   "total_tokens": 2024,
+   "cost": 0.000188725,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000188725,
+    "upstream_inference_prompt_cost": 0.000135975,
+    "upstream_inference_completions_cost": 5.275e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 204,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 8.276571958034765,
+ "fetched_at": "2026-09-05T13:34:29Z"
+}

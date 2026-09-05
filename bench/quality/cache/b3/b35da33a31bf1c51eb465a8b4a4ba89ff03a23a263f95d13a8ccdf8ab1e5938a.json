@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: webhooks (webhook dispatcher), billing-api, resizer"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616504-gpAGcHB5sBU9F82vo23q",
+  "object": "chat.completion",
+  "created": 1788616504,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names only webhooks, billing-api, and resizer, missing the gold's notifier, search-indexer, and scheduler (and 'resizer' alone does not clearly name 'image-resizer').\"}",
+     "refusal": null,
+     "reasoning": "The question asks which services Dune owns now. Gold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks (6 services).\n\nAnswer to grade: webhooks (webhook dispatcher), billing-api, resizer\n\nCheck each item:\n- webhooks (webhook dispatcher) - \"webhooks\" is in gold; \"webhook dispatcher\" could be considered equivalent? Gold includes \"webhooks\" — yes, matched.\n- billing-api - in gold, matched.\n- resizer - is this \"image-resizer\"? The gold says \"image-resizer\". \"resizer\" could be an abbreviation for image-resizer. But the grading rule: \"Where the gold is a list, every item must be named and no extra item.\" The answer only names 3 services, while gold has 6: billing-api, notifier, search-indexer, image-resizer, scheduler, webhooks. Missing: notifier, search-indexer, scheduler. So incorrect.\n\nEven if resizer counts as image-resizer, the answer is missing notifier, search-indexer, scheduler. So incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Dune owns now. Gold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks (6 services).\n\nAnswer to grade: webhooks (webhook dispatcher), billing-api, resizer\n\nCheck each item:\n- webhooks (webhook dispatcher) - \"webhooks\" is in gold; \"webhook dispatcher\" could be considered equivalent? Gold includes \"webhooks\" — yes, matched.\n- billing-api - in gold, matched.\n- resizer - is this \"image-resizer\"? The gold says \"image-resizer\". \"resizer\" could be an abbreviation for image-resizer. But the grading rule: \"Where the gold is a list, every item must be named and no extra item.\" The answer only names 3 services, while gold has 6: billing-api, notifier, search-indexer, image-resizer, scheduler, webhooks. Missing: notifier, search-indexer, scheduler. So incorrect.\n\nEven if resizer counts as image-resizer, the answer is missing notifier, search-indexer, scheduler. So incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 271,
+   "completion_tokens": 281,
+   "total_tokens": 552,
+   "cost": 7.5215e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 7.5215e-05,
+    "upstream_inference_prompt_cost": 4.965e-06,
+    "upstream_inference_completions_cost": 7.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 227,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.169931625016034,
+ "fetched_at": "2026-09-05T13:55:08Z"
+}

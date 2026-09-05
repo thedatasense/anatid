@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-08-07] incident-review/INC-2025-017: INC-2025-017 review. What happened: auth-gateway rejected every login for 12 minutes on 2025-08-02. Why: an expired intermediate certificate. Follow-up decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\n- [2025-05-30] incident-review/INC-2025-011: Review of INC-2025-011 (Ledger, 2025-05-24). The root cause was an index missing after the schema migration. We decided that ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2026-02-26] incident-review/INC-2026-003: INC-2026-003 review. What happened: the webhooks service delivered some events twice on 2026-02-20. Why: a retry loop that ignored idempotency keys. Follow-up decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-02-05] incident-review/INC-2025-004: Incident review INC-2025-004. The notifier missed alerts for 40 minutes on 2025-02-01. Root cause: a consumer offset stuck after a broker restart. Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004.\n- [2026-05-19] incident-review/INC-2026-009: Incident review INC-2026-009. The scheduler ran the nightly jobs twice on 2026-05-16. Root cause: two leaders elected during a network partition. Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2025-10-07] incident-review/INC-2025-023: Incident review INC-2025-023. The indexer served stale results for two days on 2025-10-03. Root cause: a reindex job that failed silently on a full disk. Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.\n- [2026-05-22] standup/dune/2026-05-22-3: Heads-up from the Dune team: the scheduler's error rate crept up to 2 percent after the dependency bump.\n- [2025-07-29] standup/ember/2025-07-29: Policy: every auth-gateway change requires two reviewer approvals and a security sign-off.\n- [2026-04-14] standup/dune/2026-04-14-2: The Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2026-03-11] standup/cinder/2026-03-11: No deploys to Ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2026-05-22] standup/dune/2026-05-22-2: The Dune team noticed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2026-05-28] standup/ember/2026-05-28: Ember noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-09-23] standup/dune/2025-09-23: Reporting switches from Ledger to the bus as its source. Why: the nightly ledger scans were blocking billing runs. Reporting no longer depends on Ledger.\n- [2025-11-03] standup/boreal/2025-11-03-2: Heads-up from the Boreal team: the notification service's CPU sat at 90 percent after the traffic shift.\n- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-11-03] standup/boreal/2025-11-03: Decided in today's standup: webhooks will sign payloads with rotating keys, since a partner asked for key rotation in their security review.\n- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.\n- [2025-09-23] standup/dune/2025-09-23-2: Team Dune noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners.\n- [2026-02-16] standup/dune/2026-02-16: The Dune team noticed that the product catalog's request volume halved after the client rollout and pinged the owners.\n\nQuestion: What was the root cause of INC-2026-014?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788592787-fs1fU3oFRHw06R3UQrNW",
+  "object": "chat.completion",
+  "created": 1788592787,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Cloudflare",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The user asks about INC-2026-014. Looking through the memory, I see incidents: INC-2025-017, INC-2025-011, INC-2026-003, INC-2025-004, INC-2026-009, INC-2025-023. There's no INC-2026-014. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks about INC-2026-014. Looking through the memory, I see incidents: INC-2025-017, INC-2025-011, INC-2026-003, INC-2025-004, INC-2026-009, INC-2025-023. There's no INC-2026-014. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1531,
+   "completion_tokens": 96,
+   "total_tokens": 1627,
+   "cost": 0.00027765,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00027765,
+    "upstream_inference_prompt_cost": 0.00022965,
+    "upstream_inference_completions_cost": 4.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 55,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.089539374981541,
+ "fetched_at": "2026-09-05T07:19:50Z"
+}

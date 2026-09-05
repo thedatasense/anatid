@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-11-06] handover/2025-11-06-feature-flags: Quick one: feature-flags belongs to team Ember starting today. Thanks to team Atlas for running it until now.\n- [2025-09-02] standup/atlas/2025-09-02: Decided in today's standup: clients will cache feature-flags evaluations for 30 seconds, since feature-flags saw 40,000 requests per second at peak and most of them were identical.\n- [2026-02-11] handover/2026-02-11-feature-flags: The Ember team handed the flags service to the Dune team today; Oskar wrote up the handover doc for Farah.\n- [2025-09-30] standup/atlas/2025-09-30: Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. The billing API now depends on the feature flag service. The Atlas team planning meeting is every Tuesday.\n- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-12-31] standup/atlas/2025-12-31: Atlas saw that the feature flag service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it.\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2025-04-29] standup/ember/2025-04-29: The scheduler still relies on the feature flag service; keep that in mind for the maintenance.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2026-02-03] standup/atlas/2026-02-03: The Atlas team now does a no-deploy Friday.\n- [2025-02-18] standup/ember/2025-02-18: Per the change policy, auth-gateway deploys on Mondays between 10:00 and 12:00 UTC.\n- [2026-04-14] standup/dune/2026-04-14-3: Release captain for Q3 2025: Farah.\n- [2026-03-11] standup/cinder/2026-03-11: No deploys to Ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close.\n- [2025-11-11] standup/atlas/2025-11-11: Deploy freeze for the billing API: 2025-11-24 to 2025-12-02 (the peak season).\n- [2026-06-01] standup/ember/2026-06-01: For newcomers: the deploy window for the reporting service is still on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\n- [2025-12-29] standup/cinder/2025-12-29: Reminder: auth-gateway deploys only on Mondays between 10:00 and 12:00 UTC.\n- [2026-01-22] standup/atlas/2026-01-22: The product catalog deploy window (unchanged): on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2025-08-25] standup/atlas/2025-08-25: New deploy window for Ledger: on Wednesdays between 09:00 and 11:00 UTC. Forget the previous weekday mornings before 11:00 UTC slot.\n- [2025-02-06] standup/ember/2025-02-06: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time.\n- [2025-07-29] standup/ember/2025-07-29: Policy: every auth-gateway change requires two reviewer approvals and a security sign-off.\n- [2026-03-03] standup/cinder/2026-03-03: The auth gateway deploy window (unchanged): on Mondays between 10:00 and 12:00 UTC.\n- [2025-09-24] standup/atlas/2025-09-24: Ledger deploy window (unchanged): on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-09-03] standup/cinder/2025-09-03: New deploy window for the product catalog: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Mon-Thu 09:00-17:00 UTC slot.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-08-19] standup/dune/2025-08-19: The job scheduler's deploy window changes today: it is now on Tuesdays and Fridays between 09:00 and 10:30 UTC. The old slot (Tuesdays 13:00-15:00 UTC) is retired.\n- [2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\n- [2025-05-22] standup/boreal/2025-05-22: Lena Fischer is the release captain for Q1 2026.\n- [2025-11-03] standup/boreal/2025-11-03: Decided in today's standup: webhooks will sign payloads with rotating keys, since a partner asked for key rotation in their security review.\n- [2025-04-07] standup/ember/2025-04-07: Per the change policy, the webhooks service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. Heads-up from the Ember team: the notifier's request volume halved after the client rollout.\n\nQuestion: When can feature-flags be deployed?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788592763-vwPFkC32csmFSqtXTjEf",
+  "object": "chat.completion",
+  "created": 1788592763,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"When can feature-flags be deployed?\" I need to look through the memory for any deploy window for feature-flags.\n\nScanning the memory entries:\n- Feature-flags ownership: Atlas (2025-01-08), Ember (2025-11-06), Dune then corrected to Atlas (2026-02-11, correction 2026-03-09).\n- Various deploy windows mentioned: auth-gateway (Mondays 10:00-12:00), reporting (Tuesdays/Thursdays 10:00-12:00), product catalog (weekdays 08:00-10:00, not Friday), Ledger (Wednesdays 09:00-11:00), job scheduler (Tuesdays/Fridays 09:00-10:30), event bus (Thursdays 07:00-09:00), webhooks (Mondays and Wednesdays 14:00-16:00).\n\nNo deploy window for feature-flags is stated anywhere in the memory. There's a no-deploy Friday for the Atlas team (2026-02-03), and currently feature-flags belongs to Atlas (per the 2026-03-09 correction). But that doesn't specify a deploy window — only a constraint that Atlas doesn't deploy on Fridays.\n\nThe rules say: answer only from memory; if memory doesn't contain the answer, reply exactly \"I don't know\".\n\nThe question asks for a deploy window for feature-flags. There is no explicit deploy window given for feature-flags. So the answer should be \"I don't know\".\n\nCould one infer from \"Atlas team now does a no-deploy Friday\" and feature-flags owned by Atlas? That would be a guess/inference about deploy timing — the rules say don't guess. The memory does not contain a deploy window for feature-flags.\n\nAnswer: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"When can feature-flags be deployed?\" I need to look through the memory for any deploy window for feature-flags.\n\nScanning the memory entries:\n- Feature-flags ownership: Atlas (2025-01-08), Ember (2025-11-06), Dune then corrected to Atlas (2026-02-11, correction 2026-03-09).\n- Various deploy windows mentioned: auth-gateway (Mondays 10:00-12:00), reporting (Tuesdays/Thursdays 10:00-12:00), product catalog (weekdays 08:00-10:00, not Friday), Ledger (Wednesdays 09:00-11:00), job scheduler (Tuesdays/Fridays 09:00-10:30), event bus (Thursdays 07:00-09:00), webhooks (Mondays and Wednesdays 14:00-16:00).\n\nNo deploy window for feature-flags is stated anywhere in the memory. There's a no-deploy Friday for the Atlas team (2026-02-03), and currently feature-flags belongs to Atlas (per the 2026-03-09 correction). But that doesn't specify a deploy window — only a constraint that Atlas doesn't deploy on Fridays.\n\nThe rules say: answer only from memory; if memory doesn't contain the answer, reply exactly \"I don't know\".\n\nThe question asks for a deploy window for feature-flags. There is no explicit deploy window given for feature-flags. So the answer should be \"I don't know\".\n\nCould one infer from \"Atlas team now does a no-deploy Friday\" and feature-flags owned by Atlas? That would be a guess/inference about deploy timing — the rules say don't guess. The memory does not contain a deploy window for feature-flags.\n\nAnswer: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1661,
+   "completion_tokens": 404,
+   "total_tokens": 2065,
+   "cost": 0.000214055,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000214055,
+    "upstream_inference_prompt_cost": 0.000113055,
+    "upstream_inference_completions_cost": 0.000101
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 398,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.400494583998807,
+ "fetched_at": "2026-09-05T07:19:28Z"
+}

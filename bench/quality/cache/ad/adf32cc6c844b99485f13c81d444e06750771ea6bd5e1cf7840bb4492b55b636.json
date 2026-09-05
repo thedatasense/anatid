@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Farah takes the first on-call rotation for team Dune. [decision; valid 2025-01-13 to now; recorded by standup/dune/2025-01-13]\n- As of 2026-03-02, Oskar Lind is on the Ember team's on-call rotation. [valid 2026-03-02 to now; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Oskar is off the Ember team's on-call rotation. [valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, Diego is off the Ember team's on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: As of 2025-06-19, Tomasz is the primary on-call for the Atlas team and Priya Raman is no longer the primary on-call. [decision; valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: As of 2025-05-13, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. [decision; valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Priya Raman is no longer the primary on-call for the Atlas team; Tomasz is the primary on-call for the Atlas team this cycle as of 2025-04-03. [decision; valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12; Tomasz is off rotation. [decision; valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz takes the first on-call rotation for the Atlas team. [decision; valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- As of 2026-05-22, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah. [decision; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager; on 2026-04-14 Tomasz handed the pager back to Farah. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Farah was the primary on-call for team Dune until 2026-03-11, when Tomasz took over the pager. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is the primary on-call for team Dune. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- Farah is the release captain for Q3 2025, per the 2026-04-14 team Dune standup. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- As of 2026-04-14, Farah holds the Dune on-call shift for team Dune, taking over from Tomasz; Tomasz held it as of 2026-03-11, and Farah held it as of 2026-01-16. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah; as of 2026-01-16 Farah held it. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad holds the Dune on-call shift for team Dune; Tomasz is off rotation. [decision; valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz holds the Dune on-call shift for team Dune, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n    earlier: As of 2025-10-15, Farah holds the Dune on-call shift for team Dune, having taken over from Tomasz. [valid 2025-10-15 to 2025-11-17; recorded by standup/dune/2025-10-15]\n    earlier: As of 2025-09-04, Tomasz holds the Dune on-call shift, having picked it up from Farah. [valid 2025-09-04 to 2025-10-15; recorded by standup/dune/2025-09-04]\n- As of 2026-04-14, Farah holds the Dune pager this cycle, taking over from Tomasz, who held it as of 2026-03-11. [decision; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz holds the Dune pager this cycle, taking over from Farah. [decision; valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n\nQuestion: Who is on call for Farah's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596228-JkpP5Uw61jCV9SoU3DWa",
+  "object": "chat.completion",
+  "created": 1788596228,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tomasz",
+     "refusal": null,
+     "reasoning": "The question asks: \"Who is on call for Farah's team right now?\" Today is 2026-06-30.\n\nFarah's team is team Dune (Farah is associated with team Dune based on memory entries).\n\nCurrent on-call for team Dune: The latest entries say as of 2026-05-22, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah. Valid 2026-05-22 to now.\n\nBut there's also an entry: \"As of 2026-04-14, Farah holds the Dune on-call shift for team Dune, taking over from Tomasz\" valid 2026-04-14 to now, recorded by standup/dune/2026-04-14.\n\nThe 2026-05-22 entry is later and supersedes. So Tomasz holds the Dune on-call shift as of 2026-05-22, valid to now.\n\nSo the answer: Tomasz.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Who is on call for Farah's team right now?\" Today is 2026-06-30.\n\nFarah's team is team Dune (Farah is associated with team Dune based on memory entries).\n\nCurrent on-call for team Dune: The latest entries say as of 2026-05-22, Tomasz holds the Dune on-call shift for team Dune, taking over from Farah. Valid 2026-05-22 to now.\n\nBut there's also an entry: \"As of 2026-04-14, Farah holds the Dune on-call shift for team Dune, taking over from Tomasz\" valid 2026-04-14 to now, recorded by standup/dune/2026-04-14.\n\nThe 2026-05-22 entry is later and supersedes. So Tomasz holds the Dune on-call shift as of 2026-05-22, valid to now.\n\nSo the answer: Tomasz.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1742,
+   "completion_tokens": 217,
+   "total_tokens": 1959,
+   "cost": 0.0003698,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003698,
+    "upstream_inference_prompt_cost": 0.0002613,
+    "upstream_inference_completions_cost": 0.0001085
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 212,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.695124542049598,
+ "fetched_at": "2026-09-05T08:17:10Z"
+}

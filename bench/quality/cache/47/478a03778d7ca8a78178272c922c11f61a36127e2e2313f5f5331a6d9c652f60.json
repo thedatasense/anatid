@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- [constraint] The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. (since 2025-03-26; source standup/dune/2025-03-26)\n- Team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the reporting service's owners. (since 2026-04-14; source standup/dune/2026-04-14-2)\n- [constraint] Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. (since 2025-04-18; source standup/boreal/2025-04-18)\n- [constraint] As of 2025-08-19, deploys to the job scheduler happen only on Tuesdays and Fridays between 09:00 and 10:30 UTC; the old Tuesday 13:00-15:00 UTC window is retired. (since 2025-08-19; source standup/dune/2025-08-19)\n  - earlier: [constraint] Deploys to the job scheduler happen only on Tuesdays between 13:00 and 15:00 UTC. (held 2025-02-06 to 2025-08-19; source standup/ember/2025-02-06)\n- [constraint] The ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. (since 2025-08-25; source standup/atlas/2025-08-25)\n  - earlier: [constraint] The ledger service only ships on weekday mornings before 11:00 UTC. (held 2025-01-14 to 2025-08-25; source standup/atlas/2025-01-14)\n- [decision] The Atlas team does a no-deploy Friday. (since 2026-02-03; source standup/atlas/2026-02-03)\n- [constraint] Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. (since 2025-04-07; source standup/ember/2025-04-07)\n- [constraint] Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. (since 2025-02-18; source standup/ember/2025-02-18)\n- [constraint] The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, the peak season. (since 2025-11-11; source standup/atlas/2025-11-11)\n- [constraint] The ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 because of the fiscal year close. (since 2026-03-11; source standup/cinder/2026-03-11)\n- feature-flags' p99 latency doubled after Tuesday's deploy. (since 2025-04-24; source standup/cinder/2025-04-24-2)\n- [decision] As of 2025-12-05, reporting is owned by the Ember team, taking over from team Dune. (since 2025-12-05; source handover/2025-12-05-reporting)\n- [constraint] The product catalog deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. (since 2025-09-03; source standup/cinder/2025-09-03)\n  - earlier: [constraint] The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. (held 2025-03-17 to 2025-09-03; source standup/cinder/2025-03-17)\n- Until 2025-09-23, the reporting service depended on the ledger service for the nightly balance export; it no longer depends on the ledger service. (since 2025-09-23; source standup/dune/2025-09-23)\n  - earlier: The reporting service depends on the ledger service for the nightly balance export. (held 2025-01-21 to 2025-09-23; source standup/dune/2025-01-21)\n- From 2025-12-05, the pager for reporting rings the Ember team, not team Dune. (since 2025-12-05; source handover/2025-12-05-reporting)\n- The reporting service is owned by the Ember team. (since 2026-04-13; source standup/ember/2026-04-13-2)\n  - earlier: The reporting service is owned by team Dune. (held 2025-01-20 to 2026-04-13; source standup/dune/2025-01-20-2)\n- As of 2026-04-13, the Ember team still owns the reporting service. (since 2026-04-13; source standup/ember/2026-04-13-2)\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service, because the nightly ledger scans were blocking billing runs. (since 2025-09-23; source standup/dune/2025-09-23)\n- The notifier missed alerts for 40 minutes on 2025-02-01 during INC-2025-004. (since 2025-02-05; source incident-review/INC-2025-004)\n- The Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. (since 2026-05-27; source standup/atlas/2026-05-27)\n\nQuestion: What is the deploy window for reporting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608276-poSrECPIKbSfFTjMDPi7",
+  "object": "chat.completion",
+  "created": 1788608277,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+     "refusal": null,
+     "reasoning": "The user asks: \"What is the deploy window for reporting?\"\n\nMemory: \"[constraint] The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. (since 2025-03-26; source standup/dune/2025-03-26)\"\n\nThat's the deploy window for the reporting service. Answer: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"What is the deploy window for reporting?\"\n\nMemory: \"[constraint] The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. (since 2025-03-26; source standup/dune/2025-03-26)\"\n\nThat's the deploy window for the reporting service. Answer: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1525,
+   "completion_tokens": 113,
+   "total_tokens": 1638,
+   "cost": 0.000142625,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000142625,
+    "upstream_inference_prompt_cost": 0.000114375,
+    "upstream_inference_completions_cost": 2.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 93,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.2701601249864325,
+ "fetched_at": "2026-09-05T11:38:00Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Oskar is the only engineer on the Ember team for now. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- As of 2025-03-19, the Ember team does pairing on every production change. [decision; valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- As of 2025-06-20, the webhooks service lives with Team Dune, which took it over from Team Atlas. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n    earlier: As of 2025-06-20, the webhooks service lives with the Ember team, which took it over from Team Atlas. [valid 2025-06-20 to 2025-07-04; recorded by handover/2025-06-20-webhooks]\n    earlier: As of 2025-03-28, the webhooks service lives with Team Atlas. [valid 2025-03-28 to 2025-06-20; recorded by handover/2025-03-28-webhooks]\n    earlier: The webhooks service lives with Team Boreal. [valid 2025-01-09 to 2025-03-28; recorded by standup/boreal/2025-01-09-2]\n- As of 2025-10-15, the scheduler is owned by Team Dune, which took it over from Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Atlas, which took it over from the Ember team. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder, which took it over from the Ember team. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- As of 2025-12-08, the indexer is owned by Team Dune, which took it over from Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- As of 2025-11-07, the reporting service belongs to the Ember team, which took it over from Team Dune. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service belongs to Team Boreal, which took it over from Team Dune. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- As of 2025-12-01, the resizer is owned by Team Dune, which took it over from the Ember team. [valid 2025-12-01 to now; recorded by handover/2025-12-01-image-resizer]\n    earlier: As of 2025-04-29, the resizer is owned by the Ember team. [valid 2025-04-29 to 2025-12-01; recorded by handover/2025-04-29-image-resizer]\n    earlier: The resizer lives with Team Dune. [valid 2025-01-20 to 2025-04-29; recorded by standup/dune/2025-01-20]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- INC-2025-017's root cause was an expired intermediate certificate, which took logins down. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2025-11-20, the event bus is owned by Team Boreal, which took it over from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is owned by Team Cinder, which took it over from Team Atlas. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n\nQuestion: Which services does Dune own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614740-g2MWOMTcVfpaCGhb9H7v",
+  "object": "chat.completion",
+  "created": 1788614740,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Webhooks, scheduler, indexer, resizer, billing",
+     "refusal": null,
+     "reasoning": "I need to find which services Team Dune owns now (today is 2026-06-30).\n\nLet me go through each service and find the current owner:\n\n1. Webhooks: As of 2025-06-20, webhooks lives with Team Dune (took over from Team Atlas). Valid 2025-07-04 to now. → Dune owns webhooks.\n\n2. Scheduler: As of 2025-10-15, scheduler owned by Team Dune. Valid to now. → Dune owns scheduler.\n\n3. Indexer: As of 2025-12-08, indexer owned by Team Dune. Valid to now. → Dune owns indexer.\n\n4. Reporting: As of 2025-11-07, reporting belongs to Ember team (took over from Dune). Valid 2025-11-17 to now. → Not Dune.\n\n5. Resizer: As of 2025-12-01, resizer owned by Team Dune. Valid to now. → Dune owns resizer.\n\n6. Billing: As of 2026-05-26, billing owned by Team Dune. Valid to now. → Dune owns billing.\n\n7. Ledger: owned by Ember team. → Not Dune.\n\n8. Event bus: owned by Team Boreal. → Not Dune.\n\nSo Dune owns: webhooks, scheduler, indexer, resizer, billing.\n\nThe instructions say reply in one short line with just the value asked for. So I should list them in one line.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "I need to find which services Team Dune owns now (today is 2026-06-30).\n\nLet me go through each service and find the current owner:\n\n1. Webhooks: As of 2025-06-20, webhooks lives with Team Dune (took over from Team Atlas). Valid 2025-07-04 to now. → Dune owns webhooks.\n\n2. Scheduler: As of 2025-10-15, scheduler owned by Team Dune. Valid to now. → Dune owns scheduler.\n\n3. Indexer: As of 2025-12-08, indexer owned by Team Dune. Valid to now. → Dune owns indexer.\n\n4. Reporting: As of 2025-11-07, reporting belongs to Ember team (took over from Dune). Valid 2025-11-17 to now. → Not Dune.\n\n5. Resizer: As of 2025-12-01, resizer owned by Team Dune. Valid to now. → Dune owns resizer.\n\n6. Billing: As of 2026-05-26, billing owned by Team Dune. Valid to now. → Dune owns billing.\n\n7. Ledger: owned by Ember team. → Not Dune.\n\n8. Event bus: owned by Team Boreal. → Not Dune.\n\nSo Dune owns: webhooks, scheduler, indexer, resizer, billing.\n\nThe instructions say reply in one short line with just the value asked for. So I should list them in one line.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1778,
+   "completion_tokens": 335,
+   "total_tokens": 2113,
+   "cost": 0.00020174,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00020174,
+    "upstream_inference_prompt_cost": 0.00011799,
+    "upstream_inference_completions_cost": 8.375e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 322,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.6314033750095405,
+ "fetched_at": "2026-09-05T13:25:43Z"
+}

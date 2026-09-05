@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Why do reindex jobs page on failure?\nGold answer: a silent reindex failure left stale results for two days in INC-2025-023\nAlso accepted: (none)\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: Because a reindex job failed silently on a full disk (INC-2025-023)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788598022-NKml2jAmujSukJz7GKmH",
+  "object": "chat.completion",
+  "created": 1788598022,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states the core gold fact — a silent reindex failure tied to INC-2025-023 caused the paging — and extra uncontradicted detail is permitted.\"}\n",
+     "refusal": null,
+     "reasoning": "The gold answer: \"a silent reindex failure left stale results for two days in INC-2025-023\"\n\nThe answer to grade: \"Because a reindex job failed silently on a full disk (INC-2025-023).\"\n\nThe answer states a silent reindex failure with INC-2025-023, but adds \"on a full disk\" and omits \"left stale results for two days\". The rule says: correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nThe core fact is: a silent reindex failure in INC-2025-023 caused paging (to prevent stale results). The answer states the silent reindex failure and the incident number. The \"full disk\" is extra detail that isn't in the gold answer — is it \"extra correct context\"? The rule says extra correct context is fine, but \"on a full disk\" is not verified as correct context; it's an unverified detail. However, the key fact — silent reindex failure related to INC-2025-023 — is stated. The gold fact is that a silent reindex failure left stale results in INC-2025-023, which is why jobs now page. The answer captures: reindex job failed silently, INC-2025-023. It doesn't mention stale results for two days, but the core fact (silent reindex failure, incident reference) matches.\n\nThe question is why do reindex jobs page on failure? The answer explains: because a reindex job failed silently (INC-2025-023). That matches the gold fact's essential content. The \"full disk\" detail is added. Is it a different value? The gold fact doesn't specify cause. The answer's core matches. I'd say correct — the main fact (silent reindex failure, INC-2025-023) is stated; extra detail is allowed per rule (\"extra correct context is fine\"). Though we can't verify full disk is correct, the rule seems to allow extra context. The key differentiator: does the answer state the gold fact? Yes — silent reindex failure with INC-2025-023.\n\nI'll mark correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer: \"a silent reindex failure left stale results for two days in INC-2025-023\"\n\nThe answer to grade: \"Because a reindex job failed silently on a full disk (INC-2025-023).\"\n\nThe answer states a silent reindex failure with INC-2025-023, but adds \"on a full disk\" and omits \"left stale results for two days\". The rule says: correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nThe core fact is: a silent reindex failure in INC-2025-023 caused paging (to prevent stale results). The answer states the silent reindex failure and the incident number. The \"full disk\" is extra detail that isn't in the gold answer — is it \"extra correct context\"? The rule says extra correct context is fine, but \"on a full disk\" is not verified as correct context; it's an unverified detail. However, the key fact — silent reindex failure related to INC-2025-023 — is stated. The gold fact is that a silent reindex failure left stale results in INC-2025-023, which is why jobs now page. The answer captures: reindex job failed silently, INC-2025-023. It doesn't mention stale results for two days, but the core fact (silent reindex failure, incident reference) matches.\n\nThe question is why do reindex jobs page on failure? The answer explains: because a reindex job failed silently (INC-2025-023). That matches the gold fact's essential content. The \"full disk\" detail is added. Is it a different value? The gold fact doesn't specify cause. The answer's core matches. I'd say correct — the main fact (silent reindex failure, INC-2025-023) is stated; extra detail is allowed per rule (\"extra correct context is fine\"). Though we can't verify full disk is correct, the rule seems to allow extra context. The key differentiator: does the answer state the gold fact? Yes — silent reindex failure with INC-2025-023.\n\nI'll mark correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 265,
+   "completion_tokens": 523,
+   "total_tokens": 788,
+   "cost": 0.000142945,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000142945,
+    "upstream_inference_prompt_cost": 1.2195e-05,
+    "upstream_inference_completions_cost": 0.00013075
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 471,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.633656374993734,
+ "fetched_at": "2026-09-05T08:47:08Z"
+}

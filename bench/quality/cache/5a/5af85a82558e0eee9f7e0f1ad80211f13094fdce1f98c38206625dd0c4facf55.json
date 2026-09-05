@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-30] standup/cinder/2025-01-30: If the catalog service is down, the search indexer is down: it relies on it for product documents.\n- [2025-12-18] standup/atlas/2025-12-18: Decided in today's standup: search-indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes.\n- [2026-04-01] handover/2026-04-01-search-indexer: From today the pager for the search indexer rings the Boreal team, not team Atlas. Ownership transferred.\n- [2025-05-20] handover/2025-05-20-search-indexer: Team Atlas is taking over search-indexer from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.\n- [2026-05-27] standup/atlas/2026-05-27: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. The Atlas team noticed that search-indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. The catalog still relies on the resizer; keep that in mind for the maintenance.\n- [2025-04-22] standup/cinder/2025-04-22: The search indexer is pinned to OpenSearch 2.11; the pin lifts when the full reindex completes.\n- [2026-06-09] standup/dune/2026-06-09: Observation from team Dune: after the retention change, search-indexer's disk usage jumped 30 percent.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-12-19] handover/2025-12-19-catalog: Atlas is taking over the product catalog from the Cinder team, effective today. Dashboards and alerts are being repointed.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-05-30] incident-review/INC-2025-011: Review of INC-2025-011 (Ledger, 2025-05-24). The root cause was an index missing after the schema migration. We decided that ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-11-04] standup/atlas/2025-11-04: Reminder that the billing API depends on the ledger.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-07-03] handover/2025-07-03-billing-api-correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it.\n- [2025-01-21] standup/dune/2025-01-21: Dependency map update: reporting needs the ledger service (the nightly balance export).\n- [2025-01-09] standup/atlas/2025-01-09-2: Dependency map update: billing-api needs Ledger (invoice postings).\n- [2025-02-07] standup/ember/2025-02-07: Dependency map update: scheduler needs the feature flag service (per-job kill switches).\n- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.\n- [2026-05-22] standup/dune/2026-05-22-3: Heads-up from the Dune team: the scheduler's error rate crept up to 2 percent after the dependency bump.\n- [2025-12-18] standup/boreal/2025-12-18: Rotation day for Boreal: Marcus hands the pager to Lena. Boreal adopted a weekly dependency update day.\n- [2025-03-17] standup/cinder/2025-03-17: The catalog service can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception.\n- [2026-02-10] standup/boreal/2026-02-10-2: Team Boreal noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.\n\nQuestion: Which note first recorded that search-indexer depends on the catalog, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788592096-iQhHzqhkn7gWJObjKyCe",
+  "object": "chat.completion",
+  "created": 1788592096,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/cinder/2025-01-30, on 2025-01-30",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded that search-indexer depends on the catalog, and when?\n\nLooking through the memory:\n- [2025-01-30] standup/cinder/2025-01-30: \"If the catalog service is down, the search indexer is down: it relies on it for product documents.\"\n\nThat's the earliest note recording the dependency of search-indexer on catalog. Date: 2025-01-30, note: standup/cinder/2025-01-30.\n\nAnswer in one short line with just the value asked for: the note name and date.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded that search-indexer depends on the catalog, and when?\n\nLooking through the memory:\n- [2025-01-30] standup/cinder/2025-01-30: \"If the catalog service is down, the search indexer is down: it relies on it for product documents.\"\n\nThat's the earliest note recording the dependency of search-indexer on catalog. Date: 2025-01-30, note: standup/cinder/2025-01-30.\n\nAnswer in one short line with just the value asked for: the note name and date.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1574,
+   "completion_tokens": 147,
+   "total_tokens": 1721,
+   "cost": 0.0003096,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003096,
+    "upstream_inference_prompt_cost": 0.0002361,
+    "upstream_inference_completions_cost": 7.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 125,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.019393082999159,
+ "fetched_at": "2026-09-05T07:08:21Z"
+}

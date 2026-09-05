@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Why do reindex jobs page on failure?\nGold answer: a silent reindex failure left stale results for two days in INC-2025-023\nAlso accepted: (none)\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: A reindex job failed silently on a full disk, which was the root cause of INC-2025-023."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788608351-GPOZdj5eaicYGJQBCRa4",
+  "object": "chat.completion",
+  "created": 1788608351,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer does not state the gold fact that the silent reindex failure left stale results for two days in INC-2025-023, instead introducing an unsupported full-disk cause and omitting the key detail.\"}",
+     "refusal": null,
+     "reasoning": "Compare the answer to grade with the gold answer.\n\nGold: \"a silent reindex failure left stale results for two days in INC-2025-023\"\n\nAnswer to grade: \"A reindex job failed silently on a full disk, which was the root cause of INC-2025-023.\"\n\nThe gold says a silent reindex failure left stale results for two days in INC-2025-023. The answer says the silent failure was the root cause of INC-2025-023. The question is \"Why do reindex jobs page on failure?\" The gold fact: because a silent reindex failure left stale results for two days in INC-2025-023. The answer to grade says the root cause was a full disk, and the silent failure caused INC-2025-023. Hmm.\n\nThe gold fact emphasizes \"left stale results for two days\" — that's why paging exists: to prevent silent failures leaving stale results. The answer to grade says the silent failure was the root cause of the incident, but doesn't mention stale results or two days. Is it a different value? The rule: Correct if the answer states the gold fact or an accepted alias. The answer states a silent reindex failure occurred in INC-2025-023, but attributes cause differently (full disk) and doesn't state stale results for two days. The core fact — silent reindex failure related to INC-2025-023 — is partially there. But \"root cause of INC-2025-023\" vs \"left stale results for two days in INC-2025-023\" — the answer adds unsupported detail (full disk) and omits the key \"stale results for two days.\"\n\nGrading literally: the gold fact is that a silent reindex failure left stale results for two days in INC-2025-023. The answer says a reindex job failed silently on a full disk which was root cause of INC-2025-023. Does it state the gold fact? Not exactly — it states a silent failure was tied to INC-2025-023, which is part of the fact, but the reason for paging (stale results for two days) is missing, and it adds a different mechanism (full disk). Under strict grading, \"a different value... is wrong.\" The answer gives a different cause framing. I'd mark it incorrect because it doesn't state the gold fact (stale results for two days) and introduces an unsupported different cause. However, one could argue extra correct context is fine — but \"full disk\" is not gold, and the essential detail (stale results, two days) is missing. The question asks why jobs page on failure — answer should be because of the silent failure leaving stale results for two days. The graded answer says because a failure was root cause of the incident — partially aligned but missing the key reason.\n\nI'll grade as incorrect: it omits the stale-results-for-two-days fact and adds an unsupported full-disk cause, giving a different value.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Compare the answer to grade with the gold answer.\n\nGold: \"a silent reindex failure left stale results for two days in INC-2025-023\"\n\nAnswer to grade: \"A reindex job failed silently on a full disk, which was the root cause of INC-2025-023.\"\n\nThe gold says a silent reindex failure left stale results for two days in INC-2025-023. The answer says the silent failure was the root cause of INC-2025-023. The question is \"Why do reindex jobs page on failure?\" The gold fact: because a silent reindex failure left stale results for two days in INC-2025-023. The answer to grade says the root cause was a full disk, and the silent failure caused INC-2025-023. Hmm.\n\nThe gold fact emphasizes \"left stale results for two days\" — that's why paging exists: to prevent silent failures leaving stale results. The answer to grade says the silent failure was the root cause of the incident, but doesn't mention stale results or two days. Is it a different value? The rule: Correct if the answer states the gold fact or an accepted alias. The answer states a silent reindex failure occurred in INC-2025-023, but attributes cause differently (full disk) and doesn't state stale results for two days. The core fact — silent reindex failure related to INC-2025-023 — is partially there. But \"root cause of INC-2025-023\" vs \"left stale results for two days in INC-2025-023\" — the answer adds unsupported detail (full disk) and omits the key \"stale results for two days.\"\n\nGrading literally: the gold fact is that a silent reindex failure left stale results for two days in INC-2025-023. The answer says a reindex job failed silently on a full disk which was root cause of INC-2025-023. Does it state the gold fact? Not exactly — it states a silent failure was tied to INC-2025-023, which is part of the fact, but the reason for paging (stale results for two days) is missing, and it adds a different mechanism (full disk). Under strict grading, \"a different value... is wrong.\" The answer gives a different cause framing. I'd mark it incorrect because it doesn't state the gold fact (stale results for two days) and introduces an unsupported different cause. However, one could argue extra correct context is fine — but \"full disk\" is not gold, and the essential detail (stale results, two days) is missing. The question asks why jobs page on failure — answer should be because of the silent failure leaving stale results for two days. The graded answer says because a failure was root cause of the incident — partially aligned but missing the key reason.\n\nI'll grade as incorrect: it omits the stale-results-for-two-days fact and adds an unsupported full-disk cause, giving a different value.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 270,
+   "completion_tokens": 686,
+   "total_tokens": 956,
+   "cost": 0.00018791,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00018791,
+    "upstream_inference_prompt_cost": 1.641e-05,
+    "upstream_inference_completions_cost": 0.0001715
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 630,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 12.741289000026882,
+ "fetched_at": "2026-09-05T11:39:24Z"
+}

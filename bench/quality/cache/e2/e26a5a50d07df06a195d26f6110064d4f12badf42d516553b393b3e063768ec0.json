@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The product catalog still relies on the image resizer. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-03-17 the Atlas team decided that the image resizer will keep original uploads for 90 days only, because storage for originals doubled in six months. [decision; valid 2026-03-17 to now; recorded by standup/atlas/2026-03-17]\n- The image resizer is owned by the Atlas team as of 2025-11-26, having moved from the Ember team. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The image resizer is owned by the Ember team as of 2025-03-20. [valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: The Dune team owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- On 2026-06-09 the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team, having moved from the Ember team; the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team, having moved from the Ember team. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n- Dashboards and alerts for the image resizer are being repointed as of the 2025-11-26 handover. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n- On 2025-08-19 the Dune team observed that the resizer's cold start time tripled after the runtime upgrade. [valid 2025-08-19 to now; recorded by standup/dune/2025-08-19-2]\n- The product catalog calls the image resizer for thumbnails. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- The image resizer is a hard dependency of the product catalog. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- On 2025-10-15 the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-10-15 to now; recorded by standup/atlas/2025-10-15]\n- As of 2026-04-14, Farah holds the Dune team pager, taking over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is the primary on-call for the Dune team, taking over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah is the primary on-call for the Dune team. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- As of 2026-05-22, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- On 2026-02-16 the Dune team noticed that the product catalog's request volume halved after the client rollout and pinged the owners. [valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- On 2025-12-29 the Dune team observed that the event bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- The product catalog is owned by the Atlas team as of 2025-12-19, having moved from Cinder. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n\nQuestion: Which team owned image-resizer before Dune?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603659-iIianNLtQ373tPInY8Eb",
+  "object": "chat.completion",
+  "created": 1788603659,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which team owned the image resizer before Dune. From memory: The Dune team owns the image resizer [valid 2025-01-20 to 2025-03-20], then Ember team as of 2025-03-20, then Atlas team as of 2025-11-26.\n\nThe question: \"Which team owned image-resizer before Dune?\" - Before Dune's ownership, there is no earlier entry in memory. The earliest ownership entry is Dune starting 2025-01-20. So the memory doesn't contain an owner before Dune.\n\nWait, but could the question mean \"before Dune\" as in the predecessor of Dune? The chain is Dune → Ember → Atlas. There's no team before Dune recorded. So answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owned the image resizer before Dune. From memory: The Dune team owns the image resizer [valid 2025-01-20 to 2025-03-20], then Ember team as of 2025-03-20, then Atlas team as of 2025-11-26.\n\nThe question: \"Which team owned image-resizer before Dune?\" - Before Dune's ownership, there is no earlier entry in memory. The earliest ownership entry is Dune starting 2025-01-20. So the memory doesn't contain an owner before Dune.\n\nWait, but could the question mean \"before Dune\" as in the predecessor of Dune? The chain is Dune → Ember → Atlas. There's no team before Dune recorded. So answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1555,
+   "completion_tokens": 180,
+   "total_tokens": 1735,
+   "cost": 0.000138585,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 384,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000138585,
+    "upstream_inference_prompt_cost": 9.3585e-05,
+    "upstream_inference_completions_cost": 4.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 174,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0396835419815034,
+ "fetched_at": "2026-09-05T10:21:02Z"
+}

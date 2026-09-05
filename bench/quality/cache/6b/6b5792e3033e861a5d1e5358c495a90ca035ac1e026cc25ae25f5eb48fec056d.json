@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: When can the event-bus be deployed?\nGold answer: on Tuesdays and Thursdays between 10:00 and 12:00 UTC\nAlso accepted: Tue/Thu 10:00-12:00 UTC\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: I don't know"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616333-X522lqmWzBJxFwwEMVPe",
+  "object": "chat.completion",
+  "created": 1788616333,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer says 'I don't know', which is explicitly wrong per the grading rule, instead of stating the deployment window of Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"}",
+     "refusal": null,
+     "reasoning": "The answer is \"I don't know\" which per the grading rule is wrong.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer is \"I don't know\" which per the grading rule is wrong.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 249,
+   "completion_tokens": 71,
+   "total_tokens": 320,
+   "cost": 3.6425e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.6425e-05,
+    "upstream_inference_prompt_cost": 1.8675e-05,
+    "upstream_inference_completions_cost": 1.775e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 17,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.894181292038411,
+ "fetched_at": "2026-09-05T13:52:17Z"
+}

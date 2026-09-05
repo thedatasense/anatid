@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note recorded Diego's move to Ember, and when?\nGold answer: standup/cinder/2025-11-27 (2025-11-27)\nAlso accepted: standup/cinder/2025-11-27; 2025-11-27; 27 November 2025; November 27, 2025; the standup note of 2025-11-27; the standup note of 27 November 2025; the standup note of November 27, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/ember/2026-01-15, as of 2026-01-15"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788598073-QsAD970Z2tEGv6aKYoZG",
+  "object": "chat.completion",
+  "created": 1788598073,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer identifies a different note (standup/ember/2026-01-15) and a different date (2026-01-15) than the gold note standup/cinder/2025-11-27 from 2025-11-27.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is standup/cinder/2025-11-27 (2025-11-27). The answer to grade is \"standup/ember/2026-01-15, as of 2026-01-15\" — a different note and different date. According to the grading rule, a different note or date is wrong. So this is incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is standup/cinder/2025-11-27 (2025-11-27). The answer to grade is \"standup/ember/2026-01-15, as of 2026-01-15\" — a different note and different date. According to the grading rule, a different note or date is wrong. So this is incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 347,
+   "completion_tokens": 145,
+   "total_tokens": 492,
+   "cost": 4.3075e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.3075e-05,
+    "upstream_inference_prompt_cost": 6.825e-06,
+    "upstream_inference_completions_cost": 3.625e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 78,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.167382000014186,
+ "fetched_at": "2026-09-05T08:47:55Z"
+}

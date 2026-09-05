@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Per the change policy, the auth gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\n- The security audit flagged the auth gateway's long-lived tokens. [valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- On 2026-01-22, Team Atlas decided that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- As of 2026-04-16, the ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC; the old Wednesday 09:00-11:00 UTC slot is retired. [constraint; valid 2026-04-16 to now; recorded by standup/ember/2026-04-16]\n    earlier: Per the change policy, the ledger deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-04-18 to 2026-04-16; recorded by standup/atlas/2025-04-18]\n- Changes to the auth gateway require two reviewer approvals and a security sign-off. [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- On 2025-12-29, the Ember team observed that the auth gateway's CPU sat at 90 percent after the traffic shift. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- On 2026-05-18, the Ember team noticed that the auth gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas, which took it over from Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- There is a deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- On 2025-10-22, Team Dune decided that the webhooks service will sign payloads with rotating keys. [decision; valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n- The scheduler deploys on weekday mornings before 11:00 UTC. [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n    earlier: The scheduler deploys on weekdays after 15:00 UTC and at no other time. [constraint; valid 2025-03-19 to 2025-10-27; recorded by standup/ember/2025-03-19]\n- Team Cinder flagged that the auth gateway's cold start time tripled following the runtime upgrade. [valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- On 2026-03-10, Team Dune observed that the reporting service's p99 latency doubled after Tuesday's deploy. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- On 2025-08-01, it was decided that certificate expiry will alert 30 days ahead. [decision; valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- Billing-api will gate the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- As of 2025-12-23, the pager for the auth gateway rings Team Atlas instead of Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- Team Dune decided the webhooks service will sign payloads with rotating keys because a partner asked for key rotation in their security review. [valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n\nQuestion: Which note first recorded the deploy window for auth-gateway, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615386-u7xv472uf838ZMJWB5Y3",
+  "object": "chat.completion",
+  "created": 1788615386,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/ember/2025-01-29, on 2025-01-29",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which note first recorded the deploy window for auth-gateway, and when?\"\n\nThe deploy window for the auth gateway: \"Per the change policy, the auth gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\"\n\nThat's the only entry about the auth gateway deploy window, recorded by standup/ember/2025-01-29, valid from 2025-01-29.\n\nAnswer: standup/ember/2025-01-29, on 2025-01-29.\n\nOne short line with just the value asked for: the note name and when.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which note first recorded the deploy window for auth-gateway, and when?\"\n\nThe deploy window for the auth gateway: \"Per the change policy, the auth gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\"\n\nThat's the only entry about the auth gateway deploy window, recorded by standup/ember/2025-01-29, valid from 2025-01-29.\n\nAnswer: standup/ember/2025-01-29, on 2025-01-29.\n\nOne short line with just the value asked for: the note name and when.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1504,
+   "completion_tokens": 183,
+   "total_tokens": 1687,
+   "cost": 0.00015087,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015087,
+    "upstream_inference_prompt_cost": 0.00010512,
+    "upstream_inference_completions_cost": 4.575e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 161,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.688279624970164,
+ "fetched_at": "2026-09-05T13:36:28Z"
+}

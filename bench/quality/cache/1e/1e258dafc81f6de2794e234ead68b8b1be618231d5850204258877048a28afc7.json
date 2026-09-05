@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000227\": The ledger service's memory use grew steadily for a week after the cache change, and the Boreal team noticed and pinged the owners.  (about: Boreal team, ledger service)\n- memory_id \"1000161\" [constraint]: The ledger service must stay on Postgres 14 until the partitioning work finishes.  (about: ledger service, Postgres 14)\n- memory_id \"1000145\": The reporting service depends on the ledger service for the nightly balance export.  (about: ledger service, reporting service)\n- memory_id \"1000107\" [constraint]: The ledger service only ships on weekday mornings before 11:00 UTC.  (about: ledger service)\n- memory_id \"1000087\": The billing API depends on the ledger service for invoice postings.  (about: ledger service, billing API)\n- memory_id \"1000033\": The ledger service is owned by the Atlas team.  (about: Atlas team, ledger service)\n- memory_id \"1000201\" [decision]: Priya Raman is the primary on-call for the Atlas team as of 2025-02-12, and Tomasz is off rotation.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000039\": The billing API is owned by the Atlas team.  (about: Atlas team, billing API)\n- memory_id \"1000043\": feature-flags is owned by the Atlas team.  (about: Atlas team, feature-flags)\n- memory_id \"1000183\": The job scheduler needs the feature-flags service for per-job kill switches.  (about: feature-flags, job scheduler)\n- memory_id \"1000198\" [constraint]: The billing API only ships on weekdays after 15:00 UTC.  (about: billing API)\n- memory_id \"1000128\": The reporting service is owned by team Dune.  (about: team Dune, reporting service)\n- memory_id \"1000001\": The Atlas team in 2025 consists of Priya Raman and Tomasz.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000099\" [decision]: Farah takes the first on-call rotation for team Dune.  (about: Farah, team Dune)\n- memory_id \"1000122\": team Dune owns the image resizer.  (about: team Dune, image resizer)\n- memory_id \"1000050\": Farah runs team Dune solo until the next hire lands.  (about: Farah, team Dune)\n- memory_id \"1000216\" [constraint]: The authentication gateway deploys on Mondays between 10:00 and 12:00 UTC per the change policy.  (about: authentication gateway)\n- memory_id \"1000138\": The authentication gateway is owned by the Ember team.  (about: Ember team, authentication gateway)\n- memory_id \"1000167\": The notifier missed alerts for 40 minutes on 2025-02-01 during incident INC-2025-004.  (about: notifier, INC-2025-004)\n- memory_id \"1000188\": The notifier depends on the bus for delivery events.  (about: the bus, notifier)\nExisting entity names: Boreal team, ledger service, Postgres 14, reporting service, billing API, Atlas team, Priya Raman, Tomasz, feature-flags, job scheduler, team Dune, Farah, image resizer, authentication gateway, Ember team, notifier, INC-2025-004, the bus\n\nThe note:\n\n[2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788598436-00oc3iZzAfqI7sSYCfDQ",
+  "object": "chat.completion",
+  "created": 1788598436,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Together",
+  "system_fingerprint": "default",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"The ledger service depends on the authentication gateway for service tokens.\",\n   \"entities\": [\"ledger service\", \"authentication gateway\"],\n   \"kind\": \"fact\",\n   \"confidence\": 0.95,\n   \"evidence\": \"If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [\n  {\n   \"src\": \"ledger service\",\n   \"dst\": \"authentication gateway\",\n   \"rel_kind\": \"depends_on\",\n   \"evidence\": \"it relies on it for service tokens\"\n  }\n ],\n \"remove_relations\": [],\n \"entity_aliases\": [\n  {\n   \"name\": \"auth gateway\",\n   \"canonical\": \"authentication gateway\",\n   \"evidence\": \"If the auth gateway is down, the ledger service is down\"\n  }\n ]\n}",
+     "refusal": null,
+     "reasoning": "Let me analyze this note.\n\nThe note: \"[2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\"\n\nThis states a dependency: the ledger service depends on the authentication gateway for service tokens.\n\nExisting entities: \"authentication gateway\" is the existing name. The note says \"auth gateway\" — that's an alias for \"authentication gateway\".\n\nSo:\n- add_facts: \"The ledger service depends on the authentication gateway for service tokens.\" Entities: ledger service, authentication gateway. Kind: fact. Evidence: \"If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\"\n- add_relations: src: ledger service, dst: authentication gateway, rel_kind: depends_on. Evidence: \"it relies on it for service tokens\" or the full sentence.\n- entity_aliases: name: \"auth gateway\", canonical: \"authentication gateway\". Evidence: \"If the auth gateway is down...\"\n\nShould I add a fact and a relation? The fact is durable: the ledger service relies on the auth gateway for service tokens. Yes.\n\nConfidence: high, 0.9 or so.\n\nOutput JSON only.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Let me analyze this note.\n\nThe note: \"[2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\"\n\nThis states a dependency: the ledger service depends on the authentication gateway for service tokens.\n\nExisting entities: \"authentication gateway\" is the existing name. The note says \"auth gateway\" — that's an alias for \"authentication gateway\".\n\nSo:\n- add_facts: \"The ledger service depends on the authentication gateway for service tokens.\" Entities: ledger service, authentication gateway. Kind: fact. Evidence: \"If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\"\n- add_relations: src: ledger service, dst: authentication gateway, rel_kind: depends_on. Evidence: \"it relies on it for service tokens\" or the full sentence.\n- entity_aliases: name: \"auth gateway\", canonical: \"authentication gateway\". Evidence: \"If the auth gateway is down...\"\n\nShould I add a fact and a relation? The fact is durable: the ledger service relies on the auth gateway for service tokens. Yes.\n\nConfidence: high, 0.9 or so.\n\nOutput JSON only.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2140,
+   "completion_tokens": 449,
+   "total_tokens": 2589,
+   "cost": 0.0005455,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0005455,
+    "upstream_inference_prompt_cost": 0.000321,
+    "upstream_inference_completions_cost": 0.0002245
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 258,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.136391707987059,
+ "fetched_at": "2026-09-05T08:54:00Z"
+}

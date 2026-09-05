@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-10-27, Yuki is the primary on-call for Team Cinder, having taken over from Diego. [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n    earlier: As of 2025-08-29, Diego is the primary on-call for Team Cinder, having taken over from Yuki. [valid 2025-08-29 to 2025-10-27; recorded by standup/cinder/2025-08-29]\n    earlier: As of 2025-07-10, Yuki is the primary on-call for Team Cinder until the next rotation. [valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: As of 2025-05-19, Diego is the primary on-call for Team Cinder. [valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-09, Yuki is the primary on-call for Team Cinder. [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n- As of 2025-04-09, Diego is off the Team Cinder on-call rotation. [valid 2025-04-09 to now; recorded by standup/cinder/2025-04-09]\n- Yuki takes the first Team Cinder on-call shift of the year. [valid 2025-01-14 to now; recorded by standup/cinder/2025-01-14]\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- As of 2025-08-29, for anything Cinder-related, page Diego. [preference; valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29]\n    earlier: As of 2025-07-10, for anything Cinder-related, page Yuki. [preference; valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: As of 2025-05-19, for anything Cinder-related, page Diego. [preference; valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-29, for anything Cinder-related, page Yuki. [preference; valid 2025-04-29 to 2025-05-19; recorded by standup/cinder/2025-04-29]\n- As of 2026-05-25, Marcus is the primary on-call for Team Atlas, having taken over from Priya. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, Priya is the primary on-call for Team Atlas, having taken over from Marcus. [valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Marcus Oyelaran is the primary on-call for Team Atlas. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- As of 2026-06-08, Farah is the primary on-call for Team Dune, having taken the pager from Tomasz Nowak. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Tomasz Nowak is the primary on-call for Team Dune. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, Tomasz Nowak is off the Team Dune on-call rotation. [valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n- As of 2026-04-23, Priya is back on the Team Atlas on-call rotation. [valid 2026-04-23 to now; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Priya is off the Team Atlas on-call rotation. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- Team Cinder sits on the third floor. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- Team Cinder holds planning on Mondays. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- Oskar is the only engineer on the Ember team for now. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- As of 2025-08-01, Lena is back on the Team Boreal on-call rotation. [valid 2025-08-01 to now; recorded by standup/boreal/2025-08-01]\n    earlier: As of 2025-06-05, Lena is off the Team Boreal on-call rotation. [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n- As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder. [valid 2025-03-20 to now; recorded by handover/2025-03-20-catalog]\n- As of 2025-12-08, the pager for the indexer rings Team Dune instead of Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n- For the Atlas on-call cycle starting 2025-02-19, page Tomasz Nowak instead of Priya for anything. [preference; valid 2025-02-19 to now; recorded by standup/atlas/2025-02-19]\n- As of 2025-05-09, Tomasz Nowak is the Team Atlas on-call contact for this cycle instead of Priya. [valid 2025-05-09 to now; recorded by standup/atlas/2025-05-09]\n    earlier: As of 2025-04-07, Priya carries the Team Atlas on-call phone until the next rotation. [valid 2025-04-07 to 2025-05-09; recorded by standup/atlas/2025-04-07]\n- As of 2026-02-10, the reports pipeline is owned by Team Cinder, which took it over from the Ember team. [decision; valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n\nQuestion: Who is on call for Cinder right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788613763-u041Vm1YSJAfNBQiWZJ0",
+  "object": "chat.completion",
+  "created": 1788613763,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Yuki",
+     "refusal": null,
+     "reasoning": "The question asks who is on call for Cinder right now (today is 2026-06-30).\n\nLooking at memory:\n- As of 2025-10-27, Yuki is the primary on-call for Team Cinder, having taken over from Diego. [valid 2025-10-27 to now]\n\nAlso there's a preference: \"As of 2025-08-29, for anything Cinder-related, page Diego.\" [preference; valid 2025-08-29 to now]\n\nThe question asks who is on call for Cinder right now. The latest primary on-call is Yuki (as of 2025-10-27, valid to now). But there's a preference saying page Diego for anything Cinder-related. The question is \"Who is on call for Cinder right now?\" - the on-call record says Yuki. However, the preference says page Diego for anything Cinder-related.\n\nHmm, which one to answer? The question is about who is on call. The direct answer from the on-call record: Yuki (as of 2025-10-27). The preference says page Diego for anything Cinder-related - that's a preference, not who is on call. But it might be interpreted as the effective contact.\n\nThe rule says \"Treat a later entry as superseding an earlier one on the same subject.\" The 2025-10-27 entry says Yuki is primary on-call, which is later than the 2025-08-29 preference about Diego. But they're different subjects: one is on-call status, one is paging preference.\n\nThe question \"Who is on call for Cinder right now?\" - the on-call is Yuki. However, the preference says for anything Cinder-related, page Diego. The question asks who is on call, so answer Yuki.\n\nBut wait — is the preference intended to override? The question specifically asks \"who is on call\" not \"who should I page\". The on-call record says Yuki. So answer: Yuki.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who is on call for Cinder right now (today is 2026-06-30).\n\nLooking at memory:\n- As of 2025-10-27, Yuki is the primary on-call for Team Cinder, having taken over from Diego. [valid 2025-10-27 to now]\n\nAlso there's a preference: \"As of 2025-08-29, for anything Cinder-related, page Diego.\" [preference; valid 2025-08-29 to now]\n\nThe question asks who is on call for Cinder right now. The latest primary on-call is Yuki (as of 2025-10-27, valid to now). But there's a preference saying page Diego for anything Cinder-related. The question is \"Who is on call for Cinder right now?\" - the on-call record says Yuki. However, the preference says page Diego for anything Cinder-related.\n\nHmm, which one to answer? The question is about who is on call. The direct answer from the on-call record: Yuki (as of 2025-10-27). The preference says page Diego for anything Cinder-related - that's a preference, not who is on call. But it might be interpreted as the effective contact.\n\nThe rule says \"Treat a later entry as superseding an earlier one on the same subject.\" The 2025-10-27 entry says Yuki is primary on-call, which is later than the 2025-08-29 preference about Diego. But they're different subjects: one is on-call status, one is paging preference.\n\nThe question \"Who is on call for Cinder right now?\" - the on-call is Yuki. However, the preference says for anything Cinder-related, page Diego. The question asks who is on call, so answer Yuki.\n\nBut wait — is the preference intended to override? The question specifically asks \"who is on call\" not \"who should I page\". The on-call record says Yuki. So answer: Yuki.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1833,
+   "completion_tokens": 418,
+   "total_tokens": 2251,
+   "cost": 0.000234295,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000234295,
+    "upstream_inference_prompt_cost": 0.000129795,
+    "upstream_inference_completions_cost": 0.0001045
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 414,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.1548289159545675,
+ "fetched_at": "2026-09-05T13:09:29Z"
+}

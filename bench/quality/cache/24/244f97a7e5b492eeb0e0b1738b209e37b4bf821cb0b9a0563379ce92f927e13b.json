@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000364\": As of 2025-04-24, the Cinder team reported that the feature-flags service's p99 latency doubled after Tuesday's deploy.  (about: Cinder, feature-flags)\n- memory_id \"1000321\": As of 2025-04-07, the Ember team reported that the notifier's request volume halved after the client rollout.  (about: notifier, Ember team)\n- memory_id \"1000298\" [constraint]: For anything Ember-related, page Oskar.  (about: Ember team, Oskar)\n- memory_id \"1000286\": On 2025-03-26 the Dune team observed that the notification service's memory use grew steadily for a week after the cache change.  (about: Dune team, notification service)\n- memory_id \"1000259\": The billing API is owned by the Ember team as of 2025-03-07.  (about: billing API, Ember team)\n- memory_id \"1000253\": The ledger service relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down.  (about: ledger service, auth gateway)\n- memory_id \"1000246\": The webhook dispatcher is owned by the Ember team as of 2025-03-03.  (about: webhook dispatcher, Ember team)\n- memory_id \"1000242\": As of 2025-03-03, the pager for the webhook dispatcher rings the Ember team instead of the Boreal team.  (about: Boreal team, webhook dispatcher, Ember team)\n- memory_id \"1000227\": On 2025-02-21 the Boreal team noticed that the ledger service's memory use had grown steadily for a week after the cache change.  (about: Boreal team, ledger service)\n- memory_id \"1000193\": The webhook dispatcher relies on the bus for outbound events, so if the bus is down the webhook dispatcher is down.  (about: the bus, webhook dispatcher)\n- memory_id \"1000188\": The notifier relies on the bus for delivery events, so if the bus is down the notifier is down.  (about: the bus, notifier)\n- memory_id \"1000183\": The job scheduler depends on the feature-flags service for per-job kill switches.  (about: feature-flags, job scheduler)\n- memory_id \"1000180\" [decision]: The Ember team does pairing on every production change.  (about: Ember team)\n- memory_id \"1000177\" [constraint]: Deploys to the job scheduler happen on Tuesdays between 13:00 and 15:00 UTC and at no other time.  (about: job scheduler)\n- memory_id \"1000165\": During incident INC-2025-004, the notifier missed alerts for 40 minutes on 2025-02-01.  (about: notifier, INC-2025-004)\n- memory_id \"1000160\" [constraint]: The ledger service must stay on Postgres 14 until the partitioning work finishes.  (about: ledger service, Postgres 14)\n- memory_id \"1000136\": The job scheduler is owned by the Ember team.  (about: Ember team, job scheduler)\n- memory_id \"1000109\" [constraint]: The ledger service only ships on weekday mornings before 11:00 UTC.  (about: ledger service)\n- memory_id \"1000105\": Oskar takes the first on-call shift of the year for the Ember team.  (about: Ember team, Oskar)\n- memory_id \"1000043\": The feature-flags service is owned by the Atlas team.  (about: Atlas team, feature-flags)\nExisting entity names: Cinder, feature-flags, notifier, Ember team, Oskar, Dune team, notification service, billing API, ledger service, auth gateway, webhook dispatcher, Boreal team, the bus, job scheduler, INC-2025-004, Postgres 14, Atlas team\n\nThe note:\n\n[2025-04-29] standup/ember/2025-04-29: The scheduler still relies on the feature flag service; keep that in mind for the maintenance."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788600594-9mR3wg9hKU8N2okokCUN",
+  "object": "chat.completion",
+  "created": 1788600594,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"As of 2025-04-29, the job scheduler still relies on the feature-flags service.\",\n   \"entities\": [\"job scheduler\", \"feature-flags\"],\n   \"kind\": \"fact\",\n   \"confidence\": 0.95,\n   \"evidence\": \"The scheduler still relies on the feature flag service\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [\n  {\n   \"src\": \"job scheduler\",\n   \"dst\": \"feature-flags\",\n   \"rel_kind\": \"depends_on\",\n   \"evidence\": \"The scheduler still relies on the feature flag service\"\n  }\n ],\n \"remove_relations\": [],\n \"entity_aliases\": [\n  {\n   \"name\": \"feature flag service\",\n   \"canonical\": \"feature-flags\",\n   \"evidence\": \"The scheduler still relies on the feature flag service\"\n  },\n  {\n   \"name\": \"scheduler\",\n   \"canonical\": \"job scheduler\",\n   \"evidence\": \"The scheduler still relies on the feature flag service\"\n  }\n ]\n}",
+     "refusal": null,
+     "reasoning": "Add fact/dependency; alias \"feature flag service\" → feature-flags; relation job scheduler depends_on feature-flags (exists already but note states; add anyway). \"scheduler\" alias to job scheduler.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Add fact/dependency; alias \"feature flag service\" → feature-flags; relation job scheduler depends_on feature-flags (exists already but note states; add anyway). \"scheduler\" alias to job scheduler.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2227,
+   "completion_tokens": 270,
+   "total_tokens": 2497,
+   "cost": 0.0003172,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003172,
+    "upstream_inference_prompt_cost": 0.0002227,
+    "upstream_inference_completions_cost": 9.45e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 43,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.191867500019725,
+ "fetched_at": "2026-09-05T09:29:58Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-03-07] handover/2025-03-07-billing-api: Billing-api has a new home: the Ember team. Team Atlas kept it until today.\n- [2026-01-12] handover/2026-01-12-billing-api: Quick one: billing-api belongs to the Ember team starting today. Thanks to the Atlas team for running it until now.\n- [2025-07-03] handover/2025-07-03-billing-api-correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it.\n- [2025-09-30] standup/atlas/2025-09-30: Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. The billing API now depends on the feature flag service. The Atlas team planning meeting is every Tuesday.\n- [2025-06-09] handover/2025-06-09-billing-api: The Ember team handed billing-api to Boreal today; Oskar wrote up the handover doc for Lena Fischer.\n- [2025-11-04] standup/atlas/2025-11-04: Reminder that the billing API depends on the ledger.\n- [2025-02-11] standup/atlas/2025-02-11: Reminder that the billing API only ships on weekdays after 15:00 UTC.\n- [2025-01-09] standup/atlas/2025-01-09-2: Dependency map update: billing-api needs Ledger (invoice postings).\n- [2025-11-11] standup/atlas/2025-11-11: Deploy freeze for the billing API: 2025-11-24 to 2025-12-02 (the peak season).\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-04-02] standup/ember/2025-04-02: Changes to the billing API need a rollback plan attached to the pull request.\n- [2026-03-11] standup/cinder/2026-03-11-2: The Cinder team noticed that billing-api's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-01-20] standup/dune/2025-01-20: The Dune team owns the image resizer.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-07-30] standup/atlas/2025-07-30: Team change: Tomasz leaves team Atlas and joins team Dune, effective today. On-call for Atlas passes from Tomasz to Priya with the move.\n- [2025-11-04] standup/ember/2025-11-04: The Ember team saw that the billing service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it.\n- [2026-02-03] standup/atlas/2026-02-03: The Atlas team now does a no-deploy Friday.\n- [2026-04-08] standup/atlas/2026-04-08: Reminder from the Atlas team: page Marcus for anything this cycle, not Priya. The Atlas team saw that webhooks' request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-01-06] standup/atlas/2025-01-06: The Atlas team this year is Priya Raman and Tomasz.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n- [2025-04-03] standup/atlas/2025-04-03: Reminder from team Atlas: page Tomasz for anything this cycle, not Priya.\n- [2025-06-19] standup/atlas/2025-06-19: Rotation day for team Atlas: Priya hands the pager to Tomasz.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n\nQuestion: Which team owned billing-api before Atlas took it over?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788591799-sX23y32OR2Kiqr1mwSkc",
+  "object": "chat.completion",
+  "created": 1788591799,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which team owned billing-api before Atlas took it over?\"\n\nLet me trace the ownership history of billing-api:\n\n- [2025-01-08] billing API lives with Atlas team.\n- [2025-03-07] handover: Billing-api has a new home: the Ember team. Team Atlas kept it until today. So Atlas → Ember on 2025-03-07.\n- [2025-06-09] handover: The Ember team handed billing-api to Boreal today. So Ember → Boreal on 2025-06-09.\n- [2025-07-03] correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it. So on 2025-06-09, Ember → Atlas (corrected).\n- [2026-01-12] handover: billing-api belongs to the Ember team starting today. Thanks to the Atlas team for running it until now. So Atlas → Ember on 2026-01-12.\n\nSo the question: \"Which team owned billing-api before Atlas took it over?\"\n\nAtlas took over billing-api on 2025-06-09 (per the corrected handover). Before that, it was owned by Ember (who received it from Atlas on 2025-03-07).\n\nWait, but there's a subtlety. The 2025-07-03 correction says the new owner of billing-api is Atlas, correcting the 2025-06-09 handover which said Boreal. So the sequence: Atlas (until 2025-03-07) → Ember (2025-03-07 to 2025-06-09) → Atlas (2025-06-09, corrected) → Ember (2026-01-12).\n\nSo before Atlas took it over (the takeover on 2025-06-09), the owner was Ember.\n\nBut wait — could the question refer to the very first ownership? \"Before Atlas took it over\" — Atlas originally owned it from the start (2025-01-08). The \"takeover\" events where Atlas became owner: the 2025-06-09 handover (corrected 2025-07-03). Before that, Ember owned it.\n\nSo the answer is Ember.\n\nThe answer should be one short line: \"Ember\" or \"The Ember team\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which team owned billing-api before Atlas took it over?\"\n\nLet me trace the ownership history of billing-api:\n\n- [2025-01-08] billing API lives with Atlas team.\n- [2025-03-07] handover: Billing-api has a new home: the Ember team. Team Atlas kept it until today. So Atlas → Ember on 2025-03-07.\n- [2025-06-09] handover: The Ember team handed billing-api to Boreal today. So Ember → Boreal on 2025-06-09.\n- [2025-07-03] correction: Fixing an error in the 2025-06-09 handover: the new owner of billing-api is Atlas. Team Boreal was recorded by mistake and never held it. So on 2025-06-09, Ember → Atlas (corrected).\n- [2026-01-12] handover: billing-api belongs to the Ember team starting today. Thanks to the Atlas team for running it until now. So Atlas → Ember on 2026-01-12.\n\nSo the question: \"Which team owned billing-api before Atlas took it over?\"\n\nAtlas took over billing-api on 2025-06-09 (per the corrected handover). Before that, it was owned by Ember (who received it from Atlas on 2025-03-07).\n\nWait, but there's a subtlety. The 2025-07-03 correction says the new owner of billing-api is Atlas, correcting the 2025-06-09 handover which said Boreal. So the sequence: Atlas (until 2025-03-07) → Ember (2025-03-07 to 2025-06-09) → Atlas (2025-06-09, corrected) → Ember (2026-01-12).\n\nSo before Atlas took it over (the takeover on 2025-06-09), the owner was Ember.\n\nBut wait — could the question refer to the very first ownership? \"Before Atlas took it over\" — Atlas originally owned it from the start (2025-01-08). The \"takeover\" events where Atlas became owner: the 2025-06-09 handover (corrected 2025-07-03). Before that, Ember owned it.\n\nSo the answer is Ember.\n\nThe answer should be one short line: \"Ember\" or \"The Ember team\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1678,
+   "completion_tokens": 518,
+   "total_tokens": 2196,
+   "cost": 0.0005107,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0005107,
+    "upstream_inference_prompt_cost": 0.0002517,
+    "upstream_inference_completions_cost": 0.000259
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 514,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.959857582987752,
+ "fetched_at": "2026-09-05T07:03:23Z"
+}

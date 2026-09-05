@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-09-08] standup/boreal/2025-09-08: The Boreal team on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-01-13] standup/boreal/2025-01-13: Lena takes the first Boreal on-call shift of the year.\n- [2025-06-05] standup/boreal/2025-06-05: On-call rotation: Marcus Oyelaran is primary for team Boreal starting today; Lena is off rotation.\n- [2025-02-27] standup/boreal/2025-02-27: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation. Team Boreal noticed that the flags service's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-10-31] standup/boreal/2025-10-31: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2026-02-19] standup/boreal/2026-02-19-2: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2025-11-12] standup/boreal/2025-11-12: The Boreal team holds planning on Thursdays.\n- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.\n- [2026-03-12] standup/boreal/2026-03-12: For anything Boreal-related, page Lena.\n- [2025-08-01] standup/boreal/2025-08-01: Rotation day for the Boreal team: Marcus hands the pager to Lena.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-03-31] standup/boreal/2025-03-31: The event bus remains a Boreal service.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.\n- [2025-04-16] standup/boreal/2025-04-16: Rotation day for the Boreal team: Marcus Oyelaran hands the pager to Lena Fischer.\n- [2025-12-26] standup/boreal/2025-12-26: Reminder from Boreal: page Marcus for anything this cycle, not Lena Fischer.\n- [2025-01-14] standup/ember/2025-01-14: Oskar Lind is on call for the Ember team to start the year.\n- [2025-07-17] standup/dune/2025-07-17: Reminder: Farah is on call for Dune this cycle.\n- [2026-02-04] standup/dune/2026-02-04: Team Dune on-call swapped this morning. Tomasz Nowak carries the phone until the next rotation.\n- [2025-07-10] standup/cinder/2025-07-10: Team Cinder on-call swapped this morning. Yuki carries the phone until the next rotation.\n- [2025-01-16] standup/dune/2025-01-16: First on-call rotation for team Dune goes to Farah Haddad.\n- [2025-06-27] standup/boreal/2025-06-27-2: Boreal adopted a weekly dependency update day.\n- [2026-02-19] standup/boreal/2026-02-19: As of today Marcus Oyelaran is on the Atlas team; team Boreal loses a pair of hands.\n- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-05-18] standup/ember/2026-05-18: Oskar Lind picked up the Ember on-call shift from Diego today.\n- [2026-04-13] standup/dune/2026-04-13: On-call rotation: Tomasz is primary for Dune starting today; Farah is off rotation.\n- [2026-03-10] standup/dune/2026-03-10: On-call rotation: Farah is primary for Dune starting today; Tomasz Nowak is off rotation.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2025-01-14] standup/cinder/2025-01-14: Yuki takes the first team Cinder on-call shift of the year.\n- [2025-09-22] standup/dune/2025-09-22: On-call rotation: Farah Haddad is primary for the Dune team starting today; Tomasz Nowak is off rotation.\n- [2025-11-20] handover/2025-11-20-event-bus: Boreal is taking over the bus from team Cinder, effective today. Dashboards and alerts are being repointed.\n- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.\n- [2026-05-04] standup/boreal/2026-05-04: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. Boreal still owns the catalog service, in case anyone asks.\n- [2025-06-16] handover/2025-06-16-catalog: Boreal is taking over the catalog from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2026-03-09] standup/atlas/2026-03-09: On-call rotation: Marcus Oyelaran is primary for team Atlas starting today; Priya is off rotation.\n\nQuestion: Who is on call for Boreal right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618888-KXTsELD3kUnWK59ssd0H",
+  "object": "chat.completion",
+  "created": 1788618888,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Lena",
+     "refusal": null,
+     "reasoning": "The question asks: Who is on call for Boreal right now? Today is 2026-06-30.\n\nLooking at Boreal on-call entries in chronological order:\n- 2025-01-07: Lena and Marcus make up Boreal team.\n- 2025-01-13: Lena takes first shift.\n- 2025-02-27: Marcus carries the phone.\n- 2025-04-16: Marcus hands pager to Lena Fischer.\n- 2025-06-05: Marcus Oyelaran is primary starting today; Lena off rotation.\n- 2025-08-01: Marcus hands pager to Lena.\n- 2025-09-08: Marcus carries phone.\n- 2025-10-31: Lena has pager, taking over from Marcus.\n- 2025-11-12: (planning day, not relevant)\n- 2025-12-26: page Marcus this cycle, not Lena.\n- 2026-02-19: Marcus Oyelaran is on the Atlas team; Boreal loses a pair of hands.\n- 2026-02-19-2: Lena has the Boreal pager this cycle, taking over from Marcus.\n- 2026-03-12: For anything Boreal-related, page Lena.\n\nLatest Boreal on-call relevant entry: 2026-03-12 says page Lena for anything Boreal-related. The 2026-02-19-2 says Lena has the pager this cycle. So as of now (2026-06-30), Lena is on call for Boreal.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Who is on call for Boreal right now? Today is 2026-06-30.\n\nLooking at Boreal on-call entries in chronological order:\n- 2025-01-07: Lena and Marcus make up Boreal team.\n- 2025-01-13: Lena takes first shift.\n- 2025-02-27: Marcus carries the phone.\n- 2025-04-16: Marcus hands pager to Lena Fischer.\n- 2025-06-05: Marcus Oyelaran is primary starting today; Lena off rotation.\n- 2025-08-01: Marcus hands pager to Lena.\n- 2025-09-08: Marcus carries phone.\n- 2025-10-31: Lena has pager, taking over from Marcus.\n- 2025-11-12: (planning day, not relevant)\n- 2025-12-26: page Marcus this cycle, not Lena.\n- 2026-02-19: Marcus Oyelaran is on the Atlas team; Boreal loses a pair of hands.\n- 2026-02-19-2: Lena has the Boreal pager this cycle, taking over from Marcus.\n- 2026-03-12: For anything Boreal-related, page Lena.\n\nLatest Boreal on-call relevant entry: 2026-03-12 says page Lena for anything Boreal-related. The 2026-02-19-2 says Lena has the pager this cycle. So as of now (2026-06-30), Lena is on call for Boreal.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1674,
+   "completion_tokens": 335,
+   "total_tokens": 2009,
+   "cost": 0.00012866,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1344,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012866,
+    "upstream_inference_prompt_cost": 4.491e-05,
+    "upstream_inference_completions_cost": 8.375e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 331,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.749367209034972,
+ "fetched_at": "2026-09-05T14:34:53Z"
+}

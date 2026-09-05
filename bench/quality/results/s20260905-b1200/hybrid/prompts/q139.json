@@ -1,0 +1,55 @@
+{
+ "qid": "q139",
+ "system": "hybrid",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.\n- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.\n- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-01-09] standup/boreal/2025-01-09: Boreal looks after the bus.\n- [2025-12-18] standup/boreal/2025-12-18: Rotation day for Boreal: Marcus hands the pager to Lena. Boreal adopted a weekly dependency update day.\n- [2025-06-27] standup/boreal/2025-06-27: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2025-11-06] standup/boreal/2025-11-06: Marcus has the Boreal pager this cycle, taking over from Lena.\n- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.\n- [2025-11-03] standup/boreal/2025-11-03-2: Heads-up from the Boreal team: the notification service's CPU sat at 90 percent after the traffic shift.\n- [2025-05-29] standup/boreal/2025-05-29: For anything Boreal-related, page Marcus.\n- [2025-03-17] standup/boreal/2025-03-17: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2026-01-15] standup/ember/2026-01-15: On-call rotation: Diego is primary for Ember starting today; Oskar is off rotation.\n- [2025-02-12] standup/boreal/2025-02-12: Rotation day for the Boreal team: Lena hands the pager to Marcus.\n- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.\n- [2025-01-09] standup/boreal/2025-01-09-4: Boreal pager: Lena has it first.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.\n- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2025-09-23] standup/boreal/2025-09-23: Reminder from team Boreal: page Lena for anything this cycle, not Marcus.\n- [2026-03-20] standup/boreal/2026-03-20-2: Observation from the Boreal team: after the retention change, the catalog service's disk usage jumped 30 percent. The Boreal team runs its planning on Thursdays.\n- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.\n- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2025-08-15] standup/boreal/2025-08-15: Reminder from Boreal: page Marcus for anything this cycle, not Lena Fischer.\n- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.\n- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.\n- [2026-01-16] standup/dune/2026-01-16: On-call rotation: Farah Haddad is primary for team Dune starting today; Tomasz is off rotation.\n- [2026-05-22] standup/dune/2026-05-22: Tomasz picked up the Dune on-call shift from Farah today.\n- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2026-02-10] standup/boreal/2026-02-10-2: Team Boreal noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time.\n\nQuestion: Who is the secondary on-call for Boreal?"
+  }
+ ],
+ "contexts": [
+  "- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.",
+  "- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.",
+  "- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.",
+  "- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.",
+  "- [2025-01-09] standup/boreal/2025-01-09: Boreal looks after the bus.",
+  "- [2025-12-18] standup/boreal/2025-12-18: Rotation day for Boreal: Marcus hands the pager to Lena. Boreal adopted a weekly dependency update day.",
+  "- [2025-06-27] standup/boreal/2025-06-27: Lena has the Boreal pager this cycle, taking over from Marcus.",
+  "- [2025-11-06] standup/boreal/2025-11-06: Marcus has the Boreal pager this cycle, taking over from Lena.",
+  "- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.",
+  "- [2025-11-03] standup/boreal/2025-11-03-2: Heads-up from the Boreal team: the notification service's CPU sat at 90 percent after the traffic shift.",
+  "- [2025-05-29] standup/boreal/2025-05-29: For anything Boreal-related, page Marcus.",
+  "- [2025-03-17] standup/boreal/2025-03-17: Lena has the Boreal pager this cycle, taking over from Marcus.",
+  "- [2026-01-15] standup/ember/2026-01-15: On-call rotation: Diego is primary for Ember starting today; Oskar is off rotation.",
+  "- [2025-02-12] standup/boreal/2025-02-12: Rotation day for the Boreal team: Lena hands the pager to Marcus.",
+  "- [2026-05-29] standup/ember/2026-05-29: On-call rotation: Oskar is primary for team Ember starting today; Diego is off rotation.",
+  "- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for the Dune team goes to Farah.",
+  "- [2025-01-09] standup/boreal/2025-01-09-4: Boreal pager: Lena has it first.",
+  "- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.",
+  "- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for team Atlas goes to Tomasz.",
+  "- [2025-05-13] standup/atlas/2025-05-13: The Atlas team on-call swapped this morning. Priya carries the phone until the next rotation.",
+  "- [2025-09-23] standup/boreal/2025-09-23: Reminder from team Boreal: page Lena for anything this cycle, not Marcus.",
+  "- [2026-03-20] standup/boreal/2026-03-20-2: Observation from the Boreal team: after the retention change, the catalog service's disk usage jumped 30 percent. The Boreal team runs its planning on Thursdays.",
+  "- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.",
+  "- [2025-01-14] standup/ember/2025-01-14: Oskar takes the first the Ember team on-call shift of the year.",
+  "- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.",
+  "- [2025-08-15] standup/boreal/2025-08-15: Reminder from Boreal: page Marcus for anything this cycle, not Lena Fischer.",
+  "- [2025-02-12] standup/atlas/2025-02-12: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.",
+  "- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.",
+  "- [2025-09-04] standup/dune/2025-09-04: Tomasz Nowak picked up the Dune on-call shift from Farah today.",
+  "- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.",
+  "- [2026-01-16] standup/dune/2026-01-16: On-call rotation: Farah Haddad is primary for team Dune starting today; Tomasz is off rotation.",
+  "- [2026-05-22] standup/dune/2026-05-22: Tomasz picked up the Dune on-call shift from Farah today.",
+  "- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.",
+  "- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.",
+  "- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.",
+  "- [2026-02-10] standup/boreal/2026-02-10-2: Team Boreal noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners.",
+  "- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.",
+  "- [2025-04-18] standup/boreal/2025-04-18: Deploys to the event bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time."
+ ],
+ "answer": "I don't know"
+}

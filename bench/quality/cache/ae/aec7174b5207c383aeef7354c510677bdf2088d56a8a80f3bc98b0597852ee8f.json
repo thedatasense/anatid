@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-04-03] handover/2025-04-03-event-bus: Ownership change: the event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-04-18] standup/atlas/2025-04-18-2: Heads-up from the Atlas team: the catalog service's disk usage jumped 30 percent after the retention change.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-03-28] handover/2025-03-28-webhooks: From today the pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the catalog service.\n- [2025-10-31] standup/atlas/2025-10-31: Team Atlas runs its planning on Tuesdays.\n- [2025-03-10] standup/atlas/2025-03-10-2: The Atlas team sits on the second floor.\n- [2025-03-17] standup/atlas/2025-03-17: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2025-12-23] standup/atlas/2025-12-23: The Atlas team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n- [2025-01-20] standup/dune/2025-01-20-2: The Dune team owns the reporting service.\n- [2025-08-29] standup/atlas/2025-08-29: Observation from Atlas: after the client rollout, the product catalog's request volume halved.\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz Nowak.\n- [2025-07-09] handover/2025-07-09-feature-flags: Quick one: the flags service belongs to team Cinder starting today. Thanks to Atlas for running it until now.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction to the handover note of 2025-08-29: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it; the note was written against the wrong team.\n- [2025-03-10] standup/atlas/2025-03-10: Dependency map update: the billing service needs the ledger (invoice postings).\n- [2025-01-14] standup/atlas/2025-01-14: Atlas pager: Priya has it first.\n- [2025-07-02] standup/atlas/2025-07-02: Tomasz has transferred to Dune. Team Atlas continues without them.\n- [2026-05-25] standup/atlas/2026-05-25-2: Heads-up from Atlas: the webhook dispatcher's memory use grew steadily for a week after the cache change. Atlas has switched to a no-deploy Friday.\n- [2026-05-25] standup/atlas/2026-05-25: Marcus picked up the Atlas on-call shift from Priya today.\n- [2026-05-04] standup/boreal/2026-05-04: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. Boreal still owns the catalog service, in case anyone asks.\n- [2025-09-12] standup/atlas/2025-09-12: Do not upgrade the ledger service past Postgres 14 until the partitioning work finishes.\n- [2025-04-07] standup/atlas/2025-04-07: Team Atlas on-call swapped this morning. Priya carries the phone until the next rotation.\n- [2026-05-26] handover/2026-05-26-billing-api: Ownership change: billing-api now sits with the Dune team. Boreal no longer owns it.\n- [2026-04-23] standup/atlas/2026-04-23: Priya Raman has the Atlas pager this cycle, taking over from Marcus.\n- [2025-07-03] standup/atlas/2025-07-03: Reminder from Atlas: page Priya for anything this cycle, not Tomasz Nowak.\n- [2025-01-09] standup/boreal/2025-01-09: For the record, the event bus is owned by Boreal.\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n\nQuestion: Which services does Atlas own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788618311-8nEy6wC9rt4tqvRiWHUh",
+  "object": "chat.completion",
+  "created": 1788618311,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger, the event bus, webhooks, and the scheduler.",
+     "refusal": null,
+     "reasoning": "We need to figure out which services Atlas owns now (2026-06-30).\n\nLet me go through the memory entries about ownership:\n\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n- [2025-04-03] handover/2025-04-03-event-bus: The event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-03-28] handover/2025-03-28-webhooks: The pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-07-09] handover/2025-07-09-feature-flags: The flags service belongs to team Cinder starting today. Atlas no longer has feature-flags.\n- [2026-05-26] handover/2026-05-26-billing-api: billing-api now sits with the Dune team. Boreal no longer owns it. (Note: this says Boreal no longer owns it, but earlier Atlas owned billing? The 2025-01-08 says billing service lives with team Atlas. Then 2026-05-26 says billing-api now sits with Dune. So billing-api now with Dune, not Atlas.)\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is owned by Boreal. — This is earlier than 2025-04-03 which says Atlas owns the event bus. Later entry supersedes: Atlas owns event bus.\n- [2025-08-29] handover/2025-08-29-scheduler: The scheduler now sits with team Cinder. Ember no longer owns it.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it. So scheduler belongs to Atlas.\n- [2026-05-04] standup/boreal/2026-05-04: Boreal still owns the catalog service. Not Atlas.\n\nSo current Atlas ownership:\n- Ledger (2025-01-08, no later change)\n- Event bus (2025-04-03, later than Boreal ownership)\n- Webhooks (2025-03-28) — question: does webhooks count as a service? \"the pager for the webhooks service rings the Atlas team... Ownership transferred.\" Yes.\n- Scheduler (2025-09-05 correction)\n\nWhat about \"billing service\" — Atlas owned it on 2025-01-08, then 2026-05-26 says billing-api now sits with Dune. Is billing-api the same as billing service? Likely yes; later entry supersedes. So billing is now Dune's.\n\nFeature-flags: Atlas until 2025-07-09, now Cinder.\n\nSo Atlas owns: ledger, event bus, webhooks, scheduler.\n\nAnswer in one short line: \"The ledger, the event bus, webhooks, and the scheduler.\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "We need to figure out which services Atlas owns now (2026-06-30).\n\nLet me go through the memory entries about ownership:\n\n- [2025-01-08] standup/atlas/2025-01-08: The ledger lives with Atlas. The billing service lives with team Atlas.\n- [2025-01-08] standup/atlas/2025-01-08-2: Feature-flags lives with Atlas.\n- [2025-04-03] handover/2025-04-03-event-bus: The event bus now sits with the Atlas team. The Boreal team no longer owns it.\n- [2025-03-28] handover/2025-03-28-webhooks: The pager for the webhooks service rings the Atlas team, not team Boreal. Ownership transferred.\n- [2025-07-09] handover/2025-07-09-feature-flags: The flags service belongs to team Cinder starting today. Atlas no longer has feature-flags.\n- [2026-05-26] handover/2026-05-26-billing-api: billing-api now sits with the Dune team. Boreal no longer owns it. (Note: this says Boreal no longer owns it, but earlier Atlas owned billing? The 2025-01-08 says billing service lives with team Atlas. Then 2026-05-26 says billing-api now sits with Dune. So billing-api now with Dune, not Atlas.)\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is owned by Boreal. — This is earlier than 2025-04-03 which says Atlas owns the event bus. Later entry supersedes: Atlas owns event bus.\n- [2025-08-29] handover/2025-08-29-scheduler: The scheduler now sits with team Cinder. Ember no longer owns it.\n- [2025-09-05] handover/2025-09-05-scheduler-correction: Correction: the scheduler went to Atlas, not team Cinder. Team Cinder never owned it. So scheduler belongs to Atlas.\n- [2026-05-04] standup/boreal/2026-05-04: Boreal still owns the catalog service. Not Atlas.\n\nSo current Atlas ownership:\n- Ledger (2025-01-08, no later change)\n- Event bus (2025-04-03, later than Boreal ownership)\n- Webhooks (2025-03-28) — question: does webhooks count as a service? \"the pager for the webhooks service rings the Atlas team... Ownership transferred.\" Yes.\n- Scheduler (2025-09-05 correction)\n\nWhat about \"billing service\" — Atlas owned it on 2025-01-08, then 2026-05-26 says billing-api now sits with Dune. Is billing-api the same as billing service? Likely yes; later entry supersedes. So billing is now Dune's.\n\nFeature-flags: Atlas until 2025-07-09, now Cinder.\n\nSo Atlas owns: ledger, event bus, webhooks, scheduler.\n\nAnswer in one short line: \"The ledger, the event bus, webhooks, and the scheduler.\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1375,
+   "completion_tokens": 708,
+   "total_tokens": 2083,
+   "cost": 0.000272445,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000272445,
+    "upstream_inference_prompt_cost": 9.5445e-05,
+    "upstream_inference_completions_cost": 0.000177
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 692,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.802566583035514,
+ "fetched_at": "2026-09-05T14:25:18Z"
+}

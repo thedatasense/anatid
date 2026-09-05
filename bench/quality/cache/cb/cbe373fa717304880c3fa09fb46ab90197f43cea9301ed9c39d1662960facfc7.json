@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Dune noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- Ember noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- Atlas noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-16; the root cause was two leaders elected during a network partition [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- Atlas adopted a no-deploy Friday [valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: The scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- Boreal noticed that the scheduler's cold start time tripled after the runtime upgrade [observation; valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n- Cinder owns the scheduler [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: Dune owns the scheduler [valid 2025-06-25 to 2025-09-23; recorded by handover/2025-06-25-scheduler]\n    earlier: Ember owns the scheduler [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- Decision: the scheduler will use leader election instead of a single fixed node, because the fixed node turned every restart into a missed run [decision; valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\n- Priya is on call for Atlas [valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: Marcus is on call for Atlas [valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: Priya is on call for Atlas [valid 2025-07-30 to 2026-04-08; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is on call for Atlas [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya is on call for Atlas [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is on call for Atlas [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya is on call for Atlas [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz is on call for Atlas [valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- The scheduler depends on feature-flags [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- Yuki is on call for Cinder [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on call for Cinder [valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n    earlier: Yuki is on call for Cinder [valid 2025-09-05 to 2025-10-24; recorded by standup/cinder/2025-09-05]\n    earlier: Diego is on call for Cinder [valid 2025-07-17 to 2025-09-05; recorded by standup/cinder/2025-07-17]\n    earlier: Yuki is on call for Cinder [valid 2025-06-06 to 2025-07-17; recorded by standup/cinder/2025-06-06]\n    earlier: Diego is on call for Cinder [valid 2025-04-24 to 2025-06-06; recorded by standup/cinder/2025-04-24]\n    earlier: Yuki is on call for Cinder [valid 2025-02-27 to 2025-04-24; recorded by standup/cinder/2025-02-27]\n    earlier: Diego is on call for Cinder [valid 2025-01-09 to 2025-02-27; recorded by standup/cinder/2025-01-09]\n- No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- Dune noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Lena is the release captain for Q1 2026 [valid 2025-05-22 to now; recorded by standup/boreal/2025-05-22]\n- The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger deploys only on weekday mornings before 11:00 UTC [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n\nQuestion: What is the current deploy window for the scheduler?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788597426-sFPEytph19UbowNXjYXT",
+  "object": "chat.completion",
+  "created": 1788597426,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tuesdays and Fridays between 09:00 and 10:30 UTC",
+     "refusal": null,
+     "reasoning": "The question asks for the current deploy window for the scheduler. Memory says: \"The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-08-19 to now]\". The earlier one was superseded. Today is 2026-06-30, so the current one is Tuesdays and Fridays 09:00–10:30 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks for the current deploy window for the scheduler. Memory says: \"The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-08-19 to now]\". The earlier one was superseded. Today is 2026-06-30, so the current one is Tuesdays and Fridays 09:00–10:30 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1784,
+   "completion_tokens": 106,
+   "total_tokens": 1890,
+   "cost": 0.00015262,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015262,
+    "upstream_inference_prompt_cost": 0.00012612,
+    "upstream_inference_completions_cost": 2.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 88,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8542594999889843,
+ "fetched_at": "2026-09-05T08:37:07Z"
+}

@@ -1,0 +1,66 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-02-11] incident-review/INC-2025-004: Review of INC-2025-004 (the notifier, 2025-02-06). The root cause was a consumer offset stuck after a broker restart. We decided that notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004.\n- [2025-06-19] handover/2025-06-19-notifier: Notifier has a new home: team Dune. Cinder kept it until today.\n- [2025-04-04] handover/2025-04-04-notifier: Notifier has a new home: the Cinder team. The Boreal team kept it until today.\n- [2025-04-04] standup/dune/2025-04-04: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.\n- [2025-01-09] standup/boreal/2025-01-09-2: The notifier lives with Boreal. The webhooks service lives with Boreal.\n- [2025-07-28] standup/cinder/2025-07-28: Decided in today's standup: clients will cache feature-flags evaluations for 30 seconds, since feature-flags saw 40,000 requests per second at peak and most of them were identical.\n- [2025-06-12] standup/dune/2025-06-12: The Dune team noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. Dune sits on the fourth floor.\n- [2025-02-20] standup/boreal/2025-02-20: Decided in today's standup: the notifier will retry failed pushes three times with exponential backoff, since the flat one-second retry was hammering the push provider during its outages.\n- [2026-05-08] incident-review/INC-2026-009: INC-2026-009 review. What happened: scheduler ran the nightly jobs twice on 2026-05-03. Why: two leaders elected during a network partition. Follow-up decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2025-07-03] standup/atlas/2025-07-03-2: Atlas saw that the notifier's memory use grew steadily for a week following the cache change; not their service, so they flagged it. The Atlas team noticed that the resizer's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-09-08] standup/boreal/2025-09-08-2: New dependency for billing-api: feature-flags. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch. Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners.\n\nQuestion: Why do notifier consumers commit offsets every five seconds?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788607501-WZVX8xExAwVE4671qg62",
+  "object": "chat.completion",
+  "created": 1788607501,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "DeepInfra",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Because a stuck offset went unnoticed for 40 minutes during INC-2025-004.",
+     "refusal": null,
+     "reasoning": null
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 870,
+   "completion_tokens": 21,
+   "total_tokens": 891,
+   "cost": 7.05e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 7.05e-05,
+    "upstream_inference_prompt_cost": 6.525e-05,
+    "upstream_inference_completions_cost": 5.25e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 0,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.4939000830054283,
+ "fetched_at": "2026-09-05T11:25:03Z"
+}

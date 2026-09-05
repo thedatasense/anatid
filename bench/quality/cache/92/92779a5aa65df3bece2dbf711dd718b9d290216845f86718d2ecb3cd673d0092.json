@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- The webhook dispatcher relies on the bus for outbound events, so the webhook dispatcher is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- The notifier relies on the bus for delivery events, so the notifier is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- Team Dune noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- INC-2026-003 was an incident in which the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- Team Dune observed that the bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- As of 2025-11-24, the Atlas team looks after the bus, which the Boreal team looked after until then. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. [constraint; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- On 2026-05-28, the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- On 2025-11-04, the Ember team saw that the billing service's queue depth hit 50,000 following the marketing send and flagged it as not their service. [valid 2025-11-04 to now; recorded by standup/ember/2025-11-04]\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service, because the nightly ledger scans were blocking billing runs. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- On 2026-04-14, team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2026-05-27, the bus retains messages for seven days, since replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2026-03-03, the auth gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2026-03-03 to now; recorded by standup/cinder/2026-03-03]\n- As of 2026-01-12, the billing API is owned by the Ember team, which the Atlas team owned until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: From 2025-06-09, the billing API is owned by the Atlas team. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: From 2025-06-09, the billing API is owned by the Boreal team. [valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: Since 2025-03-07, the billing API is owned by the Ember team. [valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- On 2026-06-04, the Boreal team noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- On 2026-05-22, team Dune noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- On 2026-02-16, team Dune noticed that the product catalog's request volume halved after the client rollout and pinged the owners. [valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n\nQuestion: Which note first recorded that webhooks depends on the event-bus, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595854-ZhbutxH2tuntWwgXDmiB",
+  "object": "chat.completion",
+  "created": 1788595854,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/boreal/2025-02-11-2, on 2025-02-11",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded that webhooks depends on the event-bus, and when?\n\nLooking at the memory:\n- \"The webhook dispatcher relies on the bus for outbound events, so the webhook dispatcher is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\"\n- \"The notifier relies on the bus for delivery events, so the notifier is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\"\n\nThe webhook dispatcher is the webhooks service. The note that recorded webhooks depends on the bus (event-bus) is standup/boreal/2025-02-11-2, recorded on 2025-02-11.\n\nSo the answer: standup/boreal/2025-02-11-2, on 2025-02-11.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded that webhooks depends on the event-bus, and when?\n\nLooking at the memory:\n- \"The webhook dispatcher relies on the bus for outbound events, so the webhook dispatcher is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\"\n- \"The notifier relies on the bus for delivery events, so the notifier is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\"\n\nThe webhook dispatcher is the webhooks service. The note that recorded webhooks depends on the bus (event-bus) is standup/boreal/2025-02-11-2, recorded on 2025-02-11.\n\nSo the answer: standup/boreal/2025-02-11-2, on 2025-02-11.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1593,
+   "completion_tokens": 229,
+   "total_tokens": 1822,
+   "cost": 0.00035345,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00035345,
+    "upstream_inference_prompt_cost": 0.00023895,
+    "upstream_inference_completions_cost": 0.0001145
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 205,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7544275419786572,
+ "fetched_at": "2026-09-05T08:10:56Z"
+}

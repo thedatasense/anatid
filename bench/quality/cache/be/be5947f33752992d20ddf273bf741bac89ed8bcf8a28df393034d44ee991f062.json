@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded that webhooks depends on the event-bus, and when?\nGold answer: standup/boreal/2025-01-17 (2025-01-17)\nAlso accepted: standup/boreal/2025-01-17; 2025-01-17; 17 January 2025; January 17, 2025; the standup note of 2025-01-17; the standup note of 17 January 2025; the standup note of January 17, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: I don't know"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616638-ERrcP7NKWl64uEGfEJ7t",
+  "object": "chat.completion",
+  "created": 1788616638,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer 'I don't know' fails to identify the gold note standup/boreal/2025-01-17 or its date, so it is incorrect.\"}",
+     "refusal": null,
+     "reasoning": "The question asks which note first recorded that webhooks depends on the event-bus, and when. The gold answer is standup/boreal/2025-01-17 (2025-01-17). The answer to grade is \"I don't know\", which doesn't identify the source or date. So it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which note first recorded that webhooks depends on the event-bus, and when. The gold answer is standup/boreal/2025-01-17 (2025-01-17). The answer to grade is \"I don't know\", which doesn't identify the source or date. So it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 335,
+   "completion_tokens": 114,
+   "total_tokens": 449,
+   "cost": 5.3625e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.3625e-05,
+    "upstream_inference_prompt_cost": 2.5125e-05,
+    "upstream_inference_completions_cost": 2.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 68,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.508030625001993,
+ "fetched_at": "2026-09-05T13:57:22Z"
+}

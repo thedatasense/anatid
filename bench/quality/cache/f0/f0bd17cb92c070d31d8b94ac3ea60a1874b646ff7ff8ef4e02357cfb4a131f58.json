@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- Dune noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-16; the root cause was two leaders elected during a network partition [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- Decision: the scheduler will use leader election instead of a single fixed node, because the fixed node turned every restart into a missed run [decision; valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\n- The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: The scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- The handover note of 2026-02-11 wrongly recorded Dune as the owner of feature-flags [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- Boreal noticed that the scheduler's cold start time tripled after the runtime upgrade [observation; valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n- Decision: auth-gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- Cinder owns the scheduler [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: Dune owns the scheduler [valid 2025-06-25 to 2025-09-23; recorded by handover/2025-06-25-scheduler]\n    earlier: Ember owns the scheduler [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- The handover note of 2025-06-11 wrongly recorded Cinder as the owner of the notifier [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- Decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017 [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- Atlas noticed that the ledger's disk usage jumped 30 percent after the retention change [observation; valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- The handover note of 2025-06-09 wrongly recorded Boreal as the owner of billing-api [valid 2025-07-03 to now; recorded by handover/2025-07-03-billing-api-correction]\n- The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger deploys only on weekday mornings before 11:00 UTC [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- Ember noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n\nQuestion: Which note records the decision that the scheduler leader lease will be shortened to ten seconds, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788597613-BXfUoEKc5BUpXd92Z7aB",
+  "object": "chat.completion",
+  "created": 1788597613,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "incident-review/INC-2026-009, recorded on 2026-05-19.",
+     "refusal": null,
+     "reasoning": "The question asks: which note records the decision that the scheduler leader lease will be shortened to ten seconds, and when was it written?\n\nFrom memory: \"Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\"\n\nSo the note is incident-review/INC-2026-009, recorded 2026-05-19.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note records the decision that the scheduler leader lease will be shortened to ten seconds, and when was it written?\n\nFrom memory: \"Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\"\n\nSo the note is incident-review/INC-2026-009, recorded 2026-05-19.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1434,
+   "completion_tokens": 135,
+   "total_tokens": 1569,
+   "cost": 0.0002826,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002826,
+    "upstream_inference_prompt_cost": 0.0002151,
+    "upstream_inference_completions_cost": 6.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 112,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6460797499748878,
+ "fetched_at": "2026-09-05T08:40:14Z"
+}

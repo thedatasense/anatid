@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Dashboards and alerts for the event bus are being repointed as of the 2025-11-24 handover. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- On 2025-12-29 the Dune team observed that the event bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- As of 2025-11-24, the Atlas team is taking over the event bus from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- On 2026-04-08 the Atlas team noticed that webhooks' request volume halved following the client rollout and flagged it because it is not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- On 2025-09-23 the Dune team noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- On 2025-05-14 the Cinder team observed that webhooks' memory use grew steadily for a week after the cache change. [valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- Oskar takes the first on-call shift of the year for the Ember team. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- Priya Raman holds the first on-call rotation for the Atlas team as of 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-07-30; recorded by standup/atlas/2025-01-09]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- The job scheduler depends on the feature-flags service for per-job kill switches. [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- The notifier is owned by the Dune team as of 2025-06-27; the earlier handover note of 2025-06-11 saying Cinder took ownership was written against the wrong team, and Cinder never owned it. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, having moved from the Boreal team. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- During incident INC-2026-003, the webhooks service delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- On 2025-11-03 the Boreal team decided that webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- The notifier relies on the bus for delivery events, so if the bus is down the notifier is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- The webhook dispatcher relies on the bus for outbound events, so if the bus is down the webhook dispatcher is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- On 2026-05-27 the Atlas team decided that the bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- On 2026-02-10 the Boreal team noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10-2]\n\nQuestion: Which note first recorded that webhooks depends on the event-bus, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604039-ghdSMQWWbDmfqUmCWVy7",
+  "object": "chat.completion",
+  "created": 1788604039,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/boreal/2025-02-11-2, recorded 2025-02-11",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded that webhooks depends on the event-bus, and when?\n\nLooking at memory: \"The webhook dispatcher relies on the bus for outbound events, so if the bus is down the webhook dispatcher is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\"\n\nWebhooks - the question says \"webhooks depends on the event-bus\". The note about webhook dispatcher relying on the bus is standup/boreal/2025-02-11-2, valid from 2025-02-11.\n\nIs \"webhooks\" the same as \"webhook dispatcher\"? The memory also mentions webhooks service, webhooks signing, etc. The dependency note is about \"webhook dispatcher\". There's no other note about webhooks depending on the bus. So the answer is standup/boreal/2025-02-11-2 on 2025-02-11.\n\nAnswer in one short line: standup/boreal/2025-02-11-2, 2025-02-11.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded that webhooks depends on the event-bus, and when?\n\nLooking at memory: \"The webhook dispatcher relies on the bus for outbound events, so if the bus is down the webhook dispatcher is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\"\n\nWebhooks - the question says \"webhooks depends on the event-bus\". The note about webhook dispatcher relying on the bus is standup/boreal/2025-02-11-2, valid from 2025-02-11.\n\nIs \"webhooks\" the same as \"webhook dispatcher\"? The memory also mentions webhooks service, webhooks signing, etc. The dependency note is about \"webhook dispatcher\". There's no other note about webhooks depending on the bus. So the answer is standup/boreal/2025-02-11-2 on 2025-02-11.\n\nAnswer in one short line: standup/boreal/2025-02-11-2, 2025-02-11.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1458,
+   "completion_tokens": 256,
+   "total_tokens": 1714,
+   "cost": 0.00016567,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016567,
+    "upstream_inference_prompt_cost": 0.00010167,
+    "upstream_inference_completions_cost": 6.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 232,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.043797415972222,
+ "fetched_at": "2026-09-05T10:27:23Z"
+}

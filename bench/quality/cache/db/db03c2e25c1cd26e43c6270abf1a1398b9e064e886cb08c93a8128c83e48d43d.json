@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Who owns search-indexer today?\nGold answer: Dune\nAlso accepted: the Dune team; team Dune\nGrading rule: Correct only if the answer gives the CURRENT value (the gold). Naming an earlier value listed under distractors is wrong, even if it was once true. 'I don't know' is wrong.\n\nAnswer to grade: Team Dune"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616561-Q6rLZ4KN2uvCoug93MSm",
+  "object": "chat.completion",
+  "created": 1788616561,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Novita",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'Team Dune' matches an accepted alternative phrasing of the gold answer 'Dune'.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"Dune\", accepted alternatives are \"the Dune team; team Dune\". The answer to grade is \"Team Dune\". That matches \"team Dune\" exactly (case-insensitive). So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"Dune\", accepted alternatives are \"the Dune team; team Dune\". The answer to grade is \"Team Dune\". That matches \"team Dune\" exactly (case-insensitive). So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 242,
+   "completion_tokens": 83,
+   "total_tokens": 325,
+   "cost": 3.89e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.89e-05,
+    "upstream_inference_prompt_cost": 1.815e-05,
+    "upstream_inference_completions_cost": 2.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 49,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.826073040952906,
+ "fetched_at": "2026-09-05T13:56:02Z"
+}

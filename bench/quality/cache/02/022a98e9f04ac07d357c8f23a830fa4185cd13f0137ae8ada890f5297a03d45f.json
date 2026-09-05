@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- INC-2026-009 happened because two leaders were elected on the scheduler during a network partition. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- During INC-2025-004, a stuck offset went unnoticed for 40 minutes. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2025-004 was a consumer offset stuck after a broker restart. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk, leaving stale results for two days. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-011 was caused by an index missing after the schema migration. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- During INC-2025-011, the ledger saw write latency spike tenfold for an hour on 2025-04-26. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- INC-2025-017's root cause was an expired intermediate certificate, which took logins down. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- As a follow-up to INC-2026-009, the scheduler leader lease will be shortened to ten seconds. [decision; valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- On 2025-08-01, it was decided that certificate expiry will alert 30 days ahead. [decision; valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- On 2026-01-22, the team decided the webhooks service will require an idempotency key on every delivery, because the duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- There is a deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- On 2026-03-10, Team Dune observed that the reporting service's p99 latency doubled after Tuesday's deploy. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy and flagged it because the service is not theirs. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n\nQuestion: On what date did INC-2026-009 happen?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615002-RALD5XnPpvfFjsIxDnN1",
+  "object": "chat.completion",
+  "created": 1788615002,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2026-05-03",
+     "refusal": null,
+     "reasoning": "The question asks for the date of INC-2026-009. Memory says: \"INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03.\"\n\nAnswer: 2026-05-03.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks for the date of INC-2026-009. Memory says: \"INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03.\"\n\nAnswer: 2026-05-03.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1253,
+   "completion_tokens": 65,
+   "total_tokens": 1318,
+   "cost": 9.8705e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.8705e-05,
+    "upstream_inference_prompt_cost": 8.2455e-05,
+    "upstream_inference_completions_cost": 1.625e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 57,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9236718749743886,
+ "fetched_at": "2026-09-05T13:30:04Z"
+}

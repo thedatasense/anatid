@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded the deploy window for the catalog, and when?\nGold answer: standup/cinder/2025-03-17 (2025-03-17)\nAlso accepted: standup/cinder/2025-03-17; 2025-03-17; 17 March 2025; March 17, 2025; the standup note of 2025-03-17; the standup note of 17 March 2025; the standup note of March 17, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/cinder/2025-03-17, recorded 2025-03-17"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788605611-BZPw9wZ308e5ddo2P0h0",
+  "object": "chat.completion",
+  "created": 1788605611,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the exact source label standup/cinder/2025-03-17 with the matching date 2025-03-17, which matches the gold answer.\"}\n",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"standup/cinder/2025-03-17, recorded 2025-03-17\". The gold answer is \"standup/cinder/2025-03-17 (2025-03-17)\". The grading rule says correct if identifies source label of the gold note, or kind with date. The answer matches the label exactly. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"standup/cinder/2025-03-17, recorded 2025-03-17\". The gold answer is \"standup/cinder/2025-03-17 (2025-03-17)\". The grading rule says correct if identifies source label of the gold note, or kind with date. The answer matches the label exactly. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 348,
+   "completion_tokens": 134,
+   "total_tokens": 482,
+   "cost": 5.192e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.192e-05,
+    "upstream_inference_prompt_cost": 1.842e-05,
+    "upstream_inference_completions_cost": 3.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 82,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.259153749968391,
+ "fetched_at": "2026-09-05T10:53:37Z"
+}

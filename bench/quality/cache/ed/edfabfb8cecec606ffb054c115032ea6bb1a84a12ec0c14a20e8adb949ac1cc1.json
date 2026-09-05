@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which team was wrongly recorded as the owner of the notifier before the record was corrected?\nGold answer: Cinder\nAlso accepted: the Cinder team; team Cinder\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: I don't know"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788597768-xyvIYd3Y5ihgpGrC3Jz0",
+  "object": "chat.completion",
+  "created": 1788597768,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer states 'I don't know' instead of the gold fact that the Cinder team was wrongly recorded as the owner of the notifier.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"I don't know\" which per the grading rule is wrong. So the output should be {\"correct\": false, \"reason\": \"...\"}.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"I don't know\" which per the grading rule is wrong. So the output should be {\"correct\": false, \"reason\": \"...\"}.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 243,
+   "completion_tokens": 75,
+   "total_tokens": 318,
+   "cost": 2.9295e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.9295e-05,
+    "upstream_inference_prompt_cost": 1.0545e-05,
+    "upstream_inference_completions_cost": 1.875e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 35,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.074099334015045,
+ "fetched_at": "2026-09-05T08:42:53Z"
+}

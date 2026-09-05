@@ -1,0 +1,31 @@
+{
+ "qid": "q004",
+ "system": "anatid-graph",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- Team Dune observed that the indexer's disk usage jumped 30 percent after the retention change. (since 2026-06-09; source standup/dune/2026-06-09)\n- The Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. (since 2026-05-27; source standup/atlas/2026-05-27)\n- [constraint] As of 2026-04-01, the indexer is owned by the Boreal team, taking over from the Atlas team. (since 2026-04-01; source handover/2026-04-01-search-indexer)\n  - earlier: [constraint] The indexer is owned by the Atlas team. (held 2025-05-20 to 2026-04-01; source handover/2025-05-20-search-indexer)\n  - earlier: The indexer is owned by the Cinder team. (held 2025-01-17 to 2025-05-20; source standup/cinder/2025-01-17-2)\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. (since 2026-04-01; source handover/2026-04-01-search-indexer)\n- The Boreal team noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the indexer's owners. (since 2026-02-10; source standup/boreal/2026-02-10-2)\n- [decision] As of 2025-12-18, the indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes. (since 2025-12-18; source standup/atlas/2025-12-18)\n- [decision] Reindex jobs will page on failure. (since 2025-10-07; source incident-review/INC-2025-023)\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. (since 2025-10-07; source incident-review/INC-2025-023)\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. (since 2025-10-07; source incident-review/INC-2025-023)\n- [constraint] The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. (since 2025-04-22; source standup/cinder/2025-04-22)\n- The indexer depends on the product catalog for product documents. (since 2025-01-30; source standup/cinder/2025-01-30)\n\nQuestion: Why do reindex jobs page on failure?"
+  }
+ ],
+ "contexts": [
+  "Memory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.",
+  "- Team Dune observed that the indexer's disk usage jumped 30 percent after the retention change. (since 2026-06-09; source standup/dune/2026-06-09)",
+  "- The Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. (since 2026-05-27; source standup/atlas/2026-05-27)",
+  "- [constraint] As of 2026-04-01, the indexer is owned by the Boreal team, taking over from the Atlas team. (since 2026-04-01; source handover/2026-04-01-search-indexer)",
+  "  - earlier: [constraint] The indexer is owned by the Atlas team. (held 2025-05-20 to 2026-04-01; source handover/2025-05-20-search-indexer)",
+  "  - earlier: The indexer is owned by the Cinder team. (held 2025-01-17 to 2025-05-20; source standup/cinder/2025-01-17-2)",
+  "- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. (since 2026-04-01; source handover/2026-04-01-search-indexer)",
+  "- The Boreal team noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the indexer's owners. (since 2026-02-10; source standup/boreal/2026-02-10-2)",
+  "- [decision] As of 2025-12-18, the indexer will rebuild the index nightly instead of on every catalog write, since incremental updates left stale entries behind after failed writes. (since 2025-12-18; source standup/atlas/2025-12-18)",
+  "- [decision] Reindex jobs will page on failure. (since 2025-10-07; source incident-review/INC-2025-023)",
+  "- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. (since 2025-10-07; source incident-review/INC-2025-023)",
+  "- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. (since 2025-10-07; source incident-review/INC-2025-023)",
+  "- [constraint] The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. (since 2025-04-22; source standup/cinder/2025-04-22)",
+  "- The indexer depends on the product catalog for product documents. (since 2025-01-30; source standup/cinder/2025-01-30)"
+ ],
+ "answer": "Because of INC-2025-023: a reindex job failed silently on a full disk, leaving the indexer serving stale results for two days."
+}

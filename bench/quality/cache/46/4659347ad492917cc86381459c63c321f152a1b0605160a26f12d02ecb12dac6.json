@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Priya Raman holds the first on-call rotation for the Atlas team as of 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-07-30; recorded by standup/atlas/2025-01-09]\n- As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation, taking over from Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is on the Atlas team on-call rotation as of 2025-06-19, taking over from Priya Raman. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya Raman is on the Atlas team on-call rotation as of 2025-05-13, taking over from Tomasz. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is on the Atlas team on-call rotation as of 2025-04-03. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Tomasz is off the Atlas team on-call rotation as of 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n- The Atlas team planning meeting is every Tuesday. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- As of 2025-12-25, the Atlas team is located on the second floor. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- As of 2026-05-29, Oskar is on the Ember team on-call rotation as the primary on-call. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- The ledger service is owned by the Atlas team. [valid 2025-01-08 to now; recorded by standup/atlas/2025-01-08]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2025-07-30, Priya Raman holds the Atlas pager; page Priya Raman for anything Atlas-related, not Tomasz. [constraint; valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz holds the Atlas pager this cycle as of 2025-06-19; page Tomasz for anything Atlas-related, not Priya Raman. [constraint; valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya Raman holds the Atlas pager this cycle as of 2025-05-13; page Priya Raman for anything Atlas-related, not Tomasz. [constraint; valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz holds the Atlas pager this cycle as of 2025-04-03; page Tomasz for anything Atlas-related, not Priya Raman. [constraint; valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team from 2025-02-12 and still holds the Atlas pager as of 2025-03-28. [valid 2025-03-28 to 2025-04-03; recorded by standup/atlas/2025-03-28]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12. [valid 2025-02-12 to 2025-03-28; recorded by standup/atlas/2025-02-12]\n- As of 2026-06-04, page Priya Raman for anything Atlas-related for this cycle, not Marcus. [constraint; valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: As of 2026-04-08, page Marcus for anything Atlas-related for this cycle, not Priya Raman. [constraint; valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: As of 2026-03-17, page Priya Raman for anything Atlas-related. [constraint; valid 2026-03-17 to 2026-04-08; recorded by standup/atlas/2026-03-17]\n- As of 2025-12-19, the Atlas team is taking over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- As of 2025-11-24, the Atlas team is taking over the event bus from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n\nQuestion: Who is on call for Atlas right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603176-llBcfAGPATdoQXwkxnUv",
+  "object": "chat.completion",
+  "created": 1788603176,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Priya Raman",
+     "refusal": null,
+     "reasoning": "The question asks who is on call for Atlas right now (today is 2026-06-30).\n\nLooking at the memory entries:\n- As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation. [valid 2025-07-30 to now]\n- As of 2026-06-04, page Priya Raman for anything Atlas-related for this cycle, not Marcus. [constraint; valid 2026-06-04 to now]\n\nThe most recent constraint (2026-06-04) says page Priya Raman for anything Atlas-related, not Marcus. This is the latest valid entry for the current time.\n\nSo the answer is Priya Raman.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who is on call for Atlas right now (today is 2026-06-30).\n\nLooking at the memory entries:\n- As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation. [valid 2025-07-30 to now]\n- As of 2026-06-04, page Priya Raman for anything Atlas-related for this cycle, not Marcus. [constraint; valid 2026-06-04 to now]\n\nThe most recent constraint (2026-06-04) says page Priya Raman for anything Atlas-related, not Marcus. This is the latest valid entry for the current time.\n\nSo the answer is Priya Raman.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1705,
+   "completion_tokens": 156,
+   "total_tokens": 1861,
+   "cost": 0.000166875,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000166875,
+    "upstream_inference_prompt_cost": 0.000127875,
+    "upstream_inference_completions_cost": 3.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 150,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.412921583978459,
+ "fetched_at": "2026-09-05T10:13:01Z"
+}

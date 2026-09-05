@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Tomasz Nowak wrote the billing-api handover doc for Marcus on 2025-03-17. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- As of 2025-09-08, billing-api has a new dependency on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Billing-api will gate the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- There is a deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- As of 2026-05-26, the billing service is owned by Team Dune, which took it over from Team Boreal. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: As of 2025-03-17, the billing service lives with Team Boreal. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- Lena is the release captain for Q1 2026. [valid 2025-06-05 to now; recorded by standup/boreal/2025-06-05-2]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy and flagged it because the service is not theirs. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- Oskar is the only engineer on the Ember team for now. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- The nightly ledger scans were blocking billing runs. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- As of 2025-10-22, Farah is Team Dune's release captain for Q3 2025. [valid 2025-10-22 to now; recorded by standup/dune/2025-10-22-2]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- On 2025-07-28, Team Cinder reported that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- On 2026-02-12, the Ember team reported that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- On 2026-03-10, Team Dune observed that the reporting service's p99 latency doubled after Tuesday's deploy. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- As of 2025-10-27, Yuki is the primary on-call for Team Cinder, having taken over from Diego. [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n    earlier: As of 2025-08-29, Diego is the primary on-call for Team Cinder, having taken over from Yuki. [valid 2025-08-29 to 2025-10-27; recorded by standup/cinder/2025-08-29]\n    earlier: As of 2025-07-10, Yuki is the primary on-call for Team Cinder until the next rotation. [valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: As of 2025-05-19, Diego is the primary on-call for Team Cinder. [valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-09, Yuki is the primary on-call for Team Cinder. [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n\nQuestion: What is the deploy window for billing-api?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614420-FUdPWtzovtmKmkBwC0w4",
+  "object": "chat.completion",
+  "created": 1788614420,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-11-24 to 2025-12-02 (deploy freeze)",
+     "refusal": null,
+     "reasoning": "The question asks about the deploy window for billing-api. The memory mentions:\n- \"There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season.\"\n\nThe question asks \"What is the deploy window for billing-api?\" — Hmm, the memory doesn't describe a \"deploy window\" per se; it describes a deploy freeze. The freeze is on the billing service, not specifically billing-api. Is the billing service the same as billing-api? The memory treats them somewhat separately: \"billing-api has a new dependency on feature-flags service\" vs \"billing service depends on ledger\". The ownership entries refer to \"billing service\" ownership recorded by handover/2026-05-26-billing-api, suggesting they're the same thing.\n\nBut the question asks about \"deploy window\" — the memory only says a deploy freeze from 2025-11-24 to 2025-12-02. A freeze is not a deploy window exactly, but this could be the answer: the freeze window. Actually, the question may be interpreted as \"when can billing-api be deployed\" — the freeze constrains that. But the memory doesn't state a deploy window; it states a freeze. The best answer from memory would be the freeze dates: 2025-11-24 to 2025-12-02.\n\nGiven the rules, answer with one short line with just the value: \"2025-11-24 to 2025-12-02\". Alternatively, could answer \"I don't know\" since there's no deploy window specified. But the freeze likely is the intended answer—the deploy freeze window. I'll answer the freeze window.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the deploy window for billing-api. The memory mentions:\n- \"There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season.\"\n\nThe question asks \"What is the deploy window for billing-api?\" — Hmm, the memory doesn't describe a \"deploy window\" per se; it describes a deploy freeze. The freeze is on the billing service, not specifically billing-api. Is the billing service the same as billing-api? The memory treats them somewhat separately: \"billing-api has a new dependency on feature-flags service\" vs \"billing service depends on ledger\". The ownership entries refer to \"billing service\" ownership recorded by handover/2026-05-26-billing-api, suggesting they're the same thing.\n\nBut the question asks about \"deploy window\" — the memory only says a deploy freeze from 2025-11-24 to 2025-12-02. A freeze is not a deploy window exactly, but this could be the answer: the freeze window. Actually, the question may be interpreted as \"when can billing-api be deployed\" — the freeze constrains that. But the memory doesn't state a deploy window; it states a freeze. The best answer from memory would be the freeze dates: 2025-11-24 to 2025-12-02.\n\nGiven the rules, answer with one short line with just the value: \"2025-11-24 to 2025-12-02\". Alternatively, could answer \"I don't know\" since there's no deploy window specified. But the freeze likely is the intended answer—the deploy freeze window. I'll answer the freeze window.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1550,
+   "completion_tokens": 372,
+   "total_tokens": 1922,
+   "cost": 0.00020157,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00020157,
+    "upstream_inference_prompt_cost": 0.00010857,
+    "upstream_inference_completions_cost": 9.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 352,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.206655291025527,
+ "fetched_at": "2026-09-05T13:20:25Z"
+}

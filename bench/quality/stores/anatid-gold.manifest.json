@@ -1,0 +1,14 @@
+{
+  "mode": "gold",
+  "anatid": "0.4.0",
+  "tenant": 1,
+  "id_base": 2000000,
+  "notes": 178,
+  "notes_sha": "e81184d845a695290334a281b9f6c822b8db4479ac39d404b1d8d2c8038f3695",
+  "patches_sha": "fd4636cbb9029cc70ea90402ff3b80da0c849cf0c07133bf9fd637f83fc6e3d4",
+  "embed_model": "openai/text-embedding-3-small",
+  "dim": 1536,
+  "model": null,
+  "system_prompt_sha": null,
+  "extractor": null
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Ember noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- Dune owns search-indexer [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: Cinder owns search-indexer [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- Cinder noticed that search-indexer's disk usage jumped 30 percent after the retention change [observation; valid 2026-01-01 to now; recorded by standup/cinder/2026-01-01]\n- Decision: search-indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes [decision; valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n- Search-indexer must stay on OpenSearch 2.11 until the full reindex completes [constraint; valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- Dune noticed that search-indexer's queue depth hit 50,000 after the marketing send [observation; valid 2025-11-06 to now; recorded by standup/dune/2025-11-06]\n- INC-2025-023: search-indexer served stale results for two days on 2025-10-13; the root cause was a reindex job that failed silently on a full disk [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- The catalog deploys only on Tuesdays between 13:00 and 15:00 UTC [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n- Search-indexer depends on the catalog [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- Ember noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- Farah is on call for Dune [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: Tomasz is on call for Dune [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: Farah is on call for Dune [valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n    earlier: Tomasz is on call for Dune [valid 2026-02-04 to 2026-03-10; recorded by standup/dune/2026-02-04]\n    earlier: Farah is on call for Dune [valid 2025-12-15 to 2026-02-04; recorded by standup/dune/2025-12-15]\n    earlier: Tomasz is on call for Dune [valid 2025-10-27 to 2025-12-15; recorded by standup/dune/2025-10-27]\n    earlier: Farah is on call for Dune [valid 2025-09-22 to 2025-10-27; recorded by standup/dune/2025-09-22]\n    earlier: Tomasz is on call for Dune [valid 2025-07-30 to 2025-09-22; recorded by standup/dune/2025-07-30]\n    earlier: Farah is on call for Dune [valid 2025-01-16 to 2025-07-30; recorded by standup/dune/2025-01-16]\n- Lena is on call for Boreal [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: Marcus is on call for Boreal [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: Lena is on call for Boreal [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n    earlier: Marcus is on call for Boreal [valid 2025-09-08 to 2025-10-31; recorded by standup/boreal/2025-09-08]\n    earlier: Lena is on call for Boreal [valid 2025-08-01 to 2025-09-08; recorded by standup/boreal/2025-08-01]\n    earlier: Marcus is on call for Boreal [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n    earlier: Lena is on call for Boreal [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: Marcus is on call for Boreal [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n    earlier: Lena is on call for Boreal [valid 2025-01-13 to 2025-02-27; recorded by standup/boreal/2025-01-13]\n- Billing-api deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-05-05 to now; recorded by standup/boreal/2025-05-05]\n- Cinder noticed that billing-api's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- Changes to billing-api need a rollback plan attached to the pull request [constraint; valid 2025-09-09 to now; recorded by standup/boreal/2025-09-09]\n\nQuestion: Which version is search-indexer pinned to, and until when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615867-SU59cAxTdROdCIJojEqK",
+  "object": "chat.completion",
+  "created": 1788615867,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "OpenSearch 2.11, until the full reindex completes.",
+     "refusal": null,
+     "reasoning": "The memory says: \"Search-indexer must stay on OpenSearch 2.11 until the full reindex completes [constraint; valid 2025-08-27 to now]\". So the version is OpenSearch 2.11, until the full reindex completes. Answer in one short line.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"Search-indexer must stay on OpenSearch 2.11 until the full reindex completes [constraint; valid 2025-08-27 to now]\". So the version is OpenSearch 2.11, until the full reindex completes. Answer in one short line.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1778,
+   "completion_tokens": 78,
+   "total_tokens": 1856,
+   "cost": 0.00014517,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014517,
+    "upstream_inference_prompt_cost": 0.00012567,
+    "upstream_inference_completions_cost": 1.95e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 62,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8731699170311913,
+ "fetched_at": "2026-09-05T13:44:29Z"
+}

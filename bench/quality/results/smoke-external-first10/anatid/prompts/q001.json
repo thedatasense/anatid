@@ -1,0 +1,38 @@
+{
+ "qid": "q001",
+ "system": "anatid",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- Team Dune noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the auth gateway's owners. (since 2026-05-22; source standup/dune/2026-05-22-2)\n- [decision] As of 2026-01-30, the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. (since 2026-01-30; source standup/cinder/2026-01-30)\n- The ledger service depends on the auth gateway for service tokens. (since 2025-03-04; source standup/atlas/2025-03-04)\n- [constraint] Changes to the billing API need a rollback plan attached to the pull request. (since 2025-04-02; source standup/ember/2025-04-02)\n- The Cinder team observed that the auth gateway's cold start time tripled after the runtime upgrade. (since 2025-09-03; source standup/cinder/2025-09-03-2)\n- INC-2025-017 was an incident where the auth gateway rejected every login for 12 minutes on 2025-08-02. (since 2025-08-07; source incident-review/INC-2025-017)\n- On 2025-09-16, the Ember team handed the authentication gateway over to the Cinder team. (since 2025-09-16; source handover/2025-09-16-auth-gateway)\n- The Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change. (since 2026-04-16; source standup/atlas/2026-04-16)\n- As of 2025-12-01, the billing API's error rate crept up to 2 percent after the dependency bump, per a heads-up from Boreal team. (since 2025-12-01; source standup/boreal/2025-12-01)\n- The ledger service's memory use grew steadily for a week after the cache change. (since 2025-02-21; source standup/boreal/2025-02-21-2)\n- Boreal noticed the ledger service's memory use growth after the cache change and pinged the ledger service's owners. (since 2025-02-21; source standup/boreal/2025-02-21-2)\n- The Cinder team observed that the webhook dispatcher's memory use grew steadily for a week after the cache change. (since 2025-05-14; source standup/cinder/2025-05-14)\n- [decision] Ledger service migrations will ship with a reviewed query plan. (since 2025-05-30; source incident-review/INC-2025-011)\n- [constraint] Per policy, every authentication gateway change requires two reviewer approvals and a security sign-off. (since 2025-07-29; source standup/ember/2025-07-29)\n- INC-2025-011 was a ledger service incident on 2025-05-24. (since 2025-05-30; source incident-review/INC-2025-011)\n- [constraint] Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. (since 2025-02-18; source standup/ember/2025-02-18)\n- The authentication gateway's error rate crept up to 2 percent after the dependency bump. (since 2025-05-07; source standup/boreal/2025-05-07-2)\n- [decision] The Ember team does pairing on every production change. (since 2025-02-06; source standup/ember/2025-02-06-2)\n- [constraint] The ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 because of the fiscal year close. (since 2026-03-11; source standup/cinder/2026-03-11)\n- [constraint] The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, the peak season. (since 2025-11-11; source standup/atlas/2025-11-11)\n\nQuestion: What does a change to auth-gateway need before it can merge?"
+  }
+ ],
+ "contexts": [
+  "Memory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.",
+  "- Team Dune noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the auth gateway's owners. (since 2026-05-22; source standup/dune/2026-05-22-2)",
+  "- [decision] As of 2026-01-30, the Cinder team agreed that auth gateway tokens will expire after 15 minutes instead of an hour. (since 2026-01-30; source standup/cinder/2026-01-30)",
+  "- The ledger service depends on the auth gateway for service tokens. (since 2025-03-04; source standup/atlas/2025-03-04)",
+  "- [constraint] Changes to the billing API need a rollback plan attached to the pull request. (since 2025-04-02; source standup/ember/2025-04-02)",
+  "- The Cinder team observed that the auth gateway's cold start time tripled after the runtime upgrade. (since 2025-09-03; source standup/cinder/2025-09-03-2)",
+  "- INC-2025-017 was an incident where the auth gateway rejected every login for 12 minutes on 2025-08-02. (since 2025-08-07; source incident-review/INC-2025-017)",
+  "- On 2025-09-16, the Ember team handed the authentication gateway over to the Cinder team. (since 2025-09-16; source handover/2025-09-16-auth-gateway)",
+  "- The Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change. (since 2026-04-16; source standup/atlas/2026-04-16)",
+  "- As of 2025-12-01, the billing API's error rate crept up to 2 percent after the dependency bump, per a heads-up from Boreal team. (since 2025-12-01; source standup/boreal/2025-12-01)",
+  "- The ledger service's memory use grew steadily for a week after the cache change. (since 2025-02-21; source standup/boreal/2025-02-21-2)",
+  "- Boreal noticed the ledger service's memory use growth after the cache change and pinged the ledger service's owners. (since 2025-02-21; source standup/boreal/2025-02-21-2)",
+  "- The Cinder team observed that the webhook dispatcher's memory use grew steadily for a week after the cache change. (since 2025-05-14; source standup/cinder/2025-05-14)",
+  "- [decision] Ledger service migrations will ship with a reviewed query plan. (since 2025-05-30; source incident-review/INC-2025-011)",
+  "- [constraint] Per policy, every authentication gateway change requires two reviewer approvals and a security sign-off. (since 2025-07-29; source standup/ember/2025-07-29)",
+  "- INC-2025-011 was a ledger service incident on 2025-05-24. (since 2025-05-30; source incident-review/INC-2025-011)",
+  "- [constraint] Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. (since 2025-02-18; source standup/ember/2025-02-18)",
+  "- The authentication gateway's error rate crept up to 2 percent after the dependency bump. (since 2025-05-07; source standup/boreal/2025-05-07-2)",
+  "- [decision] The Ember team does pairing on every production change. (since 2025-02-06; source standup/ember/2025-02-06-2)",
+  "- [constraint] The ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 because of the fiscal year close. (since 2026-03-11; source standup/cinder/2026-03-11)",
+  "- [constraint] The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, the peak season. (since 2025-11-11; source standup/atlas/2025-11-11)"
+ ],
+ "answer": "Two reviewer approvals and a security sign-off"
+}

@@ -1,0 +1,23 @@
+{
+ "seconds": 0.00023449998116120696,
+ "llm": {
+  "calls": 0,
+  "cache_hits": 0,
+  "network_calls": 0,
+  "chat_calls": 0,
+  "embed_calls": 0,
+  "embed_texts": 0,
+  "prompt_tokens": 0,
+  "completion_tokens": 0,
+  "embed_tokens": 0,
+  "cost_usd": 0.0,
+  "cost_usd_charged": 0.0,
+  "cost_known": true,
+  "wall_s": 0.0,
+  "recorded_wall_s": 0.0,
+  "hit_rate": 0.0
+ },
+ "report": {
+  "notes": 178
+ }
+}

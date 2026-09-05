@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which team is Yuki on?\nGold answer: Cinder\nAlso accepted: the Cinder team; team Cinder\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: Team Cinder"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616480-bl54QZc6uXRpNJExLhGn",
+  "object": "chat.completion",
+  "created": 1788616480,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states 'Team Cinder', which matches the gold answer 'Cinder' and the accepted alias 'team Cinder'.\"}",
+     "refusal": null,
+     "reasoning": "The answer \"Team Cinder\" matches the gold answer \"Cinder\" or accepted alternative \"team Cinder\". So correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer \"Team Cinder\" matches the gold answer \"Cinder\" or accepted alternative \"team Cinder\". So correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 231,
+   "completion_tokens": 61,
+   "total_tokens": 292,
+   "cost": 2.4895e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.4895e-05,
+    "upstream_inference_prompt_cost": 9.645e-06,
+    "upstream_inference_completions_cost": 1.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 24,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.184401209000498,
+ "fetched_at": "2026-09-05T13:54:47Z"
+}

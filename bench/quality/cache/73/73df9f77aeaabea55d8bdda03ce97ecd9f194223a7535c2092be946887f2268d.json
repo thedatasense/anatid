@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which version is the ledger pinned to, and until when?\nGold answer: Postgres 14, until the partitioning work finishes\nAlso accepted: Postgres 14\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong. Both the version and the condition must be given.\n\nAnswer to grade: Postgres 14, until the partitioning work finishes."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788597860-Rc0U28SgmBhtqN55PnXd",
+  "object": "chat.completion",
+  "created": 1788597860,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer exactly matches the gold answer, stating both the version (Postgres 14) and the condition (until the partitioning work finishes).\"}",
+     "refusal": null,
+     "reasoning": "The answer matches the gold answer exactly: \"Postgres 14, until the partitioning work finishes.\" Both version and condition given. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer matches the gold answer exactly: \"Postgres 14, until the partitioning work finishes.\" Both version and condition given. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 264,
+   "completion_tokens": 70,
+   "total_tokens": 334,
+   "cost": 2.962e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.962e-05,
+    "upstream_inference_prompt_cost": 1.212e-05,
+    "upstream_inference_completions_cost": 1.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 29,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0668183749658056,
+ "fetched_at": "2026-09-05T08:44:22Z"
+}

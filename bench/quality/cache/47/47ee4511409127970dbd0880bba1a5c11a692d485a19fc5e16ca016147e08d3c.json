@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000087\": The billing API depends on the ledger service for invoice postings.  (about: ledger service, billing API)\n- memory_id \"1000039\": The billing API is owned by the Atlas team.  (about: Atlas team, billing API)\n- memory_id \"1000107\" [constraint]: The ledger service only ships on weekday mornings before 11:00 UTC.  (about: ledger service)\n- memory_id \"1000075\" [decision]: Tomasz takes the first on-call rotation for the Atlas team.  (about: Atlas team, Tomasz)\n- memory_id \"1000033\": The ledger service is owned by the Atlas team.  (about: Atlas team, ledger service)\n- memory_id \"1000161\" [constraint]: The ledger service must stay on Postgres 14 until the partitioning work finishes.  (about: ledger service, Postgres 14)\n- memory_id \"1000043\": feature-flags is owned by the Atlas team.  (about: Atlas team, feature-flags)\n- memory_id \"1000145\": The reporting service depends on the ledger service for the nightly balance export.  (about: ledger service, reporting service)\n- memory_id \"1000001\": The Atlas team in 2025 consists of Priya Raman and Tomasz.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000183\": The job scheduler needs the feature-flags service for per-job kill switches.  (about: feature-flags, job scheduler)\n- memory_id \"1000128\": The reporting service is owned by team Dune.  (about: team Dune, reporting service)\n- memory_id \"1000177\" [constraint]: The job scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC and at no other time.  (about: job scheduler)\n- memory_id \"1000171\": The root cause of INC-2025-004 was a consumer offset stuck after a broker restart.  (about: notifier, INC-2025-004)\n- memory_id \"1000167\": The notifier missed alerts for 40 minutes on 2025-02-01 during incident INC-2025-004.  (about: notifier, INC-2025-004)\n- memory_id \"1000103\" [decision]: Oskar takes the first on-call shift of the year for the Ember team.  (about: Ember team, Oskar)\n- memory_id \"1000057\": The Boreal team looks after the bus.  (about: Boreal team, the bus)\n- memory_id \"1000188\": The notifier depends on the bus for delivery events.  (about: the bus, notifier)\n- memory_id \"1000180\" [decision]: The Ember team does pairing on every production change.  (about: Ember team)\n- memory_id \"1000134\": The job scheduler is owned by the Ember team.  (about: Ember team, job scheduler)\n- memory_id \"1000193\": The webhook dispatcher depends on the bus for outbound events.  (about: the bus, webhook dispatcher)\nExisting entity names: ledger service, billing API, Atlas team, Tomasz, Postgres 14, feature-flags, reporting service, Priya Raman, job scheduler, team Dune, notifier, INC-2025-004, Ember team, Oskar, Boreal team, the bus, webhook dispatcher\n\nThe note:\n\n[2025-02-11] standup/atlas/2025-02-11: Reminder that the billing API only ships on weekdays after 15:00 UTC."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788598316-CRJ09GuDKwd53ot4A71z",
+  "object": "chat.completion",
+  "created": 1788598316,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"The billing API only ships on weekdays after 15:00 UTC.\",\n   \"entities\": [\"billing API\"],\n   \"kind\": \"constraint\",\n   \"confidence\": 0.95,\n   \"evidence\": \"the billing API only ships on weekdays after 15:00 UTC\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [],\n \"remove_relations\": [],\n \"entity_aliases\": []\n}\n",
+     "refusal": null,
+     "reasoning": "The note says: \"Reminder that the billing API only ships on weekdays after 15:00 UTC.\"\n\nThis is a durable constraint about the billing API. Existing facts: billing API depends on ledger service, owned by Atlas team. There's a similar constraint about ledger service shipping on weekday mornings before 11:00 UTC, but this note is about billing API, which is new.\n\nAdd fact: constraint, \"The billing API only ships on weekdays after 15:00 UTC.\" Entities: [\"billing API\"]. Evidence: \"the billing API only ships on weekdays after 15:00 UTC\".\n\nNo corrections, relations, aliases.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: \"Reminder that the billing API only ships on weekdays after 15:00 UTC.\"\n\nThis is a durable constraint about the billing API. Existing facts: billing API depends on ledger service, owned by Atlas team. There's a similar constraint about ledger service shipping on weekday mornings before 11:00 UTC, but this note is about billing API, which is new.\n\nAdd fact: constraint, \"The billing API only ships on weekdays after 15:00 UTC.\" Entities: [\"billing API\"]. Evidence: \"the billing API only ships on weekdays after 15:00 UTC\".\n\nNo corrections, relations, aliases.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2164,
+   "completion_tokens": 229,
+   "total_tokens": 2393,
+   "cost": 0.00013891,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1344,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013891,
+    "upstream_inference_prompt_cost": 8.166e-05,
+    "upstream_inference_completions_cost": 5.725e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 127,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.379915915953461,
+ "fetched_at": "2026-09-05T08:52:00Z"
+}

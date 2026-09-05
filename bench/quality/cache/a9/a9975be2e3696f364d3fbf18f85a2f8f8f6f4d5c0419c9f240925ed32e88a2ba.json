@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note records the decision that the scheduler leader lease will be shortened to ten seconds, and when was it written?\nGold answer: incident-review/INC-2026-009 (2026-05-19)\nAlso accepted: incident-review/INC-2026-009; 2026-05-19; 19 May 2026; May 19, 2026; the incident review of 2026-05-19; the incident review of 19 May 2026; the incident review of May 19, 2026\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: I don't know"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788598072-v9mWBWrlarqY0pcej71k",
+  "object": "chat.completion",
+  "created": 1788598072,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer 'I don't know' does not identify the gold note (incident-review/INC-2026-009) or its kind together with the date 2026-05-19, so it fails the grading rule.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"I don't know\". The grading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. \"I don't know\" does not identify anything, so it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"I don't know\". The grading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. \"I don't know\" does not identify anything, so it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 328,
+   "completion_tokens": 113,
+   "total_tokens": 441,
+   "cost": 0.0001057,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001057,
+    "upstream_inference_prompt_cost": 4.92e-05,
+    "upstream_inference_completions_cost": 5.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 53,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.349228958948515,
+ "fetched_at": "2026-09-05T08:47:57Z"
+}

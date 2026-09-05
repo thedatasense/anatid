@@ -1,0 +1,20 @@
+{
+ "qid": "q017",
+ "system": "anatid-graph",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- On 2026-01-22, the team decided the webhooks service will require an idempotency key on every delivery, because the duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n\nQuestion: On what date did INC-2026-003 happen?"
+  }
+ ],
+ "contexts": [
+  "- On 2026-01-22, the team decided the webhooks service will require an idempotency key on every delivery, because the duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]",
+  "- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]",
+  "- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]"
+ ],
+ "answer": "2026-01-17"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-08-01] incident-review/INC-2025-017: Review of INC-2025-017 (the auth gateway, 2025-07-27). The root cause was an expired intermediate certificate. We decided that certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\n- [2025-02-11] incident-review/INC-2025-004: Review of INC-2025-004 (the notifier, 2025-02-06). The root cause was a consumer offset stuck after a broker restart. We decided that notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004.\n- [2025-10-16] incident-review/INC-2025-023: Review of INC-2025-023 (search-indexer, 2025-10-13). The root cause was a reindex job that failed silently on a full disk. We decided that reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2026-01-22] incident-review/INC-2026-003: Incident review INC-2026-003. Webhooks delivered some events twice on 2026-01-17. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-04-28] incident-review/INC-2025-011: INC-2025-011 review. What happened: the ledger service saw write latency spike tenfold for an hour on 2025-04-26. Why: an index missing after the schema migration. Follow-up decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2026-05-08] incident-review/INC-2026-009: INC-2026-009 review. What happened: scheduler ran the nightly jobs twice on 2026-05-03. Why: two leaders elected during a network partition. Follow-up decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2025-09-08] standup/boreal/2025-09-08-2: New dependency for billing-api: feature-flags. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch. Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners.\n- [2025-05-08] standup/boreal/2025-05-08: Boreal saw that the catalog's memory use grew steadily for a week following the cache change; not their service, so they flagged it.\n- [2025-08-14] standup/boreal/2025-08-14: Changes to auth-gateway need two reviewer approvals and a security sign-off.\n- [2025-06-27] standup/boreal/2025-06-27: Boreal saw that the bus' request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-05-18] standup/ember/2026-05-18-2: The Ember team noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2026-01-22] standup/atlas/2026-01-22: Auth-gateway tokens will expire after 15 minutes instead of an hour. Rationale: the security audit flagged long-lived tokens.\n- [2026-03-19] standup/ember/2026-03-19-2: Team Ember noticed that the job scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-07-03] standup/cinder/2025-07-03: The Cinder team saw that the bus' CPU sat at 90 percent following the traffic shift; not their service, so they flagged it.\n- [2025-05-23] standup/ember/2025-05-23: The Ember team saw that the webhooks service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-03-10] standup/atlas/2025-03-10: Dependency map update: the billing service needs the ledger (invoice postings).\n- [2025-07-28] standup/cinder/2025-07-28-2: Heads-up from Cinder: the ledger's p99 latency doubled after Tuesday's deploy. Observation from team Cinder: after the dependency bump, the billing API's error rate crept up to 2 percent.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2025-09-09] standup/boreal/2025-09-09: Changes to the billing API need a rollback plan attached to the pull request.\n- [2025-11-04] standup/boreal/2025-11-04: No deploys to the billing API from 2025-11-24 to 2025-12-02 because of the peak season.\n- [2025-10-22] standup/dune/2025-10-22: We agreed today that webhooks will sign payloads with rotating keys. The reason is that a partner asked for key rotation in their security review.\n- [2025-06-23] standup/atlas/2025-06-23: The quarterly capacity review is run by Priya.\n\nQuestion: What was the root cause of INC-2025-031?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788609108-vWCfpFcg3hj8kyXxvaPX",
+  "object": "chat.completion",
+  "created": 1788609108,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks about INC-2025-031. Looking through the memory, I see incidents: INC-2025-017, INC-2025-004, INC-2025-023, INC-2026-003, INC-2025-011, INC-2026-009. No INC-2025-031. So answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about INC-2025-031. Looking through the memory, I see incidents: INC-2025-017, INC-2025-004, INC-2025-023, INC-2026-003, INC-2025-011, INC-2026-009. No INC-2025-031. So answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1509,
+   "completion_tokens": 92,
+   "total_tokens": 1601,
+   "cost": 0.000113135,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 384,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000113135,
+    "upstream_inference_prompt_cost": 9.0135e-05,
+    "upstream_inference_completions_cost": 2.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 86,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1595234170090407,
+ "fetched_at": "2026-09-05T11:51:50Z"
+}

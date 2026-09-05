@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Who was responsible for webhooks on 2025-04-06?\nGold answer: Ember\nAlso accepted: the Ember team; team Ember\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: Oskar (the Ember team)"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788597881-Xu37gK9TB3sU6Hd7JaBI",
+  "object": "chat.completion",
+  "created": 1788597881,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer explicitly includes 'the Ember team,' which is an accepted alternative phrasing of the gold answer, with Oskar identified as its member.\"}",
+     "refusal": null,
+     "reasoning": "The answer says \"Oskar (the Ember team)\". The gold answer is Ember (or the Ember team, team Ember). The answer mentions Oskar but also parenthetically says \"the Ember team\". Does the answer give the value that held at the date? The parenthetical suggests Oskar was part of the Ember team. The question asks who was responsible; gold is Ember/team Ember. The answer includes \"the Ember team\" which is an accepted alternative. But it also names Oskar. Hmm.\n\nThe grading rule: correct only if the answer gives the value that held at the date. The answer gives Oskar primarily, with \"the Ember team\" as clarification. Is that acceptable? The accepted alternative is \"the Ember team\". The answer includes that. Ambiguity: does including Oskar make it wrong? Typically, if the answer contains the gold value, it's correct. The parenthetical \"(the Ember team)\" indicates Oskar belonged to the Ember team, essentially answering \"the Ember team\" (via Oskar). I'd lean correct since the gold phrase appears and is consistent — Oskar being a member. The answer as a whole asserts the Ember team was responsible. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer says \"Oskar (the Ember team)\". The gold answer is Ember (or the Ember team, team Ember). The answer mentions Oskar but also parenthetically says \"the Ember team\". Does the answer give the value that held at the date? The parenthetical suggests Oskar was part of the Ember team. The question asks who was responsible; gold is Ember/team Ember. The answer includes \"the Ember team\" which is an accepted alternative. But it also names Oskar. Hmm.\n\nThe grading rule: correct only if the answer gives the value that held at the date. The answer gives Oskar primarily, with \"the Ember team\" as clarification. Is that acceptable? The accepted alternative is \"the Ember team\". The answer includes that. Ambiguity: does including Oskar make it wrong? Typically, if the answer contains the gold value, it's correct. The parenthetical \"(the Ember team)\" indicates Oskar belonged to the Ember team, essentially answering \"the Ember team\" (via Oskar). I'd lean correct since the gold phrase appears and is consistent — Oskar being a member. The answer as a whole asserts the Ember team was responsible. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 253,
+   "completion_tokens": 298,
+   "total_tokens": 551,
+   "cost": 8.5795e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 8.5795e-05,
+    "upstream_inference_prompt_cost": 1.1295e-05,
+    "upstream_inference_completions_cost": 7.45e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 256,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.271905125002377,
+ "fetched_at": "2026-09-05T08:44:45Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Notifier consumers will commit offsets every five seconds. [decision; valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- Do not upgrade the ledger service past Postgres 14 until the partitioning work finishes. [constraint; valid 2025-09-12 to now; recorded by standup/atlas/2025-09-12]\n- On 2025-07-28, Team Cinder decided that clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28]\n- The catalog service's joined writes were locking product updates for seconds at a time. [valid 2025-04-04 to now; recorded by standup/dune/2025-04-04]\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- As of 2025-06-19, the notifier lives with Team Dune. [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: As of 2025-04-04, the notifier lives with Team Cinder. [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: The notifier lives with Team Boreal. [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- Team Dune's planning meeting is every Wednesday. [valid 2025-11-06 to now; recorded by standup/dune/2025-11-06-2]\n- As a follow-up to INC-2026-009, the scheduler leader lease will be shortened to ten seconds. [decision; valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- The Ember team holds its planning meeting every Friday. [valid 2025-06-13 to now; recorded by standup/ember/2025-06-13-2]\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- On 2025-07-03, Team Atlas flagged that the notifier's memory use grew steadily for a week following the cache change, noting the notifier is not their service. [valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03-2]\n- The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-02-20 to now; recorded by standup/boreal/2025-02-20]\n- As of 2025-03-19, the Ember team does pairing on every production change. [decision; valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- The scheduler's previous single fixed node turned every restart into a missed run. [valid 2025-06-13 to now; recorded by standup/ember/2025-06-13]\n- The notifier's flat one-second retry was hammering the push provider during its outages. [valid 2025-02-20 to now; recorded by standup/boreal/2025-02-20]\n- The scheduler pulls per-job kill switches from the feature-flags service on every run. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- On 2025-12-17, Team Dune decided that the indexer will rebuild the index nightly instead of on every catalog write. [decision; valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n- On 2025-06-12, Team Dune noticed the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-06-12 to now; recorded by standup/dune/2025-06-12]\n- On 2025-09-08, Team Boreal noticed that the notifier's request volume halved after the client rollout and pinged the owners. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- On 2026-01-22, the team decided the webhooks service will require an idempotency key on every delivery, because the duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n\nQuestion: Why do notifier consumers commit offsets every five seconds?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614398-a59GnPveCZ8ISV4I7dDe",
+  "object": "chat.completion",
+  "created": 1788614398,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Why do notifier consumers commit offsets every five seconds?\n\nLooking at the memory: \"Notifier consumers will commit offsets every five seconds. [decision; valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\"\n\nThe decision is recorded by incident-review/INC-2025-004. The memory says \"INC-2025-004 was an incident affecting the notifier on 2025-02-06.\"\n\nBut does the memory say WHY they commit offsets every five seconds? The decision itself doesn't state a reason. The incident INC-2025-004 affected the notifier, but there's no explanation of why the offset commit interval was chosen as a follow-up.\n\nThe question asks for the reason. The memory doesn't contain a reason for this decision. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Why do notifier consumers commit offsets every five seconds?\n\nLooking at the memory: \"Notifier consumers will commit offsets every five seconds. [decision; valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\"\n\nThe decision is recorded by incident-review/INC-2025-004. The memory says \"INC-2025-004 was an incident affecting the notifier on 2025-02-06.\"\n\nBut does the memory say WHY they commit offsets every five seconds? The decision itself doesn't state a reason. The incident INC-2025-004 affected the notifier, but there's no explanation of why the offset commit interval was chosen as a follow-up.\n\nThe question asks for the reason. The memory doesn't contain a reason for this decision. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1274,
+   "completion_tokens": 186,
+   "total_tokens": 1460,
+   "cost": 0.00014205,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014205,
+    "upstream_inference_prompt_cost": 9.555e-05,
+    "upstream_inference_completions_cost": 4.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 180,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.359555125003681,
+ "fetched_at": "2026-09-05T13:20:03Z"
+}

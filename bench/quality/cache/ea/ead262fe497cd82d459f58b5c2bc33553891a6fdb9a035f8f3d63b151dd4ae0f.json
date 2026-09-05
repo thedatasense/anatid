@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- As of 2025-06-11, team Dune owns the notifier, which the Boreal team owned until then. (since 2025-06-27; source handover/2025-06-27-notifier-correction)\n  - earlier: As of 2025-06-11, the Cinder team owns the notifier, which the Boreal team owned until then. (held 2025-06-11 to 2025-06-27; source handover/2025-06-11-notifier)\n  - earlier: The Boreal team owns the notifier. (held 2025-01-09 to 2025-06-11; source standup/boreal/2025-01-09-2)\n- [decision] The Ember team does pairing on every production change. (since 2025-02-06; source standup/ember/2025-02-06-2)\n- [decision] The Atlas team does a no-deploy Friday. (since 2026-02-03; source standup/atlas/2026-02-03)\n- The notifier missed alerts for 40 minutes on 2025-02-01 during INC-2025-004. (since 2025-02-05; source incident-review/INC-2025-004)\n- The notifier relies on the bus for delivery events, so the notifier is down whenever the bus is down. (since 2025-02-11; source standup/boreal/2025-02-11)\n- INC-2026-003 was an incident in which the webhook dispatcher delivered some events twice on 2026-02-20. (since 2026-02-26; source incident-review/INC-2026-003)\n- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. (since 2026-05-19; source incident-review/INC-2026-009)\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. (since 2025-10-07; source incident-review/INC-2025-023)\n- The ledger service depends on the auth gateway for service tokens. (since 2025-03-04; source standup/atlas/2025-03-04)\n- Until 2025-09-23, the reporting service depended on the ledger service for the nightly balance export; it no longer depends on the ledger service. (since 2025-09-23; source standup/dune/2025-09-23)\n  - earlier: The reporting service depends on the ledger service for the nightly balance export. (held 2025-01-21 to 2025-09-23; source standup/dune/2025-01-21)\n- [decision] Notifier consumers will commit offsets every five seconds. (since 2025-02-05; source incident-review/INC-2025-004)\n- The notifier's request volume halved after the client rollout. (since 2025-04-07; source standup/ember/2025-04-07)\n- INC-2025-011 was a ledger service incident on 2025-05-24. (since 2025-05-30; source incident-review/INC-2025-011)\n- [constraint] The ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. (since 2025-08-25; source standup/atlas/2025-08-25)\n  - earlier: [constraint] The ledger service only ships on weekday mornings before 11:00 UTC. (held 2025-01-14 to 2025-08-25; source standup/atlas/2025-01-14)\n- The billing API depends on the ledger service for invoice postings. (since 2025-01-09; source standup/atlas/2025-01-09-2)\n- [constraint] The ledger service must stay on Postgres 14 until the partitioning work finishes. (since 2025-01-31; source standup/atlas/2025-01-31)\n- As of 2025-09-23, the Cinder team owns the job scheduler, which team Dune owned until then. (since 2025-09-23; source handover/2025-09-23-scheduler)\n- [constraint] The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. (since 2025-03-26; source standup/dune/2025-03-26)\n- The root cause of INC-2025-004 was a notifier consumer offset stuck after a broker restart. (since 2025-02-05; source incident-review/INC-2025-004)\n- [decision] As of 2026-01-12, the billing API is owned by the Ember team, which the Atlas team owned until then. (since 2026-01-12; source handover/2026-01-12-billing-api)\n  - earlier: [decision] From 2025-06-09, the billing API is owned by the Atlas team. (held 2025-07-03 to 2026-01-12; source handover/2025-07-03-billing-api-correction)\n  - earlier: From 2025-06-09, the billing API is owned by the Boreal team. (held 2025-06-09 to 2025-07-03; source handover/2025-06-09-billing-api)\n\nQuestion: Which service does the notifier depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608244-POxcaANUZbys7vvvS4aK",
+  "object": "chat.completion",
+  "created": 1788608244,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The bus",
+     "refusal": null,
+     "reasoning": "The question: Which service does the notifier depend on?\n\nMemory: \"The notifier relies on the bus for delivery events, so the notifier is down whenever the bus is down.\" (since 2025-02-11)\n\nThe notifier depends on the bus. Answer: the bus.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: Which service does the notifier depend on?\n\nMemory: \"The notifier relies on the bus for delivery events, so the notifier is down whenever the bus is down.\" (since 2025-02-11)\n\nThe notifier depends on the bus. Answer: the bus.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1474,
+   "completion_tokens": 61,
+   "total_tokens": 1535,
+   "cost": 0.00011428,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00011428,
+    "upstream_inference_prompt_cost": 9.903e-05,
+    "upstream_inference_completions_cost": 1.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 57,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0567434999975376,
+ "fetched_at": "2026-09-05T11:37:26Z"
+}

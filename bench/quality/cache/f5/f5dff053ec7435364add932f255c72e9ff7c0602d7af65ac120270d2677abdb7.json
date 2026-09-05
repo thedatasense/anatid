@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-08-29] handover/2025-08-29-scheduler: Ownership change: the scheduler now sits with team Cinder. Ember no longer owns it.\n- [2025-01-20] standup/ember/2025-01-20-2: The auth gateway is a Ember service.\n- [2025-01-20] standup/ember/2025-01-20: For the record, scheduler is owned by the Ember team.\n- [2025-03-31] handover/2025-03-31-auth-gateway: Ownership change: the auth gateway now sits with the Boreal team. Team Ember no longer owns it.\n- [2025-12-29] standup/ember/2025-12-29-2: Observation from team Ember: after the traffic shift, the auth gateway's CPU sat at 90 percent. The ledger remains a Ember service.\n- [2025-06-20] handover/2025-06-20-webhooks: Webhooks has a new home: Ember. Atlas kept it until today.\n- [2025-01-10] standup/ember/2025-01-10: Oskar is the only engineer on the Ember team for now.\n- [2026-02-10] handover/2026-02-10-reporting: The reports pipeline has a new home: the Cinder team. Ember kept it until today.\n- [2026-05-18] standup/ember/2026-05-18-2: The Ember team noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2026-03-31] standup/ember/2026-03-31: Diego Alvarez has the Ember pager this cycle, taking over from Oskar. Ember saw that the feature flag service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-11-13] handover/2025-11-13-ledger: The ledger has a new home: team Ember. Team Atlas kept it until today.\n- [2025-03-19] standup/ember/2025-03-19-2: Ember now does pairing on every production change.\n- [2025-05-23] standup/ember/2025-05-23: The Ember team saw that the webhooks service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-03-19] standup/ember/2025-03-19-3: For anything Ember-related, page Oskar.\n- [2025-06-13] standup/ember/2025-06-13-2: Team Ember planning meeting is every Friday.\n- [2025-04-29] handover/2025-04-29-image-resizer: The Ember team is taking over the image resizer from team Dune, effective today. Dashboards and alerts are being repointed.\n- [2026-03-19] standup/ember/2026-03-19-2: Team Ember noticed that the job scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2026-02-12] standup/ember/2026-02-12: Ember on-call swapped this morning. Oskar carries the phone until the next rotation. Heads-up from team Ember: the search indexer's p99 latency doubled after Tuesday's deploy.\n- [2025-07-04] handover/2025-07-04-webhooks-correction: Fixing an error in the 2025-06-20 handover: the new owner of the webhooks service is Dune. Ember was recorded by mistake and never held it.\n- [2025-12-29] standup/ember/2025-12-29: Rotation day for the Ember team: Oskar hands the pager to Diego.\n- [2026-06-18] standup/ember/2026-06-18: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-11-17] handover/2025-11-17-reporting-correction: The 2025-11-07 note about the reporting service named the wrong team. The Ember team took it over on that date; team Boreal did not.\n- [2026-05-18] standup/ember/2026-05-18: Oskar Lind picked up the Ember on-call shift from Diego today.\n- [2025-01-14] standup/ember/2025-01-14: Oskar Lind is on call for the Ember team to start the year.\n- [2025-12-05] standup/cinder/2025-12-05: Team change: Diego Alvarez leaves team Cinder and joins Ember, effective today.\n- [2025-12-01] handover/2025-12-01-image-resizer: The resizer has a new home: the Dune team. Ember kept it until today.\n- [2026-04-16] standup/ember/2026-04-16: The ledger service's deploy window changes today: it is now on Mondays and Wednesdays between 14:00 and 16:00 UTC. The old slot (Wednesdays 09:00-11:00 UTC) is retired.\n\nQuestion: Which services does Ember own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788619010-su6NbIIEsrQBkjFnqNSf",
+  "object": "chat.completion",
+  "created": 1788619010,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger",
+     "refusal": null,
+     "reasoning": "I need to figure out which services Ember owns now (as of 2026-06-30).\n\nLet me go through the memory entries, tracking ownership changes:\n\n1. Scheduler:\n- [2025-01-20] scheduler owned by Ember.\n- [2025-08-29] Ownership change: scheduler now sits with team Cinder. Ember no longer owns it.\nSo now: Cinder owns scheduler, not Ember.\n\n2. Auth gateway:\n- [2025-01-20] auth gateway is an Ember service.\n- [2025-03-31] Ownership change: auth gateway now sits with Boreal. Ember no longer owns it.\nSo now: Boreal owns auth gateway, not Ember.\n\n3. Webhooks:\n- [2025-06-20] Webhooks new home: Ember.\n- [2025-07-04] Correction: new owner of webhooks is Dune. Ember was recorded by mistake and never held it.\nSo now: Dune owns webhooks.\n\n4. Ledger:\n- [2025-11-13] Ledger new home: team Ember. Atlas kept it until today.\n- [2025-12-29] The ledger remains an Ember service.\nSo now: Ember owns ledger.\n\n5. Reporting (reports pipeline):\n- [2025-11-07 note corrected by 2025-11-17] The Ember team took over reporting on that date (2025-11-07); Boreal did not.\n- [2026-02-10] Reports pipeline new home: Cinder. Ember kept it until today.\nSo now: Cinder owns reporting, not Ember.\n\n6. Image resizer:\n- [2025-04-29] Ember taking over image resizer from Dune.\n- [2025-12-01] Resizer new home: Dune. Ember kept it until today.\nSo now: Dune owns image resizer.\n\nSo the only service Ember currently owns is the ledger.\n\nAnswer: The ledger (just the value asked for — a short line).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "I need to figure out which services Ember owns now (as of 2026-06-30).\n\nLet me go through the memory entries, tracking ownership changes:\n\n1. Scheduler:\n- [2025-01-20] scheduler owned by Ember.\n- [2025-08-29] Ownership change: scheduler now sits with team Cinder. Ember no longer owns it.\nSo now: Cinder owns scheduler, not Ember.\n\n2. Auth gateway:\n- [2025-01-20] auth gateway is an Ember service.\n- [2025-03-31] Ownership change: auth gateway now sits with Boreal. Ember no longer owns it.\nSo now: Boreal owns auth gateway, not Ember.\n\n3. Webhooks:\n- [2025-06-20] Webhooks new home: Ember.\n- [2025-07-04] Correction: new owner of webhooks is Dune. Ember was recorded by mistake and never held it.\nSo now: Dune owns webhooks.\n\n4. Ledger:\n- [2025-11-13] Ledger new home: team Ember. Atlas kept it until today.\n- [2025-12-29] The ledger remains an Ember service.\nSo now: Ember owns ledger.\n\n5. Reporting (reports pipeline):\n- [2025-11-07 note corrected by 2025-11-17] The Ember team took over reporting on that date (2025-11-07); Boreal did not.\n- [2026-02-10] Reports pipeline new home: Cinder. Ember kept it until today.\nSo now: Cinder owns reporting, not Ember.\n\n6. Image resizer:\n- [2025-04-29] Ember taking over image resizer from Dune.\n- [2025-12-01] Resizer new home: Dune. Ember kept it until today.\nSo now: Dune owns image resizer.\n\nSo the only service Ember currently owns is the ledger.\n\nAnswer: The ledger (just the value asked for — a short line).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1366,
+   "completion_tokens": 422,
+   "total_tokens": 1788,
+   "cost": 0.00020027,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00020027,
+    "upstream_inference_prompt_cost": 9.477e-05,
+    "upstream_inference_completions_cost": 0.0001055
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 418,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.919843667012174,
+ "fetched_at": "2026-09-05T14:36:54Z"
+}

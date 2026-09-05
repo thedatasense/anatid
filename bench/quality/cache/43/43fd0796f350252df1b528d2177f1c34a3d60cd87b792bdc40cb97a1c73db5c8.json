@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- The root cause of INC-2025-004 was a consumer offset stuck after a broker restart. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- During INC-2025-004, a stuck offset went unnoticed for 40 minutes. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- On 2025-12-17, Team Dune decided that the indexer will rebuild the index nightly instead of on every catalog write. [decision; valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n- As of 2026-06-08, for the Team Dune on-call cycle, page Farah for anything instead of Tomasz Nowak. [preference; valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, for the Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah. [preference; valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, for the Team Dune on-call cycle, page Farah for anything instead of Tomasz Nowak. [preference; valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n    earlier: As of 2026-02-04, for the current Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah. [preference; valid 2026-02-04 to 2026-03-10; recorded by standup/dune/2026-02-04]\n    earlier: As of 2025-12-15, for the current Team Dune on-call cycle, page Farah for anything instead of Tomasz Nowak. [preference; valid 2025-12-15 to 2026-02-04; recorded by standup/dune/2025-12-15]\n    earlier: As of 2025-10-27, for the current Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah. [preference; valid 2025-10-27 to 2025-12-15; recorded by standup/dune/2025-10-27]\n    earlier: As of 2025-09-22, Farah is primary on-call for Team Dune and Tomasz Nowak is off rotation. [valid 2025-09-22 to 2025-10-27; recorded by standup/dune/2025-09-22]\n    earlier: As of 2025-07-30, Tomasz Nowak is on call for Team Dune this cycle, having taken the pager from Farah. [valid 2025-07-30 to 2025-09-22; recorded by standup/dune/2025-07-30]\n    earlier: As of 2025-07-17, Farah is on call for Team Dune this cycle. [valid 2025-07-17 to 2025-07-30; recorded by standup/dune/2025-07-17]\n- As of 2026-06-08, Farah is on the Team Dune on-call rotation. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Farah is off the Team Dune on-call rotation. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, Farah is the primary on-call for Team Dune. [valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- Team Dune decided the webhooks service will sign payloads with rotating keys because a partner asked for key rotation in their security review. [valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- As of 2025-11-20, dashboards and alerts for the event bus are being repointed. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- As of 2026-02-19, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: As of 2025-12-26, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: As of 2025-10-31, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n    earlier: As of 2025-09-08, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-09-08 to 2025-10-31; recorded by standup/boreal/2025-09-08]\n    earlier: As of 2025-08-01, Lena is the Team Boreal on-call primary instead of Marcus. [valid 2025-08-01 to 2025-09-08; recorded by standup/boreal/2025-08-01]\n    earlier: As of 2025-06-05, Marcus is the Team Boreal on-call primary instead of Lena. [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n    earlier: As of the 2025-04-16 rotation, Lena carries the Team Boreal on-call pager. [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: As of the 2025-02-27 on-call swap, Marcus carries the Team Boreal on-call phone until the next rotation. [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n\nQuestion: On what date was the review of INC-2025-004 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614248-hJkfpVR4qe54PGbkOgdT",
+  "object": "chat.completion",
+  "created": 1788614248,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-02-11",
+     "refusal": null,
+     "reasoning": "The question asks for the date the review of INC-2025-004 was written. The memory entries for INC-2025-004 are \"valid 2025-02-11 to now; recorded by incident-review/INC-2025-004\". So the review was recorded with validity starting 2025-02-11, suggesting the review was written on 2025-02-11.\n\nThe incident happened on 2025-02-06, and the entries are valid from 2025-02-11. The recorded-by is incident-review/INC-2025-004. So the review date is 2025-02-11.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks for the date the review of INC-2025-004 was written. The memory entries for INC-2025-004 are \"valid 2025-02-11 to now; recorded by incident-review/INC-2025-004\". So the review was recorded with validity starting 2025-02-11, suggesting the review was written on 2025-02-11.\n\nThe incident happened on 2025-02-06, and the entries are valid from 2025-02-11. The recorded-by is incident-review/INC-2025-004. So the review date is 2025-02-11.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1867,
+   "completion_tokens": 148,
+   "total_tokens": 2015,
+   "cost": 0.000177025,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000177025,
+    "upstream_inference_prompt_cost": 0.000140025,
+    "upstream_inference_completions_cost": 3.7e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 140,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.983521540998481,
+ "fetched_at": "2026-09-05T13:17:30Z"
+}

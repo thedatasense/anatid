@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What was the root cause of INC-2026-009?\nGold answer: two leaders elected during a network partition\nAlso accepted: (none)\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: Two leaders were elected on the scheduler during a network partition."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616556-fh0ibYxd0UEKUrnSg6h2",
+  "object": "chat.completion",
+  "created": 1788616556,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states the gold fact that two leaders were elected during a network partition, with acceptable extra context about the scheduler.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"two leaders elected during a network partition\". The answer to grade says \"Two leaders were elected on the scheduler during a network partition.\" This matches the gold fact with extra context (\"on the scheduler\"). The rule says extra correct context is fine. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"two leaders elected during a network partition\". The answer to grade says \"Two leaders were elected on the scheduler during a network partition.\" This matches the gold fact with extra context (\"on the scheduler\"). The rule says extra correct context is fine. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 242,
+   "completion_tokens": 94,
+   "total_tokens": 336,
+   "cost": 4.165e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.165e-05,
+    "upstream_inference_prompt_cost": 1.815e-05,
+    "upstream_inference_completions_cost": 2.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 58,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.9622690419782884,
+ "fetched_at": "2026-09-05T13:55:59Z"
+}

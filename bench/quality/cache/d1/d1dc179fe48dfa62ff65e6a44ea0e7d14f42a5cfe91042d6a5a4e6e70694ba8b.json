@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- Ember owns billing-api (since 2026-01-12; source handover/2026-01-12-billing-api)\n  - earlier: Atlas owns billing-api (held 2025-07-03 to 2026-01-12; source handover/2025-07-03-billing-api-correction)\n  - earlier: Boreal owns billing-api (held 2025-06-09 to 2025-07-03; source handover/2025-06-09-billing-api)\n  - earlier: Ember owns billing-api (held 2025-03-07 to 2025-06-09; source handover/2025-03-07-billing-api)\n  - earlier: Atlas owns billing-api (held 2025-01-08 to 2025-03-07; source standup/atlas/2025-01-08-2)\n- [observation] Cinder noticed that billing-api's cold start time tripled after the runtime upgrade (since 2026-03-11; source standup/cinder/2026-03-11-2)\n- [constraint] No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season (since 2025-11-11; source standup/atlas/2025-11-11)\n- [observation] Ember noticed that the ledger's p99 latency doubled after Tuesday's deploy (since 2026-05-28; source standup/ember/2026-05-28)\n- Billing-api depends on feature-flags (since 2025-09-30; source standup/atlas/2025-09-30)\n- [observation] Boreal noticed that billing-api's error rate crept up to 2 percent after the dependency bump (since 2025-12-01; source standup/boreal/2025-12-01)\n- Atlas adopted a no-deploy Friday (since 2026-02-03; source standup/atlas/2026-02-03)\n- [observation] Ember noticed that billing-api's queue depth hit 50,000 after the marketing send (since 2025-11-04; source standup/ember/2025-11-04)\n- [observation] Atlas noticed that search-indexer's p99 latency doubled after Tuesday's deploy (since 2026-05-27; source standup/atlas/2026-05-27)\n- [decision] Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch (since 2025-09-30; source standup/atlas/2025-09-30)\n- [observation] Dune noticed that reporting's p99 latency doubled after Tuesday's deploy (since 2026-04-14; source standup/dune/2026-04-14-2)\n- [constraint] The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC (since 2025-08-25; source standup/atlas/2025-08-25)\n  - earlier: [constraint] The ledger deploys only on weekday mornings before 11:00 UTC (held 2025-01-14 to 2025-08-25; source standup/atlas/2025-01-14)\n- [constraint] The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC (since 2025-08-19; source standup/dune/2025-08-19)\n  - earlier: [constraint] The scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC (held 2025-02-06 to 2025-08-19; source standup/ember/2025-02-06)\n- [decision] Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs (since 2025-09-23; source standup/dune/2025-09-23)\n- [constraint] Billing-api deploys only on weekdays after 15:00 UTC (since 2025-02-11; source standup/atlas/2025-02-11)\n- [constraint] Changes to billing-api need a rollback plan attached to the pull request (since 2025-04-02; source standup/ember/2025-04-02)\n- Billing-api depends on the ledger (since 2025-01-09; source standup/atlas/2025-01-09-2)\n- Priya is on call for Atlas (since 2026-06-04; source standup/atlas/2026-06-04)\n  - earlier: Marcus is on call for Atlas (held 2026-04-08 to 2026-06-04; source standup/atlas/2026-04-08)\n- Oskar is on call for Ember (since 2026-05-29; source standup/ember/2026-05-29)\n- [constraint] No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close (since 2026-03-11; source standup/cinder/2026-03-11)\n\nQuestion: When is the deploy freeze for billing-api, and why?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608345-4yqFwG1oEGt2sf2kQHVS",
+  "object": "chat.completion",
+  "created": 1788608345,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "From 2025-11-24 to 2025-12-02, because of the peak season.",
+     "refusal": null,
+     "reasoning": "The user asks: \"When is the deploy freeze for billing-api, and why?\"\n\nMemory has: \"[constraint] No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season (since 2025-11-11; source standup/atlas/2025-11-11)\"\n\nAnswer: from 2025-11-24 to 2025-12-02, because of the peak season. One short line.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"When is the deploy freeze for billing-api, and why?\"\n\nMemory has: \"[constraint] No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season (since 2025-11-11; source standup/atlas/2025-11-11)\"\n\nAnswer: from 2025-11-24 to 2025-12-02, because of the peak season. One short line.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1388,
+   "completion_tokens": 127,
+   "total_tokens": 1515,
+   "cost": 0.00012433,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012433,
+    "upstream_inference_prompt_cost": 9.258e-05,
+    "upstream_inference_completions_cost": 3.175e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 102,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2757129590027034,
+ "fetched_at": "2026-09-05T11:39:07Z"
+}

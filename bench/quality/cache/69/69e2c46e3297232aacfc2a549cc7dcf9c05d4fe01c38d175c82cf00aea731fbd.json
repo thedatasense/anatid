@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded the deploy window for the catalog, and when?\nGold answer: standup/dune/2025-03-24 (2025-03-24)\nAlso accepted: standup/dune/2025-03-24; 2025-03-24; 24 March 2025; March 24, 2025; the standup note of 2025-03-24; the standup note of 24 March 2025; the standup note of March 24, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/dune/2025-03-24, on 2025-03-24"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616515-qvR8L6K9gUrLcQAY9Zkg",
+  "object": "chat.completion",
+  "created": 1788616516,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies both the gold note's source label (standup/dune/2025-03-24) and its date (2025-03-24), matching the gold answer exactly.\"}",
+     "refusal": null,
+     "reasoning": "The answer identifies \"standup/dune/2025-03-24\" and the date \"2025-03-24\", which matches the gold answer and accepted alternatives.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer identifies \"standup/dune/2025-03-24\" and the date \"2025-03-24\", which matches the gold answer and accepted alternatives.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 348,
+   "completion_tokens": 88,
+   "total_tokens": 436,
+   "cost": 2.89e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.89e-05,
+    "upstream_inference_prompt_cost": 6.9e-06,
+    "upstream_inference_completions_cost": 2.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 36,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9502417500480078,
+ "fetched_at": "2026-09-05T13:55:17Z"
+}

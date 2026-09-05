@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-01-12, the billing API is owned by the Ember team, which the Atlas team owned until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: From 2025-06-09, the billing API is owned by the Atlas team. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: From 2025-06-09, the billing API is owned by the Boreal team. [valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: Since 2025-03-07, the billing API is owned by the Ember team. [valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- On 2026-03-11, the Cinder team observed that the billing API's cold start time tripled after the runtime upgrade. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- On 2025-12-01, the Boreal team reported that the billing API's error rate crept up to 2 percent after the dependency bump. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, covering the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- On 2026-05-28, the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- On 2026-05-27, the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2026-03-09, feature-flags is owned by the Atlas team; the 2026-02-11 handover note that said team Dune was written against the wrong team, and Dune never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- On 2026-05-22, team Dune noticed that the auth gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- On 2025-11-04, the Ember team saw that the billing service's queue depth hit 50,000 following the marketing send and flagged it as not their service. [valid 2025-11-04 to now; recorded by standup/ember/2025-11-04]\n- As of 2026-03-03, the auth gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2026-03-03 to now; recorded by standup/cinder/2026-03-03]\n- On 2026-04-14, team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- On 2026-04-08, the Atlas team saw that webhooks' request volume halved following the client rollout and flagged it as not their service. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- On 2025-06-09, Oskar wrote the billing API handover document for Lena. [valid 2025-06-09 to now; recorded by handover/2025-06-09-billing-api]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- The billing API only ships on weekdays after 15:00 UTC. [constraint; valid 2025-02-11 to now; recorded by standup/atlas/2025-02-11]\n- Changes to the billing API need a rollback plan attached to the pull request. [constraint; valid 2025-04-02 to now; recorded by standup/ember/2025-04-02]\n- The billing API gates the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it as not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- As of 2025-06-11, team Dune owns the notifier, which the Boreal team owned until then. [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: As of 2025-06-11, the Cinder team owns the notifier, which the Boreal team owned until then. [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n\nQuestion: Which note corrected the recorded owner of billing-api, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788595811-QzgjYYk2KVK5Lvh5CdrL",
+  "object": "chat.completion",
+  "created": 1788595811,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "handover/2025-07-03-billing-api-correction, on 2025-07-03",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which note corrected the recorded owner of billing-api, and when?\"\n\nLooking at the memory:\n- The billing API ownership history:\n  - As of 2026-01-12, owned by Ember team (recorded by handover/2026-01-12-billing-api)\n  - From 2025-06-09, owned by Atlas team [decision; recorded by handover/2025-07-03-billing-api-correction] — this is a correction note\n  - From 2025-06-09, owned by Boreal team [recorded by handover/2025-06-09-billing-api]\n  - etc.\n\nThe question asks which note \"corrected the recorded owner\". The correction notes are those with \"correction\" in the name. For billing-api, there's \"handover/2025-07-03-billing-api-correction\" which corrected the owner from Boreal to Atlas as of 2025-07-03.\n\nThere's also \"handover/2026-03-09-feature-flags-correction\" but that's for feature-flags, not billing-api.\n\nSo the answer: handover/2025-07-03-billing-api-correction, on 2025-07-03. The note corrected the owner from Boreal to Atlas (recording that Atlas owned it from 2025-06-09).\n\nAnswer in one short line with just the value asked: the note name and when. \"handover/2025-07-03-billing-api-correction, on 2025-07-03\" or \"2025-07-03-billing-api-correction\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which note corrected the recorded owner of billing-api, and when?\"\n\nLooking at the memory:\n- The billing API ownership history:\n  - As of 2026-01-12, owned by Ember team (recorded by handover/2026-01-12-billing-api)\n  - From 2025-06-09, owned by Atlas team [decision; recorded by handover/2025-07-03-billing-api-correction] — this is a correction note\n  - From 2025-06-09, owned by Boreal team [recorded by handover/2025-06-09-billing-api]\n  - etc.\n\nThe question asks which note \"corrected the recorded owner\". The correction notes are those with \"correction\" in the name. For billing-api, there's \"handover/2025-07-03-billing-api-correction\" which corrected the owner from Boreal to Atlas as of 2025-07-03.\n\nThere's also \"handover/2026-03-09-feature-flags-correction\" but that's for feature-flags, not billing-api.\n\nSo the answer: handover/2025-07-03-billing-api-correction, on 2025-07-03. The note corrected the owner from Boreal to Atlas (recording that Atlas owned it from 2025-06-09).\n\nAnswer in one short line with just the value asked: the note name and when. \"handover/2025-07-03-billing-api-correction, on 2025-07-03\" or \"2025-07-03-billing-api-correction\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1608,
+   "completion_tokens": 375,
+   "total_tokens": 1983,
+   "cost": 0.00020667,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00020667,
+    "upstream_inference_prompt_cost": 0.00011292,
+    "upstream_inference_completions_cost": 9.375e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 350,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.515789082972333,
+ "fetched_at": "2026-09-05T08:10:17Z"
+}

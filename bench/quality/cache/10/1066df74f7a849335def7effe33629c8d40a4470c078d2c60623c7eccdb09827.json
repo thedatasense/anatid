@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2025-04-14] standup/cinder/2025-04-14: The catalog service calls the resizer for thumbnails, so treat the resizer as a hard dependency of the catalog service.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2025-01-30] standup/cinder/2025-01-30: If the catalog service is down, the search indexer is down: it relies on it for product documents.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-03-17] standup/cinder/2025-03-17: The catalog service can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception.\n- [2025-03-20] standup/dune/2025-03-20: Reminder: the reports pipeline is owned by Dune.\n- [2025-01-20] standup/dune/2025-01-20: The Dune team owns the image resizer.\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-09-05] standup/dune/2025-09-05: The Dune team still owns the scheduler, in case anyone asks.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2025-01-20] standup/ember/2025-01-20: The job scheduler lives with the Ember team. For the record, the authentication gateway is owned by Ember.\n- [2025-01-20] standup/dune/2025-01-20-2: The reporting service is a the Dune team service.\n- [2026-04-03] standup/cinder/2026-04-03: Cinder runs its planning on Mondays.\n- [2025-10-16] standup/cinder/2025-10-16: The Cinder team has moved to the third floor.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-03-04] standup/atlas/2025-03-04: If the auth gateway is down, the ledger service is down: it relies on it for service tokens.\n- [2025-01-09] standup/cinder/2025-01-09: Diego is on call for Cinder to start the year.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-11-27] standup/cinder/2025-11-27: As of today Diego Alvarez is on the Ember team; Cinder loses a pair of hands. Yuki takes the Cinder pager from Diego, who is leaving the team.\n- [2025-10-24] standup/cinder/2025-10-24: Diego has the Cinder pager this cycle, taking over from Yuki.\n- [2025-05-14] standup/cinder/2025-05-14-2: Cinder adopted trunk-based development.\n- [2025-02-27] standup/cinder/2025-02-27: Yuki has the Cinder pager this cycle, taking over from Diego.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki Tanaka and Diego are on Cinder.\n- [2025-09-05] standup/cinder/2025-09-05: Reminder from the Cinder team: page Yuki for anything this cycle, not Diego.\n- [2025-06-06] standup/cinder/2025-06-06: Yuki has the Cinder pager this cycle, taking over from Diego Alvarez.\n- [2025-04-24] standup/cinder/2025-04-24: Rotation day for the Cinder team: Yuki hands the pager to Diego.\n- [2025-07-17] standup/cinder/2025-07-17: Rotation day for the Cinder team: Yuki Tanaka hands the pager to Diego Alvarez.\n- [2025-05-14] standup/cinder/2025-05-14: Observation from the Cinder team: after the cache change, webhooks' memory use grew steadily for a week.\n- [2026-04-16] standup/atlas/2026-04-16: The Atlas team saw that the ledger service's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-12-31] standup/atlas/2025-12-31: Atlas saw that the feature flag service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it.\n- [2025-11-04] standup/ember/2025-11-04: The Ember team saw that the billing service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it.\n- [2025-04-24] standup/cinder/2025-04-24-2: Heads-up from the Cinder team: feature-flags' p99 latency doubled after Tuesday's deploy.\n\nQuestion: Which services does Cinder own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788591947-kD5w8UcNliK7sYZ17b4U",
+  "object": "chat.completion",
+  "created": 1788591947,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Cloudflare",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The product catalog and the indexer.",
+     "refusal": null,
+     "reasoning": "The question asks which services Cinder owns now (today is 2026-06-30).\n\nLet me go through the memory entries about Cinder ownership:\n\n- [2025-01-17] standup/cinder/2025-01-17-2: the indexer is owned by Cinder.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it.\n\nSo the notifier correction supersedes — Cinder does NOT own the notification service.\n\nOther services:\n- Catalog service: Cinder owns the product catalog (2025-01-17). No later correction.\n- Indexer: owned by Cinder (2025-01-17). No later correction.\n- Image resizer: Dune owned it (2025-01-20), then 2025-03-20 handover: image resizer now sits with team Ember, Dune no longer owns it. So not Cinder.\n- Scheduler: Dune still owns (2025-09-05), though Ember had it in 2025-01-20. Not Cinder.\n- Reporting service: Dune (2025-01-20-2), Ember still owns reporting service (2026-04-13). Not Cinder.\n- Notifier: Boreal (2025-01-09-2), then handover to Cinder (2025-06-11), then correction: went to Dune, not Cinder (2025-06-27). So Cinder never owned it. Not Cinder.\n- Feature flags: Atlas (2025-01-08-2), handover 2026-02-11 said Dune, corrected 2026-03-09: went to Atlas, not Dune. Not Cinder.\n- Ledger: Atlas. Billing API: Atlas. Auth gateway: Ember. Webhook dispatcher: Boreal. Bus: Boreal.\n\nSo Cinder owns: the product catalog (catalog service) and the indexer (search indexer).\n\nAnswer in one short line: \"The product catalog and the indexer\" or similar.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Cinder owns now (today is 2026-06-30).\n\nLet me go through the memory entries about Cinder ownership:\n\n- [2025-01-17] standup/cinder/2025-01-17-2: the indexer is owned by Cinder.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it.\n\nSo the notifier correction supersedes — Cinder does NOT own the notification service.\n\nOther services:\n- Catalog service: Cinder owns the product catalog (2025-01-17). No later correction.\n- Indexer: owned by Cinder (2025-01-17). No later correction.\n- Image resizer: Dune owned it (2025-01-20), then 2025-03-20 handover: image resizer now sits with team Ember, Dune no longer owns it. So not Cinder.\n- Scheduler: Dune still owns (2025-09-05), though Ember had it in 2025-01-20. Not Cinder.\n- Reporting service: Dune (2025-01-20-2), Ember still owns reporting service (2026-04-13). Not Cinder.\n- Notifier: Boreal (2025-01-09-2), then handover to Cinder (2025-06-11), then correction: went to Dune, not Cinder (2025-06-27). So Cinder never owned it. Not Cinder.\n- Feature flags: Atlas (2025-01-08-2), handover 2026-02-11 said Dune, corrected 2026-03-09: went to Atlas, not Dune. Not Cinder.\n- Ledger: Atlas. Billing API: Atlas. Auth gateway: Ember. Webhook dispatcher: Boreal. Bus: Boreal.\n\nSo Cinder owns: the product catalog (catalog service) and the indexer (search indexer).\n\nAnswer in one short line: \"The product catalog and the indexer\" or similar.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1706,
+   "completion_tokens": 517,
+   "total_tokens": 2223,
+   "cost": 0.00049904,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00049904,
+    "upstream_inference_prompt_cost": 0.00024054,
+    "upstream_inference_completions_cost": 0.0002585
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 441,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 18.930079374986235,
+ "fetched_at": "2026-09-05T07:06:05Z"
+}

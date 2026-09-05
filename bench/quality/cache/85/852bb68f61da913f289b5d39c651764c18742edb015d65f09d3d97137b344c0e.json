@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to now; recorded by standup/dune/2025-06-24]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team instead of the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- The reporting service is owned by the Ember team as of 2025-12-05, having moved from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is owned by the Dune team. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus because nightly ledger scans were blocking billing runs. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- The ledger service relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n- During incident INC-2026-003, the webhooks service delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- The ledger service must stay on Postgres 14 until the partitioning work finishes. [constraint; valid 2025-01-31 to now; recorded by standup/atlas/2025-01-31]\n- As of 2025-04-29, the job scheduler still relies on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- The job scheduler depends on the feature-flags service for per-job kill switches. [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- On 2025-12-31 the Atlas team noticed that the feature-flags service's queue depth hit 50,000 following the marketing send and flagged it because it is not their service. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- On 2026-04-16 the Atlas team noticed that the ledger service's disk usage jumped 30 percent following the retention change and flagged it because it is not their service. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- On 2025-02-21 the Boreal team pinged the owners of the ledger service about the memory growth. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- On 2025-11-03 the Boreal team noticed that the notification service's CPU sat at 90 percent after the traffic shift. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n\nQuestion: Which service does reporting depend on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603742-7ob8FHfjbYv8OHjChMox",
+  "object": "chat.completion",
+  "created": 1788603742,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Morph",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The bus",
+     "refusal": null,
+     "reasoning": "The question asks which service the reporting service depends on now. There are two entries:\n- As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to now]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now]\n\nThe later entry supersedes: as of 2025-09-23, reporting no longer depends on ledger. It switched its data source from the ledger service to the bus. So now, reporting depends on the bus.\n\nAnswer: the bus.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which service the reporting service depends on now. There are two entries:\n- As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to now]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now]\n\nThe later entry supersedes: as of 2025-09-23, reporting no longer depends on ledger. It switched its data source from the ledger service to the bus. So now, reporting depends on the bus.\n\nAnswer: the bus.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1298,
+   "completion_tokens": 139,
+   "total_tokens": 1437,
+   "cost": 0.0001730965,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001730965,
+    "upstream_inference_prompt_cost": 0.000125906,
+    "upstream_inference_completions_cost": 4.71905e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 137,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.5446420420194045,
+ "fetched_at": "2026-09-05T10:22:26Z"
+}

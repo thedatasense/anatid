@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-05-09, Tomasz Nowak is the Team Atlas on-call contact for this cycle instead of Priya. [valid 2025-05-09 to now; recorded by standup/atlas/2025-05-09]\n    earlier: As of 2025-04-07, Priya carries the Team Atlas on-call phone until the next rotation. [valid 2025-04-07 to 2025-05-09; recorded by standup/atlas/2025-04-07]\n- As of 2026-06-08, for the Team Dune on-call cycle, page Farah for anything instead of Tomasz Nowak. [preference; valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, for the Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah. [preference; valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, for the Team Dune on-call cycle, page Farah for anything instead of Tomasz Nowak. [preference; valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n    earlier: As of 2026-02-04, for the current Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah. [preference; valid 2026-02-04 to 2026-03-10; recorded by standup/dune/2026-02-04]\n    earlier: As of 2025-12-15, for the current Team Dune on-call cycle, page Farah for anything instead of Tomasz Nowak. [preference; valid 2025-12-15 to 2026-02-04; recorded by standup/dune/2025-12-15]\n    earlier: As of 2025-10-27, for the current Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah. [preference; valid 2025-10-27 to 2025-12-15; recorded by standup/dune/2025-10-27]\n    earlier: As of 2025-09-22, Farah is primary on-call for Team Dune and Tomasz Nowak is off rotation. [valid 2025-09-22 to 2025-10-27; recorded by standup/dune/2025-09-22]\n    earlier: As of 2025-07-30, Tomasz Nowak is on call for Team Dune this cycle, having taken the pager from Farah. [valid 2025-07-30 to 2025-09-22; recorded by standup/dune/2025-07-30]\n    earlier: As of 2025-07-17, Farah is on call for Team Dune this cycle. [valid 2025-07-17 to 2025-07-30; recorded by standup/dune/2025-07-17]\n- As of 2026-06-08, Farah is the primary on-call for Team Dune, having taken the pager from Tomasz Nowak. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Tomasz Nowak is the primary on-call for Team Dune. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, Tomasz Nowak is off the Team Dune on-call rotation. [valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n- For the Atlas on-call cycle starting 2025-02-19, page Tomasz Nowak instead of Priya for anything. [preference; valid 2025-02-19 to now; recorded by standup/atlas/2025-02-19]\n- As of 2025-10-27, Yuki is the primary on-call for Team Cinder, having taken over from Diego. [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n    earlier: As of 2025-08-29, Diego is the primary on-call for Team Cinder, having taken over from Yuki. [valid 2025-08-29 to 2025-10-27; recorded by standup/cinder/2025-08-29]\n    earlier: As of 2025-07-10, Yuki is the primary on-call for Team Cinder until the next rotation. [valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: As of 2025-05-19, Diego is the primary on-call for Team Cinder. [valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-09, Yuki is the primary on-call for Team Cinder. [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n- As of 2026-05-25, Marcus is the primary on-call for Team Atlas, having taken over from Priya. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, Priya is the primary on-call for Team Atlas, having taken over from Marcus. [valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Marcus Oyelaran is the primary on-call for Team Atlas. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- As of 2025-04-09, Diego is off the Team Cinder on-call rotation. [valid 2025-04-09 to now; recorded by standup/cinder/2025-04-09]\n- As of 2026-04-23, Priya is back on the Team Atlas on-call rotation. [valid 2026-04-23 to now; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Priya is off the Team Atlas on-call rotation. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- Tomasz Nowak wrote the billing-api handover doc for Marcus on 2025-03-17. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n\nQuestion: Who is on call for Tomasz's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788613951-GeJSq9iqcOX3zQ7Mqql2",
+  "object": "chat.completion",
+  "created": 1788613951,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Farah",
+     "refusal": null,
+     "reasoning": "Tomasz's team - which team is Tomasz on? Looking at the memory, Tomasz Nowak appears in Team Atlas entries and Team Dune entries. Hmm, \"Tomasz's team\" - which one is his team?\n\nEntries:\n- Team Atlas: Tomasz Nowak is the on-call contact instead of Priya (2025-05-09), and Atlas on-call starting 2025-02-19 page Tomasz Nowak instead of Priya.\n- Team Dune: repeated preference page Tomasz Nowak vs Farah, and on-call roles.\n\nWhich team is \"Tomasz's team\"? The Dune entries alternate; the Atlas entries say \"instead of Priya\" suggesting Tomasz is on Atlas. The Dune entries say \"page Tomasz Nowak for anything instead of Farah\" also as preference.\n\nAmbiguous. But maybe \"Tomasz's team\" means the team where Tomasz is currently on call? As of now (2026-06-30):\n- Team Dune: Farah is primary on-call (took pager from Tomasz Nowak as of 2026-06-08). Preference: page Farah instead of Tomasz.\n- Team Atlas: Marcus is primary on-call.\n\nHmm, Tomasz is not on call for either. So maybe the question asks: which team is Tomasz's team, and who is on call? We can't determine which team is his.\n\nAlternatively, maybe \"Tomasz's team\" is Team Dune, since most entries relate to him and Dune. The latest Dune entry: as of 2026-06-08, Farah is primary on-call. So answer: Farah.\n\nActually, considering the latest entry says \"Farah is the primary on-call for Team Dune, having taken the pager from Tomasz Nowak\" — Tomasz was on Team Dune. So his team is Team Dune, and currently Farah is on call.\n\nAnswer: Farah.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Tomasz's team - which team is Tomasz on? Looking at the memory, Tomasz Nowak appears in Team Atlas entries and Team Dune entries. Hmm, \"Tomasz's team\" - which one is his team?\n\nEntries:\n- Team Atlas: Tomasz Nowak is the on-call contact instead of Priya (2025-05-09), and Atlas on-call starting 2025-02-19 page Tomasz Nowak instead of Priya.\n- Team Dune: repeated preference page Tomasz Nowak vs Farah, and on-call roles.\n\nWhich team is \"Tomasz's team\"? The Dune entries alternate; the Atlas entries say \"instead of Priya\" suggesting Tomasz is on Atlas. The Dune entries say \"page Tomasz Nowak for anything instead of Farah\" also as preference.\n\nAmbiguous. But maybe \"Tomasz's team\" means the team where Tomasz is currently on call? As of now (2026-06-30):\n- Team Dune: Farah is primary on-call (took pager from Tomasz Nowak as of 2026-06-08). Preference: page Farah instead of Tomasz.\n- Team Atlas: Marcus is primary on-call.\n\nHmm, Tomasz is not on call for either. So maybe the question asks: which team is Tomasz's team, and who is on call? We can't determine which team is his.\n\nAlternatively, maybe \"Tomasz's team\" is Team Dune, since most entries relate to him and Dune. The latest Dune entry: as of 2026-06-08, Farah is primary on-call. So answer: Farah.\n\nActually, considering the latest entry says \"Farah is the primary on-call for Team Dune, having taken the pager from Tomasz Nowak\" — Tomasz was on Team Dune. So his team is Team Dune, and currently Farah is on call.\n\nAnswer: Farah.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1848,
+   "completion_tokens": 415,
+   "total_tokens": 2263,
+   "cost": 0.00023467,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00023467,
+    "upstream_inference_prompt_cost": 0.00013092,
+    "upstream_inference_completions_cost": 0.00010375
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 411,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.169474708032794,
+ "fetched_at": "2026-09-05T13:12:38Z"
+}

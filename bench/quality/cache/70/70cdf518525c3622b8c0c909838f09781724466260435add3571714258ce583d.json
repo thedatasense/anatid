@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000742\": On 2025-10-15, the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the image resizer's owners.  (about: Atlas team, image resizer, the marketing send)\n- memory_id \"1000650\": On 2025-09-16, the Ember team handed the authentication gateway over to the Cinder team.  (about: Cinder team, Ember team, authentication gateway)\n- memory_id \"1000542\": The Ember team runs its planning on Fridays.  (about: Ember team)\n- memory_id \"1000448\" [decision]: The Ember team decided that the job scheduler will use leader election instead of a single fixed node.  (about: Ember team, job scheduler)\n- memory_id \"1000291\" [decision]: For anything related to the Ember team, page Oskar.  (about: Ember team, Oskar)\n- memory_id \"1000271\": The image resizer is owned by the Ember team.  (about: Ember team, image resizer)\n- memory_id \"1000237\": From 2025-03-03, the pager for the webhook dispatcher rings the Ember team.  (about: webhook dispatcher, Ember team)\n- memory_id \"1000177\" [decision]: The Ember team does pairing on every production change.  (about: Ember team)\n- memory_id \"1000138\": The authentication gateway is owned by the Ember team.  (about: Ember team, authentication gateway)\n- memory_id \"1000103\" [decision]: Oskar takes the first on-call shift of the year for the Ember team.  (about: Ember team, Oskar)\n- memory_id \"1000092\": The Ember team is currently a one-person team consisting of Oskar.  (about: Ember team, Oskar)\n- memory_id \"1000766\": The Boreal team observed that the notification service's CPU sat at 90 percent after the traffic shift.  (about: Boreal team, notification service, the traffic shift)\n- memory_id \"1000682\": As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service, because the nightly ledger scans were blocking billing runs.  (about: ledger service, billing API, the bus, reporting service)\n- memory_id \"1000395\": The Cinder team observed that the webhook dispatcher's memory use grew steadily for a week after the cache change.  (about: Cinder team, webhook dispatcher, the cache change)\n- memory_id \"1000761\": A partner asked for webhook key rotation in their security review.  (about: webhook dispatcher, partner)\n- memory_id \"1000225\": Boreal noticed the ledger service's memory use growth after the cache change and pinged the ledger service's owners.  (about: Boreal team, ledger service)\n- memory_id \"1000694\": Team Dune noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners.  (about: team Dune, the bus, the traffic shift)\n- memory_id \"1000758\" [decision]: The Boreal team decided that the webhook dispatcher will sign payloads with rotating keys.  (about: Boreal team, webhook dispatcher)\n- memory_id \"1000454\": On 2025-06-09, Oskar wrote the billing API handover document for Lena.  (about: Lena, billing API, Oskar)\n- memory_id \"1000377\": The Boreal team noticed the authentication gateway's error rate rise and pinged the authentication gateway's owners.  (about: Boreal team, authentication gateway)\nExisting entity names: Atlas team, image resizer, the marketing send, Cinder team, Ember team, authentication gateway, job scheduler, Oskar, webhook dispatcher, Boreal team, notification service, the traffic shift, ledger service, billing API, the bus, reporting service, the cache change, partner, team Dune, Lena\n\nThe note:\n\n[2025-11-04] standup/ember/2025-11-04: The Ember team saw that the billing service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788594482-qDMAkp8zSGshDQ7f1GUE",
+  "object": "chat.completion",
+  "created": 1788594482,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\":[{\"content\":\"On 2025-11-04, the Ember team saw that the billing service's queue depth hit 50,000 following the marketing send and flagged it as not their service.\",\"entities\":[\"Ember team\",\"billing service\",\"the marketing send\"],\"kind\":\"fact\",\"confidence\":0.95,\"evidence\":\"the billing service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it\"}]}",
+     "refusal": null,
+     "reasoning": "Let me analyze the note:\n\n\"[2025-11-04] standup/ember/2025-11-04: The Ember team saw that the billing service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it.\"\n\nNew durable facts:\n1. On 2025-11-04, the Ember team observed that the billing service's queue depth hit 50,000 following the marketing send.\n\nEntities: Ember team, billing service, the marketing send.\n\nThe billing service is a new entity - not in existing entity names (there's \"billing API\" but that's different; note says \"billing service\"). We should not alias billing service to billing API since they're different names but might be the same thing? The instruction says: \"When the note uses a different name for an existing entity, add an entity_aliases entry mapping the note's name to the existing name.\" Is \"billing service\" the same as \"billing API\"? Hmm. It's ambiguous. The billing API is a distinct entity mentioned before. The \"billing service\" could be the same. But the note doesn't say it's the billing API. I'd be cautious: do not invent. The billing service is likely a new entity, separate from billing API. I'll not add an alias since it's not stated they're the same. Actually, could go either way. I'll treat it as a new entity.\n\nAny relations? \"not their service, so they flagged it\" — flagged it, meaning notified owners? The note doesn't explicitly say they pinged owners. \"flagged it\" is vague; similar past notes \"pinged the owners\" got facts. I'll not add relations, as it's vague. Actually \"flagged it\" could establish a relation but rel_kind would be awkward. Skip relations.\n\nOne fact. Evidence: \"the billing service's queue depth hit 50,000 following the marketing send\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Let me analyze the note:\n\n\"[2025-11-04] standup/ember/2025-11-04: The Ember team saw that the billing service's queue depth hit 50,000 following the marketing send; not their service, so they flagged it.\"\n\nNew durable facts:\n1. On 2025-11-04, the Ember team observed that the billing service's queue depth hit 50,000 following the marketing send.\n\nEntities: Ember team, billing service, the marketing send.\n\nThe billing service is a new entity - not in existing entity names (there's \"billing API\" but that's different; note says \"billing service\"). We should not alias billing service to billing API since they're different names but might be the same thing? The instruction says: \"When the note uses a different name for an existing entity, add an entity_aliases entry mapping the note's name to the existing name.\" Is \"billing service\" the same as \"billing API\"? Hmm. It's ambiguous. The billing API is a distinct entity mentioned before. The \"billing service\" could be the same. But the note doesn't say it's the billing API. I'd be cautious: do not invent. The billing service is likely a new entity, separate from billing API. I'll not add an alias since it's not stated they're the same. Actually, could go either way. I'll treat it as a new entity.\n\nAny relations? \"not their service, so they flagged it\" — flagged it, meaning notified owners? The note doesn't explicitly say they pinged owners. \"flagged it\" is vague; similar past notes \"pinged the owners\" got facts. I'll not add relations, as it's vague. Actually \"flagged it\" could establish a relation but rel_kind would be awkward. Skip relations.\n\nOne fact. Evidence: \"the billing service's queue depth hit 50,000 following the marketing send\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2299,
+   "completion_tokens": 496,
+   "total_tokens": 2795,
+   "cost": 0.000296425,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000296425,
+    "upstream_inference_prompt_cost": 0.000172425,
+    "upstream_inference_completions_cost": 0.000124
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 398,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.866581583977677,
+ "fetched_at": "2026-09-05T07:48:08Z"
+}

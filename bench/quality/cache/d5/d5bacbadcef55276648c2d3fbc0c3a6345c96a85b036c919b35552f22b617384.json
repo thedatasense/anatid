@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, having taken over from Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, Diego is the primary on-call for the Ember team, having taken over from Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, Oskar Lind is the primary on-call for the Ember team, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- As of 2026-03-02, Oskar Lind is on the Ember team's on-call rotation. [valid 2026-03-02 to now; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, Oskar is off the Ember team's on-call rotation. [valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, Diego is off the Ember team's on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n- Oskar takes the first on-call shift of the year for the Ember team. [decision; valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- As of 2025-11-27, the Ember team consists of Oskar and Diego. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: The Ember team is currently a one-person team consisting of Oskar. [valid 2025-01-10 to 2025-11-27; recorded by standup/ember/2025-01-10]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- The Ember team runs its planning on Fridays. [valid 2025-07-21 to now; recorded by standup/ember/2025-07-21]\n- As of 2025-12-05, the pager for reporting rings the Ember team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- As of 2025-11-27, Diego is on the Ember team. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on the Cinder team. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- From 2025-03-03, the pager for the webhook dispatcher rings the Ember team. [valid 2025-03-03 to now; recorded by handover/2025-03-03-webhooks]\n- On 2026-05-28, the Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- As of 2026-05-29, for anything related to the Ember team, page Oskar this cycle, not Diego. [decision; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-04-13, for anything related to the Ember team, page Diego this cycle, not Oskar Lind. [decision; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: As of 2026-03-02, for anything related to the Ember team, page Oskar Lind for anything this cycle, not Diego. [decision; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: As of 2026-01-15, for anything related to the Ember team, page Diego, the primary on-call; Oskar is off rotation. [decision; valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n    earlier: For anything related to the Ember team, page Oskar. [decision; valid 2025-03-31 to 2026-01-15; recorded by standup/ember/2025-03-31]\n- On 2025-11-04, the Ember team saw that the billing service's queue depth hit 50,000 following the marketing send and flagged it as not their service. [valid 2025-11-04 to now; recorded by standup/ember/2025-11-04]\n- On 2025-09-16, the Ember team handed the authentication gateway over to the Cinder team. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- As of 2025-12-05, the Ember team owns reporting, which team Dune owned until then. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- The Ember team decided that the job scheduler will use leader election instead of a single fixed node. [decision; valid 2025-06-06 to now; recorded by standup/ember/2025-06-06]\n\nQuestion: Who is on call for Ember right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596485-UFuMJqde0OhaLRYpqsZO",
+  "object": "chat.completion",
+  "created": 1788596485,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Oskar",
+     "refusal": null,
+     "reasoning": "The question asks who is on call for Ember right now (today is 2026-06-30).\n\nLooking at memory: As of 2026-05-29, Oskar is the primary on-call for the Ember team, having taken over from Diego. This is valid 2026-05-29 to now, so it's current.\n\nAnswer: Oskar",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who is on call for Ember right now (today is 2026-06-30).\n\nLooking at memory: As of 2026-05-29, Oskar is the primary on-call for the Ember team, having taken over from Diego. This is valid 2026-05-29 to now, so it's current.\n\nAnswer: Oskar",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1629,
+   "completion_tokens": 83,
+   "total_tokens": 1712,
+   "cost": 0.000135245,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000135245,
+    "upstream_inference_prompt_cost": 0.000114495,
+    "upstream_inference_completions_cost": 2.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 78,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0684516669716686,
+ "fetched_at": "2026-09-05T08:21:27Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-11-24, the Atlas team is taking over the event bus from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- Until 2025-11-24, the Boreal team looked after the bus; ownership then moved to the Atlas team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: As of 2025-08-15, the Boreal team still owns the bus. [valid 2025-08-15 to 2025-11-24; recorded by standup/boreal/2025-08-15-2]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- Dashboards and alerts for the event bus are being repointed as of the 2025-11-24 handover. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- On 2025-09-23 the Dune team noticed that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- As of 2026-02-10, Marcus has the Boreal team on-call shift, taking over from Lena. [valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, Lena has the Boreal team on-call shift, taking over from Marcus. [valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: As of 2025-11-06, Marcus has the Boreal team on-call shift, taking over from Lena. [valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: As of 2025-09-23, Lena has the Boreal team on-call shift, taking over from Marcus. [valid 2025-09-23 to 2025-11-06; recorded by standup/boreal/2025-09-23]\n    earlier: As of 2025-08-15, Marcus has the Boreal team on-call shift, taking over from Lena. [valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n    earlier: Lena has the Boreal team on-call shift as of 2025-06-27, taking over from Marcus. [valid 2025-06-27 to 2025-08-15; recorded by standup/boreal/2025-06-27]\n    earlier: Marcus has the Boreal team on-call shift as of 2025-05-07, taking over from Lena. [valid 2025-05-07 to 2025-06-27; recorded by standup/boreal/2025-05-07]\n- As of 2026-05-29, Oskar is on the Ember team on-call rotation as the primary on-call. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- The webhook dispatcher relies on the bus for outbound events, so if the bus is down the webhook dispatcher is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- The notifier relies on the bus for delivery events, so if the bus is down the notifier is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- The webhook dispatcher is owned by the Boreal team as of 2025-05-15, having moved from the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team as of 2025-03-03. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation, taking over from Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is on the Atlas team on-call rotation as of 2025-06-19, taking over from Priya Raman. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya Raman is on the Atlas team on-call rotation as of 2025-05-13, taking over from Tomasz. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is on the Atlas team on-call rotation as of 2025-04-03. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Tomasz is off the Atlas team on-call rotation as of 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n\nQuestion: Who is on call for the team that owns the event-bus?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604454-mj5YqjnnKe2fZnUo69Se",
+  "object": "chat.completion",
+  "created": 1788604454,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Priya Raman",
+     "refusal": null,
+     "reasoning": "The team that owns the event bus: as of 2025-11-24, the Atlas team owns the bus. Today is 2026-06-30, so Atlas owns it. Atlas team on-call: As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation, valid to now. So Priya Raman.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The team that owns the event bus: as of 2025-11-24, the Atlas team owns the bus. Today is 2026-06-30, so Atlas owns it. Atlas team on-call: As of 2025-07-30, Priya Raman holds the Atlas team on-call rotation, valid to now. So Priya Raman.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1812,
+   "completion_tokens": 83,
+   "total_tokens": 1895,
+   "cost": 0.00014897,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014897,
+    "upstream_inference_prompt_cost": 0.00012822,
+    "upstream_inference_completions_cost": 2.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 77,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0777041249675676,
+ "fetched_at": "2026-09-05T10:34:16Z"
+}

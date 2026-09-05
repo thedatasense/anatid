@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000323\": As of 2025-04-09, Diego is off the Team Cinder on-call rotation.  (about: Team Cinder, Diego)\n- memory_id \"1000314\": The reporting service depends on the ledger.  (about: ledger, reporting service)\n- memory_id \"1000307\": The catalog service's joined writes were locking product updates for seconds at a time.  (about: catalog service)\n- memory_id \"1000305\" [decision]: As of 2025-04-04, the catalog service will keep image metadata in a separate table.  (about: catalog service)\n- memory_id \"1000263\": As of 2025-03-24, Farah still has the Team Dune pager.  (about: Farah, Team Dune)\n- memory_id \"1000261\" [constraint]: The catalog service only ships on Mondays to Thursdays between 09:00 and 17:00 UTC.  (about: catalog service)\n- memory_id \"1000254\": As of 2025-03-20, Team Dune owns the catalog service.  (about: Team Dune, catalog service)\n- memory_id \"1000250\": As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder.  (about: Team Cinder, Team Dune, catalog service)\n- memory_id \"1000246\" [preference]: As of 2025-03-19, for anything Ember-related, page Oskar.  (about: Oskar, Ember team)\n- memory_id \"1000232\": The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down.  (about: ledger, auth gateway)\n- memory_id \"1000201\": The indexer depends on the catalog service for product documents.  (about: catalog service, indexer)\n- memory_id \"1000189\" [constraint]: The reporting service can be released on Thursdays between 07:00 and 09:00 UTC; anything else needs an exception.  (about: reporting service)\n- memory_id \"1000156\": During INC-2025-004, a stuck offset went unnoticed for 40 minutes.  (about: INC-2025-004)\n- memory_id \"1000135\": The scheduler is owned by the Ember team.  (about: Ember team, scheduler)\n- memory_id \"1000129\": Team Dune owns the reporting service.  (about: Team Dune, reporting service)\n- memory_id \"1000123\": The resizer lives with Team Dune.  (about: Team Dune, resizer)\n- memory_id \"1000098\": Farah takes the first on-call rotation for Team Dune.  (about: Farah, Team Dune)\n- memory_id \"1000094\": Oskar is on call for the Ember team to start the year.  (about: Oskar, Ember team)\n- memory_id \"1000053\": As of January 2025, Team Dune consists of Farah alone.  (about: Farah, Team Dune)\n- memory_id \"1000048\": Farah runs Team Dune solo until the next hire lands.  (about: Farah, Team Dune)\nExisting entity names: Team Cinder, Diego, ledger, reporting service, catalog service, Farah, Team Dune, Oskar, Ember team, auth gateway, indexer, INC-2025-004, scheduler, resizer\n\nThe note:\n\n[2025-04-15] standup/dune/2025-04-15: If image-resizer is down, the product catalog is down: it relies on it for thumbnails."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788610492-tcyJShbNqbbg50mOrFgM",
+  "object": "chat.completion",
+  "created": 1788610492,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down.\",\n   \"entities\": [\n    \"catalog service\",\n    \"resizer\"\n   ],\n   \"kind\": \"fact\",\n   \"confidence\": 0.95,\n   \"evidence\": \"If image-resizer is down, the product catalog is down: it relies on it for thumbnails.\"\n  }\n ],\n \"add_relations\": [\n  {\n   \"src\": \"catalog service\",\n   \"dst\": \"resizer\",\n   \"rel_kind\": \"depends_on\",\n   \"evidence\": \"it relies on it for thumbnails\"\n  }\n ],\n \"entity_aliases\": [\n  {\n   \"name\": \"image-resizer\",\n   \"canonical\": \"resizer\",\n   \"evidence\": \"If image-resizer is down\"\n  },\n  {\n   \"name\": \"product catalog\",\n   \"canonical\": \"catalog service\",\n   \"evidence\": \"the product catalog is down\"\n  }\n ]\n}\n",
+     "refusal": null,
+     "reasoning": "The note says: \"If image-resizer is down, the product catalog is down: it relies on it for thumbnails.\"\n\nThis is dated 2025-04-15, from standup/dune.\n\nExisting entities: Team Cinder, Diego, ledger, reporting service, catalog service, Farah, Team Dune, Oskar, Ember team, auth gateway, indexer, INC-2025-004, scheduler, resizer.\n\nThe note mentions \"image-resizer\" and \"product catalog\". \"image-resizer\" likely refers to \"resizer\" entity. \"product catalog\" likely refers to \"catalog service\" entity.\n\nSo new facts:\n- The resizer is a dependency of the catalog service; if image-resizer is down, the product catalog is down.\n\nWait — \"product catalog\" — is that the catalog service? The existing facts mention \"catalog service\" and \"product updates\". The note says \"product catalog\". I think alias \"product catalog\" -> \"catalog service\" and \"image-resizer\" -> \"resizer\".\n\nAdd fact: \"If the resizer is down, the catalog service is down because it relies on the resizer for thumbnails.\" Entities: resizer, catalog service.\n\nAdd relation: catalog service depends_on resizer. Evidence: \"it relies on it for thumbnails\" or \"If image-resizer is down, the product catalog is down: it relies on it for thumbnails.\"\n\nAliases: \"image-resizer\" -> \"resizer\"; \"product catalog\" -> \"catalog service\".\n\nShould I also correct existing fact 1000123 \"The resizer lives with Team Dune.\"? No, that's not contradicted.\n\nOutput JSON with add_facts, add_relations, entity_aliases.\n\nFact content as standalone sentence naming subjects: \"The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down.\"\n\nEvidence: \"If image-resizer is down, the product catalog is down: it relies on it for thumbnails.\"\n\nRelation: src \"catalog service\", dst \"resizer\", rel_kind \"depends_on\", evidence \"it relies on it for thumbnails\".\n\nKind: \"fact\". Confidence: 0.9 maybe. Include confidence and evidence.\n\nOutput valid JSON only.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: \"If image-resizer is down, the product catalog is down: it relies on it for thumbnails.\"\n\nThis is dated 2025-04-15, from standup/dune.\n\nExisting entities: Team Cinder, Diego, ledger, reporting service, catalog service, Farah, Team Dune, Oskar, Ember team, auth gateway, indexer, INC-2025-004, scheduler, resizer.\n\nThe note mentions \"image-resizer\" and \"product catalog\". \"image-resizer\" likely refers to \"resizer\" entity. \"product catalog\" likely refers to \"catalog service\" entity.\n\nSo new facts:\n- The resizer is a dependency of the catalog service; if image-resizer is down, the product catalog is down.\n\nWait — \"product catalog\" — is that the catalog service? The existing facts mention \"catalog service\" and \"product updates\". The note says \"product catalog\". I think alias \"product catalog\" -> \"catalog service\" and \"image-resizer\" -> \"resizer\".\n\nAdd fact: \"If the resizer is down, the catalog service is down because it relies on the resizer for thumbnails.\" Entities: resizer, catalog service.\n\nAdd relation: catalog service depends_on resizer. Evidence: \"it relies on it for thumbnails\" or \"If image-resizer is down, the product catalog is down: it relies on it for thumbnails.\"\n\nAliases: \"image-resizer\" -> \"resizer\"; \"product catalog\" -> \"catalog service\".\n\nShould I also correct existing fact 1000123 \"The resizer lives with Team Dune.\"? No, that's not contradicted.\n\nOutput JSON with add_facts, add_relations, entity_aliases.\n\nFact content as standalone sentence naming subjects: \"The catalog service relies on the resizer for thumbnails, so if the resizer is down, the catalog service is down.\"\n\nEvidence: \"If image-resizer is down, the product catalog is down: it relies on it for thumbnails.\"\n\nRelation: src \"catalog service\", dst \"resizer\", rel_kind \"depends_on\", evidence \"it relies on it for thumbnails\".\n\nKind: \"fact\". Confidence: 0.9 maybe. Include confidence and evidence.\n\nOutput valid JSON only.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2190,
+   "completion_tokens": 687,
+   "total_tokens": 2877,
+   "cost": 0.00033216,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00033216,
+    "upstream_inference_prompt_cost": 0.00016041,
+    "upstream_inference_completions_cost": 0.00017175
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 462,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.363685582997277,
+ "fetched_at": "2026-09-05T12:15:01Z"
+}

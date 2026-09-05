@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: billing-api, notifier, webhooks (webhook dispatcher), image-resizer, search-indexer, scheduler"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616449-iVykSgfrgCGdb7H3Cd7R",
+  "object": "chat.completion",
+  "created": 1788616449,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names all six gold services (billing-api, notifier, webhooks, image-resizer, search-indexer, scheduler) with no extra items; the parenthetical is just a clarification of webhooks.\"}",
+     "refusal": null,
+     "reasoning": "The answer lists: billing-api, notifier, webhooks (with clarification \"webhook dispatcher\"), image-resizer, search-indexer, scheduler.\n\nGold: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks — 6 items.\n\nAnswer has 6 items: billing-api, notifier, webhooks, image-resizer, search-indexer, scheduler. \"webhooks (webhook dispatcher)\" — is that an extra item or just a clarification? It's likely just a clarification of webhooks, not an extra service. The rule says every item must be named and no extra item. \"webhook dispatcher\" seems to be a parenthetical clarification for webhooks, not an additional service. So it matches all 6 items with no extra.\n\nCorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer lists: billing-api, notifier, webhooks (with clarification \"webhook dispatcher\"), image-resizer, search-indexer, scheduler.\n\nGold: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks — 6 items.\n\nAnswer has 6 items: billing-api, notifier, webhooks, image-resizer, search-indexer, scheduler. \"webhooks (webhook dispatcher)\" — is that an extra item or just a clarification? It's likely just a clarification of webhooks, not an extra service. The rule says every item must be named and no extra item. \"webhook dispatcher\" seems to be a parenthetical clarification for webhooks, not an additional service. So it matches all 6 items with no extra.\n\nCorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 280,
+   "completion_tokens": 214,
+   "total_tokens": 494,
+   "cost": 6.682e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 6.682e-05,
+    "upstream_inference_prompt_cost": 1.332e-05,
+    "upstream_inference_completions_cost": 5.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 159,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.75392925000051,
+ "fetched_at": "2026-09-05T13:54:15Z"
+}

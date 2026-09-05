@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- The Dune team adopted a monthly game day. [decision; valid 2025-04-21 to now; recorded by standup/dune/2025-04-21]\n- The Dune team sits on the fourth floor. [valid 2025-07-24 to now; recorded by standup/dune/2025-07-24]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- Farah runs the Dune team solo until the next hire lands. [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- Per the 2026-04-14 Dune team standup, Farah is release captain for Q3 2025. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- As of 2025-07-30, Tomasz leaves the Atlas team and joins the Dune team. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n- As of 2026-04-14, Farah holds the Dune team pager, taking over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is the primary on-call for the Dune team, taking over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah is the primary on-call for the Dune team. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n- As of 2025-09-04, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n    earlier: Farah has the first on-call rotation for the Dune team. [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n- As of 2025-10-15, Farah holds the Dune team pager this cycle, taking over from Tomasz. [valid 2025-10-15 to now; recorded by standup/dune/2025-10-15]\n- As of 2025-12-10, Tomasz holds the Dune team pager this cycle, taking over from Farah. [valid 2025-12-10 to now; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still holds the Dune team pager. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n- As of 2026-05-22, Tomasz holds the Dune team on-call shift, taking over from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- As of 2025-09-23, the pager for the job scheduler rings Cinder instead of the Dune team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- As of 2025-09-05, the Dune team still owned the job scheduler; ownership transferred to Cinder on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: As of 2025-09-05, the Dune team still owns the job scheduler. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- On 2025-12-29 the Dune team observed that the event bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- On 2025-08-19 the Dune team observed that the resizer's cold start time tripled after the runtime upgrade. [valid 2025-08-19 to now; recorded by standup/dune/2025-08-19-2]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team instead of the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- The reporting service is owned by the Ember team as of 2025-12-05, having moved from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is owned by the Dune team. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- On 2026-06-09 the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n\nQuestion: Which services does Dune own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788603976-CSACl9RhZpYaJkhy7WEE",
+  "object": "chat.completion",
+  "created": 1788603976,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The user asks: Which services does Dune own now?\n\nLet me go through memory entries about ownership:\n\n- Job scheduler: Dune team owned it as of 2025-09-05, but ownership transferred to Cinder on 2025-09-23. So now Dune does NOT own the job scheduler.\n- Reporting service: owned by Dune team until 2025-12-05, then transferred to Ember team. So now Dune does NOT own the reporting service.\n- Resizer: The Dune team observed resizer's cold start time tripled — no ownership stated explicitly. Observation doesn't imply ownership.\n- Event bus: Dune team observed request volume halved — again, an observation, not ownership.\n- Indexer: Dune observed indexer's disk usage jumped — again observation, not ownership.\n\nHmm. So there's no explicit statement of what Dune currently owns. The question asks which services Dune owns now. The memory contains services that Dune used to own (job scheduler, reporting service) but both were transferred away. Observations about resizer, event bus, indexer imply they might be Dune's services, but ownership isn't explicitly stated. Per rules: answer only from memory, don't guess. If the memory doesn't contain the answer, reply \"I don't know\".\n\nShould I infer from observations? The rule says do not guess. Observations by the Dune team about resizer/event bus/indexer don't state ownership. So strictly, the memory doesn't state any service Dune currently owns. The answer could be \"I don't know\" — or one could argue the answer is \"none (both known services were transferred)\". But the memory doesn't explicitly say Dune owns nothing; it just says two services moved away. Saying \"none\" would be an inference, though a reasonable one. The rule says reply exactly \"I don't know\" if memory does not contain the answer.\n\nHmm, tricky. The memory doesn't contain a positive statement of current Dune ownership. However, one could argue that the answer is derivable: the only services whose ownership is mentioned are job scheduler (now Cinder's) and reporting service (now Ember's). So Dune owns... unknown others. The safest per rules: I don't know.\n\nBut wait — maybe the intended answer is that Dune doesn't own any of the mentioned services, and observations don't count. Given the strictness (\"reply exactly: I don't know\" if not contained), I'll answer \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: Which services does Dune own now?\n\nLet me go through memory entries about ownership:\n\n- Job scheduler: Dune team owned it as of 2025-09-05, but ownership transferred to Cinder on 2025-09-23. So now Dune does NOT own the job scheduler.\n- Reporting service: owned by Dune team until 2025-12-05, then transferred to Ember team. So now Dune does NOT own the reporting service.\n- Resizer: The Dune team observed resizer's cold start time tripled — no ownership stated explicitly. Observation doesn't imply ownership.\n- Event bus: Dune team observed request volume halved — again, an observation, not ownership.\n- Indexer: Dune observed indexer's disk usage jumped — again observation, not ownership.\n\nHmm. So there's no explicit statement of what Dune currently owns. The question asks which services Dune owns now. The memory contains services that Dune used to own (job scheduler, reporting service) but both were transferred away. Observations about resizer, event bus, indexer imply they might be Dune's services, but ownership isn't explicitly stated. Per rules: answer only from memory, don't guess. If the memory doesn't contain the answer, reply \"I don't know\".\n\nShould I infer from observations? The rule says do not guess. Observations by the Dune team about resizer/event bus/indexer don't state ownership. So strictly, the memory doesn't state any service Dune currently owns. The answer could be \"I don't know\" — or one could argue the answer is \"none (both known services were transferred)\". But the memory doesn't explicitly say Dune owns nothing; it just says two services moved away. Saying \"none\" would be an inference, though a reasonable one. The rule says reply exactly \"I don't know\" if memory does not contain the answer.\n\nHmm, tricky. The memory doesn't contain a positive statement of current Dune ownership. However, one could argue that the answer is derivable: the only services whose ownership is mentioned are job scheduler (now Cinder's) and reporting service (now Ember's). So Dune owns... unknown others. The safest per rules: I don't know.\n\nBut wait — maybe the intended answer is that Dune doesn't own any of the mentioned services, and observations don't count. Given the strictness (\"reply exactly: I don't know\" if not contained), I'll answer \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1532,
+   "completion_tokens": 527,
+   "total_tokens": 2059,
+   "cost": 0.0004933,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0004933,
+    "upstream_inference_prompt_cost": 0.0002298,
+    "upstream_inference_completions_cost": 0.0002635
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 521,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 20.655619375000242,
+ "fetched_at": "2026-09-05T10:26:36Z"
+}

@@ -1,0 +1,4348 @@
+{
+ "run_id": "smoke-builtin-first10",
+ "seed": 20260905,
+ "budget": 1200,
+ "tokenizer": "chars/4",
+ "family": {
+  "family": "builtin",
+  "note": "bench.quality.harness built-ins"
+ },
+ "chat_model": "z-ai/glm-5.3-flash",
+ "embed_model": "openai/text-embedding-3-small",
+ "embed_dim": 1536,
+ "started_at": "2026-09-05T11:04:42+00:00",
+ "finished_at": "2026-09-05T11:05:02+00:00",
+ "wall_s": 19.78176479198737,
+ "offline": false,
+ "limit": 10,
+ "corpus": {
+  "notes": 178,
+  "questions": 10,
+  "by_category": {
+   "single_fact": 10
+  }
+ },
+ "llm_totals": {
+  "calls": 1373,
+  "cache_hits": 1373,
+  "network_calls": 0,
+  "chat_calls": 358,
+  "embed_calls": 1015,
+  "embed_texts": 1015,
+  "prompt_tokens": 639540,
+  "completion_tokens": 231727,
+  "embed_tokens": 31798,
+  "cost_usd": 0.17615971668000022,
+  "cost_usd_charged": 0.0,
+  "cost_known": false,
+  "wall_s": 0.0,
+  "recorded_wall_s": 3894.816142963628,
+  "hit_rate": 1.0
+ },
+ "judge_stats": {
+  "calls": 90,
+  "cache_hits": 90,
+  "network_calls": 0,
+  "chat_calls": 90,
+  "embed_calls": 0,
+  "embed_texts": 0,
+  "prompt_tokens": 21204,
+  "completion_tokens": 6444,
+  "embed_tokens": 0,
+  "cost_usd": 0.003685709999999953,
+  "cost_usd_charged": 0.0,
+  "cost_known": false,
+  "wall_s": 0.0,
+  "recorded_wall_s": 263.4784543294809,
+  "hit_rate": 1.0
+ },
+ "judge_workers": 4,
+ "systems": [
+  {
+   "name": "markdown",
+   "description": "one Markdown file in arrival order; the most recent notes that fit the budget",
+   "budget": 1200,
+   "shares_store_with": null,
+   "ingest_s": 0.00023449998116120696,
+   "ingest_stats": {
+    "calls": 0,
+    "cache_hits": 0,
+    "network_calls": 0,
+    "chat_calls": 0,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "embed_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_usd_charged": 0.0,
+    "cost_known": true,
+    "wall_s": 0.0,
+    "recorded_wall_s": 0.0,
+    "hit_rate": 0.0
+   },
+   "ingest_report": {
+    "notes": 178
+   },
+   "answer_stats": {
+    "calls": 10,
+    "cache_hits": 10,
+    "network_calls": 0,
+    "chat_calls": 10,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 16543,
+    "completion_tokens": 1299,
+    "embed_tokens": 0,
+    "cost_usd": 0.0006054750000000001,
+    "cost_usd_charged": 0.0,
+    "cost_known": true,
+    "wall_s": 0.0,
+    "recorded_wall_s": 26.841436916205566,
+    "hit_rate": 1.0
+   },
+   "scores": {
+    "by_category": {
+     "single_fact": {
+      "n": 10,
+      "lexical": 0.3,
+      "llm": 0.3,
+      "agreement": 1.0,
+      "refusals": 7
+     },
+     "all": {
+      "n": 10,
+      "lexical": 0.3,
+      "llm": 0.3,
+      "agreement": 1.0,
+      "refusals": 7
+     }
+    },
+    "abstention": {
+     "precision": 0.0,
+     "recall": null,
+     "false_refusals": 7,
+     "false_refusal_rate": 0.7,
+     "refusals_total": 7
+    },
+    "stale": {
+     "n": 0,
+     "stale_answers": 0,
+     "stale_rate": null
+    },
+    "judge_unparsed": 0
+   },
+   "per_question": [
+    {
+     "qid": "q001",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer states 'I don't know' instead of the gold fact of two reviewer approvals and a security sign-off.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to auth-gateway need before it can merge?",
+     "gold": "two reviewer approvals and a security sign-off",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 4.4874963350594044e-05,
+     "answer_s": 0.00014533300418406725,
+     "answer_network_s": 2.582221499993466,
+     "answer_cached": true,
+     "cost_usd": 6.1775e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q002",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer is 'I don't know', which the grading rule explicitly marks as wrong; the gold answer is that a rollback plan must be attached to the pull request.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to billing-api need before it can merge?",
+     "gold": "a rollback plan attached to the pull request",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 3.770802868530154e-05,
+     "answer_s": 0.00013341603334993124,
+     "answer_network_s": 1.9567436249926686,
+     "answer_cached": true,
+     "cost_usd": 5.720000000000001e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q003",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer says 'I don't know', which is explicitly wrong per the grading rule.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+     "gold": "the fixed node turned every restart into a missed run",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 2.8250040486454964e-05,
+     "answer_s": 0.00010033301077783108,
+     "answer_network_s": 5.612459791998845,
+     "answer_cached": true,
+     "cost_usd": 6.760000000000002e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q004",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer is 'I don't know', which is explicitly wrong per the grading rule since it does not state the gold fact about INC-2025-023.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why do reindex jobs page on failure?",
+     "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 2.7957954443991184e-05,
+     "answer_s": 0.00010112498421221972,
+     "answer_network_s": 2.3451919160434045,
+     "answer_cached": true,
+     "cost_usd": 5.34e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q005",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because storage for originals doubled in six months.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "storage for originals doubled in six months",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that storage for originals doubled in six months.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why does image-resizer keep original uploads for only 90 days?",
+     "gold": "storage for originals doubled in six months",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 2.7542002499103546e-05,
+     "answer_s": 9.929202497005463e-05,
+     "answer_network_s": 1.650229583028704,
+     "answer_cached": true,
+     "cost_usd": 4.927499999999999e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q006",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer says 'I don't know', which the grading rule explicitly marks as wrong since it does not state the gold fact 'auth-gateway' or an accepted alias.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the ledger depend on?",
+     "gold": "auth-gateway",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 2.662499900907278e-05,
+     "answer_s": 0.00013045797822996974,
+     "answer_network_s": 2.4681549170054495,
+     "answer_cached": true,
+     "cost_usd": 5.5325e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q007",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer says 'I don't know', which the grading rule explicitly marks as wrong.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the notifier depend on?",
+     "gold": "event-bus",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 2.704199869185686e-05,
+     "answer_s": 0.00010841601761057973,
+     "answer_network_s": 2.4163855830556713,
+     "answer_cached": true,
+     "cost_usd": 5.632500000000003e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q008",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer says 'I don't know', which the grading rule explicitly marks as wrong.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for billing-api, and why?",
+     "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 2.6875000912696123e-05,
+     "answer_s": 0.00011487497249618173,
+     "answer_network_s": 2.9595997080323286,
+     "answer_cached": true,
+     "cost_usd": 8.437500000000003e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q009",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2026-03-30 to 2026-04-03, because of the fiscal year close.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer, stating the deploy freeze dates 2026-03-30 to 2026-04-03 and the reason of the fiscal year close.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for the ledger, and why?",
+     "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 2.6291003450751305e-05,
+     "answer_s": 0.00010604102862998843,
+     "answer_network_s": 2.995559042028617,
+     "answer_cached": true,
+     "cost_usd": 7.012499999999998e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q010",
+     "category": "single_fact",
+     "subtype": "deploy_window",
+     "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact exactly: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What is the deploy window for reporting?",
+     "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "context_tokens": 1200,
+     "n_contexts": 31,
+     "retrieve_s": 2.5957997422665358e-05,
+     "answer_s": 0.00010333303362131119,
+     "answer_network_s": 1.8548912500264123,
+     "answer_cached": true,
+     "cost_usd": 5.007500000000001e-05,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    }
+   ],
+   "mean_context_tokens": 1200.0,
+   "mean_contexts": 31.0,
+   "mean_answer_s": 2.6841436916205565,
+   "mean_answer_wall_s": 0.00011426220880821348,
+   "answers_from_cache": 10,
+   "escalated_answers": 0,
+   "truncated_answers": 0,
+   "retrieve_s_total": 0.0002991239889524877,
+   "answer_s_total": 26.841436916205566,
+   "answer_wall_s_total": 0.0011426220880821347,
+   "ingest_network_s": 0.0,
+   "cost_usd_answers": 0.0006054750000000001,
+   "cost_usd_ingest": 0.0
+  },
+  {
+   "name": "markdown-full",
+   "description": "the same Markdown file, whole, with no budget (upper bound of the plain prompt)",
+   "budget": null,
+   "shares_store_with": null,
+   "ingest_s": 0.0001287920167669654,
+   "ingest_stats": {
+    "calls": 0,
+    "cache_hits": 0,
+    "network_calls": 0,
+    "chat_calls": 0,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "embed_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_usd_charged": 0.0,
+    "cost_known": true,
+    "wall_s": 0.0,
+    "recorded_wall_s": 0.0,
+    "hit_rate": 0.0
+   },
+   "ingest_report": {
+    "notes": 178
+   },
+   "answer_stats": {
+    "calls": 10,
+    "cache_hits": 10,
+    "network_calls": 0,
+    "chat_calls": 10,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 80343,
+    "completion_tokens": 393,
+    "embed_tokens": 0,
+    "cost_usd": 0.00581645,
+    "cost_usd_charged": 0.0,
+    "cost_known": true,
+    "wall_s": 0.0,
+    "recorded_wall_s": 32.23048074892722,
+    "hit_rate": 1.0
+   },
+   "scores": {
+    "by_category": {
+     "single_fact": {
+      "n": 10,
+      "lexical": 1.0,
+      "llm": 1.0,
+      "agreement": 1.0,
+      "refusals": 0
+     },
+     "all": {
+      "n": 10,
+      "lexical": 1.0,
+      "llm": 1.0,
+      "agreement": 1.0,
+      "refusals": 0
+     }
+    },
+    "abstention": {
+     "precision": null,
+     "recall": null,
+     "false_refusals": 0,
+     "false_refusal_rate": 0.0,
+     "refusals_total": 0
+    },
+    "stale": {
+     "n": 0,
+     "stale_answers": 0,
+     "stale_rate": null
+    },
+    "judge_unparsed": 0
+   },
+   "per_question": [
+    {
+     "qid": "q001",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "Two reviewer approvals and a security sign-off",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "two reviewer approvals and a security sign-off",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold fact that a change to auth-gateway needs two reviewer approvals and a security sign-off.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to auth-gateway need before it can merge?",
+     "gold": "two reviewer approvals and a security sign-off",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 3.850000211969018e-05,
+     "answer_s": 0.0002258330350741744,
+     "answer_network_s": 10.085927707958035,
+     "answer_cached": true,
+     "cost_usd": 0.0008071999999999999,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q002",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "A rollback plan attached to the pull request.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a rollback plan attached to the pull request",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer that a rollback plan must be attached to the pull request.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to billing-api need before it can merge?",
+     "gold": "a rollback plan attached to the pull request",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 2.704199869185686e-05,
+     "answer_s": 0.00021650001872330904,
+     "answer_network_s": 2.765604833024554,
+     "answer_cached": true,
+     "cost_usd": 0.0006326999999999999,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q003",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because the fixed node turned every restart into a missed run.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the fixed node turned every restart into a missed run",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that the fixed node turned every restart into a missed run.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+     "gold": "the fixed node turned every restart into a missed run",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 2.6917026843875647e-05,
+     "answer_s": 0.00022145896218717098,
+     "answer_network_s": 5.124300625000615,
+     "answer_cached": true,
+     "cost_usd": 0.0012577,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q004",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because a silent reindex failure left stale results for two days in INC-2025-023.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a silent reindex failure left stale results for two days in INC-2025-023",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that a silent reindex failure left stale results for two days in INC-2025-023.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why do reindex jobs page on failure?",
+     "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 2.541701542213559e-05,
+     "answer_s": 0.00019333296222612262,
+     "answer_network_s": 4.720629916002508,
+     "answer_cached": true,
+     "cost_usd": 0.0008112500000000003,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q005",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because storage for originals doubled in six months.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "storage for originals doubled in six months",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that storage for originals doubled in six months.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why does image-resizer keep original uploads for only 90 days?",
+     "gold": "storage for originals doubled in six months",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 2.4749955628067255e-05,
+     "answer_s": 0.00020424998365342617,
+     "answer_network_s": 1.1729911669972353,
+     "answer_cached": true,
+     "cost_usd": 0.00016754999999999982,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q006",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The auth gateway",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the auth gateway",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The auth gateway' is an accepted alias of the gold answer 'auth-gateway'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the ledger depend on?",
+     "gold": "auth-gateway",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 2.4916022084653378e-05,
+     "answer_s": 0.000212125014513731,
+     "answer_network_s": 1.2478635829756968,
+     "answer_cached": true,
+     "cost_usd": 0.0001694000000000001,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q007",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The event bus",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the event bus",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The event bus' is an accepted alias of the gold answer 'event-bus'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the notifier depend on?",
+     "gold": "event-bus",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 2.4667009711265564e-05,
+     "answer_s": 0.00020174996461719275,
+     "answer_network_s": 0.8494373339926824,
+     "answer_cached": true,
+     "cost_usd": 0.00016485000000000024,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q008",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2025-11-24 to 2025-12-02, because of the peak season.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2025-11-24 to 2025-12-02, because of the peak season",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer matches the gold fact exactly.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for billing-api, and why?",
+     "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 2.662499900907278e-05,
+     "answer_s": 0.00020429102005437016,
+     "answer_network_s": 1.5242367499740794,
+     "answer_cached": true,
+     "cost_usd": 0.0008115500000000003,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q009",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2026-03-30 to 2026-04-03, because of the fiscal year close.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer, stating the deploy freeze dates 2026-03-30 to 2026-04-03 and the reason of the fiscal year close.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for the ledger, and why?",
+     "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 2.4500011932104826e-05,
+     "answer_s": 0.00020670797675848007,
+     "answer_network_s": 3.8868089580209926,
+     "answer_cached": true,
+     "cost_usd": 0.00018449999999999977,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q010",
+     "category": "single_fact",
+     "subtype": "deploy_window",
+     "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact exactly: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What is the deploy window for reporting?",
+     "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "context_tokens": 6338,
+     "n_contexts": 178,
+     "retrieve_s": 2.445897553116083e-05,
+     "answer_s": 0.00021133298287168145,
+     "answer_network_s": 0.8526798749808222,
+     "answer_cached": true,
+     "cost_usd": 0.0008097499999999997,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 178,
+      "candidate_tokens": 6338
+     }
+    }
+   ],
+   "mean_context_tokens": 6338.0,
+   "mean_contexts": 178.0,
+   "mean_answer_s": 3.223048074892722,
+   "mean_answer_wall_s": 0.00020975819206796585,
+   "answers_from_cache": 10,
+   "escalated_answers": 0,
+   "truncated_answers": 0,
+   "retrieve_s_total": 0.0002677930169738829,
+   "answer_s_total": 32.23048074892722,
+   "answer_wall_s_total": 0.0020975819206796587,
+   "ingest_network_s": 0.0,
+   "cost_usd_answers": 0.00581645,
+   "cost_usd_ingest": 0.0
+  },
+  {
+   "name": "bm25",
+   "description": "DuckDB fts over raw notes; the top notes by BM25 that fit the budget",
+   "budget": 1200,
+   "shares_store_with": null,
+   "ingest_s": 0.1023372919880785,
+   "ingest_stats": {
+    "calls": 0,
+    "cache_hits": 0,
+    "network_calls": 0,
+    "chat_calls": 0,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "embed_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_usd_charged": 0.0,
+    "cost_known": true,
+    "wall_s": 0.0,
+    "recorded_wall_s": 0.0,
+    "hit_rate": 0.0
+   },
+   "ingest_report": {
+    "notes": 178,
+    "index": "duckdb fts, porter stemmer, english stopwords, digits kept"
+   },
+   "answer_stats": {
+    "calls": 10,
+    "cache_hits": 10,
+    "network_calls": 0,
+    "chat_calls": 10,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 14378,
+    "completion_tokens": 1223,
+    "embed_tokens": 0,
+    "cost_usd": 0.0026301500000000012,
+    "cost_usd_charged": 0.0,
+    "cost_known": true,
+    "wall_s": 0.0,
+    "recorded_wall_s": 27.978462041937746,
+    "hit_rate": 1.0
+   },
+   "scores": {
+    "by_category": {
+     "single_fact": {
+      "n": 10,
+      "lexical": 1.0,
+      "llm": 1.0,
+      "agreement": 1.0,
+      "refusals": 0
+     },
+     "all": {
+      "n": 10,
+      "lexical": 1.0,
+      "llm": 1.0,
+      "agreement": 1.0,
+      "refusals": 0
+     }
+    },
+    "abstention": {
+     "precision": null,
+     "recall": null,
+     "false_refusals": 0,
+     "false_refusal_rate": 0.0,
+     "refusals_total": 0
+    },
+    "stale": {
+     "n": 0,
+     "stale_answers": 0,
+     "stale_rate": null
+    },
+    "judge_unparsed": 0
+   },
+   "per_question": [
+    {
+     "qid": "q001",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "Two reviewer approvals and a security sign-off.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "two reviewer approvals and a security sign-off",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states exactly the gold fact: two reviewer approvals and a security sign-off.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to auth-gateway need before it can merge?",
+     "gold": "two reviewer approvals and a security sign-off",
+     "context_tokens": 1026,
+     "n_contexts": 24,
+     "retrieve_s": 0.0051455419743433595,
+     "answer_s": 0.00028799998108297586,
+     "answer_network_s": 4.577040499949362,
+     "answer_cached": true,
+     "cost_usd": 0.00025124999999999974,
+     "retrieval": {
+      "candidates": 24,
+      "selected": 24,
+      "candidate_tokens": 1026
+     }
+    },
+    {
+     "qid": "q002",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "A rollback plan attached to the pull request.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a rollback plan attached to the pull request",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer that a rollback plan must be attached to the pull request.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to billing-api need before it can merge?",
+     "gold": "a rollback plan attached to the pull request",
+     "context_tokens": 1170,
+     "n_contexts": 29,
+     "retrieve_s": 0.005010749970097095,
+     "answer_s": 0.00023187499027699232,
+     "answer_network_s": 2.1968109590234235,
+     "answer_cached": true,
+     "cost_usd": 0.0001380499999999998,
+     "retrieval": {
+      "candidates": 29,
+      "selected": 29,
+      "candidate_tokens": 1170
+     }
+    },
+    {
+     "qid": "q003",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "The fixed node turned every restart into a missed run.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the fixed node turned every restart into a missed run",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold fact that the fixed node turned every restart into a missed run.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+     "gold": "the fixed node turned every restart into a missed run",
+     "context_tokens": 676,
+     "n_contexts": 15,
+     "retrieve_s": 0.0047062499797903,
+     "answer_s": 0.00023966701701283455,
+     "answer_network_s": 4.240498500003014,
+     "answer_cached": true,
+     "cost_usd": 0.00019875000000000014,
+     "retrieval": {
+      "candidates": 15,
+      "selected": 15,
+      "candidate_tokens": 676
+     }
+    },
+    {
+     "qid": "q004",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because a silent reindex failure left stale results for two days in INC-2025-023.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a silent reindex failure left stale results for two days in INC-2025-023",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that a silent reindex failure left stale results for two days in INC-2025-023.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why do reindex jobs page on failure?",
+     "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+     "context_tokens": 739,
+     "n_contexts": 18,
+     "retrieve_s": 0.004453041008673608,
+     "answer_s": 0.00020604196470230818,
+     "answer_network_s": 1.8079401660361327,
+     "answer_cached": true,
+     "cost_usd": 0.0002187999999999999,
+     "retrieval": {
+      "candidates": 18,
+      "selected": 18,
+      "candidate_tokens": 739
+     }
+    },
+    {
+     "qid": "q005",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Storage for originals doubled in six months.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "storage for originals doubled in six months",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly states the gold fact that storage for originals doubled in six months.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why does image-resizer keep original uploads for only 90 days?",
+     "gold": "storage for originals doubled in six months",
+     "context_tokens": 880,
+     "n_contexts": 21,
+     "retrieve_s": 0.00423279101960361,
+     "answer_s": 0.00016624998534098268,
+     "answer_network_s": 1.985753582965117,
+     "answer_cached": true,
+     "cost_usd": 0.0002285999999999998,
+     "retrieval": {
+      "candidates": 21,
+      "selected": 21,
+      "candidate_tokens": 880
+     }
+    },
+    {
+     "qid": "q006",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The auth gateway",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the auth gateway",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The auth gateway' is an accepted alias of the gold answer 'auth-gateway'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the ledger depend on?",
+     "gold": "auth-gateway",
+     "context_tokens": 1192,
+     "n_contexts": 32,
+     "retrieve_s": 0.0041194160003215075,
+     "answer_s": 0.0001793750561773777,
+     "answer_network_s": 1.3772746250033379,
+     "answer_cached": true,
+     "cost_usd": 0.0002873499999999996,
+     "retrieval": {
+      "candidates": 49,
+      "selected": 32,
+      "candidate_tokens": 2010
+     }
+    },
+    {
+     "qid": "q007",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The event bus",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the event bus",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The event bus' is an accepted alias of the gold answer 'event-bus'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the notifier depend on?",
+     "gold": "event-bus",
+     "context_tokens": 1166,
+     "n_contexts": 29,
+     "retrieve_s": 0.0040372919756919146,
+     "answer_s": 0.00019758398411795497,
+     "answer_network_s": 3.0271005000104196,
+     "answer_cached": true,
+     "cost_usd": 0.0002788500000000006,
+     "retrieval": {
+      "candidates": 44,
+      "selected": 29,
+      "candidate_tokens": 1873
+     }
+    },
+    {
+     "qid": "q008",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2025-11-24 to 2025-12-02 — the peak season.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2025-11-24 to 2025-12-02",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the deploy freeze dates 2025-11-24 to 2025-12-02 and the reason 'the peak season', matching the gold answer and accepted phrasing.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for billing-api, and why?",
+     "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+     "context_tokens": 1143,
+     "n_contexts": 31,
+     "retrieve_s": 0.004049875016789883,
+     "answer_s": 0.0001901249634101987,
+     "answer_network_s": 3.5260336669743992,
+     "answer_cached": true,
+     "cost_usd": 0.0003276000000000008,
+     "retrieval": {
+      "candidates": 33,
+      "selected": 31,
+      "candidate_tokens": 1299
+     }
+    },
+    {
+     "qid": "q009",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2026-03-30 to 2026-04-03, because of the fiscal year close.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer, stating the deploy freeze dates 2026-03-30 to 2026-04-03 and the reason of the fiscal year close.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for the ledger, and why?",
+     "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+     "context_tokens": 1153,
+     "n_contexts": 32,
+     "retrieve_s": 0.004168332961853594,
+     "answer_s": 0.00019099999917671084,
+     "answer_network_s": 3.6225380419637077,
+     "answer_cached": true,
+     "cost_usd": 0.0003765000000000001,
+     "retrieval": {
+      "candidates": 33,
+      "selected": 32,
+      "candidate_tokens": 1248
+     }
+    },
+    {
+     "qid": "q010",
+     "category": "single_fact",
+     "subtype": "deploy_window",
+     "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact exactly: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What is the deploy window for reporting?",
+     "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "context_tokens": 1125,
+     "n_contexts": 29,
+     "retrieve_s": 0.003977583022788167,
+     "answer_s": 0.00019645795691758394,
+     "answer_network_s": 1.6174715000088327,
+     "answer_cached": true,
+     "cost_usd": 0.00032440000000000073,
+     "retrieval": {
+      "candidates": 29,
+      "selected": 29,
+      "candidate_tokens": 1125
+     }
+    }
+   ],
+   "mean_context_tokens": 1027.0,
+   "mean_contexts": 26.0,
+   "mean_answer_s": 2.7978462041937746,
+   "mean_answer_wall_s": 0.00020863758982159197,
+   "answers_from_cache": 10,
+   "escalated_answers": 0,
+   "truncated_answers": 0,
+   "retrieve_s_total": 0.04390087292995304,
+   "answer_s_total": 27.978462041937746,
+   "answer_wall_s_total": 0.0020863758982159197,
+   "ingest_network_s": 0.0,
+   "cost_usd_answers": 0.0026301500000000012,
+   "cost_usd_ingest": 0.0
+  },
+  {
+   "name": "vector",
+   "description": "text-embedding-3-small over raw notes; the top notes by cosine that fit the budget",
+   "budget": 1200,
+   "shares_store_with": null,
+   "ingest_s": 0.08347841701470315,
+   "ingest_stats": {
+    "calls": 178,
+    "cache_hits": 178,
+    "network_calls": 0,
+    "chat_calls": 0,
+    "embed_calls": 178,
+    "embed_texts": 178,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "embed_tokens": 7660,
+    "cost_usd": 0.007970479999999983,
+    "cost_usd_charged": 0.0,
+    "cost_known": true,
+    "wall_s": 0.0,
+    "recorded_wall_s": 8.665634542994724,
+    "hit_rate": 1.0
+   },
+   "ingest_report": {
+    "notes": 178,
+    "dim": 1536
+   },
+   "answer_stats": {
+    "calls": 20,
+    "cache_hits": 20,
+    "network_calls": 0,
+    "chat_calls": 10,
+    "embed_calls": 10,
+    "embed_texts": 10,
+    "prompt_tokens": 16069,
+    "completion_tokens": 841,
+    "embed_tokens": 113,
+    "cost_usd": 0.0021299154999999924,
+    "cost_usd_charged": 0.0,
+    "cost_known": true,
+    "wall_s": 0.0,
+    "recorded_wall_s": 25.19569791399408,
+    "hit_rate": 1.0
+   },
+   "scores": {
+    "by_category": {
+     "single_fact": {
+      "n": 10,
+      "lexical": 1.0,
+      "llm": 1.0,
+      "agreement": 1.0,
+      "refusals": 0
+     },
+     "all": {
+      "n": 10,
+      "lexical": 1.0,
+      "llm": 1.0,
+      "agreement": 1.0,
+      "refusals": 0
+     }
+    },
+    "abstention": {
+     "precision": null,
+     "recall": null,
+     "false_refusals": 0,
+     "false_refusal_rate": 0.0,
+     "refusals_total": 0
+    },
+    "stale": {
+     "n": 0,
+     "stale_answers": 0,
+     "stale_rate": null
+    },
+    "judge_unparsed": 0
+   },
+   "per_question": [
+    {
+     "qid": "q001",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "Two reviewer approvals and a security sign-off.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "two reviewer approvals and a security sign-off",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states exactly the gold fact: two reviewer approvals and a security sign-off.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to auth-gateway need before it can merge?",
+     "gold": "two reviewer approvals and a security sign-off",
+     "context_tokens": 1175,
+     "n_contexts": 27,
+     "retrieve_s": 0.0006601249915547669,
+     "answer_s": 0.00016312499064952135,
+     "answer_network_s": 1.1033298749825917,
+     "answer_cached": true,
+     "cost_usd": 0.00018202050000000122,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 27,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q002",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "A rollback plan attached to the pull request.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a rollback plan attached to the pull request",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer that a rollback plan must be attached to the pull request.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to billing-api need before it can merge?",
+     "gold": "a rollback plan attached to the pull request",
+     "context_tokens": 1196,
+     "n_contexts": 30,
+     "retrieve_s": 0.0004632920026779175,
+     "answer_s": 0.0001253330265171826,
+     "answer_network_s": 1.5615874170325696,
+     "answer_cached": true,
+     "cost_usd": 0.0001329449999999989,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 30,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q003",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "The fixed node turned every restart into a missed run.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the fixed node turned every restart into a missed run",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold fact that the fixed node turned every restart into a missed run.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+     "gold": "the fixed node turned every restart into a missed run",
+     "context_tokens": 1194,
+     "n_contexts": 31,
+     "retrieve_s": 0.000472291954793036,
+     "answer_s": 0.00011612498201429844,
+     "answer_network_s": 2.865615874994546,
+     "answer_cached": true,
+     "cost_usd": 0.00029445000000000165,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q004",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because a silent reindex failure left stale results for two days in INC-2025-023.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a silent reindex failure left stale results for two days in INC-2025-023",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that a silent reindex failure left stale results for two days in INC-2025-023.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why do reindex jobs page on failure?",
+     "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+     "context_tokens": 1156,
+     "n_contexts": 22,
+     "retrieve_s": 0.00045900000259280205,
+     "answer_s": 0.0001124579575844109,
+     "answer_network_s": 0.9103245830046944,
+     "answer_cached": true,
+     "cost_usd": 0.0001471099999999989,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 22,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q005",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Storage for originals doubled in six months.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "storage for originals doubled in six months",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly states the gold fact that storage for originals doubled in six months.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why does image-resizer keep original uploads for only 90 days?",
+     "gold": "storage for originals doubled in six months",
+     "context_tokens": 1150,
+     "n_contexts": 23,
+     "retrieve_s": 0.0004522499511949718,
+     "answer_s": 0.00011879100929945707,
+     "answer_network_s": 0.7787749579874799,
+     "answer_cached": true,
+     "cost_usd": 0.0001423600000000011,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 23,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q006",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The auth gateway",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the auth gateway",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The auth gateway' is an accepted alias of the gold answer 'auth-gateway'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the ledger depend on?",
+     "gold": "auth-gateway",
+     "context_tokens": 1197,
+     "n_contexts": 33,
+     "retrieve_s": 0.00048816698836162686,
+     "answer_s": 0.00013341696467250586,
+     "answer_network_s": 0.6721052909852006,
+     "answer_cached": true,
+     "cost_usd": 0.00015675999999999884,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 33,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q007",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The event bus",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the event bus",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The event bus' is an accepted alias of the gold answer 'event-bus'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the notifier depend on?",
+     "gold": "event-bus",
+     "context_tokens": 1196,
+     "n_contexts": 31,
+     "retrieve_s": 0.0004807499935850501,
+     "answer_s": 0.00010670803021639585,
+     "answer_network_s": 1.3576046249945648,
+     "answer_cached": true,
+     "cost_usd": 0.0002837000000000013,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q008",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2025-11-24 to 2025-12-02, because of the peak season.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2025-11-24 to 2025-12-02, because of the peak season",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer matches the gold fact exactly.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for billing-api, and why?",
+     "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+     "context_tokens": 1179,
+     "n_contexts": 31,
+     "retrieve_s": 0.0004793339758180082,
+     "answer_s": 0.0001294999965466559,
+     "answer_network_s": 4.967049541010056,
+     "answer_cached": true,
+     "cost_usd": 0.00031634999999999996,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 31,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q009",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2026-03-30 to 2026-04-03, because of the fiscal year close.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer, stating the deploy freeze dates 2026-03-30 to 2026-04-03 and the reason of the fiscal year close.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for the ledger, and why?",
+     "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+     "context_tokens": 1139,
+     "n_contexts": 32,
+     "retrieve_s": 0.00047608400927856565,
+     "answer_s": 0.0001420829794369638,
+     "answer_network_s": 5.500357582990546,
+     "answer_cached": true,
+     "cost_usd": 0.0003131900000000014,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 32,
+      "candidate_tokens": 6338
+     }
+    },
+    {
+     "qid": "q010",
+     "category": "single_fact",
+     "subtype": "deploy_window",
+     "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact exactly: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What is the deploy window for reporting?",
+     "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "context_tokens": 1194,
+     "n_contexts": 30,
+     "retrieve_s": 0.0005518330144695938,
+     "answer_s": 0.00016324996249750257,
+     "answer_network_s": 2.888149125035852,
+     "answer_cached": true,
+     "cost_usd": 0.00015876999999999905,
+     "retrieval": {
+      "candidates": 178,
+      "selected": 30,
+      "candidate_tokens": 6338
+     }
+    }
+   ],
+   "mean_context_tokens": 1177.6,
+   "mean_contexts": 29.0,
+   "mean_answer_s": 2.26048988730181,
+   "mean_answer_wall_s": 0.00013107898994348943,
+   "answers_from_cache": 10,
+   "escalated_answers": 0,
+   "truncated_answers": 0,
+   "retrieve_s_total": 0.004983126884326339,
+   "answer_s_total": 22.6048988730181,
+   "answer_wall_s_total": 0.0013107898994348943,
+   "ingest_network_s": 8.665634542994724,
+   "cost_usd_answers": 0.0021299154999999924,
+   "cost_usd_ingest": 0.007970479999999983
+  },
+  {
+   "name": "anatid",
+   "description": "notes ingested with anatid.ingest and the chat model as extractor; recall with every arm, memories rendered with validity interval, writer and superseded versions",
+   "budget": 1200,
+   "shares_store_with": null,
+   "ingest_s": 8.794672916992567,
+   "ingest_stats": {
+    "calls": 610,
+    "cache_hits": 610,
+    "network_calls": 0,
+    "chat_calls": 178,
+    "embed_calls": 432,
+    "embed_texts": 432,
+    "prompt_tokens": 421737,
+    "completion_tokens": 217087,
+    "embed_tokens": 13651,
+    "cost_usd": 0.1376535461799998,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 3229.5744858885,
+    "hit_rate": 1.0
+   },
+   "ingest_report": {
+    "notes": 178,
+    "extractor": "llm",
+    "memories_created": 259,
+    "memories_closed": 80,
+    "relations_opened": 86,
+    "relations_closed": 29,
+    "dedupe_drops": 17,
+    "downgraded_corrections": 0,
+    "parser_notes": 0,
+    "empty_patches": 6,
+    "extraction_failures": 1,
+    "failed_notes": [
+     {
+      "note_id": "n155",
+      "error": "the model returned no content"
+     }
+    ],
+    "store": {
+     "memories": 259,
+     "entities": 48,
+     "episodes": 178,
+     "edges_about": 577,
+     "edges_relates": 86,
+     "edges_supersedes": 80,
+     "anatid_audit": 80,
+     "memory_versions": 339,
+     "current_memories": 179,
+     "tenant_id": 1,
+     "expand_path": "sql"
+    }
+   },
+   "answer_stats": {
+    "calls": 20,
+    "cache_hits": 20,
+    "network_calls": 0,
+    "chat_calls": 10,
+    "embed_calls": 10,
+    "embed_texts": 10,
+    "prompt_tokens": 15243,
+    "completion_tokens": 831,
+    "embed_tokens": 113,
+    "cost_usd": 0.0015274650000000334,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 55.8382690839353,
+    "hit_rate": 1.0
+   },
+   "scores": {
+    "by_category": {
+     "single_fact": {
+      "n": 10,
+      "lexical": 0.8,
+      "llm": 0.9,
+      "agreement": 0.9,
+      "refusals": 1
+     },
+     "all": {
+      "n": 10,
+      "lexical": 0.8,
+      "llm": 0.9,
+      "agreement": 0.9,
+      "refusals": 1
+     }
+    },
+    "abstention": {
+     "precision": 0.0,
+     "recall": null,
+     "false_refusals": 1,
+     "false_refusal_rate": 0.1,
+     "refusals_total": 1
+    },
+    "stale": {
+     "n": 0,
+     "stale_answers": 0,
+     "stale_rate": null
+    },
+    "judge_unparsed": 0
+   },
+   "per_question": [
+    {
+     "qid": "q001",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer states 'I don't know' instead of the gold fact of two reviewer approvals and a security sign-off.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to auth-gateway need before it can merge?",
+     "gold": "two reviewer approvals and a security sign-off",
+     "context_tokens": 1153,
+     "n_contexts": 18,
+     "retrieve_s": 0.052297124988399446,
+     "answer_s": 0.00021300005028024316,
+     "answer_network_s": 2.2756739169708453,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "auth gateway"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 18,
+      "candidate_tokens": 1235
+     }
+    },
+    {
+     "qid": "q002",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "A rollback plan attached to the pull request",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a rollback plan attached to the pull request",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly states the gold fact that a rollback plan must be attached to the pull request before a billing-api change can merge.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to billing-api need before it can merge?",
+     "gold": "a rollback plan attached to the pull request",
+     "context_tokens": 1143,
+     "n_contexts": 20,
+     "retrieve_s": 0.051857166981790215,
+     "answer_s": 0.00021962495520710945,
+     "answer_network_s": 1.529400707979221,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "billing API"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1143
+     }
+    },
+    {
+     "qid": "q003",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because the single fixed node turned every restart into a missed run.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the fixed node turned every restart into a missed run",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states that the single fixed node turned every restart into a missed run, which matches the gold answer.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+     "gold": "the fixed node turned every restart into a missed run",
+     "context_tokens": 1044,
+     "n_contexts": 20,
+     "retrieve_s": 0.04653508303454146,
+     "answer_s": 0.00023008399875834584,
+     "answer_network_s": 1.9409047499648295,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1044
+     }
+    },
+    {
+     "qid": "q004",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because a reindex job failed silently on a full disk in INC-2025-023, leaving the indexer serving stale results for two days.",
+     "lexical": {
+      "correct": false,
+      "refused": false,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact—a silent reindex failure left stale results for two days in INC-2025-023—with only an additional detail (full disk), which is acceptable extra context.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": false,
+     "question": "Why do reindex jobs page on failure?",
+     "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+     "context_tokens": 1177,
+     "n_contexts": 14,
+     "retrieve_s": 0.05616141599602997,
+     "answer_s": 0.00027266598772257566,
+     "answer_network_s": 4.889631333993748,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 14,
+      "candidate_tokens": 1426
+     }
+    },
+    {
+     "qid": "q005",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because storage for originals doubled in six months.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "storage for originals doubled in six months",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that storage for originals doubled in six months.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why does image-resizer keep original uploads for only 90 days?",
+     "gold": "storage for originals doubled in six months",
+     "context_tokens": 1064,
+     "n_contexts": 19,
+     "retrieve_s": 0.05868950003059581,
+     "answer_s": 0.00023620796855539083,
+     "answer_network_s": 3.8186468339990824,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "image resizer"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 19,
+      "candidate_tokens": 1353
+     }
+    },
+    {
+     "qid": "q006",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The auth gateway",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the auth gateway",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The auth gateway' is an accepted alias of the gold answer 'auth-gateway'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the ledger depend on?",
+     "gold": "auth-gateway",
+     "context_tokens": 896,
+     "n_contexts": 20,
+     "retrieve_s": 0.04323016700800508,
+     "answer_s": 0.00022545800311490893,
+     "answer_network_s": 1.3194565830053762,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 896
+     }
+    },
+    {
+     "qid": "q007",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "the bus",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the bus",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'the bus' is an explicitly accepted alias for the gold answer 'event-bus'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the notifier depend on?",
+     "gold": "event-bus",
+     "context_tokens": 974,
+     "n_contexts": 20,
+     "retrieve_s": 0.05124404199887067,
+     "answer_s": 0.0002518339897505939,
+     "answer_network_s": 26.399423250055406,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "notifier"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 974
+     }
+    },
+    {
+     "qid": "q008",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2025-11-24 to 2025-12-02, for the peak season.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2025-11-24 to 2025-12-02",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the exact freeze dates and attributes it to the peak season, matching the gold answer with only trivial phrasing variation.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for billing-api, and why?",
+     "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+     "context_tokens": 1152,
+     "n_contexts": 20,
+     "retrieve_s": 0.05352495901752263,
+     "answer_s": 0.00026524998247623444,
+     "answer_network_s": 3.001490709022619,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "billing API"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1152
+     }
+    },
+    {
+     "qid": "q009",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2026-03-30 to 2026-04-03, for the fiscal year close.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2026-03-30 to 2026-04-03",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer gives the exact dates 2026-03-30 to 2026-04-03 and cites the fiscal year close, matching the gold fact with only a trivially different phrasing of the reason.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for the ledger, and why?",
+     "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+     "context_tokens": 973,
+     "n_contexts": 20,
+     "retrieve_s": 0.04417474998626858,
+     "answer_s": 0.00025166699197143316,
+     "answer_network_s": 5.593118000018876,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 973
+     }
+    },
+    {
+     "qid": "q010",
+     "category": "single_fact",
+     "subtype": "deploy_window",
+     "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact exactly: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What is the deploy window for reporting?",
+     "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "context_tokens": 1012,
+     "n_contexts": 20,
+     "retrieve_s": 0.045021124999038875,
+     "answer_s": 0.00020691700046882033,
+     "answer_network_s": 2.479723957949318,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1012
+     }
+    }
+   ],
+   "mean_context_tokens": 1058.8,
+   "mean_contexts": 19.1,
+   "mean_answer_s": 5.324747004295932,
+   "mean_answer_wall_s": 0.00023727089283056557,
+   "answers_from_cache": 10,
+   "escalated_answers": 0,
+   "truncated_answers": 0,
+   "retrieve_s_total": 0.5027353340410627,
+   "answer_s_total": 53.24747004295932,
+   "answer_wall_s_total": 0.0023727089283056557,
+   "ingest_network_s": 3229.5744858885,
+   "cost_usd_answers": 0.0015274650000000334,
+   "cost_usd_ingest": 0.1376535461799998
+  },
+  {
+   "name": "anatid-text",
+   "description": "the anatid store queried with the text arm only",
+   "budget": 1200,
+   "shares_store_with": "anatid",
+   "ingest_s": 3.1669624149799347e-06,
+   "ingest_stats": {
+    "calls": 0,
+    "cache_hits": 0,
+    "network_calls": 0,
+    "chat_calls": 0,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "embed_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 0.0,
+    "hit_rate": 0.0
+   },
+   "ingest_report": {
+    "shares_store_with": "anatid"
+   },
+   "answer_stats": {
+    "calls": 10,
+    "cache_hits": 10,
+    "network_calls": 0,
+    "chat_calls": 10,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 15080,
+    "completion_tokens": 993,
+    "embed_tokens": 0,
+    "cost_usd": 0.00143858500000002,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 22.778506877017207,
+    "hit_rate": 1.0
+   },
+   "scores": {
+    "by_category": {
+     "single_fact": {
+      "n": 10,
+      "lexical": 0.8,
+      "llm": 1.0,
+      "agreement": 0.8,
+      "refusals": 0
+     },
+     "all": {
+      "n": 10,
+      "lexical": 0.8,
+      "llm": 1.0,
+      "agreement": 0.8,
+      "refusals": 0
+     }
+    },
+    "abstention": {
+     "precision": null,
+     "recall": null,
+     "false_refusals": 0,
+     "false_refusal_rate": 0.0,
+     "refusals_total": 0
+    },
+    "stale": {
+     "n": 0,
+     "stale_answers": 0,
+     "stale_rate": null
+    },
+    "judge_unparsed": 0
+   },
+   "per_question": [
+    {
+     "qid": "q001",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "Two reviewer approvals and a security sign-off.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "two reviewer approvals and a security sign-off",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states exactly the gold fact: two reviewer approvals and a security sign-off.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to auth-gateway need before it can merge?",
+     "gold": "two reviewer approvals and a security sign-off",
+     "context_tokens": 1070,
+     "n_contexts": 20,
+     "retrieve_s": 0.04018216603435576,
+     "answer_s": 0.0002257089945487678,
+     "answer_network_s": 2.4036831670091487,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1070
+     }
+    },
+    {
+     "qid": "q002",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "A rollback plan attached to the pull request.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a rollback plan attached to the pull request",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer that a rollback plan must be attached to the pull request.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to billing-api need before it can merge?",
+     "gold": "a rollback plan attached to the pull request",
+     "context_tokens": 1188,
+     "n_contexts": 19,
+     "retrieve_s": 0.04374162503518164,
+     "answer_s": 0.00022583402460440993,
+     "answer_network_s": 1.9453879579668865,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 19,
+      "candidate_tokens": 1237
+     }
+    },
+    {
+     "qid": "q003",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "The single fixed node turned every restart into a missed run.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the fixed node turned every restart into a missed run",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states that the fixed node turned every restart into a missed run, which matches the gold answer exactly.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+     "gold": "the fixed node turned every restart into a missed run",
+     "context_tokens": 1070,
+     "n_contexts": 20,
+     "retrieve_s": 0.043225041998084635,
+     "answer_s": 0.00020695803686976433,
+     "answer_network_s": 2.387297084031161,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1070
+     }
+    },
+    {
+     "qid": "q004",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "A reindex job failed silently on a full disk, leaving the indexer serving stale results for two days (INC-2025-023).",
+     "lexical": {
+      "correct": false,
+      "refused": false,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that a silent reindex failure left stale results for two days in INC-2025-023, with acceptable extra context about the full disk.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": false,
+     "question": "Why do reindex jobs page on failure?",
+     "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+     "context_tokens": 1115,
+     "n_contexts": 14,
+     "retrieve_s": 0.05331479199230671,
+     "answer_s": 0.00020795798627659678,
+     "answer_network_s": 2.9895885000005364,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 14,
+      "candidate_tokens": 1397
+     }
+    },
+    {
+     "qid": "q005",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because storage for originals doubled in six months.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "storage for originals doubled in six months",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that storage for originals doubled in six months.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why does image-resizer keep original uploads for only 90 days?",
+     "gold": "storage for originals doubled in six months",
+     "context_tokens": 1046,
+     "n_contexts": 20,
+     "retrieve_s": 0.043102541007101536,
+     "answer_s": 0.00021724996622651815,
+     "answer_network_s": 2.4254514999920502,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1046
+     }
+    },
+    {
+     "qid": "q006",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "auth gateway",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the auth gateway",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'auth gateway' matches the gold answer 'auth-gateway' with only a hyphen difference and aligns with accepted aliases.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the ledger depend on?",
+     "gold": "auth-gateway",
+     "context_tokens": 893,
+     "n_contexts": 20,
+     "retrieve_s": 0.039945167023688555,
+     "answer_s": 0.00020508398301899433,
+     "answer_network_s": 1.528939875017386,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 893
+     }
+    },
+    {
+     "qid": "q007",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The bus",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the bus",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The bus' is an explicitly accepted alias for the gold answer 'event-bus'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the notifier depend on?",
+     "gold": "event-bus",
+     "context_tokens": 920,
+     "n_contexts": 20,
+     "retrieve_s": 0.04067295900313184,
+     "answer_s": 0.00019687501480802894,
+     "answer_network_s": 1.690709458955098,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 920
+     }
+    },
+    {
+     "qid": "q008",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2025-11-24 to 2025-12-02, for the peak season.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2025-11-24 to 2025-12-02",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the exact freeze dates and attributes it to the peak season, matching the gold answer with only trivial phrasing variation.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for billing-api, and why?",
+     "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+     "context_tokens": 1119,
+     "n_contexts": 20,
+     "retrieve_s": 0.04338312498293817,
+     "answer_s": 0.00021562498295679688,
+     "answer_network_s": 3.1842390420497395,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1119
+     }
+    },
+    {
+     "qid": "q009",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "The ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 for the fiscal year close.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2026-03-30 to 2026-04-03",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer correctly states the deploy freeze dates of 2026-03-30 to 2026-04-03 and the reason (fiscal year close), matching the gold answer.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for the ledger, and why?",
+     "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+     "context_tokens": 959,
+     "n_contexts": 20,
+     "retrieve_s": 0.0415018749772571,
+     "answer_s": 0.0002323330263607204,
+     "answer_network_s": 2.20721829199465,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 959
+     }
+    },
+    {
+     "qid": "q010",
+     "category": "single_fact",
+     "subtype": "deploy_window",
+     "answer": "Tuesdays and Thursdays, 10:00–12:00 UTC",
+     "lexical": {
+      "correct": false,
+      "refused": false,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer correctly states the deploy window as Tuesdays and Thursdays 10:00–12:00 UTC, matching the gold fact and accepted alias.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": false,
+     "question": "What is the deploy window for reporting?",
+     "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "context_tokens": 975,
+     "n_contexts": 20,
+     "retrieve_s": 0.04098233301192522,
+     "answer_s": 0.00021970795933157206,
+     "answer_network_s": 2.0159920000005513,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 975
+     }
+    }
+   ],
+   "mean_context_tokens": 1035.5,
+   "mean_contexts": 19.3,
+   "mean_answer_s": 2.277850687701721,
+   "mean_answer_wall_s": 0.00021533339750021697,
+   "answers_from_cache": 10,
+   "escalated_answers": 0,
+   "truncated_answers": 0,
+   "retrieve_s_total": 0.43005162506597117,
+   "answer_s_total": 22.778506877017207,
+   "answer_wall_s_total": 0.0021533339750021696,
+   "ingest_network_s": 0.0,
+   "cost_usd_answers": 0.00143858500000002,
+   "cost_usd_ingest": 0.0
+  },
+  {
+   "name": "anatid-vector",
+   "description": "the anatid store queried with the vector arm only",
+   "budget": 1200,
+   "shares_store_with": "anatid",
+   "ingest_s": 1.374981366097927e-06,
+   "ingest_stats": {
+    "calls": 0,
+    "cache_hits": 0,
+    "network_calls": 0,
+    "chat_calls": 0,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "embed_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 0.0,
+    "hit_rate": 0.0
+   },
+   "ingest_report": {
+    "shares_store_with": "anatid"
+   },
+   "answer_stats": {
+    "calls": 20,
+    "cache_hits": 20,
+    "network_calls": 0,
+    "chat_calls": 10,
+    "embed_calls": 10,
+    "embed_texts": 10,
+    "prompt_tokens": 14309,
+    "completion_tokens": 1234,
+    "embed_tokens": 113,
+    "cost_usd": 0.001608025000000013,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 30.504997832875233,
+    "hit_rate": 1.0
+   },
+   "scores": {
+    "by_category": {
+     "single_fact": {
+      "n": 10,
+      "lexical": 0.9,
+      "llm": 1.0,
+      "agreement": 0.9,
+      "refusals": 0
+     },
+     "all": {
+      "n": 10,
+      "lexical": 0.9,
+      "llm": 1.0,
+      "agreement": 0.9,
+      "refusals": 0
+     }
+    },
+    "abstention": {
+     "precision": null,
+     "recall": null,
+     "false_refusals": 0,
+     "false_refusal_rate": 0.0,
+     "refusals_total": 0
+    },
+    "stale": {
+     "n": 0,
+     "stale_answers": 0,
+     "stale_rate": null
+    },
+    "judge_unparsed": 0
+   },
+   "per_question": [
+    {
+     "qid": "q001",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "Two reviewer approvals and a security sign-off.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "two reviewer approvals and a security sign-off",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states exactly the gold fact: two reviewer approvals and a security sign-off.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to auth-gateway need before it can merge?",
+     "gold": "two reviewer approvals and a security sign-off",
+     "context_tokens": 922,
+     "n_contexts": 20,
+     "retrieve_s": 0.038162290991749614,
+     "answer_s": 0.00021408399334177375,
+     "answer_network_s": 3.3085253330064006,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 922
+     }
+    },
+    {
+     "qid": "q002",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "A rollback plan attached to the pull request",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a rollback plan attached to the pull request",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly states the gold fact that a rollback plan must be attached to the pull request before a billing-api change can merge.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to billing-api need before it can merge?",
+     "gold": "a rollback plan attached to the pull request",
+     "context_tokens": 1131,
+     "n_contexts": 20,
+     "retrieve_s": 0.04115062498021871,
+     "answer_s": 0.0002126669860444963,
+     "answer_network_s": 1.6784444169607013,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1131
+     }
+    },
+    {
+     "qid": "q003",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because the single fixed node turned every restart into a missed run.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the fixed node turned every restart into a missed run",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states that the single fixed node turned every restart into a missed run, which matches the gold answer.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+     "gold": "the fixed node turned every restart into a missed run",
+     "context_tokens": 970,
+     "n_contexts": 18,
+     "retrieve_s": 0.04924262501299381,
+     "answer_s": 0.00020691700046882033,
+     "answer_network_s": 1.8937155830208212,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 18,
+      "candidate_tokens": 1450
+     }
+    },
+    {
+     "qid": "q004",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because a reindex job failed silently on a full disk in INC-2025-023, leaving the indexer serving stale results for two days.",
+     "lexical": {
+      "correct": false,
+      "refused": false,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact—a silent reindex failure left stale results for two days in INC-2025-023—with only an additional detail (full disk), which is acceptable extra context.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": false,
+     "question": "Why do reindex jobs page on failure?",
+     "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+     "context_tokens": 1057,
+     "n_contexts": 20,
+     "retrieve_s": 0.03920670796651393,
+     "answer_s": 0.00021954200929030776,
+     "answer_network_s": 3.813174499955494,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1057
+     }
+    },
+    {
+     "qid": "q005",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Storage for originals doubled in six months.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "storage for originals doubled in six months",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly states the gold fact that storage for originals doubled in six months.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why does image-resizer keep original uploads for only 90 days?",
+     "gold": "storage for originals doubled in six months",
+     "context_tokens": 972,
+     "n_contexts": 20,
+     "retrieve_s": 0.038157832983415574,
+     "answer_s": 0.00019508402328938246,
+     "answer_network_s": 2.6057176670292392,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 972
+     }
+    },
+    {
+     "qid": "q006",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The auth gateway",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the auth gateway",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The auth gateway' is an accepted alias of the gold answer 'auth-gateway'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the ledger depend on?",
+     "gold": "auth-gateway",
+     "context_tokens": 894,
+     "n_contexts": 20,
+     "retrieve_s": 0.037016250018496066,
+     "answer_s": 0.00021437497343868017,
+     "answer_network_s": 1.687093749991618,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 894
+     }
+    },
+    {
+     "qid": "q007",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "The bus",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the bus",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer 'The bus' is an explicitly accepted alias for the gold answer 'event-bus'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the notifier depend on?",
+     "gold": "event-bus",
+     "context_tokens": 973,
+     "n_contexts": 20,
+     "retrieve_s": 0.040474333974998444,
+     "answer_s": 0.00025987502885982394,
+     "answer_network_s": 4.030111250001937,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 973
+     }
+    },
+    {
+     "qid": "q008",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2025-11-24 to 2025-12-02, for the peak season.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2025-11-24 to 2025-12-02",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the exact freeze dates and attributes it to the peak season, matching the gold answer with only trivial phrasing variation.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for billing-api, and why?",
+     "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+     "context_tokens": 1139,
+     "n_contexts": 20,
+     "retrieve_s": 0.04151687497505918,
+     "answer_s": 0.0002321670181117952,
+     "answer_network_s": 2.9893269169842824,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1139
+     }
+    },
+    {
+     "qid": "q009",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2026-03-30 to 2026-04-03, for the fiscal year close.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2026-03-30 to 2026-04-03",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer gives the exact dates 2026-03-30 to 2026-04-03 and cites the fiscal year close, matching the gold fact with only a trivially different phrasing of the reason.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for the ledger, and why?",
+     "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+     "context_tokens": 905,
+     "n_contexts": 20,
+     "retrieve_s": 0.03723462496418506,
+     "answer_s": 0.00020474998746067286,
+     "answer_network_s": 3.6341572079691105,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 905
+     }
+    },
+    {
+     "qid": "q010",
+     "category": "single_fact",
+     "subtype": "deploy_window",
+     "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact exactly: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What is the deploy window for reporting?",
+     "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "context_tokens": 973,
+     "n_contexts": 20,
+     "retrieve_s": 0.04063320899149403,
+     "answer_s": 0.000261375040281564,
+     "answer_network_s": 2.273932166979648,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 973
+     }
+    }
+   ],
+   "mean_context_tokens": 993.6,
+   "mean_contexts": 19.8,
+   "mean_answer_s": 2.791419879189925,
+   "mean_answer_wall_s": 0.00022208360605873166,
+   "answers_from_cache": 10,
+   "escalated_answers": 0,
+   "truncated_answers": 0,
+   "retrieve_s_total": 0.4027953748591244,
+   "answer_s_total": 27.914198791899253,
+   "answer_wall_s_total": 0.0022208360605873168,
+   "ingest_network_s": 0.0,
+   "cost_usd_answers": 0.001608025000000013,
+   "cost_usd_ingest": 0.0
+  },
+  {
+   "name": "anatid-graph",
+   "description": "the anatid store queried with the graph arm only",
+   "budget": 1200,
+   "shares_store_with": "anatid",
+   "ingest_s": 6.249756552278996e-07,
+   "ingest_stats": {
+    "calls": 0,
+    "cache_hits": 0,
+    "network_calls": 0,
+    "chat_calls": 0,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "embed_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 0.0,
+    "hit_rate": 0.0
+   },
+   "ingest_report": {
+    "shares_store_with": "anatid"
+   },
+   "answer_stats": {
+    "calls": 10,
+    "cache_hits": 10,
+    "network_calls": 0,
+    "chat_calls": 10,
+    "embed_calls": 0,
+    "embed_texts": 0,
+    "prompt_tokens": 9332,
+    "completion_tokens": 612,
+    "embed_tokens": 0,
+    "cost_usd": 0.001617354999999987,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 76.1212841659435,
+    "hit_rate": 1.0
+   },
+   "scores": {
+    "by_category": {
+     "single_fact": {
+      "n": 10,
+      "lexical": 0.1,
+      "llm": 0.1,
+      "agreement": 1.0,
+      "refusals": 9
+     },
+     "all": {
+      "n": 10,
+      "lexical": 0.1,
+      "llm": 0.1,
+      "agreement": 1.0,
+      "refusals": 9
+     }
+    },
+    "abstention": {
+     "precision": 0.0,
+     "recall": null,
+     "false_refusals": 9,
+     "false_refusal_rate": 0.9,
+     "refusals_total": 9
+    },
+    "stale": {
+     "n": 0,
+     "stale_answers": 0,
+     "stale_rate": null
+    },
+    "judge_unparsed": 0
+   },
+   "per_question": [
+    {
+     "qid": "q001",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer states 'I don't know' instead of the gold fact of two reviewer approvals and a security sign-off.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to auth-gateway need before it can merge?",
+     "gold": "two reviewer approvals and a security sign-off",
+     "context_tokens": 1198,
+     "n_contexts": 18,
+     "retrieve_s": 0.04825550003442913,
+     "answer_s": 0.00021399999968707561,
+     "answer_network_s": 14.430829415970948,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "graph"
+      ],
+      "seeds": [
+       "auth gateway"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 18,
+      "candidate_tokens": 1272
+     }
+    },
+    {
+     "qid": "q002",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer is 'I don't know', which the grading rule explicitly marks as wrong; the gold answer is that a rollback plan must be attached to the pull request.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to billing-api need before it can merge?",
+     "gold": "a rollback plan attached to the pull request",
+     "context_tokens": 1091,
+     "n_contexts": 18,
+     "retrieve_s": 0.0485564999980852,
+     "answer_s": 0.0002151250373572111,
+     "answer_network_s": 3.353645541006699,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "graph"
+      ],
+      "seeds": [
+       "billing API"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 18,
+      "candidate_tokens": 1241
+     }
+    },
+    {
+     "qid": "q003",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer says 'I don't know', which is explicitly wrong per the grading rule.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+     "gold": "the fixed node turned every restart into a missed run",
+     "context_tokens": 0,
+     "n_contexts": 0,
+     "retrieve_s": 0.0006535419961437583,
+     "answer_s": 0.0001294169924221933,
+     "answer_network_s": 1.6320475839893334,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [],
+      "seeds": [],
+      "hits": 0,
+      "candidates": 0,
+      "selected": 0,
+      "candidate_tokens": 0
+     }
+    },
+    {
+     "qid": "q004",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer is 'I don't know', which is explicitly wrong per the grading rule since it does not state the gold fact about INC-2025-023.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why do reindex jobs page on failure?",
+     "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+     "context_tokens": 0,
+     "n_contexts": 0,
+     "retrieve_s": 0.0005897499504499137,
+     "answer_s": 0.00013891601702198386,
+     "answer_network_s": 11.555745083023794,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [],
+      "seeds": [],
+      "hits": 0,
+      "candidates": 0,
+      "selected": 0,
+      "candidate_tokens": 0
+     }
+    },
+    {
+     "qid": "q005",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Storage for originals doubled in six months.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "storage for originals doubled in six months",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly states the gold fact that storage for originals doubled in six months.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why does image-resizer keep original uploads for only 90 days?",
+     "gold": "storage for originals doubled in six months",
+     "context_tokens": 1155,
+     "n_contexts": 19,
+     "retrieve_s": 0.048436916957143694,
+     "answer_s": 0.00023391604190692306,
+     "answer_network_s": 13.094893917033914,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "graph"
+      ],
+      "seeds": [
+       "image resizer"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 19,
+      "candidate_tokens": 1341
+     }
+    },
+    {
+     "qid": "q006",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer says 'I don't know', which the grading rule explicitly marks as wrong since it does not state the gold fact 'auth-gateway' or an accepted alias.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the ledger depend on?",
+     "gold": "auth-gateway",
+     "context_tokens": 0,
+     "n_contexts": 0,
+     "retrieve_s": 0.000616791017819196,
+     "answer_s": 0.00019179098308086395,
+     "answer_network_s": 0.7626281249686144,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [],
+      "seeds": [],
+      "hits": 0,
+      "candidates": 0,
+      "selected": 0,
+      "candidate_tokens": 0
+     }
+    },
+    {
+     "qid": "q007",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer says 'I don't know', which the grading rule explicitly marks as wrong.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the notifier depend on?",
+     "gold": "event-bus",
+     "context_tokens": 1134,
+     "n_contexts": 20,
+     "retrieve_s": 0.04587716702371836,
+     "answer_s": 0.0002210829989053309,
+     "answer_network_s": 13.977417749993037,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "graph"
+      ],
+      "seeds": [
+       "notifier"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1134
+     }
+    },
+    {
+     "qid": "q008",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer says 'I don't know', which the grading rule explicitly marks as wrong.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for billing-api, and why?",
+     "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+     "context_tokens": 1091,
+     "n_contexts": 18,
+     "retrieve_s": 0.04789700004039332,
+     "answer_s": 0.0002169999643228948,
+     "answer_network_s": 14.972381667001173,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "graph"
+      ],
+      "seeds": [
+       "billing API"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 18,
+      "candidate_tokens": 1241
+     }
+    },
+    {
+     "qid": "q009",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer says 'I don't know', which the grading rule explicitly marks as wrong.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for the ledger, and why?",
+     "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+     "context_tokens": 0,
+     "n_contexts": 0,
+     "retrieve_s": 0.0005852080066688359,
+     "answer_s": 0.00012149999383836985,
+     "answer_network_s": 0.8173641249886714,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [],
+      "seeds": [],
+      "hits": 0,
+      "candidates": 0,
+      "selected": 0,
+      "candidate_tokens": 0
+     }
+    },
+    {
+     "qid": "q010",
+     "category": "single_fact",
+     "subtype": "deploy_window",
+     "answer": "I don't know",
+     "lexical": {
+      "correct": false,
+      "refused": true,
+      "matched": null,
+      "stale": false
+     },
+     "judge": {
+      "correct": false,
+      "reason": "The answer states 'I don't know' instead of the gold fact that the deploy window for reporting is on Tuesdays and Thursdays between 10:00 and 12:00 UTC, which the rule defines as wrong.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What is the deploy window for reporting?",
+     "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "context_tokens": 0,
+     "n_contexts": 0,
+     "retrieve_s": 0.0005620410083793104,
+     "answer_s": 0.00014495797222480178,
+     "answer_network_s": 1.5243309579673223,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [],
+      "seeds": [],
+      "hits": 0,
+      "candidates": 0,
+      "selected": 0,
+      "candidate_tokens": 0
+     }
+    }
+   ],
+   "mean_context_tokens": 566.9,
+   "mean_contexts": 9.3,
+   "mean_answer_s": 7.61212841659435,
+   "mean_answer_wall_s": 0.00018277060007676482,
+   "answers_from_cache": 10,
+   "escalated_answers": 0,
+   "truncated_answers": 0,
+   "retrieve_s_total": 0.24203041603323072,
+   "answer_s_total": 76.1212841659435,
+   "answer_wall_s_total": 0.0018277060007676482,
+   "ingest_network_s": 0.0,
+   "cost_usd_answers": 0.001617354999999987,
+   "cost_usd_ingest": 0.0
+  },
+  {
+   "name": "anatid-gold",
+   "description": "the same store built from the corpus's gold patches (ScriptedExtractor): an oracle for extraction, not the product",
+   "budget": 1200,
+   "shares_store_with": null,
+   "ingest_s": 8.470434667018708,
+   "ingest_stats": {
+    "calls": 365,
+    "cache_hits": 365,
+    "network_calls": 0,
+    "chat_calls": 0,
+    "embed_calls": 365,
+    "embed_texts": 365,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "embed_tokens": 10035,
+    "cost_usd": 0.008017980000000369,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 64.66890628973988,
+    "hit_rate": 1.0
+   },
+   "ingest_report": {
+    "notes": 178,
+    "extractor": "gold",
+    "memories_created": 187,
+    "memories_closed": 64,
+    "relations_opened": 95,
+    "relations_closed": 61,
+    "dedupe_drops": 35,
+    "downgraded_corrections": 0,
+    "parser_notes": 0,
+    "empty_patches": 18,
+    "extraction_failures": 0,
+    "failed_notes": [],
+    "store": {
+     "memories": 187,
+     "entities": 31,
+     "episodes": 178,
+     "edges_about": 330,
+     "edges_relates": 95,
+     "edges_supersedes": 64,
+     "anatid_audit": 64,
+     "memory_versions": 251,
+     "current_memories": 123,
+     "tenant_id": 1,
+     "expand_path": "sql"
+    }
+   },
+   "answer_stats": {
+    "calls": 20,
+    "cache_hits": 20,
+    "network_calls": 0,
+    "chat_calls": 10,
+    "embed_calls": 10,
+    "embed_texts": 10,
+    "prompt_tokens": 15302,
+    "completion_tokens": 770,
+    "embed_tokens": 113,
+    "cost_usd": 0.0014585800000000426,
+    "cost_usd_charged": 0.0,
+    "cost_known": false,
+    "wall_s": 0.0,
+    "recorded_wall_s": 30.93952633207664,
+    "hit_rate": 1.0
+   },
+   "scores": {
+    "by_category": {
+     "single_fact": {
+      "n": 10,
+      "lexical": 1.0,
+      "llm": 1.0,
+      "agreement": 1.0,
+      "refusals": 0
+     },
+     "all": {
+      "n": 10,
+      "lexical": 1.0,
+      "llm": 1.0,
+      "agreement": 1.0,
+      "refusals": 0
+     }
+    },
+    "abstention": {
+     "precision": null,
+     "recall": null,
+     "false_refusals": 0,
+     "false_refusal_rate": 0.0,
+     "refusals_total": 0
+    },
+    "stale": {
+     "n": 0,
+     "stale_answers": 0,
+     "stale_rate": null
+    },
+    "judge_unparsed": 0
+   },
+   "per_question": [
+    {
+     "qid": "q001",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "Two reviewer approvals and a security sign-off",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "two reviewer approvals and a security sign-off",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold fact that a change to auth-gateway needs two reviewer approvals and a security sign-off.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to auth-gateway need before it can merge?",
+     "gold": "two reviewer approvals and a security sign-off",
+     "context_tokens": 879,
+     "n_contexts": 20,
+     "retrieve_s": 0.04757287504617125,
+     "answer_s": 0.00022345897741615772,
+     "answer_network_s": 1.3863927920465358,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "auth-gateway"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 879
+     }
+    },
+    {
+     "qid": "q002",
+     "category": "single_fact",
+     "subtype": "approval_rule",
+     "answer": "A rollback plan attached to the pull request",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a rollback plan attached to the pull request",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly states the gold fact that a rollback plan must be attached to the pull request before a billing-api change can merge.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What does a change to billing-api need before it can merge?",
+     "gold": "a rollback plan attached to the pull request",
+     "context_tokens": 931,
+     "n_contexts": 20,
+     "retrieve_s": 0.05082287499681115,
+     "answer_s": 0.00022658298257738352,
+     "answer_network_s": 2.397656541026663,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "billing-api"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 931
+     }
+    },
+    {
+     "qid": "q003",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because the fixed node turned every restart into a missed run.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "the fixed node turned every restart into a missed run",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that the fixed node turned every restart into a missed run.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+     "gold": "the fixed node turned every restart into a missed run",
+     "context_tokens": 982,
+     "n_contexts": 20,
+     "retrieve_s": 0.05093062500236556,
+     "answer_s": 0.0002531250356696546,
+     "answer_network_s": 1.8870870000100695,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "scheduler"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 982
+     }
+    },
+    {
+     "qid": "q004",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because a silent reindex failure left stale results for two days in INC-2025-023",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "a silent reindex failure left stale results for two days in INC-2025-023",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact that a silent reindex failure left stale results for two days in INC-2025-023, matching the gold answer exactly.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why do reindex jobs page on failure?",
+     "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+     "context_tokens": 1054,
+     "n_contexts": 18,
+     "retrieve_s": 0.05878012499306351,
+     "answer_s": 0.00022070802515372634,
+     "answer_network_s": 1.5977894170209765,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text"
+      ],
+      "seeds": [],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 18,
+      "candidate_tokens": 1300
+     }
+    },
+    {
+     "qid": "q005",
+     "category": "single_fact",
+     "subtype": "decision_reason",
+     "answer": "Because storage for originals doubled in six months",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "storage for originals doubled in six months",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact exactly: storage for originals doubled in six months.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Why does image-resizer keep original uploads for only 90 days?",
+     "gold": "storage for originals doubled in six months",
+     "context_tokens": 1155,
+     "n_contexts": 20,
+     "retrieve_s": 0.05734112503705546,
+     "answer_s": 0.0002181250019930303,
+     "answer_network_s": 3.4099068749928847,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "image-resizer"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1155
+     }
+    },
+    {
+     "qid": "q006",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "auth-gateway",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "auth-gateway",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer 'auth-gateway'.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the ledger depend on?",
+     "gold": "auth-gateway",
+     "context_tokens": 959,
+     "n_contexts": 20,
+     "retrieve_s": 0.05453616700833663,
+     "answer_s": 0.00023854203755035996,
+     "answer_network_s": 2.345602500019595,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "ledger"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 959
+     }
+    },
+    {
+     "qid": "q007",
+     "category": "single_fact",
+     "subtype": "dependency",
+     "answer": "event-bus",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "event-bus",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states 'event-bus', which exactly matches the gold answer.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "Which service does the notifier depend on?",
+     "gold": "event-bus",
+     "context_tokens": 1180,
+     "n_contexts": 18,
+     "retrieve_s": 0.06250087503576651,
+     "answer_s": 0.00021416699746623635,
+     "answer_network_s": 2.0518217909848318,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "notifier"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 18,
+      "candidate_tokens": 1248
+     }
+    },
+    {
+     "qid": "q008",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2025-11-24 to 2025-12-02, because of the peak season.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2025-11-24 to 2025-12-02, because of the peak season",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer matches the gold fact exactly.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for billing-api, and why?",
+     "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+     "context_tokens": 1130,
+     "n_contexts": 19,
+     "retrieve_s": 0.06307970802299678,
+     "answer_s": 0.0002490829792805016,
+     "answer_network_s": 2.045289249974303,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "billing-api"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 19,
+      "candidate_tokens": 1210
+     }
+    },
+    {
+     "qid": "q009",
+     "category": "single_fact",
+     "subtype": "deploy_freeze",
+     "answer": "2026-03-30 to 2026-04-03, because of the fiscal year close.",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer exactly matches the gold answer, stating the deploy freeze dates 2026-03-30 to 2026-04-03 and the reason of the fiscal year close.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "When is the deploy freeze for the ledger, and why?",
+     "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+     "context_tokens": 1197,
+     "n_contexts": 20,
+     "retrieve_s": 0.06010658299783245,
+     "answer_s": 0.00024341698735952377,
+     "answer_network_s": 3.219504583044909,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "ledger"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1197
+     }
+    },
+    {
+     "qid": "q010",
+     "category": "single_fact",
+     "subtype": "deploy_window",
+     "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "lexical": {
+      "correct": true,
+      "refused": false,
+      "matched": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+      "stale": false
+     },
+     "judge": {
+      "correct": true,
+      "reason": "The answer states the gold fact exactly: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+      "cached": true,
+      "parsed": true
+     },
+     "agree": true,
+     "question": "What is the deploy window for reporting?",
+     "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "context_tokens": 1123,
+     "n_contexts": 20,
+     "retrieve_s": 0.06064937496557832,
+     "answer_s": 0.0002162089804187417,
+     "answer_network_s": 8.00767654197989,
+     "answer_cached": true,
+     "cost_usd": null,
+     "retrieval": {
+      "arms_ran": [
+       "vector",
+       "text",
+       "graph"
+      ],
+      "seeds": [
+       "reporting"
+      ],
+      "hits": 20,
+      "candidates": 20,
+      "selected": 20,
+      "candidate_tokens": 1123
+     }
+    }
+   ],
+   "mean_context_tokens": 1059.0,
+   "mean_contexts": 19.5,
+   "mean_answer_s": 2.834872729110066,
+   "mean_answer_wall_s": 0.0002303418004885316,
+   "answers_from_cache": 10,
+   "escalated_answers": 0,
+   "truncated_answers": 0,
+   "retrieve_s_total": 0.5663203331059776,
+   "answer_s_total": 28.34872729110066,
+   "answer_wall_s_total": 0.002303418004885316,
+   "ingest_network_s": 64.66890628973988,
+   "cost_usd_answers": 0.0014585800000000426,
+   "cost_usd_ingest": 0.008017980000000369
+  }
+ ],
+ "questions": [
+  {
+   "qid": "q001",
+   "category": "single_fact",
+   "subtype": "approval_rule",
+   "question": "What does a change to auth-gateway need before it can merge?",
+   "gold": "two reviewer approvals and a security sign-off",
+   "aliases": [],
+   "distractors": [],
+   "support": [
+    "n088"
+   ]
+  },
+  {
+   "qid": "q002",
+   "category": "single_fact",
+   "subtype": "approval_rule",
+   "question": "What does a change to billing-api need before it can merge?",
+   "gold": "a rollback plan attached to the pull request",
+   "aliases": [],
+   "distractors": [],
+   "support": [
+    "n050"
+   ]
+  },
+  {
+   "qid": "q003",
+   "category": "single_fact",
+   "subtype": "decision_reason",
+   "question": "Why did the scheduler switch to leader election instead of a single fixed node?",
+   "gold": "the fixed node turned every restart into a missed run",
+   "aliases": [
+    "the fixed node made every restart a missed run"
+   ],
+   "distractors": [],
+   "support": [
+    "n073"
+   ]
+  },
+  {
+   "qid": "q004",
+   "category": "single_fact",
+   "subtype": "decision_reason",
+   "question": "Why do reindex jobs page on failure?",
+   "gold": "a silent reindex failure left stale results for two days in INC-2025-023",
+   "aliases": [],
+   "distractors": [],
+   "support": [
+    "n109"
+   ]
+  },
+  {
+   "qid": "q005",
+   "category": "single_fact",
+   "subtype": "decision_reason",
+   "question": "Why does image-resizer keep original uploads for only 90 days?",
+   "gold": "storage for originals doubled in six months",
+   "aliases": [],
+   "distractors": [],
+   "support": [
+    "n154"
+   ]
+  },
+  {
+   "qid": "q006",
+   "category": "single_fact",
+   "subtype": "dependency",
+   "question": "Which service does the ledger depend on?",
+   "gold": "auth-gateway",
+   "aliases": [
+    "the auth gateway",
+    "the authentication gateway"
+   ],
+   "distractors": [],
+   "support": [
+    "n041"
+   ]
+  },
+  {
+   "qid": "q007",
+   "category": "single_fact",
+   "subtype": "dependency",
+   "question": "Which service does the notifier depend on?",
+   "gold": "event-bus",
+   "aliases": [
+    "the event-bus",
+    "the event bus",
+    "the bus"
+   ],
+   "distractors": [],
+   "support": [
+    "n031"
+   ]
+  },
+  {
+   "qid": "q008",
+   "category": "single_fact",
+   "subtype": "deploy_freeze",
+   "question": "When is the deploy freeze for billing-api, and why?",
+   "gold": "2025-11-24 to 2025-12-02, because of the peak season",
+   "aliases": [
+    "2025-11-24 to 2025-12-02",
+    "the peak season"
+   ],
+   "distractors": [],
+   "support": [
+    "n121"
+   ]
+  },
+  {
+   "qid": "q009",
+   "category": "single_fact",
+   "subtype": "deploy_freeze",
+   "question": "When is the deploy freeze for the ledger, and why?",
+   "gold": "2026-03-30 to 2026-04-03, because of the fiscal year close",
+   "aliases": [
+    "2026-03-30 to 2026-04-03",
+    "the fiscal year close"
+   ],
+   "distractors": [],
+   "support": [
+    "n152"
+   ]
+  },
+  {
+   "qid": "q010",
+   "category": "single_fact",
+   "subtype": "deploy_window",
+   "question": "What is the deploy window for reporting?",
+   "gold": "on Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+   "aliases": [
+    "Tue/Thu 10:00-12:00 UTC"
+   ],
+   "distractors": [],
+   "support": [
+    "n047"
+   ]
+  }
+ ]
+}

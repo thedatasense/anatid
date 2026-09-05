@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: billing-api, webhook dispatcher, notifier, image resizer, scheduler, and search-indexer."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788619987-TRbfKrlWsACC6qfZJunY",
+  "object": "chat.completion",
+  "created": 1788619987,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names 'webhook dispatcher' instead of the gold service 'webhooks', and since no alternative phrasings are accepted, that item is not named correctly despite the other five matching.\"}\n",
+     "refusal": null,
+     "reasoning": "Let me analyze this grading task.\n\nQuestion: Which services does Dune own now?\nGold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks\nAnswer to grade: billing-api, webhook dispatcher, notifier, image resizer, scheduler, and search-indexer.\n\nThe gold has 6 services:\n1. billing-api\n2. notifier\n3. search-indexer\n4. image-resizer\n5. scheduler\n6. webhooks\n\nThe answer to grade has 6 items:\n1. billing-api ✓ (matches billing-api)\n2. webhook dispatcher — gold has \"webhooks\". Is \"webhook dispatcher\" the same as \"webhooks\"? The gold is \"webhooks\" and the answer says \"webhook dispatcher\". This is a phrasing difference. The rule says \"Correct if the final answer names the gold\" and \"Where the gold is a list, every item must be named and no extra item.\" The accepted alternatives are \"(none)\", so no alternative phrasings are accepted.\n\nHmm, \"webhook dispatcher\" vs \"webhooks\" — this is a naming difference. Since no alternative phrasings are accepted, strictly applying the rule, \"webhook dispatcher\" is not exactly \"webhooks\". But is it \"naming the gold\"? The service name differs: \"webhooks\" vs \"webhook dispatcher\". \n\nAlso \"image resizer\" vs \"image-resizer\" — just hyphenation difference, that's fine typically.\n\n\"webhook dispatcher\" vs \"webhooks\" — this could be considered the same service with different phrasing. But the grading rule says apply the rule literally. The rule says the gold has 6 services and every item must be named. Is \"webhook dispatcher\" naming \"webhooks\"? It's arguably close but not exact. Since \"Also accepted: (none)\", there are no accepted alternative phrasings.\n\nHmm, this is tricky. Literal application: the answer names \"webhook dispatcher\" which is not \"webhooks\". The gold service is \"webhooks\". Without accepted alternatives, I should mark it incorrect.\n\nBut wait — is \"webhook dispatcher\" reasonably the same service? The rule says apply the rule literally. The rule: \"Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item.\" Since also accepted is none, the only accepted name for that service is \"webhooks\". \"webhook dispatcher\" is a different name. So strictly, it's incorrect.\n\nHowever, one could argue \"webhook dispatcher\" names the webhooks service. But literal application with no accepted alternatives suggests incorrect.\n\nAlso check for extra items: the answer has exactly 6 items, no extras. Items match: billing-api ✓, notifier ✓, image resizer ≈ image-resizer ✓ (hyphenation), scheduler ✓, search-indexer ✓, webhook dispatcher vs webhooks ✗.\n\nGiven no accepted alternative phrasings, I'll mark it incorrect because \"webhook dispatcher\" is not \"webhooks\".\n\nActually, let me reconsider. \"Image resizer\" vs \"image-resizer\" — hyphenation is typically acceptable normalization. But \"webhook dispatcher\" vs \"webhooks\" changes the name substantively (adds \"dispatcher\"). Given the rule says apply literally and accepted alternatives is none, I'll say false.\n\nJSON: {\"correct\": false, \"reason\": \"The answer says 'webhook dispatcher' but the gold service is 'webhooks' and no alternative phrasings are accepted.\"}",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Let me analyze this grading task.\n\nQuestion: Which services does Dune own now?\nGold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks\nAnswer to grade: billing-api, webhook dispatcher, notifier, image resizer, scheduler, and search-indexer.\n\nThe gold has 6 services:\n1. billing-api\n2. notifier\n3. search-indexer\n4. image-resizer\n5. scheduler\n6. webhooks\n\nThe answer to grade has 6 items:\n1. billing-api ✓ (matches billing-api)\n2. webhook dispatcher — gold has \"webhooks\". Is \"webhook dispatcher\" the same as \"webhooks\"? The gold is \"webhooks\" and the answer says \"webhook dispatcher\". This is a phrasing difference. The rule says \"Correct if the final answer names the gold\" and \"Where the gold is a list, every item must be named and no extra item.\" The accepted alternatives are \"(none)\", so no alternative phrasings are accepted.\n\nHmm, \"webhook dispatcher\" vs \"webhooks\" — this is a naming difference. Since no alternative phrasings are accepted, strictly applying the rule, \"webhook dispatcher\" is not exactly \"webhooks\". But is it \"naming the gold\"? The service name differs: \"webhooks\" vs \"webhook dispatcher\". \n\nAlso \"image resizer\" vs \"image-resizer\" — just hyphenation difference, that's fine typically.\n\n\"webhook dispatcher\" vs \"webhooks\" — this could be considered the same service with different phrasing. But the grading rule says apply the rule literally. The rule says the gold has 6 services and every item must be named. Is \"webhook dispatcher\" naming \"webhooks\"? It's arguably close but not exact. Since \"Also accepted: (none)\", there are no accepted alternative phrasings.\n\nHmm, this is tricky. Literal application: the answer names \"webhook dispatcher\" which is not \"webhooks\". The gold service is \"webhooks\". Without accepted alternatives, I should mark it incorrect.\n\nBut wait — is \"webhook dispatcher\" reasonably the same service? The rule says apply the rule literally. The rule: \"Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item.\" Since also accepted is none, the only accepted name for that service is \"webhooks\". \"webhook dispatcher\" is a different name. So strictly, it's incorrect.\n\nHowever, one could argue \"webhook dispatcher\" names the webhooks service. But literal application with no accepted alternatives suggests incorrect.\n\nAlso check for extra items: the answer has exactly 6 items, no extras. Items match: billing-api ✓, notifier ✓, image resizer ≈ image-resizer ✓ (hyphenation), scheduler ✓, search-indexer ✓, webhook dispatcher vs webhooks ✗.\n\nGiven no accepted alternative phrasings, I'll mark it incorrect because \"webhook dispatcher\" is not \"webhooks\".\n\nActually, let me reconsider. \"Image resizer\" vs \"image-resizer\" — hyphenation is typically acceptable normalization. But \"webhook dispatcher\" vs \"webhooks\" changes the name substantively (adds \"dispatcher\"). Given the rule says apply literally and accepted alternatives is none, I'll say false.\n\nJSON: {\"correct\": false, \"reason\": \"The answer says 'webhook dispatcher' but the gold service is 'webhooks' and no alternative phrasings are accepted.\"}",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 278,
+   "completion_tokens": 793,
+   "total_tokens": 1071,
+   "cost": 0.00020374,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00020374,
+    "upstream_inference_prompt_cost": 5.49e-06,
+    "upstream_inference_completions_cost": 0.00019825
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 738,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.147124834009446,
+ "fetched_at": "2026-09-05T14:53:16Z"
+}

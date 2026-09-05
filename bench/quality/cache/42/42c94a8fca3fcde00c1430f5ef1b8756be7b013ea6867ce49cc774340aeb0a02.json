@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Ember noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- Ember noticed that auth-gateway's CPU sat at 90 percent after the traffic shift [observation; valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- Atlas owns auth-gateway [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: Boreal owns auth-gateway [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- Diego is on call for Ember [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: Oskar is on call for Ember [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: Diego is on call for Ember [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: Oskar is on call for Ember [valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: Diego is on call for Ember [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n    earlier: Oskar is on call for Ember [valid 2025-01-14 to 2025-12-29; recorded by standup/ember/2025-01-14]\n- Ember owns the ledger [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: Atlas owns the ledger [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- Decision: auth-gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens [decision; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- Diego is a member of Ember [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n    earlier: Diego is a member of Cinder [valid 2025-01-08 to 2025-12-05; recorded by standup/cinder/2025-01-08]\n- Changes to auth-gateway need two reviewer approvals and a security sign-off [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- The ledger depends on auth-gateway [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- Ember noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- Ember noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- The handover note of 2025-06-20 wrongly recorded Ember as the owner of webhooks [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- Ember noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- Auth-gateway deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\n- Cinder noticed that auth-gateway's cold start time tripled after the runtime upgrade [observation; valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- Ember adopted pairing on every production change [valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-07-27; the root cause was an expired intermediate certificate [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- Oskar is a member of Ember [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- Ember holds its planning meeting on Fridays [valid 2025-06-13 to now; recorded by standup/ember/2025-06-13-2]\n- Ember noticed that webhooks's request volume halved after the client rollout [observation; valid 2025-05-23 to now; recorded by standup/ember/2025-05-23]\n\nQuestion: Which team owned auth-gateway before Ember?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788616311-Pyc8MYbcO9vxPLeyDQ8o",
+  "object": "chat.completion",
+  "created": 1788616311,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which team owned auth-gateway before Ember?\n\nLooking at ownership history of auth-gateway:\n- Atlas owns auth-gateway [valid 2025-12-23 to now]\n- earlier: Boreal owns auth-gateway [valid 2025-03-31 to 2025-12-23]\n- earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-03-31]\n\nBefore Ember owned auth-gateway... hmm. The chronological order is: Ember (2025-01-20 to 2025-03-31), then Boreal (2025-03-31 to 2025-12-23), then Atlas (2025-12-23 to now).\n\nSo \"before Ember\" chronologically — nothing before Ember. But the question likely means \"which team owned auth-gateway before Ember did\" — but Ember was first in the recorded history. Hmm, wait. Alternatively, the question could be interpreted as: the current owner is Atlas; before Ember? Actually wait — perhaps the question intends \"before Ember\" as in the previous owner in the sequence relative to now... Let me re-read: \"Which team owned auth-gateway before Ember?\" The list says Ember owned it first (2025-01-20), then Boreal, then Atlas. So no team owned it before Ember in the records.\n\nBut wait — maybe the question intends \"before Ember\" meaning the predecessor of the current owner? No, current owner is Atlas.\n\nHmm, this is tricky. The memory shows Ember owned it first from 2025-01-20. There is no earlier owner. So the answer would be \"I don't know\"? Or the questioner might be thinking \"who owned before Ember\" expecting Boreal because they think Ember owns it now? Actually many might think Ember owns auth-gateway because many standup entries are from Ember. The naive reading: \"Which team owned auth-gateway before Ember?\" — expecting that the answer is Boreal (the one before current Atlas? no).\n\nLet's think: ownership chain: Ember → Boreal → Atlas. Before Ember = nothing recorded. But the question likely tests temporal reasoning: The questioner probably assumes the sequence and asks about the predecessor. Since the record shows Ember was the first owner, there is no team recorded before Ember. So the correct answer per the rules is \"I don't know\"? Hmm.\n\nAlternatively, interpret \"before Ember\" loosely: Boreal owned auth-gateway after Ember, not before. So there's no recorded owner before Ember.\n\nBut wait — maybe the intended answer is Boreal, if the question writer misordered. Let me carefully consider: \"earlier: Boreal owns auth-gateway [valid 2025-03-31 to 2025-12-23]\" — earlier than Atlas. \"earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-03-31]\" — earlier than Boreal. So the earliest known owner is Ember. Before Ember, unknown.\n\nPer rules: \"If the memory does not contain the answer, reply exactly: I don't know\". The memory does not contain an owner of auth-gateway before 2025-01-20. So answer: I don't know.\n\nHmm, but maybe the question intends \"which team owned auth-gateway immediately before Ember's current... \" no, Ember doesn't own auth-gateway now.\n\nActually, could the question be a trick where the expected answer is Boreal? Many such QA datasets test \"who owned X before Y\" where Y is current owner. Here Y = Ember, which is the earliest. So correct answer: I don't know — memory shows Ember was the first recorded owner.\n\nI'll answer \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which team owned auth-gateway before Ember?\n\nLooking at ownership history of auth-gateway:\n- Atlas owns auth-gateway [valid 2025-12-23 to now]\n- earlier: Boreal owns auth-gateway [valid 2025-03-31 to 2025-12-23]\n- earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-03-31]\n\nBefore Ember owned auth-gateway... hmm. The chronological order is: Ember (2025-01-20 to 2025-03-31), then Boreal (2025-03-31 to 2025-12-23), then Atlas (2025-12-23 to now).\n\nSo \"before Ember\" chronologically — nothing before Ember. But the question likely means \"which team owned auth-gateway before Ember did\" — but Ember was first in the recorded history. Hmm, wait. Alternatively, the question could be interpreted as: the current owner is Atlas; before Ember? Actually wait — perhaps the question intends \"before Ember\" as in the previous owner in the sequence relative to now... Let me re-read: \"Which team owned auth-gateway before Ember?\" The list says Ember owned it first (2025-01-20), then Boreal, then Atlas. So no team owned it before Ember in the records.\n\nBut wait — maybe the question intends \"before Ember\" meaning the predecessor of the current owner? No, current owner is Atlas.\n\nHmm, this is tricky. The memory shows Ember owned it first from 2025-01-20. There is no earlier owner. So the answer would be \"I don't know\"? Or the questioner might be thinking \"who owned before Ember\" expecting Boreal because they think Ember owns it now? Actually many might think Ember owns auth-gateway because many standup entries are from Ember. The naive reading: \"Which team owned auth-gateway before Ember?\" — expecting that the answer is Boreal (the one before current Atlas? no).\n\nLet's think: ownership chain: Ember → Boreal → Atlas. Before Ember = nothing recorded. But the question likely tests temporal reasoning: The questioner probably assumes the sequence and asks about the predecessor. Since the record shows Ember was the first owner, there is no team recorded before Ember. So the correct answer per the rules is \"I don't know\"? Hmm.\n\nAlternatively, interpret \"before Ember\" loosely: Boreal owned auth-gateway after Ember, not before. So there's no recorded owner before Ember.\n\nBut wait — maybe the intended answer is Boreal, if the question writer misordered. Let me carefully consider: \"earlier: Boreal owns auth-gateway [valid 2025-03-31 to 2025-12-23]\" — earlier than Atlas. \"earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-03-31]\" — earlier than Boreal. So the earliest known owner is Ember. Before Ember, unknown.\n\nPer rules: \"If the memory does not contain the answer, reply exactly: I don't know\". The memory does not contain an owner of auth-gateway before 2025-01-20. So answer: I don't know.\n\nHmm, but maybe the question intends \"which team owned auth-gateway immediately before Ember's current... \" no, Ember doesn't own auth-gateway now.\n\nActually, could the question be a trick where the expected answer is Boreal? Many such QA datasets test \"who owned X before Y\" where Y is current owner. Here Y = Ember, which is the earliest. So correct answer: I don't know — memory shows Ember was the first recorded owner.\n\nI'll answer \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1425,
+   "completion_tokens": 789,
+   "total_tokens": 2214,
+   "cost": 0.000296445,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000296445,
+    "upstream_inference_prompt_cost": 9.9195e-05,
+    "upstream_inference_completions_cost": 0.00019725
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 783,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.718796750006732,
+ "fetched_at": "2026-09-05T13:52:00Z"
+}

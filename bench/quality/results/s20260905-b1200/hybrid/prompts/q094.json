@@ -1,0 +1,53 @@
+{
+ "qid": "q094",
+ "system": "hybrid",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.\n- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.\n- [2026-03-20] standup/boreal/2026-03-20-2: Observation from the Boreal team: after the retention change, the catalog service's disk usage jumped 30 percent. The Boreal team runs its planning on Thursdays.\n- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.\n- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-11-03] standup/boreal/2025-11-03-2: Heads-up from the Boreal team: the notification service's CPU sat at 90 percent after the traffic shift.\n- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.\n- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.\n- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-01-09] standup/boreal/2025-01-09: Boreal looks after the bus.\n- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.\n- [2025-05-29] standup/boreal/2025-05-29: For anything Boreal-related, page Marcus.\n- [2025-12-18] standup/boreal/2025-12-18: Rotation day for Boreal: Marcus hands the pager to Lena. Boreal adopted a weekly dependency update day.\n- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.\n- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.\n- [2025-02-11] standup/boreal/2025-02-11-2: If the bus is down, the webhooks service is down: it relies on it for outbound events.\n- [2025-02-11] standup/boreal/2025-02-11: If the event bus is down, the notification service is down: it relies on it for delivery events.\n- [2025-01-09] standup/boreal/2025-01-09-4: Boreal pager: Lena has it first.\n- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.\n- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.\n- [2025-06-27] standup/boreal/2025-06-27: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2025-11-06] standup/boreal/2025-11-06: Marcus has the Boreal pager this cycle, taking over from Lena.\n- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.\n- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.\n- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.\n- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.\n- [2025-03-17] standup/boreal/2025-03-17: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2026-02-10] standup/boreal/2026-02-10-2: Team Boreal noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.\n- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.\n- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.\n- [2025-06-09] handover/2025-06-09-billing-api: The Ember team handed billing-api to Boreal today; Oskar wrote up the handover doc for Lena Fischer.\n- [2025-08-15] standup/boreal/2025-08-15: Reminder from Boreal: page Marcus for anything this cycle, not Lena Fischer.\n- [2025-09-23] standup/boreal/2025-09-23: Reminder from team Boreal: page Lena for anything this cycle, not Marcus.\n- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder.\n\nQuestion: Which services does Boreal own now?"
+  }
+ ],
+ "contexts": [
+  "- [2025-01-09] standup/boreal/2025-01-09-2: The Boreal team owns the notifier.",
+  "- [2025-01-09] standup/boreal/2025-01-09-3: For the record, the webhook dispatcher is owned by team Boreal.",
+  "- [2026-03-20] standup/boreal/2026-03-20-2: Observation from the Boreal team: after the retention change, the catalog service's disk usage jumped 30 percent. The Boreal team runs its planning on Thursdays.",
+  "- [2025-08-15] standup/boreal/2025-08-15-2: Team Boreal still owns the bus, in case anyone asks.",
+  "- [2026-06-04] standup/boreal/2026-06-04: Boreal noticed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners.",
+  "- [2025-11-03] standup/boreal/2025-11-03-2: Heads-up from the Boreal team: the notification service's CPU sat at 90 percent after the traffic shift.",
+  "- [2025-02-21] standup/boreal/2025-02-21-2: Boreal noticed that the ledger service's memory use grew steadily for a week after the cache change and pinged the owners.",
+  "- [2025-06-11] handover/2025-06-11-notifier: The notification service has a new home: Cinder. Boreal kept it until today.",
+  "- [2025-12-01] standup/boreal/2025-12-01-2: Boreal saw that the job scheduler's cold start time tripled following the runtime upgrade; not their service, so they flagged it.",
+  "- [2025-01-09] standup/boreal/2025-01-09: Boreal looks after the bus.",
+  "- [2025-01-07] standup/boreal/2025-01-07: Lena and Marcus make up the Boreal team.",
+  "- [2025-01-08] standup/atlas/2025-01-08: For the record, the ledger service is owned by the Atlas team.",
+  "- [2025-05-29] standup/boreal/2025-05-29: For anything Boreal-related, page Marcus.",
+  "- [2025-12-18] standup/boreal/2025-12-18: Rotation day for Boreal: Marcus hands the pager to Lena. Boreal adopted a weekly dependency update day.",
+  "- [2026-04-13] standup/ember/2026-04-13-2: Ember still owns the reporting service, in case anyone asks.",
+  "- [2026-03-20] standup/boreal/2026-03-20: Marcus moves from team Boreal to the Atlas team today. On-call for Boreal passes from Marcus to Lena with the move.",
+  "- [2025-02-11] standup/boreal/2025-02-11-2: If the bus is down, the webhooks service is down: it relies on it for outbound events.",
+  "- [2025-02-11] standup/boreal/2025-02-11: If the event bus is down, the notification service is down: it relies on it for delivery events.",
+  "- [2025-01-09] standup/boreal/2025-01-09-4: Boreal pager: Lena has it first.",
+  "- [2025-12-01] standup/boreal/2025-12-01: Heads-up from Boreal: the billing API's error rate crept up to 2 percent after the dependency bump.",
+  "- [2026-03-09] handover/2026-03-09-feature-flags-correction: Correction to the handover note of 2026-02-11: the flags service went to team Atlas, not Dune. Dune never owned it; the note was written against the wrong team.",
+  "- [2025-06-27] standup/boreal/2025-06-27: Lena has the Boreal pager this cycle, taking over from Marcus.",
+  "- [2025-11-06] standup/boreal/2025-11-06: Marcus has the Boreal pager this cycle, taking over from Lena.",
+  "- [2025-06-27] handover/2025-06-27-notifier-correction: Correction to the handover note of 2025-06-11: the notification service went to the Dune team, not team Cinder. The Cinder team never owned it; the note was written against the wrong team.",
+  "- [2025-05-07] standup/boreal/2025-05-07: Marcus Oyelaran picked up the Boreal on-call shift from Lena Fischer today.",
+  "- [2025-01-17] standup/cinder/2025-01-17: Team Cinder owns the product catalog.",
+  "- [2026-02-10] standup/boreal/2026-02-10: Team Boreal on-call swapped this morning. Marcus Oyelaran carries the phone until the next rotation.",
+  "- [2025-03-17] standup/boreal/2025-03-17: Lena has the Boreal pager this cycle, taking over from Marcus.",
+  "- [2026-02-10] standup/boreal/2026-02-10-2: Team Boreal noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners.",
+  "- [2025-01-08] standup/atlas/2025-01-08-2: The billing API lives with the Atlas team. For the record, feature-flags is owned by Atlas.",
+  "- [2025-05-07] standup/boreal/2025-05-07-2: The Boreal team noticed that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.",
+  "- [2025-03-20] handover/2025-03-20-image-resizer: Ownership change: the image resizer now sits with team Ember. Team Dune no longer owns it.",
+  "- [2025-06-09] handover/2025-06-09-billing-api: The Ember team handed billing-api to Boreal today; Oskar wrote up the handover doc for Lena Fischer.",
+  "- [2025-08-15] standup/boreal/2025-08-15: Reminder from Boreal: page Marcus for anything this cycle, not Lena Fischer.",
+  "- [2025-09-23] standup/boreal/2025-09-23: Reminder from team Boreal: page Lena for anything this cycle, not Marcus.",
+  "- [2025-01-17] standup/cinder/2025-01-17-2: For the record, the indexer is owned by Cinder."
+ ],
+ "answer": "The event bus, the webhook dispatcher, and the billing API."
+}

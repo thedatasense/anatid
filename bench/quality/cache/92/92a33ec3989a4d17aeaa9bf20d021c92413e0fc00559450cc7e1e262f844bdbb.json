@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The indexer is pinned to OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to now; recorded by standup/dune/2025-06-24]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team instead of the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- On 2026-04-14 the Dune team noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2025-09-23, the reporting service no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- On 2026-05-27 the Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2025-04-29, the job scheduler still relies on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- The reports pipeline must stay on Python 3.11 until the pandas 3 upgrade lands. [constraint; valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- The reporting service is owned by the Ember team as of 2025-12-05, having moved from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is owned by the Dune team. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- Dashboards and alerts for the product catalog are being repointed as of the 2025-12-19 handover. [valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- On 2025-12-25 the Atlas team noticed that the reports pipeline's disk usage jumped 30 percent after the retention change and flagged it because it is not their service. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- As of 2025-04-24, the Cinder team reported that the feature-flags service's p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- As of 2025-09-23, the reporting service switched its data source from the ledger service to the bus because nightly ledger scans were blocking billing runs. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- On 2025-09-02 the Atlas team decided that clients will cache feature-flags evaluations for 30 seconds. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- On 2026-06-04 the Boreal team noticed that the product catalog's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- The indexer was owned by the Atlas team from 2025-05-20, taking over from Cinder, until ownership transferred to the Boreal team on 2026-04-01. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, taking over from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- The ledger service must stay on Postgres 14 until the partitioning work finishes. [constraint; valid 2025-01-31 to now; recorded by standup/atlas/2025-01-31]\n- Dashboards and alerts for the image resizer are being repointed as of the 2025-11-26 handover. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n\nQuestion: Which version is reporting pinned to, and until when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788604251-f5Iqqm0T9h2U94Y6guzl",
+  "object": "chat.completion",
+  "created": 1788604251,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "SiliconFlow",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Python 3.11, until the pandas 3 upgrade lands.",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which version is reporting pinned to, and until when?\"\n\nLooking at the memory, there are constraints:\n- \"The indexer is pinned to OpenSearch 2.11 until the full reindex completes.\"\n- \"The reports pipeline must stay on Python 3.11 until the pandas 3 upgrade lands.\"\n- \"The ledger service must stay on Postgres 14 until the partitioning work finishes.\"\n\nThe question asks about \"reporting\". The reports pipeline is pinned to Python 3.11 until the pandas 3 upgrade lands. Is \"reports pipeline\" the same as \"reporting service\"? The memory mentions \"reporting service\" separately. There's a constraint about \"the reports pipeline\" - that's about Python 3.11 until pandas 3 upgrade.\n\nThe question says \"reporting\" - could refer to the reporting service or reports pipeline. The reporting service doesn't have a version pin mentioned. The reports pipeline has Python 3.11 pinned until the pandas 3 upgrade lands.\n\nHmm, the question is ambiguous. The rule says answer only from memory, don't guess. The reports pipeline constraint is the closest match. \"Reporting\" likely refers to reports pipeline. I'd answer: Python 3.11, until the pandas 3 upgrade lands.\n\nThe instruction says reply in one short line with just the value asked for. So: \"Python 3.11, until the pandas 3 upgrade lands.\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which version is reporting pinned to, and until when?\"\n\nLooking at the memory, there are constraints:\n- \"The indexer is pinned to OpenSearch 2.11 until the full reindex completes.\"\n- \"The reports pipeline must stay on Python 3.11 until the pandas 3 upgrade lands.\"\n- \"The ledger service must stay on Postgres 14 until the partitioning work finishes.\"\n\nThe question asks about \"reporting\". The reports pipeline is pinned to Python 3.11 until the pandas 3 upgrade lands. Is \"reports pipeline\" the same as \"reporting service\"? The memory mentions \"reporting service\" separately. There's a constraint about \"the reports pipeline\" - that's about Python 3.11 until pandas 3 upgrade.\n\nThe question says \"reporting\" - could refer to the reporting service or reports pipeline. The reporting service doesn't have a version pin mentioned. The reports pipeline has Python 3.11 pinned until the pandas 3 upgrade lands.\n\nHmm, the question is ambiguous. The rule says answer only from memory, don't guess. The reports pipeline constraint is the closest match. \"Reporting\" likely refers to reports pipeline. I'd answer: Python 3.11, until the pandas 3 upgrade lands.\n\nThe instruction says reply in one short line with just the value asked for. So: \"Python 3.11, until the pandas 3 upgrade lands.\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1440,
+   "completion_tokens": 310,
+   "total_tokens": 1750,
+   "cost": 0.000371,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000371,
+    "upstream_inference_prompt_cost": 0.000216,
+    "upstream_inference_completions_cost": 0.000155
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 294,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.453434833034407,
+ "fetched_at": "2026-09-05T10:30:55Z"
+}

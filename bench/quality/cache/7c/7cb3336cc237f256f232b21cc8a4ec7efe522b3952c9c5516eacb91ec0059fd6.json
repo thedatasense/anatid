@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- On 2026-05-25, Team Atlas reported that the webhooks service's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- As of 2026-05-25, for the Team Atlas on-call cycle, page Marcus for anything instead of Priya. [preference; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, for the Team Atlas on-call cycle, page Priya for anything instead of Marcus. [preference; valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, for the Team Atlas on-call cycle, page Marcus Oyelaran for anything instead of Priya. [preference; valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n    earlier: As of 2025-07-03, for the current Team Atlas on-call cycle, page Priya for anything instead of Tomasz Nowak. [preference; valid 2025-07-03 to 2026-03-09; recorded by standup/atlas/2025-07-03]\n    earlier: As of 2025-05-09, for the current Team Atlas on-call cycle, page Tomasz Nowak for anything instead of Priya. [preference; valid 2025-05-09 to 2025-07-03; recorded by standup/atlas/2025-05-09]\n- As of 2026-05-25, Marcus is the primary on-call for Team Atlas, having taken over from Priya. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, Priya is the primary on-call for Team Atlas, having taken over from Marcus. [valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Marcus Oyelaran is the primary on-call for Team Atlas. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- On 2026-05-18, the Ember team noticed that the auth gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- As of 2026-04-23, Priya is back on the Team Atlas on-call rotation. [valid 2026-04-23 to now; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Priya is off the Team Atlas on-call rotation. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- As of 2026-04-16, the ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC; the old Wednesday 09:00-11:00 UTC slot is retired. [constraint; valid 2026-04-16 to now; recorded by standup/ember/2026-04-16]\n    earlier: Per the change policy, the ledger deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-04-18 to 2026-04-16; recorded by standup/atlas/2025-04-18]\n- There is a deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- On 2026-03-09, Team Atlas observed that the scheduler's cold start time tripled after the runtime upgrade. [valid 2026-03-09 to now; recorded by standup/atlas/2026-03-09-2]\n- As of 2026-02-24, the feature-flags service belongs to Team Cinder, which took it over from Team Boreal. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the feature-flags service belongs to Team Boreal, which took it over from Team Cinder. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the feature-flags service belongs to Team Cinder, which took it over from Team Atlas. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n    earlier: The feature-flags service lives with Team Atlas. [valid 2025-01-08 to 2025-07-09; recorded by standup/atlas/2025-01-08-2]\n- As of 2026-02-19, Marcus Oyelaran has transferred from Team Boreal to Team Atlas. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19]\n- As of 2026-02-10, the reports pipeline is owned by Team Cinder, which took it over from the Ember team. [decision; valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- The security audit flagged the auth gateway's long-lived tokens. [valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- On 2026-01-22, Team Atlas decided that auth gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- On 2026-01-13, Team Atlas noticed that the ledger's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- On 2026-01-05, Team Cinder observed that the ledger's disk usage jumped 30 percent after the retention change. [valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n\nQuestion: On what date did INC-2025-017 happen?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615524-VMD4lg7nsf7QemuBH6nA",
+  "object": "chat.completion",
+  "created": 1788615524,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks about INC-2025-017. Looking through the memory, there's no mention of any incident IDs like INC-2025-017. The memory contains various notes about teams, services, on-call rotations, deploy freezes, etc., but nothing about incident IDs.\n\nSo the answer should be \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about INC-2025-017. Looking through the memory, there's no mention of any incident IDs like INC-2025-017. The memory contains various notes about teams, services, on-call rotations, deploy freezes, etc., but nothing about incident IDs.\n\nSo the answer should be \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1786,
+   "completion_tokens": 76,
+   "total_tokens": 1862,
+   "cost": 0.00015295,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015295,
+    "upstream_inference_prompt_cost": 0.00013395,
+    "upstream_inference_completions_cost": 1.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 70,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.989350749994628,
+ "fetched_at": "2026-09-05T13:38:47Z"
+}

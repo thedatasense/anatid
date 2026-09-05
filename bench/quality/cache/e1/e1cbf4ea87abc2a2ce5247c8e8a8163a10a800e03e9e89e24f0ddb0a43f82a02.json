@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- There is a deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- There is a deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- As of 2026-04-16, the ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC; the old Wednesday 09:00-11:00 UTC slot is retired. [constraint; valid 2026-04-16 to now; recorded by standup/ember/2026-04-16]\n    earlier: Per the change policy, the ledger deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-04-18 to 2026-04-16; recorded by standup/atlas/2025-04-18]\n- Do not upgrade the ledger service past Postgres 14 until the partitioning work finishes. [constraint; valid 2025-09-12 to now; recorded by standup/atlas/2025-09-12]\n- On 2025-07-28, Team Cinder reported that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- During INC-2025-011, the ledger saw write latency spike tenfold for an hour on 2025-04-26. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- As of 2025-11-13, the ledger is owned by the Ember team, which took it over from Team Atlas. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- On 2026-01-13, Team Atlas noticed that the ledger's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Ledger migrations will ship with a reviewed query plan. [decision; valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- On 2026-01-05, Team Cinder observed that the ledger's disk usage jumped 30 percent after the retention change. [valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- As of 2025-09-15, the reporting service reads from the event bus instead of querying the ledger directly and no longer depends on the ledger. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- The ledger relies on the auth gateway for service tokens, so if the auth gateway is down, the ledger service is down. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- The nightly ledger scans were blocking billing runs. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- Per the change policy, the auth gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\n- The scheduler deploys on weekday mornings before 11:00 UTC. [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n    earlier: The scheduler deploys on weekdays after 15:00 UTC and at no other time. [constraint; valid 2025-03-19 to 2025-10-27; recorded by standup/ember/2025-03-19]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- Billing-api will gate the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- During INC-2025-004, a stuck offset went unnoticed for 40 minutes. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n\nQuestion: When is the deploy freeze for the ledger, and why?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788614974-za7hf9K6Ap97M53veSrB",
+  "object": "chat.completion",
+  "created": 1788614974,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "SiliconFlow",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2026-03-30 to 2026-04-03, because of the fiscal year close.",
+     "refusal": null,
+     "reasoning": "The user asks: \"When is the deploy freeze for the ledger, and why?\"\n\nLooking at the memory:\n- Deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of fiscal year close.\n- Deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. (not ledger)\n\nSo the answer: 2026-03-30 to 2026-04-03, fiscal year close.\n\nOne short line with the value asked for.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"When is the deploy freeze for the ledger, and why?\"\n\nLooking at the memory:\n- Deploy freeze on the ledger from 2026-03-30 to 2026-04-03 because of fiscal year close.\n- Deploy freeze on the billing service from 2025-11-24 to 2025-12-02 because of peak season. (not ledger)\n\nSo the answer: 2026-03-30 to 2026-04-03, fiscal year close.\n\nOne short line with the value asked for.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1439,
+   "completion_tokens": 139,
+   "total_tokens": 1578,
+   "cost": 0.00028535,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00028535,
+    "upstream_inference_prompt_cost": 0.00021585,
+    "upstream_inference_completions_cost": 6.95e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 115,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.9732914160122164,
+ "fetched_at": "2026-09-05T13:29:37Z"
+}

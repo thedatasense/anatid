@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal noticed that the catalog's memory use grew steadily for a week after the cache change [observation; valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- Atlas noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Atlas owns the catalog [valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the catalog [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- The handover note of 2026-02-11 wrongly recorded Dune as the owner of feature-flags [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- Dune noticed that the catalog's request volume halved after the client rollout [observation; valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- The catalog deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- Atlas adopted a no-deploy Friday [valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- Boreal noticed that the catalog's disk usage jumped 30 percent after the retention change [observation; valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- The handover note of 2025-06-09 wrongly recorded Boreal as the owner of billing-api [valid 2025-07-03 to now; recorded by handover/2025-07-03-billing-api-correction]\n- Decision: the catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time [decision; valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n- Cinder noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- The event-bus deploys only on Thursdays between 07:00 and 09:00 UTC [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- Decision: search-indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023 [decision; valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-023: search-indexer served stale results for two days on 2025-10-03; the root cause was a reindex job that failed silently on a full disk [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- Reporting deploys only on Tuesdays and Thursdays between 10:00 and 12:00 UTC [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger deploys only on weekday mornings before 11:00 UTC [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: The scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- The handover note of 2025-06-11 wrongly recorded Cinder as the owner of the notifier [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n- Ember noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n\nQuestion: Which note first recorded the deploy window for the catalog, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788597680-WcoGiuFvAnGEthZYqIZA",
+  "object": "chat.completion",
+  "created": 1788597680,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/cinder/2025-03-17, on 2025-03-17",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which note first recorded the deploy window for the catalog, and when?\"\n\nLooking at the memory entries about the catalog's deploy window:\n- The catalog deploys only on weekdays between 08:00 and 10:00 UTC [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n\nThe first (earliest) recording was by standup/cinder/2025-03-17, valid 2025-03-17. So the note is \"standup/cinder/2025-03-17\" recorded on 2025-03-17.\n\nThe question asks \"when\" - the date. The entry was recorded 2025-03-17.\n\nAnswer: standup/cinder/2025-03-17, on 2025-03-17.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which note first recorded the deploy window for the catalog, and when?\"\n\nLooking at the memory entries about the catalog's deploy window:\n- The catalog deploys only on weekdays between 08:00 and 10:00 UTC [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n\nThe first (earliest) recording was by standup/cinder/2025-03-17, valid 2025-03-17. So the note is \"standup/cinder/2025-03-17\" recorded on 2025-03-17.\n\nThe question asks \"when\" - the date. The entry was recorded 2025-03-17.\n\nAnswer: standup/cinder/2025-03-17, on 2025-03-17.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1381,
+   "completion_tokens": 260,
+   "total_tokens": 1641,
+   "cost": 0.000160895,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000160895,
+    "upstream_inference_prompt_cost": 9.5895e-05,
+    "upstream_inference_completions_cost": 6.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 238,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.001940791960806,
+ "fetched_at": "2026-09-05T08:41:24Z"
+}

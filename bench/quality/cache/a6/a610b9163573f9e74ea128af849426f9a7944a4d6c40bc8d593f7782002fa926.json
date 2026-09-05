@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-06-18, for anything Ember-related, page Diego. [preference; valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of 2026-05-18, for anything Ember-related, page Oskar. [preference; valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of 2026-03-31, for anything Ember-related, page Diego. [preference; valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: As of 2026-02-12, for anything Ember-related, page Oskar. [preference; valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: As of 2025-12-29, for anything Ember-related, page Diego. [preference; valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n    earlier: As of 2025-03-19, for anything Ember-related, page Oskar. [preference; valid 2025-03-19 to 2025-12-29; recorded by standup/ember/2025-03-19-3]\n- As of 2026-06-18, Diego has the Ember team's pager this cycle, taking over from Oskar. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of 2026-05-18, Oskar has the Ember team's pager this cycle, taking over from Diego. [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of 2026-03-31, Diego has the Ember team's pager this cycle, taking over from Oskar. [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n    earlier: As of 2026-02-12, Oskar is the on-call for the Ember team, taking the pager back from Diego. [valid 2026-02-12 to 2026-03-31; recorded by standup/ember/2026-02-12]\n    earlier: As of 2025-12-29, Diego is the on-call for the Ember team, having taken over the pager from Oskar. [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n- Oskar runs the weekly architecture review. [valid 2026-06-16 to now; recorded by standup/ember/2026-06-16]\n- As of 2026-06-08, for the Team Dune on-call cycle, page Farah for anything instead of Tomasz Nowak. [preference; valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, for the Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah. [preference; valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, for the Team Dune on-call cycle, page Farah for anything instead of Tomasz Nowak. [preference; valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n    earlier: As of 2026-02-04, for the current Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah. [preference; valid 2026-02-04 to 2026-03-10; recorded by standup/dune/2026-02-04]\n    earlier: As of 2025-12-15, for the current Team Dune on-call cycle, page Farah for anything instead of Tomasz Nowak. [preference; valid 2025-12-15 to 2026-02-04; recorded by standup/dune/2025-12-15]\n    earlier: As of 2025-10-27, for the current Team Dune on-call cycle, page Tomasz Nowak for anything instead of Farah. [preference; valid 2025-10-27 to 2025-12-15; recorded by standup/dune/2025-10-27]\n    earlier: As of 2025-09-22, Farah is primary on-call for Team Dune and Tomasz Nowak is off rotation. [valid 2025-09-22 to 2025-10-27; recorded by standup/dune/2025-09-22]\n    earlier: As of 2025-07-30, Tomasz Nowak is on call for Team Dune this cycle, having taken the pager from Farah. [valid 2025-07-30 to 2025-09-22; recorded by standup/dune/2025-07-30]\n    earlier: As of 2025-07-17, Farah is on call for Team Dune this cycle. [valid 2025-07-17 to 2025-07-30; recorded by standup/dune/2025-07-17]\n- As of 2026-06-08, Farah is on the Team Dune on-call rotation. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Farah is off the Team Dune on-call rotation. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, Farah is the primary on-call for Team Dune. [valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n- As of 2026-06-08, Farah is the primary on-call for Team Dune, having taken the pager from Tomasz Nowak. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Tomasz Nowak is the primary on-call for Team Dune. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n    earlier: As of 2026-03-10, Tomasz Nowak is off the Team Dune on-call rotation. [valid 2026-03-10 to 2026-04-13; recorded by standup/dune/2026-03-10]\n- On 2026-06-08, Tomasz Nowak handed the Team Dune pager to Farah. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n\nQuestion: Who is on call for the team that owns the service the ledger depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788615666-phkfCVh3LPRgvnfmzxdU",
+  "object": "chat.completion",
+  "created": 1788615666,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Who is on call for the team that owns the service the ledger depends on?\"\n\nThe memory doesn't mention \"the ledger\" or any service dependencies. There's no information about what service the ledger depends on, or which team owns it. So I can't answer this from memory.\n\nWait, let me re-check. The memory mentions Ember team and Team Dune, paging preferences, on-call rotations. But nothing about \"ledger\" or service dependencies.\n\nSo the answer is: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Who is on call for the team that owns the service the ledger depends on?\"\n\nThe memory doesn't mention \"the ledger\" or any service dependencies. There's no information about what service the ledger depends on, or which team owns it. So I can't answer this from memory.\n\nWait, let me re-check. The memory mentions Ember team and Team Dune, paging preferences, on-call rotations. But nothing about \"ledger\" or service dependencies.\n\nSo the answer is: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1867,
+   "completion_tokens": 111,
+   "total_tokens": 1978,
+   "cost": 6.0255e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1792,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 6.0255e-05,
+    "upstream_inference_prompt_cost": 3.2505e-05,
+    "upstream_inference_completions_cost": 2.775e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 105,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.419506541977171,
+ "fetched_at": "2026-09-05T13:41:08Z"
+}

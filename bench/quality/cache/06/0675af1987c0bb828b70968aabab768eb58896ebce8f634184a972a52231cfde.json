@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-011 was a ledger service incident on 2025-05-24. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017 was an incident where the auth gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-003 was an incident in which the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- The root cause of INC-2025-004 was a notifier consumer offset stuck after a broker restart. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The job scheduler leader lease will be shortened to ten seconds, a decision from the INC-2026-009 review. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The notifier missed alerts for 40 minutes on 2025-02-01 during INC-2025-004. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- On 2026-02-11, Oskar wrote the feature-flags handover document for Farah. [valid 2026-02-11 to now; recorded by handover/2026-02-11-feature-flags]\n- Per policy, every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-07-29 to now; recorded by standup/ember/2025-07-29]\n- On 2025-12-25, the Atlas team flagged the reports pipeline as not their service. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- Priya Raman runs the quarterly capacity review. [valid 2026-03-20 to now; recorded by standup/atlas/2026-03-20]\n- On 2025-09-16, Oskar wrote the authentication gateway handover document for Diego. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- A partner asked for webhook key rotation in their security review. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n\nQuestion: On what date was the review of INC-2025-017 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596770-deDO99bWfzdAJhiZuGGq",
+  "object": "chat.completion",
+  "created": 1788596770,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Morph",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-08-07",
+     "refusal": null,
+     "reasoning": "The question asks: On what date was the review of INC-2025-017 written?\n\nLooking at the memory entries for INC-2025-017:\n- \"Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n- \"The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n- \"INC-2025-017 was an incident where the auth gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n\nThe entries are valid from 2025-08-07. The incident happened on 2025-08-02. The review entries are recorded with validity starting 2025-08-07, which suggests the review was written on 2025-08-07.\n\nThe question asks for the date the review was written. The memory entries carry the date they were recorded — the validity starts 2025-08-07, so the review was recorded on 2025-08-07.\n\nAnswer: 2025-08-07",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: On what date was the review of INC-2025-017 written?\n\nLooking at the memory entries for INC-2025-017:\n- \"Certificate expiry will alert 30 days ahead, a follow-up decision from the INC-2025-017 review. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n- \"The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n- \"INC-2025-017 was an incident where the auth gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\"\n\nThe entries are valid from 2025-08-07. The incident happened on 2025-08-02. The review entries are recorded with validity starting 2025-08-07, which suggests the review was written on 2025-08-07.\n\nThe question asks for the date the review was written. The memory entries carry the date they were recorded — the validity starts 2025-08-07, so the review was recorded on 2025-08-07.\n\nAnswer: 2025-08-07",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1179,
+   "completion_tokens": 308,
+   "total_tokens": 1487,
+   "cost": 0.000218929,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000218929,
+    "upstream_inference_prompt_cost": 0.000114363,
+    "upstream_inference_completions_cost": 0.000104566
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 302,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8496551670250483,
+ "fetched_at": "2026-09-05T08:26:12Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-023: search-indexer served stale results for two days on 2025-10-03; the root cause was a reindex job that failed silently on a full disk [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023 [decision; valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-08-02; the root cause was an expired intermediate certificate [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-16; the root cause was two leaders elected during a network partition [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-01; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- INC-2026-003: webhooks delivered some events twice on 2026-02-20; the root cause was a retry loop that ignored idempotency keys [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- Decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017 [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- INC-2025-011: the ledger saw write latency spike tenfold for an hour on 2025-05-24; the root cause was an index missing after the schema migration [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011 [decision; valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- The scheduler depends on feature-flags [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- The catalog deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- Dune holds its planning meeting on Wednesdays [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- Boreal holds its planning meeting on Thursdays [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- Cinder holds its planning meeting on Mondays [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- Atlas holds its planning meeting on Tuesdays [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- Ember holds its planning meeting on Fridays [valid 2025-07-21 to now; recorded by standup/ember/2025-07-21]\n- Reporting depends on the event-bus [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: Reporting depends on the ledger [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n\nQuestion: On what date did INC-2025-023 happen?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788605164-sZ9Dn9Qrvg7CDhRGD0oE",
+  "object": "chat.completion",
+  "created": 1788605164,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-10-03",
+     "refusal": null,
+     "reasoning": "The user asks for the date of INC-2025-023. Memory says: \"search-indexer served stale results for two days on 2025-10-03\". So the answer is 2025-10-03.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks for the date of INC-2025-023. Memory says: \"search-indexer served stale results for two days on 2025-10-03\". So the answer is 2025-10-03.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1318,
+   "completion_tokens": 57,
+   "total_tokens": 1375,
+   "cost": 0.00010542,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00010542,
+    "upstream_inference_prompt_cost": 9.117e-05,
+    "upstream_inference_completions_cost": 1.425e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 49,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.5091275830054656,
+ "fetched_at": "2026-09-05T10:46:06Z"
+}

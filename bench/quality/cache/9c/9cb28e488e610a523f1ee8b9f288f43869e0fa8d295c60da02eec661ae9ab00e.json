@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\nMemory: one remembered fact per line, with the dates it held and the note that recorded it. An indented \"earlier\" line is a version of the fact above it that was later corrected.\n- [constraint] The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, the peak season. (since 2025-11-11; source standup/atlas/2025-11-11)\n- The Cinder team observed that the billing API's cold start time tripled after the runtime upgrade and pinged the billing API's owners. (since 2026-03-11; source standup/cinder/2026-03-11-2)\n- On 2025-06-09, Oskar wrote the billing API handover document for Lena. (since 2025-06-09; source handover/2025-06-09-billing-api)\n- The billing API depends on the ledger service for invoice postings. (since 2025-01-09; source standup/atlas/2025-01-09-2)\n- [constraint] The indexer is pinned to OpenSearch 2.11, and the pin lifts when the full reindex completes. (since 2025-04-22; source standup/cinder/2025-04-22)\n- [constraint] The ledger service has a deploy freeze from 2026-03-30 to 2026-04-03 because of the fiscal year close. (since 2026-03-11; source standup/cinder/2026-03-11)\n- [constraint] The billing API only ships on weekdays after 15:00 UTC. (since 2025-02-11; source standup/atlas/2025-02-11)\n- [decision] As of 2026-01-12, the billing API is owned by the Ember team, which the Atlas team owned until then. (since 2026-01-12; source handover/2026-01-12-billing-api)\n  - earlier: [decision] From 2025-06-09, the billing API is owned by the Atlas team. (held 2025-07-03 to 2026-01-12; source handover/2025-07-03-billing-api-correction)\n  - earlier: From 2025-06-09, the billing API is owned by the Boreal team. (held 2025-06-09 to 2025-07-03; source handover/2025-06-09-billing-api)\n  - earlier: Since 2025-03-07, the billing API is owned by the Ember team. (held 2025-03-07 to 2025-06-09; source handover/2025-03-07-billing-api)\n  - earlier: The billing API is owned by the Atlas team. (held 2025-01-08 to 2025-03-07; source standup/atlas/2025-01-08-2)\n- [constraint] Changes to the billing API need a rollback plan attached to the pull request. (since 2025-04-02; source standup/ember/2025-04-02)\n- [decision] The billing API gates the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch. (since 2025-09-30; source standup/atlas/2025-09-30)\n- [decision] As of 2025-07-30, Priya Raman is the primary on-call for the Atlas team and Tomasz is no longer the primary on-call. (since 2025-07-30; source standup/atlas/2025-07-30)\n  - earlier: [decision] As of 2025-06-19, Tomasz is the primary on-call for the Atlas team and Priya Raman is no longer the primary on-call. (held 2025-06-19 to 2025-07-30; source standup/atlas/2025-06-19)\n- The billing service is not the Ember team's service, so the Ember team flagged the billing service's queue depth issue. (since 2025-11-04; source standup/ember/2025-11-04)\n- The Atlas team noticed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. (since 2026-05-27; source standup/atlas/2026-05-27)\n- As of 2025-12-01, the billing API's error rate crept up to 2 percent after the dependency bump, per a heads-up from Boreal team. (since 2025-12-01; source standup/boreal/2025-12-01)\n- The Ember team noticed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. (since 2026-05-28; source standup/ember/2026-05-28)\n- Team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the reporting service's owners. (since 2026-04-14; source standup/dune/2026-04-14-2)\n- [decision] The Atlas team does a no-deploy Friday. (since 2026-02-03; source standup/atlas/2026-02-03)\n- [decision] Lena is the release captain for Q1 2026. (since 2025-05-22; source standup/boreal/2025-05-22)\n- Farah is the release captain for Q3 2025. (since 2026-04-14; source standup/dune/2026-04-14-3)\n- feature-flags' p99 latency doubled after Tuesday's deploy. (since 2025-04-24; source standup/cinder/2025-04-24-2)\n\nQuestion: When is the deploy freeze for billing-api, and why?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788608246-ABdSK4BAfzUGLgLDO33X",
+  "object": "chat.completion",
+  "created": 1788608246,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-11-24 to 2025-12-02, because of the peak season.",
+     "refusal": null,
+     "reasoning": "The question asks: \"When is the deploy freeze for billing-api, and why?\"\n\nLooking at memory: \"[constraint] The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, the peak season. (since 2025-11-11; source standup/atlas/2025-11-11)\"\n\nSo the answer: 2025-11-24 to 2025-12-02, because of peak season.\n\nAlso there's a ledger service freeze but that's a different service. The billing API freeze is 2025-11-24 to 2025-12-02, peak season.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"When is the deploy freeze for billing-api, and why?\"\n\nLooking at memory: \"[constraint] The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, the peak season. (since 2025-11-11; source standup/atlas/2025-11-11)\"\n\nSo the answer: 2025-11-24 to 2025-12-02, because of peak season.\n\nAlso there's a ledger service freeze but that's a different service. The billing API freeze is 2025-11-24 to 2025-12-02, peak season.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1487,
+   "completion_tokens": 161,
+   "total_tokens": 1648,
+   "cost": 0.000140255,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000140255,
+    "upstream_inference_prompt_cost": 0.000100005,
+    "upstream_inference_completions_cost": 4.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 138,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.8355007499922067,
+ "fetched_at": "2026-09-05T11:37:29Z"
+}

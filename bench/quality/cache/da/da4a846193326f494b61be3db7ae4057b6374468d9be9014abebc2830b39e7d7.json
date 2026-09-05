@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note corrected the recorded owner of webhooks, and when?\nGold answer: handover/2025-07-04-webhooks-correction (2025-07-04)\nAlso accepted: handover/2025-07-04-webhooks-correction; 2025-07-04; 4 July 2025; July 4, 2025; the handover message of 2025-07-04; the handover message of 4 July 2025; the handover message of July 4, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/dune/2026-03-04, on 2026-03-04"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788616377-xVwtYe4a68hPGvY7gpK7",
+  "object": "chat.completion",
+  "created": 1788616377,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names a different note (standup/dune/2026-03-04) and a different date (2026-03-04) than the gold handover note of 2025-07-04.\"}\n",
+     "refusal": null,
+     "reasoning": "The gold answer is \"handover/2025-07-04-webhooks-correction (2025-07-04)\". The answer to grade is \"standup/dune/2026-03-04, on 2026-03-04\" — a different note label and a different date. Per the rule, a different note or date is wrong. So correct = false.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"handover/2025-07-04-webhooks-correction (2025-07-04)\". The answer to grade is \"standup/dune/2026-03-04, on 2026-03-04\" — a different note label and a different date. Per the rule, a different note or date is wrong. So correct = false.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 351,
+   "completion_tokens": 142,
+   "total_tokens": 493,
+   "cost": 5.4145e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.4145e-05,
+    "upstream_inference_prompt_cost": 1.8645e-05,
+    "upstream_inference_completions_cost": 3.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 80,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2666641250252724,
+ "fetched_at": "2026-09-05T13:52:59Z"
+}

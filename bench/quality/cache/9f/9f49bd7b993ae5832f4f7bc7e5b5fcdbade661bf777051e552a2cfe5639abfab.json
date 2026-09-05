@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Until 2025-09-23, the reporting service depended on the ledger service for the nightly balance export; it no longer depends on the ledger service. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- The ledger service depends on the auth gateway for service tokens. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- As of 2025-12-05, the Ember team owns reporting, which team Dune owned until then. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- The reporting service is owned by team Dune. [valid 2025-01-20 to now; recorded by standup/dune/2025-01-20-2]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- On 2026-04-14, team Dune noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The product catalog depends on the image resizer for thumbnails. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service, because the nightly ledger scans were blocking billing runs. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- The job scheduler depends on feature-flags for per-job kill switches. [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- INC-2026-003 was an incident in which the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- As of 2025-12-05, the pager for reporting rings the Ember team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- INC-2026-009 was an incident in which the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- INC-2025-023 was an indexer incident on 2025-10-03 in which the indexer served stale results for two days. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-011 was a ledger service incident on 2025-05-24. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- The ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- The ledger service must stay on Postgres 14 until the partitioning work finishes. [constraint; valid 2025-01-31 to now; recorded by standup/atlas/2025-01-31]\n- On 2025-12-25, the Atlas team flagged the reports pipeline as not their service. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n\nQuestion: Which service depends on reporting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788596346-OZFNEXMCF9Xbpcs46A5K",
+  "object": "chat.completion",
+  "created": 1788596346,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service depends on reporting?\"\n\nLet me look through the memory for any dependency where reporting is the dependency (i.e., some service depends on reporting).\n\nLooking at the entries:\n- reporting service depended on ledger service (reporting → ledger, not the reverse)\n- ledger service depends on auth gateway\n- billing API depends on ledger service\n- reporting ships Tuesdays/Thursdays\n- Ember owns reporting\n- reporting owned by Dune\n- Ember still owns reporting\n- Dune noticed p99 latency doubled\n- indexer depends on product catalog\n- product catalog depends on image resizer\n- reporting uses bus as source instead of ledger\n- job scheduler depends on feature-flags\n- INC entries\n- pager for reporting rings Ember\n- ledger deploys Wednesdays\n- ledger on Postgres 14\n- Atlas flagged reports pipeline as not their service\n\nNo entry says any service depends on reporting. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service depends on reporting?\"\n\nLet me look through the memory for any dependency where reporting is the dependency (i.e., some service depends on reporting).\n\nLooking at the entries:\n- reporting service depended on ledger service (reporting → ledger, not the reverse)\n- ledger service depends on auth gateway\n- billing API depends on ledger service\n- reporting ships Tuesdays/Thursdays\n- Ember owns reporting\n- reporting owned by Dune\n- Ember still owns reporting\n- Dune noticed p99 latency doubled\n- indexer depends on product catalog\n- product catalog depends on image resizer\n- reporting uses bus as source instead of ledger\n- job scheduler depends on feature-flags\n- INC entries\n- pager for reporting rings Ember\n- ledger deploys Wednesdays\n- ledger on Postgres 14\n- Atlas flagged reports pipeline as not their service\n\nNo entry says any service depends on reporting. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1264,
+   "completion_tokens": 207,
+   "total_tokens": 1471,
+   "cost": 0.0002931,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002931,
+    "upstream_inference_prompt_cost": 0.0001896,
+    "upstream_inference_completions_cost": 0.0001035
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 201,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8785530000459403,
+ "fetched_at": "2026-09-05T08:19:07Z"
+}
