@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-03-31 to now; recorded by standup/boreal/2025-03-31-2]\n- The notifier's previous flat one-second retry was hammering the push provider during its outages. [valid 2025-03-31 to now; recorded by standup/boreal/2025-03-31-2]\n- Duplicate deliveries in INC-2026-003 came from retries without an idempotency key. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The notifier's request volume halved following the client rollout, as noticed by Cinder on 2025-09-26. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- The notifier's memory use grew steadily for a week after the cache change. [valid 2025-11-05 to now; recorded by standup/ember/2025-11-05]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- Boreal reported at standup on 2026-02-04 that the scheduler's error rate crept up to 2 percent following the dependency bump. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- Team Ember reported at standup on 2026-05-27 that the notifier's CPU sat at 90 percent after the traffic shift. [valid 2026-05-27 to now; recorded by standup/ember/2026-05-27]\n- INC-2025-004 was caused by a notifier consumer offset stuck after a broker restart. [valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- Notifier consumers will commit offsets every five seconds as follow-up to INC-2025-004. [decision; valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- On 2026-04-29, Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-04-29 to now; recorded by standup/ember/2026-04-29]\n- On 2026-03-16, Ember noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-03-16 to now; recorded by standup/ember/2026-03-16]\n- Team Ember reported at standup on 2025-11-17 that the authentication gateway's error rate crept up to 2 percent following the dependency bump. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- The indexer's incremental updates left stale entries behind after failed writes. [valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- The reporting service's p99 latency doubled after Tuesday's deploy, as noticed by Cinder on 2025-08-20. [valid 2025-08-20 to now; recorded by standup/cinder/2025-08-20]\n- Notifier missed alerts for 40 minutes on 2025-03-04 during incident INC-2025-004. [valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- Team Atlas observed on 2025-11-11 that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- The job scheduler's single fixed node turned every restart into a missed run. [valid 2025-06-16 to now; recorded by standup/dune/2025-06-16]\n- Boreal decided at standup on 2026-05-05 that the event bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-05 to now; recorded by standup/boreal/2026-05-05]\n\nQuestion: Why does the notifier retry failed pushes three times with exponential backoff?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657594-oASdlr0C4mKmH7cscRZM",
+  "object": "chat.completion",
+  "created": 1788657594,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Because the previous flat one-second retry was hammering the push provider during its outages.",
+     "refusal": null,
+     "reasoning": "The question asks why the notifier retries failed pushes three times with exponential backoff. Looking at memory:\n\n- \"The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-03-31 to now]\"\n- \"The notifier's previous flat one-second retry was hammering the push provider during its outages.\"\n\nThe reason: the previous flat one-second retry was hammering the push provider during outages. So the answer is that reason.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks why the notifier retries failed pushes three times with exponential backoff. Looking at memory:\n\n- \"The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-03-31 to now]\"\n- \"The notifier's previous flat one-second retry was hammering the push provider during its outages.\"\n\nThe reason: the previous flat one-second retry was hammering the push provider during outages. So the answer is that reason.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1221,
+   "completion_tokens": 116,
+   "total_tokens": 1337,
+   "cost": 0.000112895,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000112895,
+    "upstream_inference_prompt_cost": 8.3895e-05,
+    "upstream_inference_completions_cost": 2.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 96,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1055696670082398,
+ "fetched_at": "2026-09-06T01:19:56Z"
+}

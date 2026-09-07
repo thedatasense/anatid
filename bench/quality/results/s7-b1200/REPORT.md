@@ -29,11 +29,11 @@ Accuracy over all questions under both scorers, with the abstention and stalenes
 | vector (S3) | 93% | 91% | 99% | 86% | 3% | 0% | 1179 | 4.82 | $0.03 |
 | hybrid (S2+S3) | 91% | 91% | 100% | 89% | 2% | 0% | 1179 | 4.31 | $0.02 |
 | vector-prf (S3, feedback) | 92% | 91% | 99% | 89% | 2% | 0% | 1179 | 3.81 | $0.02 |
-| anatid (S4) | 91% | 87% | 96% | 69% | 9% | 2% | 1102 | 3.82 | $0.02 |
-| anatid-text (S4t) | 84% | 82% | 97% | 57% | 15% | 2% | 1055 | 3.63 | $0.02 |
-| anatid-vector (S4v) | 93% | 88% | 95% | 74% | 7% | 0% | 1075 | 3.47 | $0.03 |
-| anatid-graph (S4g) | 21% | 21% | 99% | 18% | 94% | 0% | 590 | 2.23 | $0.0076 |
-| anatid-gold (S5, oracle) | 96% | 95% | 99% | 86% | 3% | 0% | 1098 | 3.32 | $0.02 |
+| anatid (S4) | 89% | 87% | 96% | 71% | 8% | 2% | 1078 | 2.89 | $0.03 |
+| anatid-text (S4t) | 77% | 77% | 99% | 50% | 20% | 2% | 1041 | 3.36 | $0.02 |
+| anatid-vector (S4v) | 87% | 85% | 97% | 71% | 8% | 4% | 1079 | 3.43 | $0.03 |
+| anatid-graph (S4g) | 22% | 21% | 99% | 18% | 92% | 0% | 625 | 3.33 | $0.01 |
+| anatid-gold (S5, oracle) | 96% | 96% | 100% | 83% | 4% | 0% | 1018 | 3.86 | $0.02 |
 
 Context tokens and latency are means per question. Latency is the network time of the answer call, recorded when the call was first made, so a replay from the cache reports the same number. Answer cost is the sum over the questions, at the provider's reported price.
 
@@ -51,10 +51,10 @@ Two scorers. The LLM judge sees the question, the gold, the accepted aliases, th
 | vector (S3) | 100% | 100% | 100% | 56% | 100% | 100% | 93% |
 | hybrid (S2+S3) | 96% | 100% | 100% | 48% | 100% | 100% | 91% |
 | vector-prf (S3, feedback) | 96% | 100% | 100% | 56% | 100% | 100% | 92% |
-| anatid (S4) | 96% | 96% | 100% | 60% | 96% | 100% | 91% |
-| anatid-text (S4t) | 88% | 92% | 88% | 40% | 96% | 100% | 84% |
-| anatid-vector (S4v) | 100% | 96% | 100% | 68% | 92% | 100% | 93% |
-| anatid-graph (S4g) | 12% | 4% | 0% | 8% | 4% | 100% | 21% |
+| anatid (S4) | 100% | 96% | 96% | 56% | 88% | 100% | 89% |
+| anatid-text (S4t) | 80% | 84% | 88% | 12% | 96% | 100% | 77% |
+| anatid-vector (S4v) | 92% | 96% | 92% | 60% | 88% | 96% | 87% |
+| anatid-graph (S4g) | 12% | 8% | 0% | 8% | 4% | 100% | 22% |
 | anatid-gold (S5, oracle) | 100% | 100% | 92% | 84% | 100% | 100% | 96% |
 
 ### Lexical match
@@ -67,11 +67,11 @@ Two scorers. The LLM judge sees the question, the gold, the accepted aliases, th
 | vector (S3) | 100% | 100% | 100% | 48% | 100% | 100% | 91% |
 | hybrid (S2+S3) | 96% | 100% | 100% | 48% | 100% | 100% | 91% |
 | vector-prf (S3, feedback) | 96% | 100% | 100% | 48% | 100% | 100% | 91% |
-| anatid (S4) | 92% | 96% | 96% | 44% | 96% | 100% | 87% |
-| anatid-text (S4t) | 84% | 92% | 88% | 32% | 96% | 100% | 82% |
-| anatid-vector (S4v) | 92% | 96% | 96% | 52% | 92% | 100% | 88% |
-| anatid-graph (S4g) | 8% | 4% | 0% | 8% | 4% | 100% | 21% |
-| anatid-gold (S5, oracle) | 100% | 100% | 88% | 84% | 100% | 100% | 95% |
+| anatid (S4) | 92% | 96% | 96% | 48% | 88% | 100% | 87% |
+| anatid-text (S4t) | 76% | 84% | 88% | 16% | 96% | 100% | 77% |
+| anatid-vector (S4v) | 88% | 96% | 92% | 48% | 88% | 96% | 85% |
+| anatid-graph (S4g) | 8% | 8% | 0% | 8% | 4% | 100% | 21% |
+| anatid-gold (S5, oracle) | 100% | 100% | 92% | 84% | 100% | 100% | 96% |
 
 ### Agreement between the two scorers
 
@@ -83,11 +83,11 @@ Two scorers. The LLM judge sees the question, the gold, the accepted aliases, th
 | vector (S3) | 100% | 100% | 100% | 92% | 100% | 100% | 99% |
 | hybrid (S2+S3) | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
 | vector-prf (S3, feedback) | 100% | 100% | 100% | 92% | 100% | 100% | 99% |
-| anatid (S4) | 96% | 100% | 96% | 84% | 100% | 100% | 96% |
-| anatid-text (S4t) | 96% | 100% | 100% | 84% | 100% | 100% | 97% |
-| anatid-vector (S4v) | 92% | 100% | 96% | 84% | 100% | 100% | 95% |
+| anatid (S4) | 92% | 100% | 100% | 84% | 100% | 100% | 96% |
+| anatid-text (S4t) | 96% | 100% | 100% | 96% | 100% | 100% | 99% |
+| anatid-vector (S4v) | 96% | 100% | 100% | 88% | 100% | 100% | 97% |
 | anatid-graph (S4g) | 96% | 100% | 100% | 100% | 100% | 100% | 99% |
-| anatid-gold (S5, oracle) | 100% | 100% | 96% | 100% | 100% | 100% | 99% |
+| anatid-gold (S5, oracle) | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
 
 ## Knowing when to stop
 
@@ -101,11 +101,11 @@ A quarter of the questions have no answer in the notes. A system that always ans
 | vector (S3) | 29 | 86% | 100% | 4 | 3% |
 | hybrid (S2+S3) | 28 | 89% | 100% | 3 | 2% |
 | vector-prf (S3, feedback) | 28 | 89% | 100% | 3 | 2% |
-| anatid (S4) | 36 | 69% | 100% | 11 | 9% |
-| anatid-text (S4t) | 44 | 57% | 100% | 19 | 15% |
-| anatid-vector (S4v) | 34 | 74% | 100% | 9 | 7% |
-| anatid-graph (S4g) | 142 | 18% | 100% | 117 | 94% |
-| anatid-gold (S5, oracle) | 29 | 86% | 100% | 4 | 3% |
+| anatid (S4) | 35 | 71% | 100% | 10 | 8% |
+| anatid-text (S4t) | 50 | 50% | 100% | 25 | 20% |
+| anatid-vector (S4v) | 34 | 71% | 96% | 10 | 8% |
+| anatid-graph (S4g) | 140 | 18% | 100% | 115 | 92% |
+| anatid-gold (S5, oracle) | 30 | 83% | 100% | 5 | 4% |
 
 ## The cost of extraction: S4 against the S5 oracle
 
@@ -113,19 +113,19 @@ S4 and S5 share the pipeline, the embedder and the retrieval; they differ only i
 
 | category | S4 anatid | S5 anatid-gold (oracle) | gap |
 | --- | ---: | ---: | ---: |
-| single_fact | 96% | 100% | +4% |
+| single_fact | 100% | 100% | 0% |
 | knowledge_update | 96% | 100% | +4% |
-| temporal | 100% | 92% | -8% |
-| multi_hop | 60% | 84% | +24% |
-| provenance | 96% | 100% | +4% |
+| temporal | 96% | 92% | -4% |
+| multi_hop | 56% | 84% | +28% |
+| provenance | 88% | 100% | +12% |
 | abstention | 100% | 100% | 0% |
-| all | 91% | 96% | +5% |
+| all | 89% | 96% | +7% |
 
 What the two builds did:
 
 | store | memories created | superseded | downgraded corrections | dedupe drops | failures |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| anatid (S4) | 247 | 77 | 0 | 24 | 0 |
+| anatid (S4) | 263 | 69 | 0 | 30 | 0 |
 | anatid-gold (S5, oracle) | 191 | 68 | 0 | 35 | 0 |
 
 A downgraded correction is one the model proposed against a memory the pipeline could not find; it lands as a new fact next to the old one instead of replacing it, which is the usual way a stale value survives into an answer.
@@ -136,40 +136,38 @@ The same S4 store read through one recall arm at a time, LLM judge. The fused sy
 
 | system | single_fact | knowledge_update | temporal | multi_hop | provenance | abstention | all |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| anatid (S4) | 96% | 96% | 100% | 60% | 96% | 100% | 91% |
-| anatid-text (S4t) | 88% | 92% | 88% | 40% | 96% | 100% | 84% |
-| anatid-vector (S4v) | 100% | 96% | 100% | 68% | 92% | 100% | 93% |
-| anatid-graph (S4g) | 12% | 4% | 0% | 8% | 4% | 100% | 21% |
+| anatid (S4) | 100% | 96% | 96% | 56% | 88% | 100% | 89% |
+| anatid-text (S4t) | 80% | 84% | 88% | 12% | 96% | 100% | 77% |
+| anatid-vector (S4v) | 92% | 96% | 92% | 60% | 88% | 96% | 87% |
+| anatid-graph (S4g) | 12% | 8% | 0% | 8% | 4% | 100% | 22% |
 
 ## Where anatid lost, and where it won
 
-Against the 5 budgeted baselines (markdown (S1), bm25 (S2), vector (S3), hybrid (S2+S3), vector-prf (S3, feedback)), under the LLM judge: S4 alone right on 2 questions; S4 wrong where at least one baseline was right on 8 questions. A win is a question no baseline got; a loss is one at least one baseline got. Both lists are complete in `summary.json`.
+Against the 5 budgeted baselines (markdown (S1), bm25 (S2), vector (S3), hybrid (S2+S3), vector-prf (S3, feedback)), under the LLM judge: S4 alone right on 0 questions; S4 wrong where at least one baseline was right on 9 questions. A win is a question no baseline got; a loss is one at least one baseline got. Both lists are complete in `summary.json`.
 
 Categories where S4 trails the best budgeted baseline:
 
-- single_fact: anatid (S4) 96% against bm25 (S2) 100%
 - knowledge_update: anatid (S4) 96% against bm25 (S2) 100%
-- provenance: anatid (S4) 96% against bm25 (S2) 100%
+- temporal: anatid (S4) 96% against vector (S3) 100%
+- provenance: anatid (S4) 88% against bm25 (S2) 100%
 
-### Losses (8, first 8 shown)
+### Losses (9, first 9 shown)
 
 | qid | category | question | gold | S4 answer | baselines |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| q003 | single_fact | Why do notifier consumers commit offsets every five seconds? | a stuck offset went unnoticed for 40 minutes durin | I don't know | S1: I don't know; S2: Because a stuck offset went unnoticed for 40 minutes during ; S3: Because a stuck offset went unnoticed for 40 minutes during ; S2+S3: Because a stuck offset went unnoticed for 40 minutes during ; S3, feedback: Because a stuck offset went unnoticed for 40 minutes during  |
 | q040 | knowledge_update | Who owns reporting today? | Cinder | The Ember team | S1: Cinder; S2: Cinder; S3: Cinder; S2+S3: Cinder; S3, feedback: Cinder |
+| q056 | temporal | Who was on call for Atlas on 2025-06-21? | Tomasz | I don't know | S1: I don't know; S2: Tomasz Nowak; S3: Tomasz Nowak; S2+S3: Tomasz Nowak; S3, feedback: Tomasz Nowak |
 | q078 | multi_hop | Who is on call for the team that owns the service the ledger depends on? | Marcus | I don't know | S1: I don't know; S2: Marcus Oyelaran; S3: Marcus Oyelaran; S2+S3: Marcus Oyelaran; S3, feedback: Marcus Oyelaran |
 | q080 | multi_hop | Who is on call for the team that owns the service webhooks depends on? | Lena | I don't know | S1: Lena; S2: Priya; S3: I don't know; S2+S3: Priya; S3, feedback: Marcus Oyelaran |
-| q097 | multi_hop | What is the deploy window of the service that reporting depends on? | on Tuesdays and Thursdays between 10:00 and 12:00  | I don't know | S1: I don't know; S2: Tuesdays and Thursdays between 10:00 and 12:00 UTC; S3: Tuesdays and Thursdays between 10:00 and 12:00 UTC; S2+S3: Tuesdays and Thursdays between 10:00 and 12:00 UTC.; S3, feedback: Tuesdays and Thursdays between 10:00 and 12:00 UTC. |
-| q099 | multi_hop | What is the deploy window of the service that the ledger depends on? | on weekdays between 08:00 and 10:00 UTC, never on  | I don't know | S1: I don't know; S2: I don't know; S3: Weekdays between 08:00 and 10:00 UTC, never on Fridays.; S2+S3: Weekdays between 08:00 and 10:00 UTC, never on Fridays.; S3, feedback: Weekdays between 08:00 and 10:00 UTC, never on Fridays (auth |
-| q100 | multi_hop | What is the deploy window of the service that webhooks depends on? | on Tuesdays and Thursdays between 10:00 and 12:00  | I don't know | S1: I don't know; S2: Tuesdays and Thursdays between 10:00 and 12:00 UTC.; S3: Tuesdays and Thursdays between 10:00 and 12:00 UTC; S2+S3: Tuesdays and Thursdays between 10:00 and 12:00 UTC; S3, feedback: Tuesdays and Thursdays between 10:00 and 12:00 UTC. |
-| q107 | provenance | Which note first recorded that reporting depends on the ledger, and when? | standup/dune/2025-03-10 (2025-03-10) | Recorded by standup/dune on 2025-04-08. | S1: I don't know; S2: standup/dune/2025-03-10, on 2025-03-10.; S3: standup/dune/2025-03-10, on 2025-03-10; S2+S3: standup/dune/2025-03-10, on 2025-03-10; S3, feedback: standup/dune/2025-03-10, on 2025-03-10. |
+| q083 | multi_hop | Who is on call for the team that owns the event-bus? | Lena | Marcus | S1: Lena; S2: Marcus Oyelaran; S3: Marcus Oyelaran; S2+S3: Marcus Oyelaran; S3, feedback: Marcus Oyelaran |
+| q096 | multi_hop | Which services does Ember own now? | ledger | The ledger and the reporting service. | S1: I don't know; S2: The ledger and the reporting service.; S3: The ledger; S2+S3: The ledger; S3, feedback: The ledger. |
+| q101 | provenance | Which note corrected the recorded owner of reporting, and when? | handover/2025-11-17-reporting-correction (2025-11- | I don't know | S1: handover/2026-02-10-reporting, recorded 2026-02-10; S2: handover/2025-11-17-reporting-correction, on 2025-11-17; S3: handover/2025-11-17-reporting-correction, on 2025-11-17; S2+S3: handover/2025-11-17-reporting-correction, recorded 2025-11-1; S3, feedback: handover/2025-11-17-reporting-correction, 2025-11-17 |
+| q107 | provenance | Which note first recorded that reporting depends on the ledger, and when? | standup/dune/2025-03-10 (2025-03-10) | standup/dune/2025-04-08, on 2025-04-08 | S1: I don't know; S2: standup/dune/2025-03-10, on 2025-03-10.; S3: standup/dune/2025-03-10, on 2025-03-10; S2+S3: standup/dune/2025-03-10, on 2025-03-10; S3, feedback: standup/dune/2025-03-10, on 2025-03-10. |
+| q119 | provenance | On what date was the review of INC-2025-017 written? | 2025-08-01 | I don't know | S1: I don't know; S2: 2025-08-01; S3: 2025-08-01; S2+S3: 2025-08-01; S3, feedback: 2025-08-01 |
 
-### Wins (2, first 2 shown)
+### Wins (0, first 0 shown)
 
-| qid | category | question | gold | S4 answer | baselines |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| q082 | multi_hop | Who is on call for the team that owns search-indexer? | Farah | Farah | S1: Diego; S2: Tomasz Nowak; S3: Tomasz Nowak; S2+S3: Tomasz Nowak; S3, feedback: Tomasz Nowak |
-| q095 | multi_hop | Which services does Dune own now? | billing-api, notifier, search-indexer, image-resiz | Webhooks, scheduler, indexer, billing, resizer, notifier | S1: Webhook dispatcher and billing-api; S2: webhooks (webhook dispatcher), billing-api, resizer; S3: webhook dispatcher, billing-api, notifier, resizer, schedule; S2+S3: Webhook dispatcher, resizer, notifier, billing-api; S3, feedback: billing-api, webhook dispatcher, notifier, image resizer, sc |
+None.
 
 ## Cost and time
 
@@ -179,17 +177,17 @@ Ingest is the one-off cost of building the memory (extraction calls and embeddin
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | markdown (S1) | 0.0 | 0.0 | $0.00 | 0 | 0.00 | 563.3 | $0.01 | 150/150 | 0 |
 | markdown-full (S1, no budget) | 0.0 | 0.0 | $0.00 | 0 | 0.00 | 375.8 | $0.05 | 150/150 | 0 |
-| bm25 (S2) | 0.1 | 0.0 | $0.00 | 0 | 0.64 | 868.3 | $0.03 | 150/150 | 0 |
-| vector (S3) | 0.1 | 2.6 | $0.0089 | 177 | 0.08 | 723.0 | $0.03 | 150/150 | 0 |
-| hybrid (S2+S3) | 0.1 | 2.6 | $0.0089 | 177 | 0.76 | 646.1 | $0.02 | 150/150 | 0 |
-| vector-prf (S3, feedback) | 0.1 | 2.6 | $0.0089 | 177 | 0.18 | 570.8 | $0.02 | 150/150 | 0 |
-| anatid (S4) | 9.1 | 4146.6 | $0.09 | 601 | 9.54 | 573.5 | $0.02 | 150/150 | 0 |
-| anatid-text (S4t) | shares anatid |  |  |  | 8.27 | 544.5 | $0.02 | 150/150 | 0 |
-| anatid-vector (S4v) | shares anatid |  |  |  | 7.57 | 520.8 | $0.03 | 150/150 | 0 |
-| anatid-graph (S4g) | shares anatid |  |  |  | 5.31 | 334.7 | $0.0076 | 150/150 | 0 |
-| anatid-gold (S5, oracle) | 9.1 | 59.5 | $0.0090 | 368 | 9.74 | 497.7 | $0.02 | 150/150 | 0 |
+| bm25 (S2) | 0.1 | 0.0 | $0.00 | 0 | 0.65 | 868.3 | $0.03 | 150/150 | 0 |
+| vector (S3) | 0.1 | 2.6 | $0.0089 | 177 | 0.07 | 723.0 | $0.03 | 150/150 | 0 |
+| hybrid (S2+S3) | 0.1 | 2.6 | $0.0089 | 177 | 0.78 | 646.1 | $0.02 | 150/150 | 0 |
+| vector-prf (S3, feedback) | 0.1 | 2.6 | $0.0089 | 177 | 0.15 | 570.8 | $0.02 | 150/150 | 0 |
+| anatid (S4) | 3026.3 | 3357.4 | $0.11 | 615 | 14.80 | 433.5 | $0.03 | 0/150 | 0 |
+| anatid-text (S4t) | shares anatid |  |  |  | 13.11 | 503.5 | $0.02 | 0/150 | 0 |
+| anatid-vector (S4v) | shares anatid |  |  |  | 12.88 | 513.8 | $0.03 | 0/150 | 0 |
+| anatid-graph (S4g) | shares anatid |  |  |  | 7.61 | 499.7 | $0.01 | 70/150 | 0 |
+| anatid-gold (S5, oracle) | 9.4 | 59.5 | $0.0090 | 368 | 15.33 | 578.4 | $0.02 | 0/150 | 0 |
 
-Whole run: 62 s wall time; 5850 model calls of which 5850 came from the cache (100%); recorded cost $0.46, of which $0.00 was charged in this run. The judge made 1650 calls costing $0.06.
+Whole run: 5543 s wall time; 5865 model calls of which 4802 came from the cache (82%); recorded cost $0.49, of which $0.21 was charged in this run. The judge made 1650 calls costing $0.06.
 
 ## Reproduce
 

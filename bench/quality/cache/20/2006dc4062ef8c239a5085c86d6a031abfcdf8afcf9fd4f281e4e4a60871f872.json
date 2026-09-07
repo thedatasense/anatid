@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-06-04, the Boreal team observed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- On 2026-05-28, the Ember team observed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change, and since it was not their service, they flagged it. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Cinder runs its planning on Mondays. [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- On 2026-03-11, the Cinder team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- From 2026-03-30 to 2026-04-03 there are no deploys to the ledger service because of the fiscal year close. [constraint; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11]\n- Authentication gateway token expiry was shortened to 15 minutes because the security audit flagged long-lived tokens. [valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- At the Cinder standup on 2026-01-30, it was decided that authentication gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- As of 2026-01-12, the billing API is owned by the Ember team, having been run by the Atlas team until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: The Atlas team owns the billing API as of 2025-06-09, when ownership passed from the Ember team; the Boreal team was recorded by mistake and never held it. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: The Boreal team owns the billing API as of 2025-06-09, when ownership passed from the Ember team. [decision; valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: The Ember team owns the billing API as of 2025-03-07, when ownership passed from the Atlas team. [decision; valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- The Boreal team observed on 2025-12-01 that the billing API's error rate crept up to 2 percent after the dependency bump. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- As of 2025-11-27, the Cinder pager pages Yuki Tanaka, not Diego. [constraint; valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, the Cinder pager pages Diego this cycle, not Yuki Tanaka. [constraint; valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n    earlier: As of 2025-09-05, the Cinder team says to page Yuki Tanaka for anything this cycle, not Diego. [constraint; valid 2025-09-05 to 2025-10-24; recorded by standup/cinder/2025-09-05]\n    earlier: Diego has the Cinder pager as of 2025-07-17, taking over from Yuki Tanaka. [valid 2025-07-17 to 2025-09-05; recorded by standup/cinder/2025-07-17]\n    earlier: Yuki Tanaka has the Cinder pager as of 2025-06-06, taking over from Diego. [valid 2025-06-06 to 2025-07-17; recorded by standup/cinder/2025-06-06]\n    earlier: Diego has the Cinder pager as of 2025-04-24, taking over from Yuki Tanaka. [valid 2025-04-24 to 2025-06-06; recorded by standup/cinder/2025-04-24]\n    earlier: Yuki Tanaka has the Cinder pager for the cycle starting 2025-02-27, taking over from Diego. [valid 2025-02-27 to 2025-04-24; recorded by standup/cinder/2025-02-27]\n- As of 2025-11-27, Diego is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on Cinder. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- As of 2025-11-27, Yuki Tanaka takes the Cinder pager from Diego. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n- As of 2025-11-27, Diego Alvarez is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n- The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, during the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n\nQuestion: Which team was Yuki on before joining Cinder?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654310-kCbE4eJeuDQ7zYPa70qa",
+  "object": "chat.completion",
+  "created": 1788654310,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which team was Yuki on before joining Cinder?\n\nLet me look through the memory for information about Yuki Tanaka's team history.\n\nMemory entries about Yuki:\n- Pager rotations: Yuki Tanaka has the Cinder pager at various times (2025-02-27, 2025-06-06, 2025-11-27).\n- Diego is on the Ember team, having left Cinder.\n\nThere's no information about Yuki being on any team other than Cinder. The memory only mentions Yuki in the context of the Cinder pager. There's no record of which team Yuki was on before joining Cinder.\n\nSo the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which team was Yuki on before joining Cinder?\n\nLet me look through the memory for information about Yuki Tanaka's team history.\n\nMemory entries about Yuki:\n- Pager rotations: Yuki Tanaka has the Cinder pager at various times (2025-02-27, 2025-06-06, 2025-11-27).\n- Diego is on the Ember team, having left Cinder.\n\nThere's no information about Yuki being on any team other than Cinder. The memory only mentions Yuki in the context of the Cinder pager. There's no record of which team Yuki was on before joining Cinder.\n\nSo the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1674,
+   "completion_tokens": 148,
+   "total_tokens": 1822,
+   "cost": 6.655e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1600,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 6.655e-05,
+    "upstream_inference_prompt_cost": 2.955e-05,
+    "upstream_inference_completions_cost": 3.7e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 142,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4313545420300215,
+ "fetched_at": "2026-09-06T00:25:13Z"
+}

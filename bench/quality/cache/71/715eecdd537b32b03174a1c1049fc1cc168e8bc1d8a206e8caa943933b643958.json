@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2025-04-11] handover/2025-04-11-webhooks: Quick one: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved.\n- [2025-09-09] handover/2025-09-09-webhooks: The Ember team handed the webhook dispatcher to team Atlas today; Oskar wrote up the handover doc for Priya.\n- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-11-24] handover/2025-11-24-event-bus: From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2026-04-22] handover/2026-04-22-webhooks: The webhook dispatcher has a new home: Dune. Team Atlas kept it until today.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-11-19] handover/2025-11-19-notifier: Notifier has a new home: the Cinder team. Boreal kept it until today.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-11-11] standup/boreal/2025-11-11-2: Heads-up from team Boreal: the event bus' CPU sat at 90 percent after the traffic shift.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2026-03-25] handover/2026-03-25-billing-api: The billing API has a new home: team Dune. Boreal kept it until today.\n- [2025-10-20] handover/2025-10-20-catalog: Quick one: the product catalog belongs to the Boreal team starting today. Thanks to the Cinder team for running it until now.\n- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-12-24] handover/2025-12-24-billing-api: Handover: as of today the billing service moves from the Atlas team to team Boreal. Priya walked Lena through the runbook this morning.\n- [2026-04-06] handover/2026-04-06-notifier: Handover: as of today the notifier moves from the Cinder team to team Boreal. Yuki walked Lena through the runbook this morning.\n- [2025-03-11] standup/ember/2025-03-11-2: Observation from team Ember: after the cache change, the webhooks service's memory use grew steadily for a week. Team Ember now does pairing on every production change.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2026-04-29] handover/2026-04-29-ledger: Cinder is taking over the ledger from team Boreal, effective today. Dashboards and alerts are being repointed.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-09-15] standup/boreal/2025-09-15: Lena still has the Boreal pager.\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n\nQuestion: Which team owned webhooks before Boreal?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653331-HPLrCAC1gZsLHXiO0aRu",
+  "object": "chat.completion",
+  "created": 1788653331,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which team owned webhooks before Boreal.\n\nMemory entries about webhooks ownership:\n- 2025-01-09: webhooks is a Boreal service.\n- 2025-04-11: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\n- 2025-09-09: Ember handed webhook dispatcher to team Atlas.\n- 2026-04-22: webhook dispatcher has a new home: Dune. Atlas kept it until today.\n\nSo the timeline: Boreal → Ember (2025-04-11) → Atlas (2025-09-09) → Dune (2026-04-22).\n\nWait, the question: \"Which team owned webhooks before Boreal?\" Hmm. Boreal owned it at 2025-01-09, then Ember. But \"before Boreal\" — was there a team before Boreal? The earliest entry says webhooks is a Boreal service on 2025-01-09. The 2025-04-11 handover says \"Thanks to Boreal for running it until now\" — meaning before Ember, Boreal owned it. So the question might be interpreted as: before webhooks went to... hmm.\n\nActually wait — maybe the question is poorly worded, but the intended answer: The 2025-04-11 handover says webhooks went to Ember, thanking Boreal for running it until then. So before Ember, Boreal owned it. But the question asks who owned it before Boreal.\n\nAlternatively, the question could be interpreted in the context of a later handover — perhaps the most recent change involving Boreal? No, Boreal never received webhooks back.\n\nHmm, but let me reconsider. The memory says the earliest record is 2025-01-09: webhooks is a Boreal service. There's no record of who owned it before Boreal. So the answer would be \"I don't know.\"\n\nBut wait — maybe the question intends \"before Boreal handed it away\" — i.e., who owned webhooks before the handover from Boreal? That would be Boreal itself, which doesn't make sense. Or maybe the question is about the sequence: Boreal → Ember. So \"which team owned webhooks before [it was handed away from] Boreal?\" That's Boreal.\n\nHmm, tricky. Let me think about the likely intent. Perhaps the question is a test of the superseding rule: The chain is Boreal → Ember → Atlas → Dune. The question \"which team owned webhooks before Boreal\" — there is no information about ownership before 2025-01-09 when Boreal had it. Actually the 2025-01-09 entry says \"The webhooks service is a Boreal service\" — it doesn't say it just became Boreal's. So no prior owner is recorded.\n\nBut hold on — maybe the question is actually about the moment: \"before Boreal\" might be a mistake, and the intended question based on the pattern of such QA datasets: \"Which team owned webhooks before Ember?\" would be Boreal. Or \"before Atlas?\" would be Ember. \"Before Dune?\" would be Atlas.\n\nGiven the question as asked: \"Which team owned webhooks before Boreal?\" — If no team is recorded as owning it before Boreal, answer \"I don't know.\"\n\nAlternatively, could the question be interpreted temporally as of today? Today webhooks is owned by Dune. Before Boreal? Boreal owned it earliest. There's no earlier owner in memory.\n\nHmm, but let me reconsider: is there any entry that says who owned webhooks before Boreal? The 2025-04-11 entry: \"webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\" This confirms Boreal owned it before Ember, not before Boreal.\n\nSo the answer per the rules: If memory does not contain the answer, reply exactly \"I don't know.\"\n\nI think the correct answer is \"I don't know\" since no owner prior to Boreal is recorded. However, I worry the intended answer might be Ember (if the question author misread the timeline) — but per the rules, answer only from memory. The memory chain: Boreal (2025-01-09) → Ember (2025-04-11) → Atlas (2025-09-09) → Dune (2026-04-22). Nothing before Boreal.\n\nAnswer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owned webhooks before Boreal.\n\nMemory entries about webhooks ownership:\n- 2025-01-09: webhooks is a Boreal service.\n- 2025-04-11: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\n- 2025-09-09: Ember handed webhook dispatcher to team Atlas.\n- 2026-04-22: webhook dispatcher has a new home: Dune. Atlas kept it until today.\n\nSo the timeline: Boreal → Ember (2025-04-11) → Atlas (2025-09-09) → Dune (2026-04-22).\n\nWait, the question: \"Which team owned webhooks before Boreal?\" Hmm. Boreal owned it at 2025-01-09, then Ember. But \"before Boreal\" — was there a team before Boreal? The earliest entry says webhooks is a Boreal service on 2025-01-09. The 2025-04-11 handover says \"Thanks to Boreal for running it until now\" — meaning before Ember, Boreal owned it. So the question might be interpreted as: before webhooks went to... hmm.\n\nActually wait — maybe the question is poorly worded, but the intended answer: The 2025-04-11 handover says webhooks went to Ember, thanking Boreal for running it until then. So before Ember, Boreal owned it. But the question asks who owned it before Boreal.\n\nAlternatively, the question could be interpreted in the context of a later handover — perhaps the most recent change involving Boreal? No, Boreal never received webhooks back.\n\nHmm, but let me reconsider. The memory says the earliest record is 2025-01-09: webhooks is a Boreal service. There's no record of who owned it before Boreal. So the answer would be \"I don't know.\"\n\nBut wait — maybe the question intends \"before Boreal handed it away\" — i.e., who owned webhooks before the handover from Boreal? That would be Boreal itself, which doesn't make sense. Or maybe the question is about the sequence: Boreal → Ember. So \"which team owned webhooks before [it was handed away from] Boreal?\" That's Boreal.\n\nHmm, tricky. Let me think about the likely intent. Perhaps the question is a test of the superseding rule: The chain is Boreal → Ember → Atlas → Dune. The question \"which team owned webhooks before Boreal\" — there is no information about ownership before 2025-01-09 when Boreal had it. Actually the 2025-01-09 entry says \"The webhooks service is a Boreal service\" — it doesn't say it just became Boreal's. So no prior owner is recorded.\n\nBut hold on — maybe the question is actually about the moment: \"before Boreal\" might be a mistake, and the intended question based on the pattern of such QA datasets: \"Which team owned webhooks before Ember?\" would be Boreal. Or \"before Atlas?\" would be Ember. \"Before Dune?\" would be Atlas.\n\nGiven the question as asked: \"Which team owned webhooks before Boreal?\" — If no team is recorded as owning it before Boreal, answer \"I don't know.\"\n\nAlternatively, could the question be interpreted temporally as of today? Today webhooks is owned by Dune. Before Boreal? Boreal owned it earliest. There's no earlier owner in memory.\n\nHmm, but let me reconsider: is there any entry that says who owned webhooks before Boreal? The 2025-04-11 entry: \"webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\" This confirms Boreal owned it before Ember, not before Boreal.\n\nSo the answer per the rules: If memory does not contain the answer, reply exactly \"I don't know.\"\n\nI think the correct answer is \"I don't know\" since no owner prior to Boreal is recorded. However, I worry the intended answer might be Ember (if the question author misread the timeline) — but per the rules, answer only from memory. The memory chain: Boreal (2025-01-09) → Ember (2025-04-11) → Atlas (2025-09-09) → Dune (2026-04-22). Nothing before Boreal.\n\nAnswer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1602,
+   "completion_tokens": 949,
+   "total_tokens": 2551,
+   "cost": 0.00034588,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00034588,
+    "upstream_inference_prompt_cost": 0.00010863,
+    "upstream_inference_completions_cost": 0.00023725
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 943,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 11.115468375035562,
+ "fetched_at": "2026-09-06T00:09:03Z"
+}

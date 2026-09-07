@@ -2,7 +2,7 @@
 {"qid": "q002", "answer": "I don't know"}
 {"qid": "q003", "answer": "I don't know"}
 {"qid": "q004", "answer": "I don't know"}
-{"qid": "q005", "answer": "Storage for originals doubled in six months."}
+{"qid": "q005", "answer": "I don't know"}
 {"qid": "q006", "answer": "I don't know"}
 {"qid": "q007", "answer": "I don't know"}
 {"qid": "q008", "answer": "I don't know"}
@@ -10,13 +10,13 @@
 {"qid": "q010", "answer": "I don't know"}
 {"qid": "q011", "answer": "I don't know"}
 {"qid": "q012", "answer": "I don't know"}
-{"qid": "q013", "answer": "I don't know"}
-{"qid": "q014", "answer": "I don't know"}
+{"qid": "q013", "answer": "Yuki Tanaka"}
+{"qid": "q014", "answer": "A consumer offset stuck after a broker restart."}
 {"qid": "q015", "answer": "I don't know"}
 {"qid": "q016", "answer": "A retry loop that ignored idempotency keys"}
 {"qid": "q017", "answer": "I don't know"}
 {"qid": "q018", "answer": "I don't know"}
-{"qid": "q019", "answer": "The Dune team"}
+{"qid": "q019", "answer": "Dune team"}
 {"qid": "q020", "answer": "I don't know"}
 {"qid": "q021", "answer": "I don't know"}
 {"qid": "q022", "answer": "I don't know"}
@@ -27,24 +27,24 @@
 {"qid": "q027", "answer": "I don't know"}
 {"qid": "q028", "answer": "I don't know"}
 {"qid": "q029", "answer": "I don't know"}
-{"qid": "q030", "answer": "I don't know"}
+{"qid": "q030", "answer": "Yuki Tanaka"}
 {"qid": "q031", "answer": "I don't know"}
 {"qid": "q032", "answer": "I don't know"}
 {"qid": "q033", "answer": "I don't know"}
-{"qid": "q034", "answer": "Atlas team"}
+{"qid": "q034", "answer": "I don't know"}
 {"qid": "q035", "answer": "I don't know"}
 {"qid": "q036", "answer": "I don't know"}
 {"qid": "q037", "answer": "I don't know"}
 {"qid": "q038", "answer": "I don't know"}
-{"qid": "q039", "answer": "Boreal team"}
+{"qid": "q039", "answer": "Boreal"}
 {"qid": "q040", "answer": "I don't know"}
 {"qid": "q041", "answer": "I don't know"}
 {"qid": "q042", "answer": "I don't know"}
 {"qid": "q043", "answer": "I don't know"}
 {"qid": "q044", "answer": "I don't know"}
 {"qid": "q045", "answer": "Ember"}
-{"qid": "q046", "answer": "I don't know"}
-{"qid": "q047", "answer": "Dune"}
+{"qid": "q046", "answer": "Atlas team"}
+{"qid": "q047", "answer": "Dune team"}
 {"qid": "q048", "answer": "I don't know"}
 {"qid": "q049", "answer": "I don't know"}
 {"qid": "q050", "answer": "I don't know"}
@@ -68,7 +68,7 @@
 {"qid": "q068", "answer": "I don't know"}
 {"qid": "q069", "answer": "I don't know"}
 {"qid": "q070", "answer": "I don't know"}
-{"qid": "q071", "answer": "I don't know"}
+{"qid": "q071", "answer": "The Boreal team"}
 {"qid": "q072", "answer": "I don't know"}
 {"qid": "q073", "answer": "I don't know"}
 {"qid": "q074", "answer": "I don't know"}
@@ -78,7 +78,7 @@
 {"qid": "q078", "answer": "I don't know"}
 {"qid": "q079", "answer": "I don't know"}
 {"qid": "q080", "answer": "I don't know"}
-{"qid": "q081", "answer": "Priya Raman"}
+{"qid": "q081", "answer": "I don't know"}
 {"qid": "q082", "answer": "I don't know"}
 {"qid": "q083", "answer": "I don't know"}
 {"qid": "q084", "answer": "I don't know"}
@@ -101,26 +101,26 @@
 {"qid": "q101", "answer": "I don't know"}
 {"qid": "q102", "answer": "I don't know"}
 {"qid": "q103", "answer": "I don't know"}
-{"qid": "q104", "answer": "standup/cinder/2026-01-30, written 2026-01-30"}
-{"qid": "q105", "answer": "I don't know"}
+{"qid": "q104", "answer": "I don't know"}
+{"qid": "q105", "answer": "incident-review/INC-2025-017, 2025-08-07"}
 {"qid": "q106", "answer": "I don't know"}
 {"qid": "q107", "answer": "I don't know"}
 {"qid": "q108", "answer": "I don't know"}
 {"qid": "q109", "answer": "I don't know"}
-{"qid": "q110", "answer": "standup/atlas/2026-05-27, on 2026-05-27"}
+{"qid": "q110", "answer": "I don't know"}
 {"qid": "q111", "answer": "I don't know"}
 {"qid": "q112", "answer": "I don't know"}
 {"qid": "q113", "answer": "I don't know"}
 {"qid": "q114", "answer": "handover/2025-05-20-search-indexer, on 2025-05-20."}
-{"qid": "q115", "answer": "handover/2026-04-01-search-indexer, on 2026-04-01"}
-{"qid": "q116", "answer": "I don't know"}
-{"qid": "q117", "answer": "standup/atlas/2026-04-08, recorded on 2026-04-08"}
-{"qid": "q118", "answer": "standup/dune/2026-05-22, on 2026-05-22."}
-{"qid": "q119", "answer": "I don't know"}
-{"qid": "q120", "answer": "I don't know"}
+{"qid": "q115", "answer": "handover/2026-04-01-search-indexer, on 2026-04-01."}
+{"qid": "q116", "answer": "standup/ember/2026-01-15, as of 2026-01-15"}
+{"qid": "q117", "answer": "standup/boreal/2026-03-20, on 2026-03-20"}
+{"qid": "q118", "answer": "standup/dune/2026-05-22, on 2026-05-22 (Tomasz picked up the Dune team on-call shift from Farah)."}
+{"qid": "q119", "answer": "2025-02-05"}
+{"qid": "q120", "answer": "2025-08-07"}
 {"qid": "q121", "answer": "I don't know"}
 {"qid": "q122", "answer": "2026-05-19"}
-{"qid": "q123", "answer": "standup/cinder/2025-12-29, on 2025-12-29"}
+{"qid": "q123", "answer": "I don't know"}
 {"qid": "q124", "answer": "I don't know"}
 {"qid": "q125", "answer": "I don't know"}
 {"qid": "q126", "answer": "I don't know"}

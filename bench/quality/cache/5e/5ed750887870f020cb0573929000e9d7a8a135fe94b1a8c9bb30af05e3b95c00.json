@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Webhooks depends on the event-bus [valid 2025-02-13 to now; recorded by standup/boreal/2025-02-13]\n- Reporting depends on the event-bus [valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n    earlier: Reporting depends on the ledger [valid 2025-02-06 to 2025-09-19; recorded by standup/dune/2025-02-06]\n- The notifier depends on the event-bus [valid 2025-02-13 to now; recorded by standup/boreal/2025-02-13]\n- Boreal noticed that webhooks's request volume halved after the client rollout [observation; valid 2025-04-22 to now; recorded by standup/boreal/2025-04-22-2]\n- INC-2026-003: webhooks delivered some events twice on 2026-02-08; the root cause was a retry loop that ignored idempotency keys [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- Webhooks deploys only on Thursdays between 07:00 and 09:00 UTC [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- The event-bus deploys only on weekdays after 15:00 UTC [constraint; valid 2025-04-22 to now; recorded by standup/boreal/2025-04-22]\n- Dune owns webhooks [valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n    earlier: Atlas owns webhooks [valid 2025-09-09 to 2026-04-22; recorded by handover/2025-09-09-webhooks]\n    earlier: Ember owns webhooks [valid 2025-04-11 to 2025-09-09; recorded by handover/2025-04-11-webhooks]\n    earlier: Boreal owns webhooks [valid 2025-01-09 to 2025-04-11; recorded by standup/boreal/2025-01-09-2]\n- Dune noticed that the event-bus's request volume halved after the client rollout [observation; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08-2]\n- Ember noticed that webhooks's memory use grew steadily for a week after the cache change [observation; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Boreal owns the event-bus [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: Dune owns the event-bus [valid 2025-09-09 to 2025-11-24; recorded by handover/2025-09-09-event-bus]\n    earlier: Boreal owns the event-bus [valid 2025-01-09 to 2025-09-09; recorded by standup/boreal/2025-01-09]\n- Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one [decision; valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- Boreal noticed that the event-bus's CPU sat at 90 percent after the traffic shift [observation; valid 2025-11-11 to now; recorded by standup/boreal/2025-11-11-2]\n- Decision: the event-bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far [decision; valid 2026-05-05 to now; recorded by standup/boreal/2026-05-05]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Billing-api depends on feature-flags [valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- Decision: webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review [decision; valid 2025-09-16 to now; recorded by standup/atlas/2025-09-16]\n- Billing-api depends on the ledger [valid 2025-02-06 to now; recorded by standup/atlas/2025-02-06]\n- The handover note of 2025-11-18 wrongly recorded Ember as the owner of search-indexer [valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n- The handover note of 2025-06-25 wrongly recorded Ember as the owner of reporting [valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n\nQuestion: Which note first recorded that webhooks depends on the event-bus, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658720-oDqPlRw4dP2Eowa9F7vH",
+  "object": "chat.completion",
+  "created": 1788658720,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/boreal/2025-02-13, on 2025-02-13",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded that webhooks depends on the event-bus, and when?\n\nLooking at memory: \"Webhooks depends on the event-bus [valid 2025-02-13 to now; recorded by standup/boreal/2025-02-13]\"\n\nSo the note is standup/boreal/2025-02-13, and it was recorded on 2025-02-13. There's only one entry about webhooks depending on event-bus, so the first (and only) record is that one.\n\nAnswer: standup/boreal/2025-02-13, recorded 2025-02-13.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded that webhooks depends on the event-bus, and when?\n\nLooking at memory: \"Webhooks depends on the event-bus [valid 2025-02-13 to now; recorded by standup/boreal/2025-02-13]\"\n\nSo the note is standup/boreal/2025-02-13, and it was recorded on 2025-02-13. There's only one entry about webhooks depending on event-bus, so the first (and only) record is that one.\n\nAnswer: standup/boreal/2025-02-13, recorded 2025-02-13.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1354,
+   "completion_tokens": 161,
+   "total_tokens": 1515,
+   "cost": 0.0001418,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001418,
+    "upstream_inference_prompt_cost": 0.00010155,
+    "upstream_inference_completions_cost": 4.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 139,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.00328637502389,
+ "fetched_at": "2026-09-06T01:38:44Z"
+}

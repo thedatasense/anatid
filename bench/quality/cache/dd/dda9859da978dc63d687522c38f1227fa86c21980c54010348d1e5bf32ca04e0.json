@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- billing-api can be released on weekday mornings before 11:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-24 to now; recorded by standup/atlas/2025-03-24]\n- The Postgres 14 pin on Ledger lifts when the partitioning work finishes. [valid 2025-05-30 to now; recorded by standup/atlas/2025-05-30]\n- Diego carried the Cinder on-call phone from 2025-11-25 until 2025-12-15, when Yuki took over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is back on the Cinder on-call rotation as of 2025-11-25, carrying the phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Diego is off the Cinder on-call rotation as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- The scheduler leader lease will be shortened to ten seconds because two leaders ran the nightly jobs twice in INC-2026-009. [decision; valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- The authentication gateway is not Team Ember's service. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- The security audit flagged long-lived authentication gateway tokens. [valid 2026-01-27 to now; recorded by standup/boreal/2026-01-27]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-07-06. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- Every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11]\n- Authentication gateway tokens will expire after 15 minutes instead of an hour as of 2026-01-27. [decision; valid 2026-01-27 to now; recorded by standup/boreal/2026-01-27]\n- The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-04-14 to now; recorded by standup/ember/2025-04-14]\n- The authentication gateway went to team Boreal as of 2025-07-01, not the Cinder team; Cinder never owned it. [decision; valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n    earlier: The authentication gateway lives with team Cinder as of 2025-07-01. [decision; valid 2025-07-01 to 2025-07-18; recorded by handover/2025-07-01-auth-gateway]\n    earlier: The authentication gateway lives with team Ember. [valid 2025-01-20 to 2025-07-01; recorded by standup/ember/2025-01-20-2]\n- Cinder observed at standup on 2026-04-17 that the authentication gateway's cold start time tripled after the runtime upgrade. [valid 2026-04-17 to now; recorded by standup/cinder/2026-04-17]\n- Team Ember reported at standup on 2025-11-10 that the authentication gateway's CPU sat at 90 percent after the traffic shift. [valid 2025-11-10 to now; recorded by standup/ember/2025-11-10]\n- Team Ember reported at standup on 2025-11-17 that the authentication gateway's error rate crept up to 2 percent following the dependency bump. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n\nQuestion: When can auth-gateway be deployed?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657136-LN5zd4WEzDsE9AVw1n1M",
+  "object": "chat.completion",
+  "created": 1788657136,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Mondays to Thursdays between 09:00 and 17:00 UTC.",
+     "refusal": null,
+     "reasoning": "The question asks when auth-gateway can be deployed. Memory says: \"The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC.\" [constraint; valid 2025-04-14 to now]\n\nSo answer: Mondays to Thursdays between 09:00 and 17:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when auth-gateway can be deployed. Memory says: \"The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC.\" [constraint; valid 2025-04-14 to now]\n\nSo answer: Mondays to Thursdays between 09:00 and 17:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1459,
+   "completion_tokens": 92,
+   "total_tokens": 1551,
+   "cost": 0.000124745,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000124745,
+    "upstream_inference_prompt_cost": 0.000101745,
+    "upstream_inference_completions_cost": 2.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 72,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8888987500104122,
+ "fetched_at": "2026-09-06T01:12:18Z"
+}

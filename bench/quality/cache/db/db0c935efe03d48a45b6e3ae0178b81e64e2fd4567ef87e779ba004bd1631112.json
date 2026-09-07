@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-05-22, the Dune team observed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- Every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-07-29 to now; recorded by standup/ember/2025-07-29]\n- Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-18 to now; recorded by standup/ember/2025-02-18]\n- Changes to the billing API need a rollback plan attached to the pull request. [constraint; valid 2025-04-02 to now; recorded by standup/ember/2025-04-02]\n- The ledger service relies on the authentication gateway for service tokens. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date. [decision; valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: The Ember team owns the authentication gateway. [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- The Boreal team noticed on 2025-05-07 that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07-2]\n- On 2025-09-16, Oskar wrote the handover doc for Diego for the authentication gateway handover to Cinder. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- The Cinder team observed on 2025-09-03 that the authentication gateway's cold start time tripled after the runtime upgrade. [valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03-2]\n- At the Cinder standup on 2026-01-30, it was decided that authentication gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- Authentication gateway token expiry was shortened to 15 minutes because the security audit flagged long-lived tokens. [valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- The ledger service's memory use grew steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- A partner asked for webhook key rotation in their security review. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- As of 2025-09-30, the billing API will gate the new invoice flow behind feature-flags because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change, and since it was not their service, they flagged it. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. [constraint; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- The root cause of INC-2025-004 was a consumer offset stuck after a broker restart. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n\nQuestion: What does a change to auth-gateway need before it can merge?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652608-BaRiue87RwNrnIicMvhO",
+  "object": "chat.completion",
+  "created": 1788652608,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Two reviewer approvals and a security sign-off.",
+     "refusal": null,
+     "reasoning": "The question asks what a change to auth-gateway needs before it can merge. The memory entry: \"Every authentication gateway change requires two reviewer approvals and a security sign-off.\" That's the answer.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks what a change to auth-gateway needs before it can merge. The memory entry: \"Every authentication gateway change requires two reviewer approvals and a security sign-off.\" That's the answer.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1286,
+   "completion_tokens": 51,
+   "total_tokens": 1337,
+   "cost": 0.00010152,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00010152,
+    "upstream_inference_prompt_cost": 8.877e-05,
+    "upstream_inference_completions_cost": 1.275e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 40,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.4516462920000777,
+ "fetched_at": "2026-09-05T23:56:49Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2025-11-20, Team Boreal took over the event bus from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- On 2025-08-29, Diego took over the Team Cinder pager from Yuki. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29]\n- As of 2025-06-16, Team Boreal has taken over the catalog service from Team Dune. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: Team Dune owns the catalog service as of the 2025-03-20 ownership transfer. [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Team Cinder owns the catalog service. [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n- As of 2025-11-20, the event bus is owned by Team Boreal; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is owned by Team Cinder; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: The event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas; Team Boreal kept it until then. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- As of 2025-10-15, the scheduler is owned by Team Dune; Team Atlas kept it until then. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler went to Team Atlas, not Team Cinder; Team Cinder never owned it, and the Ember team no longer owns it. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder; the Ember team no longer owns it. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- On 2025-05-08, Team Boreal observed that the catalog service's memory use grew steadily for a week following the cache change, and flagged it since the catalog service is not Team Boreal's service. [valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- As of 2026-02-19, Lena has the Team Boreal pager this cycle, taking over from Marcus. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: As of 2025-12-26, Marcus has the Team Boreal pager this cycle; pages for anything should go to Marcus, not Lena. [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: As of 2025-10-31, Lena has the Team Boreal pager this cycle, taking over from Marcus. [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n- As of 2025-10-27, the scheduler deploys on weekday mornings before 11:00 UTC. [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n    earlier: The scheduler deploys on weekdays after 15:00 UTC and at no other time. [constraint; valid 2025-03-19 to 2025-10-27; recorded by standup/ember/2025-03-19]\n- As of 2026-02-23, the scheduler's deploy window remains weekday mornings before 11:00 UTC. [constraint; valid 2026-02-23 to now; recorded by standup/dune/2026-02-23]\n- As of 2026-02-24, the flags service belongs to Team Cinder; Team Boreal kept it until then. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the flags service belongs to Team Boreal; Team Cinder kept it until then. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the flags service belongs to Team Cinder; Team Atlas ran it until then. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n\nQuestion: Which team owned the catalog before Boreal took it over?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653752-FvNhteIomYimhKvUVhKz",
+  "object": "chat.completion",
+  "created": 1788653752,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Dune",
+     "refusal": null,
+     "reasoning": "The question: Which team owned the catalog before Boreal took it over?\n\nMemory: On 2025-06-16, Team Boreal took over the catalog service from Team Dune. Earlier: Team Dune owns catalog service as of 2025-03-20 transfer. So before Boreal took over, Team Dune owned it.\n\nAnswer: Team Dune.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: Which team owned the catalog before Boreal took it over?\n\nMemory: On 2025-06-16, Team Boreal took over the catalog service from Team Dune. Earlier: Team Dune owns catalog service as of 2025-03-20 transfer. So before Boreal took over, Team Dune owned it.\n\nAnswer: Team Dune.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1675,
+   "completion_tokens": 82,
+   "total_tokens": 1757,
+   "cost": 0.000146125,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000146125,
+    "upstream_inference_prompt_cost": 0.000125625,
+    "upstream_inference_completions_cost": 2.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 77,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7106700830045156,
+ "fetched_at": "2026-09-06T00:15:55Z"
+}

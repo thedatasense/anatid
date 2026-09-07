@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The ledger deploys only on Mondays and Wednesdays between 14:00 and 16:00 UTC [constraint; valid 2026-04-16 to now; recorded by standup/ember/2026-04-16]\n    earlier: The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC [constraint; valid 2025-04-18 to 2026-04-16; recorded by standup/atlas/2025-04-18]\n- Cinder noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- The ledger must stay on Postgres 14 until the partitioning work finishes [constraint; valid 2025-09-12 to now; recorded by standup/atlas/2025-09-12]\n- Atlas noticed that the ledger's memory use grew steadily for a week after the cache change [observation; valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- Atlas adopted a no-deploy Friday [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Billing-api depends on the ledger [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- The ledger depends on auth-gateway [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- Billing-api deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-05-05 to now; recorded by standup/boreal/2025-05-05]\n- No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- INC-2025-011: the ledger saw write latency spike tenfold for an hour on 2025-04-26; the root cause was an index missing after the schema migration [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- Ember owns the ledger [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: Atlas owns the ledger [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- Cinder noticed that the ledger's disk usage jumped 30 percent after the retention change [observation; valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011 [decision; valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- Ember noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- Dune noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Ember noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- Auth-gateway deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\n\nQuestion: When is the deploy freeze for the ledger, and why?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788655008-qUhVuNBH5tmW1q76FYJ9",
+  "object": "chat.completion",
+  "created": 1788655008,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2026-03-30 to 2026-04-03, because of the fiscal year close.",
+     "refusal": null,
+     "reasoning": "The question asks: \"When is the deploy freeze for the ledger, and why?\"\n\nLooking at the memory:\n- \"No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\"\n\nThat's the deploy freeze for the ledger: from 2026-03-30 to 2026-04-03, because of the fiscal year close.\n\nThe answer should be one short line with the value asked for. The question asks for when and why. So: \"2026-03-30 to 2026-04-03, because of the fiscal year close.\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"When is the deploy freeze for the ledger, and why?\"\n\nLooking at the memory:\n- \"No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\"\n\nThat's the deploy freeze for the ledger: from 2026-03-30 to 2026-04-03, because of the fiscal year close.\n\nThe answer should be one short line with the value asked for. The question asks for when and why. So: \"2026-03-30 to 2026-04-03, because of the fiscal year close.\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1237,
+   "completion_tokens": 184,
+   "total_tokens": 1421,
+   "cost": 0.000138775,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000138775,
+    "upstream_inference_prompt_cost": 9.2775e-05,
+    "upstream_inference_completions_cost": 4.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 160,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.5678183340351097,
+ "fetched_at": "2026-09-06T00:36:50Z"
+}

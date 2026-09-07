@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-04-22, the search indexer is pinned to OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The indexer served stale results for two days on 2025-10-03 during incident INC-2025-023. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- Reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023. [decision; valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- On 2026-06-09, the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [constraint; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- The catalog service still relies on the resizer. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, when ownership passed from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- On 2026-02-10, the Boreal team observed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10-2]\n- On 2025-12-18, the Atlas team decided that the indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes. [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- On 2026-05-27, the Atlas team observed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- The job scheduler depends on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- On 2026-06-04, the Boreal team observed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- On 2026-03-20, the Boreal team observed that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- The feature-flags service saw 40,000 requests per second at peak, most of them identical, as of 2025-09-02. [valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- The ledger service's memory use grew steadily for a week after the cache change. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n\nQuestion: Which service depends on search-indexer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654007-8UQKqEEw5x9pFnJSJm61",
+  "object": "chat.completion",
+  "created": 1788654007,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service depends on search-indexer?\"\n\nLooking at the memory, I see dependency entries:\n- The indexer depends on the product catalog for product documents. (indexer → product catalog)\n- The catalog service still relies on the resizer. (catalog → resizer)\n- The job scheduler depends on the feature-flags service. (scheduler → feature-flags)\n\nI don't see any entry stating that a service depends on the search-indexer. The dependencies listed show what the indexer depends on, not what depends on the indexer.\n\nSo the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service depends on search-indexer?\"\n\nLooking at the memory, I see dependency entries:\n- The indexer depends on the product catalog for product documents. (indexer → product catalog)\n- The catalog service still relies on the resizer. (catalog → resizer)\n- The job scheduler depends on the feature-flags service. (scheduler → feature-flags)\n\nI don't see any entry stating that a service depends on the search-indexer. The dependencies listed show what the indexer depends on, not what depends on the indexer.\n\nSo the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1424,
+   "completion_tokens": 128,
+   "total_tokens": 1552,
+   "cost": 0.0001388,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001388,
+    "upstream_inference_prompt_cost": 0.0001068,
+    "upstream_inference_completions_cost": 3.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 122,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.749861249991227,
+ "fetched_at": "2026-09-06T00:20:11Z"
+}

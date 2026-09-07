@@ -1,0 +1,150 @@
+{"qid": "q001", "answer": "Two reviewer approvals and a security sign-off"}
+{"qid": "q002", "answer": "A rollback plan attached to the pull request"}
+{"qid": "q003", "answer": "Because an expired intermediate certificate took logins down in INC-2025-017."}
+{"qid": "q004", "answer": "Because the flat one-second retry was hammering the push provider during its outages."}
+{"qid": "q005", "answer": "The event-bus"}
+{"qid": "q006", "answer": "feature-flags"}
+{"qid": "q007", "answer": "2025-11-24 to 2025-12-02, because of the peak season"}
+{"qid": "q008", "answer": "2026-03-30 to 2026-04-03, because of the fiscal year close"}
+{"qid": "q009", "answer": "Mondays to Thursdays between 09:00 and 17:00 UTC"}
+{"qid": "q010", "answer": "Weekday mornings before 11:00 UTC"}
+{"qid": "q011", "answer": "Weekdays after 15:00 UTC"}
+{"qid": "q012", "answer": "Monthly game day"}
+{"qid": "q013", "answer": "Third floor"}
+{"qid": "q014", "answer": "A consumer offset stuck after a broker restart"}
+{"qid": "q015", "answer": "An index missing after the schema migration"}
+{"qid": "q016", "answer": "A retry loop that ignored idempotency keys."}
+{"qid": "q017", "answer": "2025-07-06"}
+{"qid": "q018", "answer": "2025-10-24"}
+{"qid": "q019", "answer": "2026-02-08"}
+{"qid": "q020", "answer": "Dune"}
+{"qid": "q021", "answer": "Boreal"}
+{"qid": "q022", "answer": "OpenSearch 2.11, until the full reindex completes"}
+{"qid": "q023", "answer": "Postgres 14, until the partitioning work finishes."}
+{"qid": "q024", "answer": "Ember"}
+{"qid": "q025", "answer": "Ember"}
+{"qid": "q026", "answer": "the event-bus"}
+{"qid": "q027", "answer": "the ledger, feature-flags"}
+{"qid": "q028", "answer": "Priya"}
+{"qid": "q029", "answer": "Oskar"}
+{"qid": "q030", "answer": "Lena"}
+{"qid": "q031", "answer": "Yuki"}
+{"qid": "q032", "answer": "Tomasz"}
+{"qid": "q033", "answer": "Atlas"}
+{"qid": "q034", "answer": "Boreal"}
+{"qid": "q035", "answer": "Dune"}
+{"qid": "q036", "answer": "Boreal"}
+{"qid": "q037", "answer": "Boreal"}
+{"qid": "q038", "answer": "Cinder"}
+{"qid": "q039", "answer": "Dune"}
+{"qid": "q040", "answer": "Dune"}
+{"qid": "q041", "answer": "Boreal"}
+{"qid": "q042", "answer": "Boreal"}
+{"qid": "q043", "answer": "Boreal"}
+{"qid": "q044", "answer": "Dune"}
+{"qid": "q045", "answer": "Ember"}
+{"qid": "q046", "answer": "Atlas"}
+{"qid": "q047", "answer": "Dune"}
+{"qid": "q048", "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC"}
+{"qid": "q049", "answer": "Mondays and Wednesdays between 14:00 and 16:00 UTC"}
+{"qid": "q050", "answer": "Weekdays between 08:00 and 10:00 UTC, never on Fridays."}
+{"qid": "q051", "answer": "The ledger"}
+{"qid": "q052", "answer": "2025-12-24"}
+{"qid": "q053", "answer": "2025-12-10"}
+{"qid": "q054", "answer": "2026-01-20"}
+{"qid": "q055", "answer": "2025-04-11"}
+{"qid": "q056", "answer": "Priya"}
+{"qid": "q057", "answer": "Lena"}
+{"qid": "q058", "answer": "Farah"}
+{"qid": "q059", "answer": "Diego"}
+{"qid": "q060", "answer": "Atlas"}
+{"qid": "q061", "answer": "Dune"}
+{"qid": "q062", "answer": "Cinder"}
+{"qid": "q063", "answer": "Atlas"}
+{"qid": "q064", "answer": "Dune"}
+{"qid": "q065", "answer": "Boreal"}
+{"qid": "q066", "answer": "Atlas"}
+{"qid": "q067", "answer": "Boreal"}
+{"qid": "q068", "answer": "Boreal"}
+{"qid": "q069", "answer": "Atlas"}
+{"qid": "q070", "answer": "Cinder"}
+{"qid": "q071", "answer": "Boreal"}
+{"qid": "q072", "answer": "Atlas"}
+{"qid": "q073", "answer": "Mondays between 10:00 and 12:00 UTC"}
+{"qid": "q074", "answer": "Wednesdays between 09:00 and 11:00 UTC"}
+{"qid": "q075", "answer": "Tuesdays between 13:00 and 15:00 UTC"}
+{"qid": "q076", "answer": "Lena"}
+{"qid": "q077", "answer": "I don't know"}
+{"qid": "q078", "answer": "Lena"}
+{"qid": "q079", "answer": "I don't know"}
+{"qid": "q080", "answer": "Tomasz"}
+{"qid": "q081", "answer": "Lena"}
+{"qid": "q082", "answer": "Lena"}
+{"qid": "q083", "answer": "Lena"}
+{"qid": "q084", "answer": "Lena"}
+{"qid": "q085", "answer": "Oskar"}
+{"qid": "q086", "answer": "Tomasz"}
+{"qid": "q087", "answer": "Priya"}
+{"qid": "q088", "answer": "Boreal"}
+{"qid": "q089", "answer": "Boreal"}
+{"qid": "q090", "answer": "Boreal"}
+{"qid": "q091", "answer": "Boreal"}
+{"qid": "q092", "answer": "feature-flags"}
+{"qid": "q093", "answer": "catalog, reporting, search-indexer, the notifier, the event-bus, auth-gateway"}
+{"qid": "q094", "answer": "The ledger"}
+{"qid": "q095", "answer": "scheduler, webhooks, billing-api, image-resizer"}
+{"qid": "q096", "answer": "Weekdays after 15:00 UTC"}
+{"qid": "q097", "answer": "Tuesdays and Thursdays between 10:00 and 12:00 UTC"}
+{"qid": "q098", "answer": "Mondays to Thursdays between 09:00 and 17:00 UTC"}
+{"qid": "q099", "answer": "Weekdays after 15:00 UTC"}
+{"qid": "q100", "answer": "Weekdays after 15:00 UTC"}
+{"qid": "q101", "answer": "handover/2025-07-18-auth-gateway-correction, on 2025-07-18"}
+{"qid": "q102", "answer": "handover/2025-07-03-reporting-correction, on 2025-07-03."}
+{"qid": "q103", "answer": "handover/2025-12-15-search-indexer-correction, on 2025-12-15"}
+{"qid": "q104", "answer": "standup/boreal/2026-01-27, written 2026-01-27"}
+{"qid": "q105", "answer": "incident-review/INC-2025-023, recorded 2025-10-27."}
+{"qid": "q106", "answer": "standup/cinder/2025-04-01, written on 2025-04-01."}
+{"qid": "q107", "answer": "standup/cinder/2025-03-28"}
+{"qid": "q108", "answer": "standup/boreal/2025-02-13, on 2025-02-13"}
+{"qid": "q109", "answer": "standup/ember/2025-03-28, on 2025-03-28"}
+{"qid": "q110", "answer": "standup/boreal/2025-02-13, on 2025-02-13"}
+{"qid": "q111", "answer": "handover/2026-03-25-billing-api, on 2026-03-25."}
+{"qid": "q112", "answer": "handover/2025-12-10-ledger, on 2025-12-10"}
+{"qid": "q113", "answer": "handover/2026-04-29-ledger, on 2026-04-29"}
+{"qid": "q114", "answer": "handover/2025-04-11-webhooks, on 2025-04-11"}
+{"qid": "q115", "answer": "standup/cinder/2025-12-15, on 2025-12-15."}
+{"qid": "q116", "answer": "standup/boreal/2026-03-17, recorded 2026-03-17"}
+{"qid": "q117", "answer": "standup/atlas/2025-07-21, on 2025-07-21"}
+{"qid": "q118", "answer": "2025-04-18"}
+{"qid": "q119", "answer": "2025-07-09"}
+{"qid": "q120", "answer": "2025-10-27"}
+{"qid": "q121", "answer": "2026-05-22"}
+{"qid": "q122", "answer": "standup/ember, 2025-04-14"}
+{"qid": "q123", "answer": "standup/atlas/2025-03-24, recorded 2025-03-24"}
+{"qid": "q124", "answer": "standup/atlas/2025-02-28 (recorded 2025-02-28)"}
+{"qid": "q125", "answer": "standup/boreal/2025-02-21, recorded 2025-02-21"}
+{"qid": "q126", "answer": "I don't know"}
+{"qid": "q127", "answer": "I don't know"}
+{"qid": "q128", "answer": "I don't know"}
+{"qid": "q129", "answer": "I don't know"}
+{"qid": "q130", "answer": "I don't know"}
+{"qid": "q131", "answer": "I don't know"}
+{"qid": "q132", "answer": "I don't know"}
+{"qid": "q133", "answer": "I don't know"}
+{"qid": "q134", "answer": "I don't know"}
+{"qid": "q135", "answer": "I don't know"}
+{"qid": "q136", "answer": "I don't know"}
+{"qid": "q137", "answer": "I don't know"}
+{"qid": "q138", "answer": "I don't know"}
+{"qid": "q139", "answer": "I don't know"}
+{"qid": "q140", "answer": "I don't know"}
+{"qid": "q141", "answer": "I don't know"}
+{"qid": "q142", "answer": "I don't know"}
+{"qid": "q143", "answer": "I don't know"}
+{"qid": "q144", "answer": "I don't know"}
+{"qid": "q145", "answer": "I don't know"}
+{"qid": "q146", "answer": "I don't know"}
+{"qid": "q147", "answer": "I don't know"}
+{"qid": "q148", "answer": "I don't know"}
+{"qid": "q149", "answer": "I don't know"}
+{"qid": "q150", "answer": "I don't know"}

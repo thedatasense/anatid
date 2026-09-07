@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does billing-api depend on now?\nGold answer: ledger and feature-flags\nAlso accepted: (none)\nGrading rule: Correct only if the answer gives the CURRENT value (the gold). Naming an earlier value listed under distractors is wrong, even if it was once true. 'I don't know' is wrong. Every listed service must be named.\n\nAnswer to grade: The ledger service and the feature flag service"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655037-DalHreErY94wZUHGSDMQ",
+  "object": "chat.completion",
+  "created": 1788655037,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names both current dependencies, ledger and feature-flags, matching the gold answer.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"ledger and feature-flags\". The answer to grade says \"The ledger service and the feature flag service\". This names both services: ledger and feature-flags. The phrasing \"feature flag service\" matches \"feature-flags\". This should be correct.\n\nRule: Every listed service must be named. Both are named. No earlier value mentioned. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"ledger and feature-flags\". The answer to grade says \"The ledger service and the feature flag service\". This names both services: ledger and feature-flags. The phrasing \"feature flag service\" matches \"feature-flags\". This should be correct.\n\nRule: Every listed service must be named. Both are named. No earlier value mentioned. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 253,
+   "completion_tokens": 109,
+   "total_tokens": 362,
+   "cost": 3.4705e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.4705e-05,
+    "upstream_inference_prompt_cost": 7.455e-06,
+    "upstream_inference_completions_cost": 2.725e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 79,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.952750416006893,
+ "fetched_at": "2026-09-06T00:37:19Z"
+}

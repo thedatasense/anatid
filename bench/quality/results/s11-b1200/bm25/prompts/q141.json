@@ -1,0 +1,57 @@
+{
+ "qid": "q141",
+ "system": "bm25",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for Dune goes to Farah.\n- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.\n- [2025-11-03] standup/dune/2025-11-03: On-call rotation: Farah Haddad is primary for Dune starting today; Tomasz is off rotation.\n- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-03-31] standup/dune/2025-03-31: Farah still has the Dune pager.\n- [2026-03-09] standup/dune/2026-03-09: Dune sits on the fourth floor.\n- [2026-01-12] standup/dune/2026-01-12: The scheduler remains a the Dune team service.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-04-23] standup/dune/2025-04-23: Team Dune adopted a monthly game day.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.\n- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.\n- [2026-06-03] standup/dune/2026-06-03: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.\n- [2026-02-24] standup/dune/2026-02-24: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.\n- [2026-01-22] standup/dune/2026-01-22: Reminder from team Dune: page Farah for anything this cycle, not Tomasz.\n- [2025-09-04] standup/dune/2025-09-04: Rotation day for Dune: Farah hands the pager to Tomasz.\n- [2026-04-09] standup/dune/2026-04-09: Reminder from the Dune team: page Farah for anything this cycle, not Tomasz Nowak.\n- [2025-09-24] standup/boreal/2025-09-24: Marcus picked up the Boreal on-call shift from Lena today.\n- [2025-05-21] standup/boreal/2025-05-21: Lena picked up the Boreal on-call shift from Marcus today.\n- [2025-05-02] standup/cinder/2025-05-02: Yuki picked up the Cinder on-call shift from Diego today.\n- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.\n- [2025-12-08] standup/dune/2025-12-08-2: Heads-up from team Dune: the bus' request volume halved after the client rollout.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2026-06-17] standup/ember/2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.\n- [2026-04-14] standup/atlas/2026-04-14: Marcus Oyelaran picked up the Atlas on-call shift from Priya today.\n- [2026-01-02] standup/boreal/2026-01-02: Boreal on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-08-29] standup/cinder/2025-08-29: Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-07-09] standup/boreal/2025-07-09: Marcus picked up the Boreal on-call shift from Lena Fischer today.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.\n- [2025-07-22] standup/cinder/2025-07-22: Cinder on-call swapped this morning. Yuki Tanaka carries the phone until the next rotation.\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2025-10-02] standup/cinder/2025-10-02: On-call rotation: Yuki is primary for team Cinder starting today; Diego is off rotation.\n- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.\n- [2025-05-28] standup/ember/2025-05-28: Observation from Ember: after the cache change, Ledger's memory use grew steadily for a week. Reminder: Oskar Lind is on call for team Ember this cycle.\n\nQuestion: Who is the secondary on-call for Dune?"
+  }
+ ],
+ "contexts": [
+  "- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for Dune goes to Farah.",
+  "- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.",
+  "- [2025-11-03] standup/dune/2025-11-03: On-call rotation: Farah Haddad is primary for Dune starting today; Tomasz is off rotation.",
+  "- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.",
+  "- [2025-03-31] standup/dune/2025-03-31: Farah still has the Dune pager.",
+  "- [2026-03-09] standup/dune/2026-03-09: Dune sits on the fourth floor.",
+  "- [2026-01-12] standup/dune/2026-01-12: The scheduler remains a the Dune team service.",
+  "- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.",
+  "- [2025-04-23] standup/dune/2025-04-23: Team Dune adopted a monthly game day.",
+  "- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.",
+  "- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.",
+  "- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.",
+  "- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.",
+  "- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.",
+  "- [2026-06-03] standup/dune/2026-06-03: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.",
+  "- [2026-02-24] standup/dune/2026-02-24: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.",
+  "- [2026-01-22] standup/dune/2026-01-22: Reminder from team Dune: page Farah for anything this cycle, not Tomasz.",
+  "- [2025-09-04] standup/dune/2025-09-04: Rotation day for Dune: Farah hands the pager to Tomasz.",
+  "- [2026-04-09] standup/dune/2026-04-09: Reminder from the Dune team: page Farah for anything this cycle, not Tomasz Nowak.",
+  "- [2025-09-24] standup/boreal/2025-09-24: Marcus picked up the Boreal on-call shift from Lena today.",
+  "- [2025-05-21] standup/boreal/2025-05-21: Lena picked up the Boreal on-call shift from Marcus today.",
+  "- [2025-05-02] standup/cinder/2025-05-02: Yuki picked up the Cinder on-call shift from Diego today.",
+  "- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.",
+  "- [2025-12-08] standup/dune/2025-12-08-2: Heads-up from team Dune: the bus' request volume halved after the client rollout.",
+  "- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.",
+  "- [2026-06-17] standup/ember/2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.",
+  "- [2026-04-14] standup/atlas/2026-04-14: Marcus Oyelaran picked up the Atlas on-call shift from Priya today.",
+  "- [2026-01-02] standup/boreal/2026-01-02: Boreal on-call swapped this morning. Marcus carries the phone until the next rotation.",
+  "- [2025-08-29] standup/cinder/2025-08-29: Cinder on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-07-09] standup/boreal/2025-07-09: Marcus picked up the Boreal on-call shift from Lena Fischer today.",
+  "- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.",
+  "- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.",
+  "- [2025-07-22] standup/cinder/2025-07-22: Cinder on-call swapped this morning. Yuki Tanaka carries the phone until the next rotation.",
+  "- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.",
+  "- [2025-10-02] standup/cinder/2025-10-02: On-call rotation: Yuki is primary for team Cinder starting today; Diego is off rotation.",
+  "- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.",
+  "- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.",
+  "- [2025-05-28] standup/ember/2025-05-28: Observation from Ember: after the cache change, Ledger's memory use grew steadily for a week. Reminder: Oskar Lind is on call for team Ember this cycle."
+ ],
+ "answer": "I don't know"
+}

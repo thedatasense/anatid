@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does billing-api depend on now?\nGold answer: ledger and feature-flags\nAlso accepted: (none)\nGrading rule: Correct only if the answer gives the CURRENT value (the gold). Naming an earlier value listed under distractors is wrong, even if it was once true. 'I don't know' is wrong. Every listed service must be named.\n\nAnswer to grade: The flags service and Ledger"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659078-LgZz0BZDFXipBmidy8yA",
+  "object": "chat.completion",
+  "created": 1788659078,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names both current dependencies, with 'flags service' referring to feature-flags and Ledger matching ledger.\"}\n",
+     "refusal": null,
+     "reasoning": "The gold answer is \"ledger and feature-flags\". The answer to grade says \"The flags service and Ledger\".\n\nIs \"flags service\" an accepted alternative phrasing for \"feature-flags\"? The accepted alternatives list is \"(none)\", meaning no alternative phrasings are accepted. But grading rule says every listed service must be named. The rule says: \"Correct only if the answer gives the CURRENT value (the gold). Naming an earlier value listed under distractors is wrong... 'I don't know' is wrong. Every listed service must be named.\"\n\nHmm. The accepted alternative phrasings field is \"(none)\", so strictly no alternatives accepted. But we should judge semantically? The rule says apply literally. The gold is \"ledger and feature-flags\". The answer names \"flags service\" and \"Ledger\". \"flags service\" is clearly referring to feature-flags service — it's a paraphrase. But accepted alternatives is \"(none)\". Does that mean we must reject any paraphrase?\n\nTypically, the \"accepted alternative phrasings\" field lists explicit variants; if none, we judge based on semantic equivalence. Grading rules in such tasks usually allow paraphrases unless the rule says exact match. The rule here focuses on current vs earlier values, not on exact phrasing. \"Every listed service must be named\" — both services named: ledger (Ledger) and feature-flags (flags service). I'd say correct = true.\n\nThe answer: \"The flags service and Ledger\" — feature-flags = flags service. This is a reasonable match. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"ledger and feature-flags\". The answer to grade says \"The flags service and Ledger\".\n\nIs \"flags service\" an accepted alternative phrasing for \"feature-flags\"? The accepted alternatives list is \"(none)\", meaning no alternative phrasings are accepted. But grading rule says every listed service must be named. The rule says: \"Correct only if the answer gives the CURRENT value (the gold). Naming an earlier value listed under distractors is wrong... 'I don't know' is wrong. Every listed service must be named.\"\n\nHmm. The accepted alternative phrasings field is \"(none)\", so strictly no alternatives accepted. But we should judge semantically? The rule says apply literally. The gold is \"ledger and feature-flags\". The answer names \"flags service\" and \"Ledger\". \"flags service\" is clearly referring to feature-flags service — it's a paraphrase. But accepted alternatives is \"(none)\". Does that mean we must reject any paraphrase?\n\nTypically, the \"accepted alternative phrasings\" field lists explicit variants; if none, we judge based on semantic equivalence. Grading rules in such tasks usually allow paraphrases unless the rule says exact match. The rule here focuses on current vs earlier values, not on exact phrasing. \"Every listed service must be named\" — both services named: ledger (Ledger) and feature-flags (flags service). I'd say correct = true.\n\nThe answer: \"The flags service and Ledger\" — feature-flags = flags service. This is a reasonable match. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 250,
+   "completion_tokens": 361,
+   "total_tokens": 611,
+   "cost": 9.748e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.748e-05,
+    "upstream_inference_prompt_cost": 7.23e-06,
+    "upstream_inference_completions_cost": 9.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 323,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.503422749985475,
+ "fetched_at": "2026-09-06T01:44:42Z"
+}

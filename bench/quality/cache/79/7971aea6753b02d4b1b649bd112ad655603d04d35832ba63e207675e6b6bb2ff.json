@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The webhooks service belongs to Team Atlas as of 2025-09-09, after Ember handed it over. [decision; valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n    earlier: The webhooks service belongs to team Ember as of 2025-04-11. [decision; valid 2025-04-11 to 2025-09-09; recorded by handover/2025-04-11-webhooks]\n    earlier: The webhooks service is a Boreal service as of 2025-01-09. [valid 2025-01-09 to 2025-04-11; recorded by standup/boreal/2025-01-09-2]\n- The reporting service still relies on the event bus as of 2025-11-13. [valid 2025-11-13 to now; recorded by standup/boreal/2025-11-13]\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- The event bus belongs to Boreal as of 2025-11-24, after Team Dune handed it over. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The event bus belongs to Team Dune as of 2025-09-09, after Boreal handed it over. [decision; valid 2025-09-09 to 2025-11-24; recorded by handover/2025-09-09-event-bus]\n    earlier: The event bus is a Boreal service. [valid 2025-01-09 to 2025-09-09; recorded by standup/boreal/2025-01-09]\n- The webhooks service has a deploy window on Thursdays between 07:00 and 09:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- The webhook dispatcher delivered some events twice on 2026-02-08 during INC-2026-003. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The webhooks service's request volume halved following the client rollout. [valid 2025-04-22 to now; recorded by standup/boreal/2025-04-22-2]\n- The webhooks service will require an idempotency key on every delivery. [decision; valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- Boreal handed the event bus to Team Dune on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- The event bus pager rings the Boreal team, not Team Dune, as of 2025-11-24. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- The event bus deploys only on weekdays after 15:00 UTC per the change policy. [constraint; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17-2]\n    earlier: The event bus deploys on weekdays after 15:00 UTC per the change policy. [constraint; valid 2025-04-22 to 2026-03-17; recorded by standup/boreal/2025-04-22]\n- As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly. [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- The webhook dispatcher is owned by Team Dune as of 2026-04-22, after Team Atlas kept it until then. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- The webhooks service will sign payloads with rotating keys. [decision; valid 2025-09-16 to now; recorded by standup/atlas/2025-09-16]\n- The webhook dispatcher moved from Team Atlas to Team Dune on 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- After the cache change, the webhooks service's memory use grew steadily for a week. [valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Boreal decided at standup on 2026-05-05 that the event bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-05 to now; recorded by standup/boreal/2026-05-05]\n- Team Dune reported on 2025-12-08 that the event bus's request volume halved following the client rollout. [valid 2025-12-08 to now; recorded by standup/dune/2025-12-08-2]\n- Billing-api depends on the flags service as of 2025-10-21. [valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- Oskar wrote up the handover doc for Priya for the webhooks service handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n\nQuestion: Which note first recorded that webhooks depends on the event-bus, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657948-1eBHznYBHU8zopZ6qnsO",
+  "object": "chat.completion",
+  "created": 1788657948,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The user asks: \"Which note first recorded that webhooks depends on the event-bus, and when?\"\n\nLooking through the memory entries, I need to find any entry about webhooks depending on the event bus. Let me scan:\n\n- webhooks belongs to Team Atlas\n- reporting service relies on the event bus\n- Ember handed webhooks to Team Atlas\n- event bus belongs to Boreal\n- webhooks deploy window Thursdays\n- webhook dispatcher delivered events twice\n- webhooks request volume halved\n- webhooks idempotency key\n- Boreal handed event bus to Team Dune\n- event bus pager rings Boreal\n- event bus deploy policy\n- reporting service reads from event bus instead of Ledger\n- webhook dispatcher owned by Team Dune\n- webhooks will sign payloads with rotating keys\n- webhook dispatcher moved from Atlas to Dune\n- webhooks memory use grew\n- event bus retain messages 7 days\n- event bus request volume halved\n- billing-api depends on flags service\n- Oskar wrote handover doc\n\nNo entry says webhooks depends on the event-bus. The reporting service depends on the event bus, but not webhooks. So the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"Which note first recorded that webhooks depends on the event-bus, and when?\"\n\nLooking through the memory entries, I need to find any entry about webhooks depending on the event bus. Let me scan:\n\n- webhooks belongs to Team Atlas\n- reporting service relies on the event bus\n- Ember handed webhooks to Team Atlas\n- event bus belongs to Boreal\n- webhooks deploy window Thursdays\n- webhook dispatcher delivered events twice\n- webhooks request volume halved\n- webhooks idempotency key\n- Boreal handed event bus to Team Dune\n- event bus pager rings Boreal\n- event bus deploy policy\n- reporting service reads from event bus instead of Ledger\n- webhook dispatcher owned by Team Dune\n- webhooks will sign payloads with rotating keys\n- webhook dispatcher moved from Atlas to Dune\n- webhooks memory use grew\n- event bus retain messages 7 days\n- event bus request volume halved\n- billing-api depends on flags service\n- Oskar wrote handover doc\n\nNo entry says webhooks depends on the event-bus. The reporting service depends on the event bus, but not webhooks. So the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1482,
+   "completion_tokens": 261,
+   "total_tokens": 1743,
+   "cost": 0.0001572,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001572,
+    "upstream_inference_prompt_cost": 9.195e-05,
+    "upstream_inference_completions_cost": 6.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 255,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.542900250002276,
+ "fetched_at": "2026-09-06T01:25:52Z"
+}

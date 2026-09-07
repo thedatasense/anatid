@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-11-13] standup/boreal/2025-11-13: The reporting service still relies on the bus; keep that in mind for the maintenance.\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2026-05-05] standup/boreal/2026-05-05: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far.\n- [2025-04-22] standup/boreal/2025-04-22: Per the change policy, the event-bus deploys on weekdays after 15:00 UTC.\n- [2025-11-11] standup/boreal/2025-11-11-2: Heads-up from team Boreal: the event bus' CPU sat at 90 percent after the traffic shift.\n- [2026-03-17] standup/boreal/2026-03-17-2: Reminder: the event-bus deploys only on weekdays after 15:00 UTC.\n- [2025-11-24] handover/2025-11-24-event-bus: From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\n- [2025-09-09] handover/2025-09-09-event-bus: Boreal handed the bus to the Dune team today; Marcus Oyelaran wrote up the handover doc for Tomasz Nowak.\n- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved.\n- [2025-09-09] handover/2025-09-09-webhooks: The Ember team handed the webhook dispatcher to team Atlas today; Oskar wrote up the handover doc for Priya.\n- [2025-04-11] handover/2025-04-11-webhooks: Quick one: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-11-17] standup/ember/2025-11-17: Team Ember saw that the authentication gateway's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it. The weekly architecture review is run by Oskar.\n- [2026-05-27] standup/ember/2026-05-27: Heads-up from team Ember: notifier's CPU sat at 90 percent after the traffic shift.\n- [2026-02-11] incident-review/INC-2026-003: Incident review INC-2026-003. The webhook dispatcher delivered some events twice on 2026-02-08. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-03-21] standup/ember/2025-03-21: The job scheduler can be released on Tuesdays between 13:00 and 15:00 UTC; anything else needs an exception.\n- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n\nQuestion: What did reporting depend on before it switched to the event-bus?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651758-52mJJSjujSTHX63RFgBq",
+  "object": "chat.completion",
+  "created": 1788651758,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The Ledger (reporting queried it directly before reading from the event-bus)",
+     "refusal": null,
+     "reasoning": "The question asks: What did reporting depend on before it switched to the event-bus?\n\nFrom memory: [2025-09-19] \"We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\"\n\nSo before, reporting depended on the Ledger (it queried the ledger directly).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: What did reporting depend on before it switched to the event-bus?\n\nFrom memory: [2025-09-19] \"We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\"\n\nSo before, reporting depended on the Ledger (it queried the ledger directly).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1574,
+   "completion_tokens": 104,
+   "total_tokens": 1678,
+   "cost": 0.00013637,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013637,
+    "upstream_inference_prompt_cost": 0.00011037,
+    "upstream_inference_completions_cost": 2.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 86,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.7897119999979623,
+ "fetched_at": "2026-09-05T23:42:39Z"
+}

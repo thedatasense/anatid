@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-08, the Atlas team observed that webhooks' request volume halved following the client rollout, and since it was not their service, they flagged it. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n\nQuestion: Which note first recorded that webhooks depends on the event-bus, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654257-ED5wQWhbRCsLNrctNs1V",
+  "object": "chat.completion",
+  "created": 1788654257,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The memory contains one entry: on 2026-04-08, the Atlas team observed that webhooks' request volume halved following the client rollout, and since it was not their service, they flagged it.\n\nThe question asks: Which note first recorded that webhooks depends on the event-bus, and when?\n\nThe memory says nothing about event-bus dependency. There's no note mentioned about webhooks depending on event-bus. The entry mentions webhooks request volume halving, but no dependency on event-bus, and no note label for such a dependency.\n\nSo the answer is: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory contains one entry: on 2026-04-08, the Atlas team observed that webhooks' request volume halved following the client rollout, and since it was not their service, they flagged it.\n\nThe question asks: Which note first recorded that webhooks depends on the event-bus, and when?\n\nThe memory says nothing about event-bus dependency. There's no note mentioned about webhooks depending on event-bus. The entry mentions webhooks request volume halving, but no dependency on event-bus, and no note label for such a dependency.\n\nSo the answer is: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 267,
+   "completion_tokens": 131,
+   "total_tokens": 398,
+   "cost": 4.1255e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.1255e-05,
+    "upstream_inference_prompt_cost": 8.505e-06,
+    "upstream_inference_completions_cost": 3.275e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 125,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.257102166011464,
+ "fetched_at": "2026-09-06T00:24:20Z"
+}

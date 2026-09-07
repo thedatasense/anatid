@@ -1,0 +1,53 @@
+{
+ "qid": "q060",
+ "system": "bm25",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2026-01-29] handover/2026-01-29-feature-flags: Handover: as of today the feature flag service moves from Cinder to team Dune. Yuki walked Farah Haddad through the runbook this morning.\n- [2026-04-21] handover/2026-04-21-feature-flags: The feature flag service has a new home: the Atlas team. The Dune team kept it until today.\n- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-10-21] standup/atlas/2025-10-21: New dependency for the billing service: the feature flag service. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch.\n- [2025-02-13] handover/2025-02-13-feature-flags: Handover: as of today the flags service moves from team Atlas to the Cinder team. Priya walked Diego through the runbook this morning.\n- [2025-04-23] standup/ember/2025-04-23: The Ember team runs its planning on Fridays.\n- [2025-04-23] standup/dune/2025-04-23: Team Dune adopted a monthly game day.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-03-28] standup/ember/2025-03-28: If feature-flags is down, the job scheduler is down: it relies on it for per-job kill switches.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2026-05-01] standup/cinder/2026-05-01-2: Observation from the Cinder team: after the marketing send, the flags service's queue depth hit 50,000.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2026-01-27] standup/boreal/2026-01-27: Auth-gateway tokens will expire after 15 minutes instead of an hour. Rationale: the security audit flagged long-lived tokens.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-01-10] standup/ember/2025-01-10: Oskar is the only engineer on team Ember for now.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz.\n- [2025-01-20] standup/ember/2025-01-20-2: The authentication gateway lives with team Ember.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki and Diego are on team Cinder.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.\n- [2025-07-01] handover/2025-07-01-auth-gateway: Quick one: the auth gateway belongs to team Cinder starting today. Thanks to the Ember team for running it until now.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-09-26] standup/cinder/2025-09-26: The Cinder team saw that the notifier's request volume halved following the client rollout; not their service, so they flagged it.\n\nQuestion: Which team owned feature-flags on 2025-01-23?"
+  }
+ ],
+ "contexts": [
+  "- [2026-01-29] handover/2026-01-29-feature-flags: Handover: as of today the feature flag service moves from Cinder to team Dune. Yuki walked Farah Haddad through the runbook this morning.",
+  "- [2026-04-21] handover/2026-04-21-feature-flags: The feature flag service has a new home: the Atlas team. The Dune team kept it until today.",
+  "- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.",
+  "- [2025-10-21] standup/atlas/2025-10-21: New dependency for the billing service: the feature flag service. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch.",
+  "- [2025-02-13] handover/2025-02-13-feature-flags: Handover: as of today the flags service moves from team Atlas to the Cinder team. Priya walked Diego through the runbook this morning.",
+  "- [2025-04-23] standup/ember/2025-04-23: The Ember team runs its planning on Fridays.",
+  "- [2025-04-23] standup/dune/2025-04-23: Team Dune adopted a monthly game day.",
+  "- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.",
+  "- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.",
+  "- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.",
+  "- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.",
+  "- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.",
+  "- [2025-03-28] standup/ember/2025-03-28: If feature-flags is down, the job scheduler is down: it relies on it for per-job kill switches.",
+  "- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.",
+  "- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.",
+  "- [2026-05-01] standup/cinder/2026-05-01-2: Observation from the Cinder team: after the marketing send, the flags service's queue depth hit 50,000.",
+  "- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.",
+  "- [2026-01-27] standup/boreal/2026-01-27: Auth-gateway tokens will expire after 15 minutes instead of an hour. Rationale: the security audit flagged long-lived tokens.",
+  "- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.",
+  "- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.",
+  "- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.",
+  "- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.",
+  "- [2025-01-10] standup/ember/2025-01-10: Oskar is the only engineer on team Ember for now.",
+  "- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.",
+  "- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.",
+  "- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.",
+  "- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz.",
+  "- [2025-01-20] standup/ember/2025-01-20-2: The authentication gateway lives with team Ember.",
+  "- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki and Diego are on team Cinder.",
+  "- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.",
+  "- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.",
+  "- [2025-07-01] handover/2025-07-01-auth-gateway: Quick one: the auth gateway belongs to team Cinder starting today. Thanks to the Ember team for running it until now.",
+  "- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.",
+  "- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.",
+  "- [2025-09-26] standup/cinder/2025-09-26: The Cinder team saw that the notifier's request volume halved following the client rollout; not their service, so they flagged it."
+ ],
+ "answer": "Atlas"
+}

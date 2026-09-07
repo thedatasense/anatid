@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: the scheduler, webhooks, search-indexer, the notifier, billing-api, image-resizer"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655621-Y9f8RIvXprzzueZ1wZPN",
+  "object": "chat.completion",
+  "created": 1788655621,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names all six gold services (scheduler, webhooks, search-indexer, notifier, billing-api, image-resizer) with no extra items.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer lists 6 services: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks.\n\nThe answer to grade: \"the scheduler, webhooks, search-indexer, the notifier, billing-api, image-resizer\"\n\nCheck each item:\n1. scheduler ✓ (with \"the\" prefix, but that's fine)\n2. webhooks ✓\n3. search-indexer ✓\n4. notifier ✓ (with \"the\")\n5. billing-api ✓\n6. image-resizer ✓\n\nAll 6 items present, no extra items. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer lists 6 services: billing-api, notifier, search-indexer, image-resizer, scheduler and webhooks.\n\nThe answer to grade: \"the scheduler, webhooks, search-indexer, the notifier, billing-api, image-resizer\"\n\nCheck each item:\n1. scheduler ✓ (with \"the\" prefix, but that's fine)\n2. webhooks ✓\n3. search-indexer ✓\n4. notifier ✓ (with \"the\")\n5. billing-api ✓\n6. image-resizer ✓\n\nAll 6 items present, no extra items. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 270,
+   "completion_tokens": 162,
+   "total_tokens": 432,
+   "cost": 5.691e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.691e-05,
+    "upstream_inference_prompt_cost": 1.641e-05,
+    "upstream_inference_completions_cost": 4.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 119,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.9665710420231335,
+ "fetched_at": "2026-09-06T00:47:04Z"
+}

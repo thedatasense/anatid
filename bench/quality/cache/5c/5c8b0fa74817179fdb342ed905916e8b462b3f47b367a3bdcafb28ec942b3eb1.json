@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017. [decision; valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- Team Ember now does pairing on every production change. [decision; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- A silent reindex failure left stale results for two days in INC-2025-023. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- As of 2026-03-20, the image-resizer will keep original uploads for 90 days only. [decision; valid 2026-03-20 to now; recorded by standup/dune/2026-03-20]\n- Boreal decided at standup on 2026-05-05 that the event bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-05 to now; recorded by standup/boreal/2026-05-05]\n\nQuestion: Why does certificate expiry alert 30 days ahead?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657120-qSrw38fmRyLJk0rnIPBb",
+  "object": "chat.completion",
+  "created": 1788657120,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Because an expired intermediate certificate took logins down in INC-2025-017.",
+     "refusal": null,
+     "reasoning": "The question asks why certificate expiry alerts 30 days ahead. The memory says: \"Certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\"\n\nAnswer in one short line with just the value asked for (a reason).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks why certificate expiry alerts 30 days ahead. The memory says: \"Certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\"\n\nAnswer in one short line with just the value asked for (a reason).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 499,
+   "completion_tokens": 79,
+   "total_tokens": 578,
+   "cost": 5.7175e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.7175e-05,
+    "upstream_inference_prompt_cost": 3.7425e-05,
+    "upstream_inference_completions_cost": 1.975e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 59,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7667168749612756,
+ "fetched_at": "2026-09-06T01:12:03Z"
+}

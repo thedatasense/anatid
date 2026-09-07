@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-11-13] standup/boreal/2025-11-13: The reporting service still relies on the bus; keep that in mind for the maintenance.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.\n- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.\n- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.\n- [2025-05-15] standup/dune/2025-05-15: Reporting must stay on Python 3.11 until the pandas 3 upgrade lands.\n- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-10-02] standup/cinder/2025-10-02: On-call rotation: Yuki is primary for team Cinder starting today; Diego is off rotation.\n- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-08-13] standup/boreal/2025-08-13: The search indexer must stay on OpenSearch 2.11 until the full reindex completes. Reminder that reporting depends on the ledger.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2025-05-28] standup/ember/2025-05-28: Observation from Ember: after the cache change, Ledger's memory use grew steadily for a week. Reminder: Oskar Lind is on call for team Ember this cycle.\n- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n\nQuestion: Who is on call for the team that owns reporting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651360-F1pZyBnyZOJubsKKOGcC",
+  "object": "chat.completion",
+  "created": 1788651360,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Lena",
+     "refusal": null,
+     "reasoning": "The question: \"Who is on call for the team that owns reporting?\"\n\nFirst, determine who owns reporting. Memory entries:\n- 2025-06-25: reports pipeline now with team Ember (Dune no longer owns it).\n- 2025-01-20: Team Dune owns the reporting service.\n- 2025-07-03: Correction: reporting went to Boreal, not Ember. Ember never owned it.\n\nSo the latest correction (2025-07-03) says reporting is owned by Boreal. Later entries: 2025-09-19, 2025-11-13 talk about reporting reading from bus, no ownership change. 2026-04-22: search indexer to Boreal, not reporting. So Boreal owns reporting.\n\nNow who is on call for team Boreal? Entries:\n- 2025-01-09: Marcus on call to start the year.\n- 2025-11-11: Boreal on-call swapped; Lena carries the phone until the next rotation.\n- 2025-08-13 mentions search indexer constraint.\n\nLatest on-call for Boreal: 2025-11-11, Lena. No later Boreal on-call entries. So answer: Lena.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Who is on call for the team that owns reporting?\"\n\nFirst, determine who owns reporting. Memory entries:\n- 2025-06-25: reports pipeline now with team Ember (Dune no longer owns it).\n- 2025-01-20: Team Dune owns the reporting service.\n- 2025-07-03: Correction: reporting went to Boreal, not Ember. Ember never owned it.\n\nSo the latest correction (2025-07-03) says reporting is owned by Boreal. Later entries: 2025-09-19, 2025-11-13 talk about reporting reading from bus, no ownership change. 2026-04-22: search indexer to Boreal, not reporting. So Boreal owns reporting.\n\nNow who is on call for team Boreal? Entries:\n- 2025-01-09: Marcus on call to start the year.\n- 2025-11-11: Boreal on-call swapped; Lena carries the phone until the next rotation.\n- 2025-08-13 mentions search indexer constraint.\n\nLatest on-call for Boreal: 2025-11-11, Lena. No later Boreal on-call entries. So answer: Lena.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1654,
+   "completion_tokens": 262,
+   "total_tokens": 1916,
+   "cost": 0.00018187,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00018187,
+    "upstream_inference_prompt_cost": 0.00011637,
+    "upstream_inference_completions_cost": 6.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 258,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.394426584010944,
+ "fetched_at": "2026-09-05T23:36:05Z"
+}

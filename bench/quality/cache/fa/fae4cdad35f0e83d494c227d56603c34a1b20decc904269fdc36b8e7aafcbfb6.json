@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Team Ember now does pairing on every production change. [decision; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Yuki is the primary on-call for team Cinder as of 2025-12-15, taking over from Diego. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call for team Cinder as of 2025-11-25, taking over from Yuki. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call for team Cinder as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14. [decision; valid 2026-04-14 to now; recorded by standup/atlas/2026-04-14]\n- Yuki is the primary on-call to contact for anything on Cinder as of 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call to contact for anything on Cinder as of 2025-11-25; Yuki is off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call to contact for anything on Cinder as of 2025-10-02; Diego is off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Page Diego for anything on Cinder this cycle, as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Page Yuki for anything on Cinder this cycle, not Diego Alvarez, as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Page Diego Alvarez for anything on Cinder this cycle, not Yuki Tanaka, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Page Yuki Tanaka for anything on Cinder this cycle, not Diego, as of 2025-02-17. [decision; valid 2025-02-17 to 2025-06-13; recorded by standup/cinder/2025-02-17]\n- Tomasz is back on the Team Dune on-call rotation as of 2025-12-08. [decision; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n    earlier: Tomasz is off the Team Dune on-call rotation as of 2025-11-03. [decision; valid 2025-11-03 to 2025-12-08; recorded by standup/dune/2025-11-03]\n- Tomasz is off the Team Atlas on-call rotation as of 2025-07-16. [decision; valid 2025-07-16 to now; recorded by standup/atlas/2025-07-16]\n- Team Cinder's on-call swapped on 2025-12-15, with Yuki carrying the Cinder on-call phone. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Team Cinder's on-call swapped on 2025-11-25, with Diego carrying the Cinder on-call phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n- Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08. [decision; valid 2026-06-08 to now; recorded by standup/atlas/2026-06-08]\n    earlier: Page Marcus Oyelaran for anything this cycle for Team Atlas, not Priya, as of 2026-04-14. [decision; valid 2026-04-14 to 2026-06-08; recorded by standup/atlas/2026-04-14]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-07-16. [decision; valid 2025-07-16 to 2026-04-14; recorded by standup/atlas/2025-07-16]\n    earlier: Page Tomasz for anything this cycle for Team Atlas, not Priya, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-16; recorded by standup/atlas/2025-06-13]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-05-14. [decision; valid 2025-05-14 to 2025-06-13; recorded by standup/atlas/2025-05-14]\n    earlier: Page Tomasz Nowak for anything this cycle for Team Atlas, not Priya, as of 2025-04-04. [decision; valid 2025-04-04 to 2025-05-14; recorded by standup/atlas/2025-04-04]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-02-19. [decision; valid 2025-02-19 to 2025-04-04; recorded by standup/atlas/2025-02-19]\n- Lena picked up the Boreal on-call shift from Marcus Oyelaran on 2025-05-21. [decision; valid 2025-05-21 to now; recorded by standup/boreal/2025-05-21]\n- Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-07-09. [decision; valid 2025-07-09 to now; recorded by standup/boreal/2025-07-09]\n- Lena picked up the Boreal on-call pager from Marcus Oyelaran on 2025-08-12. [decision; valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12]\n- Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-09-24. [decision; valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n\nQuestion: Who is on call for Marcus's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657364-R680qDmsrkgJHMneC3EZ",
+  "object": "chat.completion",
+  "created": 1788657364,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Priya",
+     "refusal": null,
+     "reasoning": "The question asks: \"Who is on call for Marcus's team right now?\"\n\nMarcus Oyelaran — which team? He appears in Team Atlas and Boreal entries. \"Marcus's team\" — ambiguous. Let's think.\n\nMarcus Oyelaran entries:\n- Picked up Team Atlas on-call shift from Priya on 2026-04-14.\n- Page Marcus Oyelaran for Team Atlas as of 2026-04-14 (valid until 2026-06-08).\n- Boreal: Marcus picked up from Lena 2025-07-09, Lena from Marcus 2025-08-12, Marcus from Lena 2025-09-24.\n\nHmm, \"Marcus's team\" — likely Team Atlas, since he's most recently associated there. But Boreal entries also involve him. The question implies Marcus has a specific team. The most recent decision involving Marcus and a team: Team Atlas shift 2026-04-14, then superseded on 2026-06-08 by \"Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08\" — so Priya is on call for Atlas now.\n\nBut wait — Boreal: Marcus picked up Boreal shift on 2025-09-24, valid to now. But then Lena picked up on 2025-08-12? Order: Lena from Marcus 2025-05-21; Marcus from Lena 2025-07-09; Lena from Marcus 2025-08-12; Marcus from Lena 2025-09-24. So latest Boreal: Marcus has Boreal on-call as of 2025-09-24, valid to now. So currently Marcus holds Boreal on-call.\n\n\"Marcus's team\" — which team is Marcus's? He's associated with Atlas and Boreal. Hmm. Perhaps the intended interpretation: Marcus is currently on call for Boreal (his team?). Actually \"Marcus's team\" could mean the team Marcus belongs to. The most recent entry about Marcus picking up a shift: Team Atlas on 2026-04-14, then on 2026-06-08 Priya took over Atlas paging (\"Page Priya ... not Marcus Oyelaran\"). So as of now (2026-06-30), for Atlas: Priya. For Boreal: Marcus (per 2025-09-24, valid to now).\n\nHmm, ambiguous. The question \"Who is on call for Marcus's team right now?\" — Perhaps the memory store's latest state: Marcus's team is Boreal (he currently holds Boreal shift, valid to now). Then who is on call for Boreal right now? Marcus himself? That seems odd but possible answer: Marcus Oyelaran.\n\nAlternatively, Marcus's team is Atlas (he picked up Atlas shift 2026-04-14, most recent mention). Then currently Atlas on-call is Priya (as of 2026-06-08).\n\nWhich interpretation? The latest recorded event for Marcus is Atlas 2026-04-14 pickup. But then superseded by Priya on 2026-06-08. The Boreal entry 2025-09-24 says Marcus picked up from Lena, valid to now — meaning Marcus currently holds Boreal on-call. So \"Marcus's team\" is ambiguous.\n\nConsider: \"Marcus's team\" — the team Marcus is on. If Marcus currently holds Boreal on-call, then his team might be Boreal. But he also did Atlas. Hmm.\n\nThese memory-based QA tasks often test chaining: \"Marcus's team\" = Team Atlas (since he's associated as picking up Atlas on-call). Then \"who is on call right now\" = Priya (since 2026-06-08 entry supersedes). That seems like a two-hop question: identify Marcus's team (Atlas), then find current on-call for Atlas.\n\nBut Marcus is also associated with Boreal. Which is \"his team\"? The most recent Atlas entry involving Marcus: 2026-04-14. The most recent Boreal entry: 2025-09-24. More recent = Atlas. So Marcus's team = Team Atlas. Current Atlas on-call: Priya (valid 2026-06-08 to now).\n\nAnswer: Priya.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Who is on call for Marcus's team right now?\"\n\nMarcus Oyelaran — which team? He appears in Team Atlas and Boreal entries. \"Marcus's team\" — ambiguous. Let's think.\n\nMarcus Oyelaran entries:\n- Picked up Team Atlas on-call shift from Priya on 2026-04-14.\n- Page Marcus Oyelaran for Team Atlas as of 2026-04-14 (valid until 2026-06-08).\n- Boreal: Marcus picked up from Lena 2025-07-09, Lena from Marcus 2025-08-12, Marcus from Lena 2025-09-24.\n\nHmm, \"Marcus's team\" — likely Team Atlas, since he's most recently associated there. But Boreal entries also involve him. The question implies Marcus has a specific team. The most recent decision involving Marcus and a team: Team Atlas shift 2026-04-14, then superseded on 2026-06-08 by \"Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08\" — so Priya is on call for Atlas now.\n\nBut wait — Boreal: Marcus picked up Boreal shift on 2025-09-24, valid to now. But then Lena picked up on 2025-08-12? Order: Lena from Marcus 2025-05-21; Marcus from Lena 2025-07-09; Lena from Marcus 2025-08-12; Marcus from Lena 2025-09-24. So latest Boreal: Marcus has Boreal on-call as of 2025-09-24, valid to now. So currently Marcus holds Boreal on-call.\n\n\"Marcus's team\" — which team is Marcus's? He's associated with Atlas and Boreal. Hmm. Perhaps the intended interpretation: Marcus is currently on call for Boreal (his team?). Actually \"Marcus's team\" could mean the team Marcus belongs to. The most recent entry about Marcus picking up a shift: Team Atlas on 2026-04-14, then on 2026-06-08 Priya took over Atlas paging (\"Page Priya ... not Marcus Oyelaran\"). So as of now (2026-06-30), for Atlas: Priya. For Boreal: Marcus (per 2025-09-24, valid to now).\n\nHmm, ambiguous. The question \"Who is on call for Marcus's team right now?\" — Perhaps the memory store's latest state: Marcus's team is Boreal (he currently holds Boreal shift, valid to now). Then who is on call for Boreal right now? Marcus himself? That seems odd but possible answer: Marcus Oyelaran.\n\nAlternatively, Marcus's team is Atlas (he picked up Atlas shift 2026-04-14, most recent mention). Then currently Atlas on-call is Priya (as of 2026-06-08).\n\nWhich interpretation? The latest recorded event for Marcus is Atlas 2026-04-14 pickup. But then superseded by Priya on 2026-06-08. The Boreal entry 2025-09-24 says Marcus picked up from Lena, valid to now — meaning Marcus currently holds Boreal on-call. So \"Marcus's team\" is ambiguous.\n\nConsider: \"Marcus's team\" — the team Marcus is on. If Marcus currently holds Boreal on-call, then his team might be Boreal. But he also did Atlas. Hmm.\n\nThese memory-based QA tasks often test chaining: \"Marcus's team\" = Team Atlas (since he's associated as picking up Atlas on-call). Then \"who is on call right now\" = Priya (since 2026-06-08 entry supersedes). That seems like a two-hop question: identify Marcus's team (Atlas), then find current on-call for Atlas.\n\nBut Marcus is also associated with Boreal. Which is \"his team\"? The most recent Atlas entry involving Marcus: 2026-04-14. The most recent Boreal entry: 2025-09-24. More recent = Atlas. So Marcus's team = Team Atlas. Current Atlas on-call: Priya (valid 2026-06-08 to now).\n\nAnswer: Priya.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1804,
+   "completion_tokens": 903,
+   "total_tokens": 2707,
+   "cost": 0.0007221,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0007221,
+    "upstream_inference_prompt_cost": 0.0002706,
+    "upstream_inference_completions_cost": 0.0004515
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 899,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 21.60580162500264,
+ "fetched_at": "2026-09-06T01:16:26Z"
+}

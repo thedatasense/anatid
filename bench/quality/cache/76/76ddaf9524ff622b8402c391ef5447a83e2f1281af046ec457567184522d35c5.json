@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The webhooks service has a deploy window on Thursdays between 07:00 and 09:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- The webhooks service will require an idempotency key on every delivery. [decision; valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The webhooks service's request volume halved following the client rollout. [valid 2025-04-22 to now; recorded by standup/boreal/2025-04-22-2]\n- The webhooks service will sign payloads with rotating keys. [decision; valid 2025-09-16 to now; recorded by standup/atlas/2025-09-16]\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- The webhooks service belongs to Team Atlas as of 2025-09-09, after Ember handed it over. [decision; valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n    earlier: The webhooks service belongs to team Ember as of 2025-04-11. [decision; valid 2025-04-11 to 2025-09-09; recorded by handover/2025-04-11-webhooks]\n    earlier: The webhooks service is a Boreal service as of 2025-01-09. [valid 2025-01-09 to 2025-04-11; recorded by standup/boreal/2025-01-09-2]\n- After the cache change, the webhooks service's memory use grew steadily for a week. [valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- Billing-api depends on the flags service as of 2025-10-21. [valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- Oskar wrote up the handover doc for Priya for the webhooks service handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- The reporting service still relies on the event bus as of 2025-11-13. [valid 2025-11-13 to now; recorded by standup/boreal/2025-11-13]\n- Billing-api depends on Ledger to work. [constraint; valid 2026-03-05 to now; recorded by standup/boreal/2026-03-05]\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- The webhook dispatcher delivered some events twice on 2026-02-08 during INC-2026-003. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The webhook dispatcher moved from Team Atlas to Team Dune on 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- The job scheduler remains a Team Dune service as of 2026-01-12. [valid 2026-01-12 to now; recorded by standup/dune/2026-01-12]\n- The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly. [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- The authentication gateway is not Team Ember's service. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- The webhook dispatcher is owned by Team Dune as of 2026-04-22, after Team Atlas kept it until then. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n\nQuestion: Which service depends on webhooks?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657041-vSCcqNyU7GmjZxElqtRV",
+  "object": "chat.completion",
+  "created": 1788657041,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service depends on webhooks?\"\n\nLet me look through the memory for anything that depends on webhooks.\n\nScanning the memory entries:\n- webhooks service deploy window\n- webhooks idempotency key\n- webhooks request volume halved\n- webhooks sign payloads\n- webhooks handed to Team Atlas\n- webhooks belongs to Team Atlas\n- cache change memory growth\n- Ledger depends on authentication gateway\n- Billing-api depends on flags service\n- Oskar handover doc\n- reporting service relies on event bus\n- Billing-api depends on Ledger\n- reporting service deploy window\n- webhook dispatcher delivered events twice\n- webhook dispatcher moved from Atlas to Dune\n- job scheduler Team Dune\n- job scheduler depends on flags service\n- reporting service reads from event bus\n- authentication gateway not Team Ember's\n- webhook dispatcher owned by Team Dune\n\nNothing says any service depends on the webhooks service. The memory mentions things webhooks depends on or its ownership, but nothing that depends on webhooks.\n\nSo the answer is: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service depends on webhooks?\"\n\nLet me look through the memory for anything that depends on webhooks.\n\nScanning the memory entries:\n- webhooks service deploy window\n- webhooks idempotency key\n- webhooks request volume halved\n- webhooks sign payloads\n- webhooks handed to Team Atlas\n- webhooks belongs to Team Atlas\n- cache change memory growth\n- Ledger depends on authentication gateway\n- Billing-api depends on flags service\n- Oskar handover doc\n- reporting service relies on event bus\n- Billing-api depends on Ledger\n- reporting service deploy window\n- webhook dispatcher delivered events twice\n- webhook dispatcher moved from Atlas to Dune\n- job scheduler Team Dune\n- job scheduler depends on flags service\n- reporting service reads from event bus\n- authentication gateway not Team Ember's\n- webhook dispatcher owned by Team Dune\n\nNothing says any service depends on the webhooks service. The memory mentions things webhooks depends on or its ownership, but nothing that depends on webhooks.\n\nSo the answer is: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1244,
+   "completion_tokens": 231,
+   "total_tokens": 1475,
+   "cost": 0.00014337,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014337,
+    "upstream_inference_prompt_cost": 8.562e-05,
+    "upstream_inference_completions_cost": 5.775e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 225,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.0622945000068285,
+ "fetched_at": "2026-09-06T01:10:45Z"
+}

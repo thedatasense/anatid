@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note records the decision that the catalog will keep image metadata in a separate table, and when was it written?\nGold answer: standup/cinder/2025-04-01 (2025-04-01)\nAlso accepted: standup/cinder/2025-04-01; 2025-04-01; 1 April 2025; April 1, 2025; the standup note of 2025-04-01; the standup note of 1 April 2025; the standup note of April 1, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/cinder/2025-04-01, recorded on 2025-04-01."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659084-AtDnBfMiVpyengT5IAhC",
+  "object": "chat.completion",
+  "created": 1788659084,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the gold source label standup/cinder/2025-04-01 along with its date 2025-04-01, matching the gold answer.\"}",
+     "refusal": null,
+     "reasoning": "The answer identifies the source label \"standup/cinder/2025-04-01\" and the date \"2025-04-01\", which matches the gold answer exactly.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer identifies the source label \"standup/cinder/2025-04-01\" and the date \"2025-04-01\", which matches the gold answer exactly.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 359,
+   "completion_tokens": 84,
+   "total_tokens": 443,
+   "cost": 2.8725e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.8725e-05,
+    "upstream_inference_prompt_cost": 7.725e-06,
+    "upstream_inference_completions_cost": 2.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 37,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6084657089668326,
+ "fetched_at": "2026-09-06T01:44:46Z"
+}

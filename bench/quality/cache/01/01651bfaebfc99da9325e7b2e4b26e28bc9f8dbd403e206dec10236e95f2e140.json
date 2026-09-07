@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-08, the Atlas team observed that webhooks' request volume halved following the client rollout, and since it was not their service, they flagged it. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- Tomasz was on the Atlas team on-call rotation as of 2025-04-03, but left it on 2025-07-30 when he moved to the Dune team. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is back on the Atlas team on-call rotation as of 2025-04-03. [valid 2025-04-03 to 2025-07-30; recorded by standup/atlas/2025-04-03]\n    earlier: Tomasz had the first on-call rotation for the Atlas team but is off rotation as of 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- On 2025-06-09, Oskar wrote the handover doc for the billing API for Lena. [valid 2025-06-09 to now; recorded by handover/2025-06-09-billing-api]\n- At the Boreal standup on 2025-11-03, it was decided that the webhook dispatcher will sign payloads with rotating keys. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- The cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- At the Cinder standup on 2026-01-30, it was decided that authentication gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- On 2025-09-16, Oskar wrote the handover doc for Diego for the authentication gateway handover to Cinder. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The root cause of INC-2025-004 was a consumer offset stuck after a broker restart. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- Diego is on call for Cinder to start the year. [valid 2025-01-09 to now; recorded by standup/cinder/2025-01-09]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The notifier missed alerts for 40 minutes on 2025-02-01 during incident INC-2025-004. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The notifier's previous flat one-second retry was hammering the push provider during its outages. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- Authentication gateway token expiry was shortened to 15 minutes because the security audit flagged long-lived tokens. [valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n\nQuestion: Who was responsible for webhooks on 2025-04-06?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653303-00W1Z1YkjHdeJGtGwAYw",
+  "object": "chat.completion",
+  "created": 1788653303,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember team",
+     "refusal": null,
+     "reasoning": "The question asks who was responsible for webhooks on 2025-04-06.\n\nMemory entries about webhooks pager:\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now]\n- Earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15]\n\n2025-04-06 falls within 2025-03-03 to 2025-05-15, so the answer is the Ember team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was responsible for webhooks on 2025-04-06.\n\nMemory entries about webhooks pager:\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now]\n- Earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15]\n\n2025-04-06 falls within 2025-03-03 to 2025-05-15, so the answer is the Ember team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1428,
+   "completion_tokens": 148,
+   "total_tokens": 1576,
+   "cost": 0.00013642,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013642,
+    "upstream_inference_prompt_cost": 9.942e-05,
+    "upstream_inference_completions_cost": 3.7e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 143,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0211354159982875,
+ "fetched_at": "2026-09-06T00:08:25Z"
+}

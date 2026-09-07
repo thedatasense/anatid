@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-03-24, Farah still has the Team Dune pager. [valid 2025-03-24 to now; recorded by standup/dune/2025-03-24]\n- As of 2025-10-15, the pager for the scheduler rings Team Dune instead of Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n- As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder. [valid 2025-03-20 to now; recorded by handover/2025-03-20-catalog]\n- As of 2025-12-08, the pager for the indexer rings Team Dune instead of Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n- On the 2026-06-08 rotation day, Tomasz Nowak handed the Team Dune pager to Farah. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n- On the 2025-12-15 rotation day, Tomasz Nowak handed the Team Dune pager to Farah. [valid 2025-12-15 to now; recorded by standup/dune/2025-12-15]\n- On the 2025-07-30 rotation day, Farah handed the Team Dune pager to Tomasz Nowak. [valid 2025-07-30 to now; recorded by standup/dune/2025-07-30]\n- Farah is off the Team Dune on-call rotation as of 2026-04-13; as of 2026-02-04 the Team Dune pager for that cycle was carried by Tomasz Nowak. [valid 2026-04-13 to now; recorded by standup/dune/2026-04-13]\n    earlier: Farah is on the Team Dune on-call rotation; as of 2026-02-04 the pager for this cycle is carried by Tomasz Nowak. [valid 2026-02-04 to 2026-04-13; recorded by standup/dune/2026-02-04]\n    earlier: As of 2025-12-15, Farah is back on the Team Dune on-call rotation, carrying the pager for this cycle. [valid 2025-12-15 to 2026-02-04; recorded by standup/dune/2025-12-15]\n    earlier: As of 2025-10-27, Tomasz Nowak is back on the Team Dune on-call rotation, carrying the pager for this cycle. [valid 2025-10-27 to 2025-12-15; recorded by standup/dune/2025-10-27]\n    earlier: As of 2025-09-22, Tomasz Nowak is off the Team Dune on-call rotation, after holding the pager since 2025-07-30. [valid 2025-09-22 to 2025-10-27; recorded by standup/dune/2025-09-22]\n    earlier: As of 2025-07-30, Tomasz Nowak is on call for Team Dune this cycle, having received the pager from Farah. [valid 2025-07-30 to 2025-09-22; recorded by standup/dune/2025-07-30]\n    earlier: As of 2025-07-17, Farah is on call for Team Dune this cycle. [valid 2025-07-17 to 2025-07-30; recorded by standup/dune/2025-07-17]\n- As of 2026-06-08, Farah is the primary on-call for Team Dune. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Tomasz Nowak is the primary on-call for Team Dune. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n- As of 2026-03-10, Farah is the primary on-call for Team Dune for this cycle. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10]\n- As of 2025-10-15, the scheduler is owned by Team Dune; Team Atlas kept it until then. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler went to Team Atlas, not Team Cinder; Team Cinder never owned it, and the Ember team no longer owns it. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder; the Ember team no longer owns it. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- As of 2025-06-19, the notifier lives with Team Dune; Team Cinder kept it until then. [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: As of 2025-04-04, the notifier lives with Team Cinder. [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: The notifier lives with Team Boreal. [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- As of 2025-12-08, the indexer lives with Team Dune; Team Cinder kept it until then. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- On the 2026-02-04 rotation day, Team Dune's on-call swapped and Tomasz Nowak carries the phone until the next rotation. [valid 2026-02-04 to now; recorded by standup/dune/2026-02-04]\n- As of 2026-06-08, Farah is back on the Team Dune on-call rotation as the primary on-call. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Farah is off the Team Dune on-call rotation. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n\nQuestion: Who currently holds the Dune pager?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654146-vERkKLPejRoXuDBxLZFC",
+  "object": "chat.completion",
+  "created": 1788654146,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Farah",
+     "refusal": null,
+     "reasoning": "The question asks who currently holds the Dune pager. Today is 2026-06-30.\n\nRelevant entries:\n- 2026-06-08: Tomasz Nowak handed the Team Dune pager to Farah.\n- As of 2026-03-24: Farah still has the Team Dune pager (earlier).\n- 2026-06-08: Farah is primary on-call.\n- 2026-04-13: Farah off rotation; 2026-02-04 Tomasz carried pager.\n- 2026-06-08: Farah back on rotation as primary on-call.\n\nLatest entries (2026-06-08) say Farah received the pager. So currently Farah.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who currently holds the Dune pager. Today is 2026-06-30.\n\nRelevant entries:\n- 2026-06-08: Tomasz Nowak handed the Team Dune pager to Farah.\n- As of 2026-03-24: Farah still has the Team Dune pager (earlier).\n- 2026-06-08: Farah is primary on-call.\n- 2026-04-13: Farah off rotation; 2026-02-04 Tomasz carried pager.\n- 2026-06-08: Farah back on rotation as primary on-call.\n\nLatest entries (2026-06-08) say Farah received the pager. So currently Farah.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1832,
+   "completion_tokens": 159,
+   "total_tokens": 1991,
+   "cost": 0.00016947,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016947,
+    "upstream_inference_prompt_cost": 0.00012972,
+    "upstream_inference_completions_cost": 3.975e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 155,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1863499999744818,
+ "fetched_at": "2026-09-06T00:22:28Z"
+}

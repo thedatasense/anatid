@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Cinder own now?\nGold answer: reporting and feature-flags\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 2 services.\n\nAnswer to grade: reporting, feature-flags"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655620-ZtmYVL3KusjZ4d1MFvVF",
+  "object": "chat.completion",
+  "created": 1788655620,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names both gold services, reporting and feature-flags, with no extra items.\"}\n",
+     "refusal": null,
+     "reasoning": "The answer says \"reporting, feature-flags\" which names both gold services. The gold is \"reporting and feature-flags\" - a list of 2 services. The answer names both items: reporting and feature-flags. No extra items. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer says \"reporting, feature-flags\" which names both gold services. The gold is \"reporting and feature-flags\" - a list of 2 services. The answer names both items: reporting and feature-flags. No extra items. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 243,
+   "completion_tokens": 91,
+   "total_tokens": 334,
+   "cost": 3.7135e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.7135e-05,
+    "upstream_inference_prompt_cost": 1.4385e-05,
+    "upstream_inference_completions_cost": 2.275e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 57,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.4020623749820516,
+ "fetched_at": "2026-09-06T00:47:04Z"
+}

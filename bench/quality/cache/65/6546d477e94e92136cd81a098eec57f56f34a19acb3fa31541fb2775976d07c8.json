@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which deploy window applies to the event-bus?\nGold answer: on weekdays after 15:00 UTC\nAlso accepted: weekdays after 15:00 UTC\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: Weekdays after 15:00 UTC"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658867-dZVTkK55zMbftE0VTn9i",
+  "object": "chat.completion",
+  "created": 1788658867,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states 'Weekdays after 15:00 UTC', which matches the accepted alias with only a capitalization difference.\"}",
+     "refusal": null,
+     "reasoning": "The answer \"Weekdays after 15:00 UTC\" matches the accepted alias \"weekdays after 15:00 UTC\" with capitalization difference, which is fine. Output JSON.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer \"Weekdays after 15:00 UTC\" matches the accepted alias \"weekdays after 15:00 UTC\" with capitalization difference, which is fine. Output JSON.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 240,
+   "completion_tokens": 75,
+   "total_tokens": 315,
+   "cost": 3.291e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.291e-05,
+    "upstream_inference_prompt_cost": 1.416e-05,
+    "upstream_inference_completions_cost": 1.875e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 38,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.8612517500296235,
+ "fetched_at": "2026-09-06T01:41:12Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-06-09, the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- On 2026-06-04, the Boreal team observed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- As of 2026-06-04, for anything Atlas-related, page Priya Raman, not Marcus, since she has the Atlas team pager this cycle. [decision; valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: As of 2026-04-08, for anything Atlas-related, page Marcus, not Priya Raman. [decision; valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: For anything Atlas-related, page Priya Raman. [decision; valid 2026-03-17 to 2026-04-08; recorded by standup/atlas/2026-03-17]\n- As of 2026-06-04, Priya Raman has the Atlas team pager this cycle, taking over from Marcus. [valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n- The catalog service still relies on the resizer. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-05-27, the Atlas team observed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-05-27, the Atlas team decided that the bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- On 2026-05-22, the Dune team observed that the job scheduler's error rate crept up to 2 percent after the dependency bump. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- On 2026-05-22, the Dune team observed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- On 2026-05-22, Tomasz picked up the Dune team on-call shift from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change, and since it was not their service, they flagged it. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Farah is release captain for Q3 2025 for the Dune team. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- On 2026-04-14, the Dune team observed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- Farah holds the first on-call rotation for the Dune team as of 2026-04-14, having taken over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz holds the first on-call rotation for the Dune team as of 2026-03-11, having taken over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: Farah has the first on-call rotation for the Dune team. [valid 2025-01-13 to 2026-03-11; recorded by standup/dune/2025-01-13]\n- As of 2026-04-14, Farah is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is primary on-call for the Dune team, having taken over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz Nowak has the Dune team pager, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still has the Dune team pager. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n- On 2026-04-14, Tomasz handed the Dune team pager to Farah on rotation day. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- On 2026-04-08, the Atlas team observed that webhooks' request volume halved following the client rollout, and since it was not their service, they flagged it. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n\nQuestion: Which team owns the service that the notifier depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654223-kfq0fzRRMEYhsN5Rywj5",
+  "object": "chat.completion",
+  "created": 1788654223,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which team owns the service that the notifier depends on?\"\n\nLooking through the memory, I need to find information about a \"notifier\" service and its dependencies. Scanning all entries:\n\n- Dune team: indexer disk usage, catalog service memory (Boreal), Atlas pager decisions, resizer, indexer p99 latency, bus retention, planning meeting, job scheduler error rate, auth-gateway CPU, on-call shifts, ledger service disk usage, release captain, reporting service p99 latency, webhooks request volume.\n\nThere's no mention of a \"notifier\" service anywhere in the memory, nor any dependency relationships involving a notifier. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which team owns the service that the notifier depends on?\"\n\nLooking through the memory, I need to find information about a \"notifier\" service and its dependencies. Scanning all entries:\n\n- Dune team: indexer disk usage, catalog service memory (Boreal), Atlas pager decisions, resizer, indexer p99 latency, bus retention, planning meeting, job scheduler error rate, auth-gateway CPU, on-call shifts, ledger service disk usage, release captain, reporting service p99 latency, webhooks request volume.\n\nThere's no mention of a \"notifier\" service anywhere in the memory, nor any dependency relationships involving a notifier. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1734,
+   "completion_tokens": 149,
+   "total_tokens": 1883,
+   "cost": 0.00013658,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 512,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013658,
+    "upstream_inference_prompt_cost": 9.933e-05,
+    "upstream_inference_completions_cost": 3.725e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 143,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.581696707988158,
+ "fetched_at": "2026-09-06T00:23:46Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does billing-api depend on now?\nGold answer: ledger and feature-flags\nAlso accepted: (none)\nGrading rule: Correct only if the answer gives the CURRENT value (the gold). Naming an earlier value listed under distractors is wrong, even if it was once true. 'I don't know' is wrong. Every listed service must be named.\n\nAnswer to grade: Ledger"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658874-BDKFnFaGVooWcpprf1e7",
+  "object": "chat.completion",
+  "created": 1788658874,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer only names Ledger but omits feature-flags, and the rule requires every listed service to be named.\"}",
+     "refusal": null,
+     "reasoning": "The question asks which services billing-api depends on now. Gold answer: \"ledger and feature-flags\". The answer to grade: \"Ledger\" — only names one of the two services. Rule: \"Every listed service must be named.\" So it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services billing-api depends on now. Gold answer: \"ledger and feature-flags\". The answer to grade: \"Ledger\" — only names one of the two services. Rule: \"Every listed service must be named.\" So it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 238,
+   "completion_tokens": 89,
+   "total_tokens": 327,
+   "cost": 3.626e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.626e-05,
+    "upstream_inference_prompt_cost": 1.401e-05,
+    "upstream_inference_completions_cost": 2.225e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 54,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.519247083051596,
+ "fetched_at": "2026-09-06T01:41:16Z"
+}

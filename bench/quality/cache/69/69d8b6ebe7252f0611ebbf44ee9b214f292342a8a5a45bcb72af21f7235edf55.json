@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Yuki is on team Cinder as of 2025-01-08; Diego left team Cinder for team Ember on 2025-12-15. [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Yuki and Diego are on team Cinder as of 2025-01-08. [valid 2025-01-08 to 2025-12-15; recorded by standup/cinder/2025-01-08]\n- Yuki is the primary on-call for team Cinder as of 2025-12-15, taking over from Diego. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call for team Cinder as of 2025-11-25, taking over from Yuki. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call for team Cinder as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- Yuki is the primary on-call to contact for anything on Cinder as of 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call to contact for anything on Cinder as of 2025-11-25; Yuki is off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call to contact for anything on Cinder as of 2025-10-02; Diego is off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Page Diego for anything on Cinder this cycle, as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Page Yuki for anything on Cinder this cycle, not Diego Alvarez, as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Page Diego Alvarez for anything on Cinder this cycle, not Yuki Tanaka, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Page Yuki Tanaka for anything on Cinder this cycle, not Diego, as of 2025-02-17. [decision; valid 2025-02-17 to 2025-06-13; recorded by standup/cinder/2025-02-17]\n- Yuki picked up the Cinder on-call shift from Diego on 2025-05-02. [decision; valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02]\n- Team Cinder's on-call swapped on 2025-12-15, with Yuki carrying the Cinder on-call phone. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Team Cinder's on-call swapped on 2025-11-25, with Diego carrying the Cinder on-call phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n- As of 2026-05-28, Yuki Tanaka still has the Cinder pager. [valid 2026-05-28 to now; recorded by standup/cinder/2026-05-28]\n- Diego takes over the Cinder on-call pager from Yuki as of 2025-03-27. [decision; valid 2025-03-27 to now; recorded by standup/cinder/2025-03-27]\n- Diego carried the Cinder on-call phone from 2025-11-25 until 2025-12-15, when Yuki took over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is back on the Cinder on-call rotation as of 2025-11-25, carrying the phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Diego is off the Cinder on-call rotation as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- Diego left team Cinder and joined team Ember effective 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n- Cinder holds team planning on Mondays. [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-2]\n\nQuestion: Which team was Yuki on before joining Cinder?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657070-6e8t6aAbt4ehWa03YYJp",
+  "object": "chat.completion",
+  "created": 1788657070,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which team Yuki was on before joining Cinder. The memory only says Yuki is on team Cinder as of 2025-01-08. There's no information about any prior team. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Yuki was on before joining Cinder. The memory only says Yuki is on team Cinder as of 2025-01-08. There's no information about any prior team. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1723,
+   "completion_tokens": 58,
+   "total_tokens": 1781,
+   "cost": 0.000143725,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000143725,
+    "upstream_inference_prompt_cost": 0.000129225,
+    "upstream_inference_completions_cost": 1.45e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 52,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2668969579972327,
+ "fetched_at": "2026-09-06T01:11:13Z"
+}

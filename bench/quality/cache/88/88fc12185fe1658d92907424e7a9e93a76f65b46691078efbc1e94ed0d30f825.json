@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Atlas team owns the image resizer as of 2025-11-26, when ownership transferred from the Ember team. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The Ember team owns the image resizer as of 2025-03-20. [decision; valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: The Dune team owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- As of 2026-03-17, storage for the image resizer's original uploads has doubled in six months. [valid 2026-03-17 to now; recorded by standup/atlas/2026-03-17]\n- The product catalog calls the image resizer for thumbnails, so the image resizer is a hard dependency of the product catalog. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- As of the 2025-11-26 handover, the image resizer's dashboards and alerts are being repointed. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n- On 2026-03-17, the Atlas team decided that the image resizer will keep original uploads for 90 days only, because storage for originals doubled in six months. [decision; valid 2026-03-17 to now; recorded by standup/atlas/2026-03-17]\n- On 2025-10-15, the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-10-15 to now; recorded by standup/atlas/2025-10-15]\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, when ownership passed from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- As of 2026-01-12, the billing API is owned by the Ember team, having been run by the Atlas team until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: The Atlas team owns the billing API as of 2025-06-09, when ownership passed from the Ember team; the Boreal team was recorded by mistake and never held it. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: The Boreal team owns the billing API as of 2025-06-09, when ownership passed from the Ember team. [decision; valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: The Ember team owns the billing API as of 2025-03-07, when ownership passed from the Atlas team. [decision; valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [constraint; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- As of 2025-12-19, the Atlas team owns the product catalog, having taken it over from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- The Boreal team observed on 2025-12-01 that the billing API's error rate crept up to 2 percent after the dependency bump. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- On 2025-12-25, the Atlas team observed that the reports pipeline's disk usage jumped 30 percent following the retention change, and since it was not their service, they flagged it. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- On 2026-06-09, the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- The product catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time. [decision; valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n- On 2025-12-19, the Atlas team took over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- On 2025-06-09, Oskar wrote the handover doc for the billing API for Lena. [valid 2025-06-09 to now; recorded by handover/2025-06-09-billing-api]\n\nQuestion: As of now, which team is responsible for image-resizer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652713-bPbWLENLnVZC3lUlAszZ",
+  "object": "chat.completion",
+  "created": 1788652713,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The Atlas team",
+     "refusal": null,
+     "reasoning": "The question asks which team owns the image resizer as of now (2026-06-30). The memory says: \"The Atlas team owns the image resizer as of 2025-11-26, when ownership transferred from the Ember team. [decision; valid 2025-11-26 to now; ...]\" So the answer is the Atlas team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owns the image resizer as of now (2026-06-30). The memory says: \"The Atlas team owns the image resizer as of 2025-11-26, when ownership transferred from the Ember team. [decision; valid 2025-11-26 to now; ...]\" So the answer is the Atlas team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1613,
+   "completion_tokens": 81,
+   "total_tokens": 1694,
+   "cost": 0.000133545,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000133545,
+    "upstream_inference_prompt_cost": 0.000113295,
+    "upstream_inference_completions_cost": 2.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 76,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.089144084020518,
+ "fetched_at": "2026-09-05T23:58:37Z"
+}

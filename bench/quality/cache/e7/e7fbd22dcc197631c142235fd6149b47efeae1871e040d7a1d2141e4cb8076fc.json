@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- Yuki Tanaka is on Cinder. [valid 2025-01-08 to now; recorded by standup/cinder/2025-01-08]\n- Cinder runs its planning on Mondays. [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date. [decision; valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: The Ember team owns the authentication gateway. [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- Cinder adopted trunk-based development as of 2025-05-14. [decision; valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14-2]\n- Diego is on call for Cinder to start the year. [valid 2025-01-09 to now; recorded by standup/cinder/2025-01-09]\n- As of 2025-10-16, the Cinder team sits on the third floor. [valid 2025-10-16 to now; recorded by standup/cinder/2025-10-16]\n- As of 2025-11-27, Yuki Tanaka takes the Cinder pager from Diego. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n- As of 2025-11-27, the Cinder pager pages Yuki Tanaka, not Diego. [constraint; valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, the Cinder pager pages Diego this cycle, not Yuki Tanaka. [constraint; valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n    earlier: As of 2025-09-05, the Cinder team says to page Yuki Tanaka for anything this cycle, not Diego. [constraint; valid 2025-09-05 to 2025-10-24; recorded by standup/cinder/2025-09-05]\n    earlier: Diego has the Cinder pager as of 2025-07-17, taking over from Yuki Tanaka. [valid 2025-07-17 to 2025-09-05; recorded by standup/cinder/2025-07-17]\n    earlier: Yuki Tanaka has the Cinder pager as of 2025-06-06, taking over from Diego. [valid 2025-06-06 to 2025-07-17; recorded by standup/cinder/2025-06-06]\n    earlier: Diego has the Cinder pager as of 2025-04-24, taking over from Yuki Tanaka. [valid 2025-04-24 to 2025-06-06; recorded by standup/cinder/2025-04-24]\n    earlier: Yuki Tanaka has the Cinder pager for the cycle starting 2025-02-27, taking over from Diego. [valid 2025-02-27 to 2025-04-24; recorded by standup/cinder/2025-02-27]\n- As of 2025-11-27, Diego is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on Cinder. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- On 2025-07-17, Yuki Tanaka handed the Cinder pager to Diego on rotation day. [valid 2025-07-17 to now; recorded by standup/cinder/2025-07-17]\n- As of 2025-11-27, Diego Alvarez is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n- On 2025-12-19, the Atlas team took over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- As of 2025-10-13, the pager for the ledger service rings Cinder, not the Atlas team. [constraint; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- As of 2025-10-24, Diego has the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to now; recorded by standup/cinder/2025-10-24]\n- The Cinder team reported on 2025-04-24 that feature-flags' p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- On 2025-09-16, Oskar wrote the handover doc for Diego for the authentication gateway handover to Cinder. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- Ownership of the job scheduler transferred from the Dune team to the Cinder team on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- As of 2025-09-23, the pager for the job scheduler rings the Cinder team, not the Dune team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- The Cinder team owns the job scheduler as of 2025-09-23, when ownership transferred from the Dune team. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The Dune team owns the job scheduler as of 2025-09-05. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n\nQuestion: Which services does Cinder own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653414-EzhELKA6f3tfJgtuDmPN",
+  "object": "chat.completion",
+  "created": 1788653414,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The authentication gateway and the job scheduler",
+     "refusal": null,
+     "reasoning": "The question asks which services Cinder owns now (as of 2026-06-30).\n\nLet me go through the memory:\n\n1. Authentication gateway: Ember handed it to Cinder on 2025-09-16; Cinder owns it as of that date. Valid 2025-09-16 to now. So Cinder owns the authentication gateway.\n\n2. Product catalog: On 2025-12-19, the Atlas team took over the product catalog from the Cinder team. So Cinder no longer owns the product catalog (implies they owned it before).\n\n3. Ledger service: pager for ledger service rings Cinder — that's pager, not necessarily ownership. It's a constraint about paging, not ownership. Hmm, but it might imply ownership. The entry says \"the pager for the ledger service rings Cinder, not the Atlas team.\" That's a paging constraint, not explicitly ownership. Should I include it? The question asks about services Cinder owns. Ownership entries are decisions: auth gateway, job scheduler. The ledger is only about pager. I'd be careful. The rule says answer only from memory, don't guess. Pager ringing Cinder doesn't state ownership. But it might be interpreted. I think safest: list services Cinder owns: authentication gateway, job scheduler.\n\n4. Job scheduler: Cinder team owns it as of 2025-09-23. Valid to now. Yes.\n\nSo answer: authentication gateway and job scheduler.\n\nThe instruction: reply in one short line with just the value asked for. So: \"Authentication gateway and job scheduler\" — maybe include the ledger? I'll exclude ledger since it's only a pager constraint, not ownership.\n\nActually, let me reconsider. \"Which services does Cinder own now?\" The pager ringing could suggest responsibility. But ownership decisions are explicit. I'll answer: the authentication gateway and the job scheduler.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Cinder owns now (as of 2026-06-30).\n\nLet me go through the memory:\n\n1. Authentication gateway: Ember handed it to Cinder on 2025-09-16; Cinder owns it as of that date. Valid 2025-09-16 to now. So Cinder owns the authentication gateway.\n\n2. Product catalog: On 2025-12-19, the Atlas team took over the product catalog from the Cinder team. So Cinder no longer owns the product catalog (implies they owned it before).\n\n3. Ledger service: pager for ledger service rings Cinder — that's pager, not necessarily ownership. It's a constraint about paging, not ownership. Hmm, but it might imply ownership. The entry says \"the pager for the ledger service rings Cinder, not the Atlas team.\" That's a paging constraint, not explicitly ownership. Should I include it? The question asks about services Cinder owns. Ownership entries are decisions: auth gateway, job scheduler. The ledger is only about pager. I'd be careful. The rule says answer only from memory, don't guess. Pager ringing Cinder doesn't state ownership. But it might be interpreted. I think safest: list services Cinder owns: authentication gateway, job scheduler.\n\n4. Job scheduler: Cinder team owns it as of 2025-09-23. Valid to now. Yes.\n\nSo answer: authentication gateway and job scheduler.\n\nThe instruction: reply in one short line with just the value asked for. So: \"Authentication gateway and job scheduler\" — maybe include the ledger? I'll exclude ledger since it's only a pager constraint, not ownership.\n\nActually, let me reconsider. \"Which services does Cinder own now?\" The pager ringing could suggest responsibility. But ownership decisions are explicit. I'll answer: the authentication gateway and the job scheduler.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1660,
+   "completion_tokens": 384,
+   "total_tokens": 2044,
+   "cost": 0.000441,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000441,
+    "upstream_inference_prompt_cost": 0.000249,
+    "upstream_inference_completions_cost": 0.000192
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 375,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.637733499985188,
+ "fetched_at": "2026-09-06T00:10:22Z"
+}

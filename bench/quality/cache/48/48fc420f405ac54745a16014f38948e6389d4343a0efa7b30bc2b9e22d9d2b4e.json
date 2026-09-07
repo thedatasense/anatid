@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-11-24] handover/2025-11-24-event-bus: From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\n- [2025-04-22] standup/boreal/2025-04-22: Per the change policy, the event-bus deploys on weekdays after 15:00 UTC.\n- [2026-03-17] standup/boreal/2026-03-17-2: Reminder: the event-bus deploys only on weekdays after 15:00 UTC.\n- [2025-11-11] standup/boreal/2025-11-11-2: Heads-up from team Boreal: the event bus' CPU sat at 90 percent after the traffic shift.\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2025-09-09] handover/2025-09-09-event-bus: Boreal handed the bus to the Dune team today; Marcus Oyelaran wrote up the handover doc for Tomasz Nowak.\n- [2026-05-05] standup/boreal/2026-05-05: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-11-13] standup/boreal/2025-11-13: The reporting service still relies on the bus; keep that in mind for the maintenance.\n- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.\n- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.\n- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.\n- [2025-08-29] standup/cinder/2025-08-29: Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2026-01-02] standup/boreal/2026-01-02: Boreal on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-12-08] standup/dune/2025-12-08-2: Heads-up from team Dune: the bus' request volume halved after the client rollout.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-07-22] standup/cinder/2025-07-22: Cinder on-call swapped this morning. Yuki Tanaka carries the phone until the next rotation.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-10-02] standup/cinder/2025-10-02: On-call rotation: Yuki is primary for team Cinder starting today; Diego is off rotation.\n- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-09-24] standup/boreal/2025-09-24: Marcus picked up the Boreal on-call shift from Lena today.\n\nQuestion: Who is on call for the team that owns the event-bus?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652505-Lq4zNjWlbJ1qnZVe2RF5",
+  "object": "chat.completion",
+  "created": 1788652505,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Lena",
+     "refusal": null,
+     "reasoning": "Let me work through this carefully.\n\nThe question asks: Who is on call for the team that owns the event-bus (as of today, 2026-06-30)?\n\nFirst, determine which team owns the event-bus now.\n\nOwnership history:\n- 2025-01-09: event bus is Boreal team service; Boreal owns notifier.\n- 2025-09-09: handover: Boreal handed the bus to Dune team.\n- 2025-11-24: handover: from today, the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred (back to Boreal).\n\nSo as of 2025-11-24, the event-bus is owned by team Boreal. There are no later entries changing ownership. So the owning team is Boreal.\n\nNow, who is on call for Boreal currently (as of 2026-06-30)?\n\nBoreal on-call entries:\n- 2025-01-09: Marcus on call to start the year.\n- 2025-11-11: Lena carries the phone.\n- 2025-09-24: Marcus picked up the Boreal on-call shift from Lena today. (Wait, that's earlier than 2025-11-11 — that's odd, 2025-09-24 vs 2025-11-11. So Marcus on 09-24, then Lena on 11-11.)\n- 2026-01-02: Boreal on-call swapped. Marcus carries the phone.\n- 2026-02-04: Boreal on-call swapped. Lena carries the phone until the next rotation.\n\nLatest entry: 2026-02-04 — Lena carries the phone until the next rotation. No later Boreal on-call entries after 2026-02-04. So Lena is on call for Boreal.\n\nThe question asks about \"now\" (2026-06-30). The latest recorded on-call is Lena (2026-02-04). Since memory says \"until the next rotation\" and there's no later rotation recorded, the answer per memory is Lena.\n\nAnswer: Lena",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Let me work through this carefully.\n\nThe question asks: Who is on call for the team that owns the event-bus (as of today, 2026-06-30)?\n\nFirst, determine which team owns the event-bus now.\n\nOwnership history:\n- 2025-01-09: event bus is Boreal team service; Boreal owns notifier.\n- 2025-09-09: handover: Boreal handed the bus to Dune team.\n- 2025-11-24: handover: from today, the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred (back to Boreal).\n\nSo as of 2025-11-24, the event-bus is owned by team Boreal. There are no later entries changing ownership. So the owning team is Boreal.\n\nNow, who is on call for Boreal currently (as of 2026-06-30)?\n\nBoreal on-call entries:\n- 2025-01-09: Marcus on call to start the year.\n- 2025-11-11: Lena carries the phone.\n- 2025-09-24: Marcus picked up the Boreal on-call shift from Lena today. (Wait, that's earlier than 2025-11-11 — that's odd, 2025-09-24 vs 2025-11-11. So Marcus on 09-24, then Lena on 11-11.)\n- 2026-01-02: Boreal on-call swapped. Marcus carries the phone.\n- 2026-02-04: Boreal on-call swapped. Lena carries the phone until the next rotation.\n\nLatest entry: 2026-02-04 — Lena carries the phone until the next rotation. No later Boreal on-call entries after 2026-02-04. So Lena is on call for Boreal.\n\nThe question asks about \"now\" (2026-06-30). The latest recorded on-call is Lena (2026-02-04). Since memory says \"until the next rotation\" and there's no later rotation recorded, the answer per memory is Lena.\n\nAnswer: Lena",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1667,
+   "completion_tokens": 456,
+   "total_tokens": 2123,
+   "cost": 0.000239025,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000239025,
+    "upstream_inference_prompt_cost": 0.000125025,
+    "upstream_inference_completions_cost": 0.000114
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 452,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 8.434700166981202,
+ "fetched_at": "2026-09-05T23:55:14Z"
+}

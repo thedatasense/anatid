@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Effective 2025-12-05, Diego Alvarez joined the Ember team. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n- For anything Ember-related, page Diego. [decision; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n    earlier: For anything Ember-related, page Oskar. [decision; valid 2025-03-19 to 2026-03-31; recorded by standup/ember/2025-03-19-3]\n- As of the 2026-06-18 rotation, Diego holds the Ember team pager. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of the 2026-05-18 rotation, Oskar holds the Ember team pager, having taken it over from Diego. [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of the 2026-03-31 rotation, Diego Alvarez holds the Ember team pager, having taken it over from Oskar. [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n- On 2026-05-18, Oskar picked up the Ember team on-call shift from Diego. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18]\n- On the 2025-12-29 rotation day, Oskar handed the Ember team pager to Diego. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29]\n- On 2026-06-18, the Ember team on-call swapped and Diego carries the phone until the next rotation. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- Effective 2025-12-05, Diego Alvarez left Team Cinder. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n- On 2025-08-29, Diego took over the Team Cinder pager from Yuki. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29]\n- Oskar is the only engineer on the Ember team for now. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- As of the 2025-05-19 rotation day, Diego is back on rotation for Team Cinder, having received the pager from Yuki. [valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-09, Diego is off rotation for Team Cinder. [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n- On 2025-02-21, Yuki handed the Team Cinder pager to Diego during rotation day. [valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- On 2025-10-27, Diego handed the Team Cinder pager to Yuki during rotation day. [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n- Team Cinder consists of Yuki; Diego Alvarez left the team on 2025-12-05. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n    earlier: Team Cinder consists of Yuki and Diego. [valid 2025-01-08 to 2025-12-05; recorded by standup/cinder/2025-01-08]\n- As of 2025-04-29, the Ember team has taken over the resizer from Team Dune. [valid 2025-04-29 to now; recorded by handover/2025-04-29-image-resizer]\n- As of 2025-04-29, the Ember team has taken over the resizer from Team Dune. [valid 2025-04-29 to now; recorded by handover/2025-04-29-image-resizer]\n    earlier: The resizer lives with Team Dune. [valid 2025-01-20 to 2025-04-29; recorded by standup/dune/2025-01-20]\n- On the 2025-05-19 rotation day, Yuki handed the Team Cinder pager to Diego. [valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19]\n- The Ember team does pairing on every production change. [decision; valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- As of 2025-10-27, Yuki is the primary on-call for Team Cinder, having taken over from Diego. [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n    earlier: As of 2025-08-29, Diego is the primary on-call for Team Cinder, having taken over from Yuki. [valid 2025-08-29 to 2025-10-27; recorded by standup/cinder/2025-08-29]\n    earlier: As of 2025-07-10, Yuki is the primary on-call for Team Cinder, carrying the phone until the next rotation. [valid 2025-07-10 to 2025-08-29; recorded by standup/cinder/2025-07-10]\n    earlier: As of the 2025-05-19 rotation day, Diego is the primary on-call for Team Cinder, having received the pager from Yuki. [valid 2025-05-19 to 2025-07-10; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-09, Yuki is the primary on-call for Team Cinder. [valid 2025-04-09 to 2025-05-19; recorded by standup/cinder/2025-04-09]\n\nQuestion: Which team was Diego on before moving to Ember?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653314-FQHGDzuHOPhD6mZXYnvK",
+  "object": "chat.completion",
+  "created": 1788653314,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Cinder",
+     "refusal": null,
+     "reasoning": "The question asks which team Diego was on before moving to Ember.\n\nMemory entries:\n- \"Effective 2025-12-05, Diego Alvarez joined the Ember team.\"\n- \"Effective 2025-12-05, Diego Alvarez left Team Cinder.\"\n- \"Team Cinder consists of Yuki; Diego Alvarez left the team on 2025-12-05.\"\n\nSo Diego was on Team Cinder before moving to Ember.\n\nAnswer: Team Cinder.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Diego was on before moving to Ember.\n\nMemory entries:\n- \"Effective 2025-12-05, Diego Alvarez joined the Ember team.\"\n- \"Effective 2025-12-05, Diego Alvarez left Team Cinder.\"\n- \"Team Cinder consists of Yuki; Diego Alvarez left the team on 2025-12-05.\"\n\nSo Diego was on Team Cinder before moving to Ember.\n\nAnswer: Team Cinder.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1816,
+   "completion_tokens": 94,
+   "total_tokens": 1910,
+   "cost": 0.00015202,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015202,
+    "upstream_inference_prompt_cost": 0.00012852,
+    "upstream_inference_completions_cost": 2.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 89,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8586969579919241,
+ "fetched_at": "2026-09-06T00:08:35Z"
+}

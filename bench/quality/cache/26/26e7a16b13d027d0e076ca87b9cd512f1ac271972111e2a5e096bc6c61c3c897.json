@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Search-indexer depends on the catalog [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- Search-indexer must stay on OpenSearch 2.11 until the full reindex completes [constraint; valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- Ember noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- INC-2025-023: search-indexer served stale results for two days on 2025-10-13; the root cause was a reindex job that failed silently on a full disk [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- Cinder noticed that search-indexer's disk usage jumped 30 percent after the retention change [observation; valid 2026-01-01 to now; recorded by standup/cinder/2026-01-01]\n- Dune owns search-indexer [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: Cinder owns search-indexer [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- The catalog deploys only on Tuesdays between 13:00 and 15:00 UTC [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16]\n    earlier: The catalog deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n- Decision: search-indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes [decision; valid 2025-12-17 to now; recorded by standup/dune/2025-12-17]\n- Dune noticed that search-indexer's queue depth hit 50,000 after the marketing send [observation; valid 2025-11-06 to now; recorded by standup/dune/2025-11-06]\n- The scheduler deploys only on weekday mornings before 11:00 UTC [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n    earlier: The scheduler deploys only on weekdays after 15:00 UTC [constraint; valid 2025-03-19 to 2025-10-27; recorded by standup/ember/2025-03-19]\n- Webhooks deploys only on Mondays between 10:00 and 12:00 UTC [constraint; valid 2025-03-17 to now; recorded by standup/boreal/2025-03-17]\n- No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- Dune noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023 [decision; valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- Billing-api deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-05-05 to now; recorded by standup/boreal/2025-05-05]\n- The scheduler depends on feature-flags [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- Atlas noticed that the catalog's request volume halved after the client rollout [observation; valid 2025-08-29 to now; recorded by standup/atlas/2025-08-29]\n- The catalog depends on image-resizer [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- Atlas noticed that the catalog's disk usage jumped 30 percent after the retention change [observation; valid 2025-04-18 to now; recorded by standup/atlas/2025-04-18-2]\n- Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n\nQuestion: What is the deploy window of the service that search-indexer depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788655351-zwjVYlScbKVg3qQ31v0i",
+  "object": "chat.completion",
+  "created": 1788655351,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tuesdays between 13:00 and 15:00 UTC",
+     "refusal": null,
+     "reasoning": "Search-indexer depends on the catalog. The catalog deploys only on Tuesdays between 13:00 and 15:00 UTC (current, valid 2026-03-16 to now). The earlier constraint was Mondays to Thursdays between 09:00 and 17:00 UTC, valid until 2026-03-16. Today is 2026-06-30, so current answer: Tuesdays between 13:00 and 15:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Search-indexer depends on the catalog. The catalog deploys only on Tuesdays between 13:00 and 15:00 UTC (current, valid 2026-03-16 to now). The earlier constraint was Mondays to Thursdays between 09:00 and 17:00 UTC, valid until 2026-03-16. Today is 2026-06-30, so current answer: Tuesdays between 13:00 and 15:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1290,
+   "completion_tokens": 115,
+   "total_tokens": 1405,
+   "cost": 0.0001255,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001255,
+    "upstream_inference_prompt_cost": 9.675e-05,
+    "upstream_inference_completions_cost": 2.875e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 99,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.2366510839783587,
+ "fetched_at": "2026-09-06T00:42:34Z"
+}

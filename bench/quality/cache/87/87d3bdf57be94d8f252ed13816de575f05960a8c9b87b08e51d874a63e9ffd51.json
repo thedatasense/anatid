@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2025-09-26] standup/atlas/2025-09-26: For newcomers: the deploy window for the ledger service is still on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-11-12] standup/boreal/2025-11-12: The catalog service's deploy window changes today: it is now on Tuesdays and Thursdays between 10:00 and 12:00 UTC. The old slot (Mondays 10:00-12:00 UTC) is retired.\n- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.\n- [2025-04-14] standup/ember/2025-04-14: Auth-gateway deploy window: on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-11-03] standup/dune/2025-11-03-2: For newcomers: the deploy window for the job scheduler is still on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2025-08-13] standup/boreal/2025-08-13: The search indexer must stay on OpenSearch 2.11 until the full reindex completes. Reminder that reporting depends on the ledger.\n- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-11-13] standup/boreal/2025-11-13: The reporting service still relies on the bus; keep that in mind for the maintenance.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-05-02] standup/cinder/2025-05-02-2: The catalog deploy window: on Mondays between 10:00 and 12:00 UTC. Team Cinder holds planning on Mondays.\n- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.\n- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.\n- [2026-04-16] standup/atlas/2026-04-16: Team Atlas saw that the billing service's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-03-14] standup/atlas/2025-03-14: Dependency map update: the ledger needs the auth gateway (service tokens).\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-10-21] standup/atlas/2025-10-21: New dependency for the billing service: the feature flag service. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-08-08] standup/dune/2025-08-08: New deploy window for the job scheduler: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Tuesdays 13:00-15:00 UTC slot. Observation from the Dune team: after the marketing send, billing-api's queue depth hit 50,000.\n- [2025-11-17] standup/ember/2025-11-17: Team Ember saw that the authentication gateway's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it. The weekly architecture review is run by Oskar.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2026-05-01] standup/cinder/2026-05-01: From today the ledger service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC.\n\nQuestion: What is the deploy window of the service that reporting depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651435-QF8AofSb3B8POa6b2b9V",
+  "object": "chat.completion",
+  "created": 1788651435,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"What is the deploy window of the service that reporting depends on?\"\n\nFirst, I need to figure out what service reporting depends on. The memory says:\n- [2025-09-19]: reporting will read from the event-bus instead of querying the ledger directly. That removes the dependency on Ledger from the reporting service.\n- [2025-11-13]: The reporting service still relies on the bus; keep that in mind for the maintenance.\n\nSo as of the latest info, reporting depends on the event-bus (bus). But there's no deploy window mentioned for the event-bus in memory.\n\nOlder entries: reporting depended on the ledger ([2025-02-06], [2025-08-13] reminder that reporting depends on the ledger). But the 2025-09-19 entry removed that dependency.\n\nThe question doesn't specify a moment, so answer for now (today is 2026-06-30). Currently, reporting depends on the event-bus. Is there a deploy window for the event-bus? No entry mentions an event-bus deploy window.\n\nAlternatively, if interpreting \"the service that reporting depends on\" as the ledger (from the older note), the ledger deploy window as of now (2026-05-01 entry) is Mondays and Wednesdays between 14:00 and 16:00 UTC. But the dependency on ledger was removed in 2025-09-19.\n\nHmm, but wait — does the event-bus count as a \"service\"? The memory says reporting relies on the bus. There's no deploy window recorded for the event-bus. So the answer might be \"I don't know\" since there's no deploy window for the bus.\n\nActually, let me reconsider. The chain:\n1. Reporting depends on... currently the event-bus (per 2025-11-13, latest). No deploy window for event-bus exists in memory.\n2. If someone thought reporting depends on ledger, that's outdated.\n\nThe rules say: if the memory does not contain the answer, reply exactly \"I don't know\".\n\nThe current dependency is the event-bus, and no deploy window for it is recorded. So the answer should be \"I don't know\".\n\nBut wait — maybe the intended answer is the ledger's deploy window? The question might be a trick testing temporal reasoning: reporting used to depend on ledger, but no longer. If the question intended the ledger, the latest ledger deploy window is Mondays and Wednesdays 14:00-16:00 UTC.\n\nHmm. Let me think about what the \"correct\" answer is. The question: \"What is the deploy window of the service that reporting depends on?\" Without a stated moment, answer for now (2026-06-30). Now, reporting depends on the event-bus. The event-bus deploy window is not in memory. So \"I don't know\".\n\nAlternatively, maybe the question intends: reporting depends on the event-bus now, but there's no window; if the question was about the past (before 2025-09-19), reporting depended on ledger, whose current window is Mondays and Wednesdays 14:00-16:00 UTC.\n\nGiven the rule \"If the memory does not contain the answer, reply exactly: I don't know\", and the current dependency (event-bus) has no recorded deploy window, the correct answer is \"I don't know\".\n\nBut hold on — could \"the bus\" be the \"event-bus\" and there's some other entry? Let me scan all entries again:\n- Reporting deploy window: Tuesdays and Fridays 09:00-10:30 UTC (that's reporting's own window).\n- Ledger deploy window: Wednesdays 09:00-11:00 UTC (Atlas 2025-09-26), changed to Mondays and Wednesdays 14:00-16:00 UTC (2026-05-01).\n- Catalog: Tuesdays and Thursdays 10:00-12:00 UTC.\n- Webhooks: Thursdays 07:00-09:00 UTC.\n- Auth-gateway: Mondays to Thursdays 09:00-17:00 UTC.\n- Job scheduler: weekdays 08:00-10:00 UTC, never Fridays.\n- No event-bus deploy window.\n\nSo the answer is \"I don't know\" — since the current dependency (event-bus) has no deploy window recorded.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"What is the deploy window of the service that reporting depends on?\"\n\nFirst, I need to figure out what service reporting depends on. The memory says:\n- [2025-09-19]: reporting will read from the event-bus instead of querying the ledger directly. That removes the dependency on Ledger from the reporting service.\n- [2025-11-13]: The reporting service still relies on the bus; keep that in mind for the maintenance.\n\nSo as of the latest info, reporting depends on the event-bus (bus). But there's no deploy window mentioned for the event-bus in memory.\n\nOlder entries: reporting depended on the ledger ([2025-02-06], [2025-08-13] reminder that reporting depends on the ledger). But the 2025-09-19 entry removed that dependency.\n\nThe question doesn't specify a moment, so answer for now (today is 2026-06-30). Currently, reporting depends on the event-bus. Is there a deploy window for the event-bus? No entry mentions an event-bus deploy window.\n\nAlternatively, if interpreting \"the service that reporting depends on\" as the ledger (from the older note), the ledger deploy window as of now (2026-05-01 entry) is Mondays and Wednesdays between 14:00 and 16:00 UTC. But the dependency on ledger was removed in 2025-09-19.\n\nHmm, but wait — does the event-bus count as a \"service\"? The memory says reporting relies on the bus. There's no deploy window recorded for the event-bus. So the answer might be \"I don't know\" since there's no deploy window for the bus.\n\nActually, let me reconsider. The chain:\n1. Reporting depends on... currently the event-bus (per 2025-11-13, latest). No deploy window for event-bus exists in memory.\n2. If someone thought reporting depends on ledger, that's outdated.\n\nThe rules say: if the memory does not contain the answer, reply exactly \"I don't know\".\n\nThe current dependency is the event-bus, and no deploy window for it is recorded. So the answer should be \"I don't know\".\n\nBut wait — maybe the intended answer is the ledger's deploy window? The question might be a trick testing temporal reasoning: reporting used to depend on ledger, but no longer. If the question intended the ledger, the latest ledger deploy window is Mondays and Wednesdays 14:00-16:00 UTC.\n\nHmm. Let me think about what the \"correct\" answer is. The question: \"What is the deploy window of the service that reporting depends on?\" Without a stated moment, answer for now (2026-06-30). Now, reporting depends on the event-bus. The event-bus deploy window is not in memory. So \"I don't know\".\n\nAlternatively, maybe the question intends: reporting depends on the event-bus now, but there's no window; if the question was about the past (before 2025-09-19), reporting depended on ledger, whose current window is Mondays and Wednesdays 14:00-16:00 UTC.\n\nGiven the rule \"If the memory does not contain the answer, reply exactly: I don't know\", and the current dependency (event-bus) has no recorded deploy window, the correct answer is \"I don't know\".\n\nBut hold on — could \"the bus\" be the \"event-bus\" and there's some other entry? Let me scan all entries again:\n- Reporting deploy window: Tuesdays and Fridays 09:00-10:30 UTC (that's reporting's own window).\n- Ledger deploy window: Wednesdays 09:00-11:00 UTC (Atlas 2025-09-26), changed to Mondays and Wednesdays 14:00-16:00 UTC (2026-05-01).\n- Catalog: Tuesdays and Thursdays 10:00-12:00 UTC.\n- Webhooks: Thursdays 07:00-09:00 UTC.\n- Auth-gateway: Mondays to Thursdays 09:00-17:00 UTC.\n- Job scheduler: weekdays 08:00-10:00 UTC, never Fridays.\n- No event-bus deploy window.\n\nSo the answer is \"I don't know\" — since the current dependency (event-bus) has no deploy window recorded.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1559,
+   "completion_tokens": 930,
+   "total_tokens": 2489,
+   "cost": 0.000341745,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000341745,
+    "upstream_inference_prompt_cost": 0.000109245,
+    "upstream_inference_completions_cost": 0.0002325
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 924,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 10.211900541966315,
+ "fetched_at": "2026-09-05T23:37:25Z"
+}

@@ -1,0 +1,57 @@
+{
+ "qid": "q047",
+ "system": "vector-prf",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz.\n- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.\n- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-07-21] standup/atlas/2025-07-21: As of today Tomasz is on Dune; Atlas loses a pair of hands.\n- [2025-05-14] standup/atlas/2025-05-14: Reminder from team Atlas: page Priya for anything this cycle, not Tomasz.\n- [2025-06-13] standup/atlas/2025-06-13: Rotation day for Atlas: Priya Raman hands the pager to Tomasz.\n- [2025-04-04] standup/atlas/2025-04-04: Reminder from Atlas: page Tomasz Nowak for anything this cycle, not Priya.\n- [2026-01-22] standup/dune/2026-01-22: Reminder from team Dune: page Farah for anything this cycle, not Tomasz.\n- [2025-11-03] standup/dune/2025-11-03: On-call rotation: Farah Haddad is primary for Dune starting today; Tomasz is off rotation.\n- [2025-02-19] standup/atlas/2025-02-19: Reminder from the Atlas team: page Priya Raman for anything this cycle, not Tomasz. Priya Raman runs the quarterly capacity review.\n- [2025-09-04] standup/dune/2025-09-04: Rotation day for Dune: Farah hands the pager to Tomasz.\n- [2026-04-09] standup/dune/2026-04-09: Reminder from the Dune team: page Farah for anything this cycle, not Tomasz Nowak.\n- [2026-06-03] standup/dune/2026-06-03: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.\n- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2026-02-24] standup/dune/2026-02-24: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.\n- [2025-07-21] standup/atlas/2025-07-21-2: Team Atlas has moved to the second floor.\n- [2025-09-09] handover/2025-09-09-event-bus: Boreal handed the bus to the Dune team today; Marcus Oyelaran wrote up the handover doc for Tomasz Nowak.\n- [2026-04-14] standup/atlas/2026-04-14: Marcus Oyelaran picked up the Atlas on-call shift from Priya today.\n- [2025-10-02] standup/cinder/2025-10-02: On-call rotation: Yuki is primary for team Cinder starting today; Diego is off rotation.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-08-12] standup/boreal/2025-08-12: Rotation day for the Boreal team: Marcus hands the pager to Lena Fischer.\n- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki and Diego are on team Cinder.\n- [2026-06-08] standup/atlas/2026-06-08: Reminder from team Atlas: page Priya for anything this cycle, not Marcus.\n- [2025-04-23] standup/dune/2025-04-23: Team Dune adopted a monthly game day.\n- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.\n- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.\n- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.\n- [2025-06-13] standup/cinder/2025-06-13: Diego Alvarez has the Cinder pager this cycle, taking over from Yuki Tanaka.\n- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n- [2025-07-22] standup/cinder/2025-07-22: Cinder on-call swapped this morning. Yuki Tanaka carries the phone until the next rotation.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.\n- [2025-01-31] standup/atlas/2025-01-31: Atlas adopted a no-deploy Friday.\n- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.\n- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.\n\nQuestion: Which team is Tomasz on now?"
+  }
+ ],
+ "contexts": [
+  "- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.",
+  "- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz.",
+  "- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.",
+  "- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.",
+  "- [2025-07-21] standup/atlas/2025-07-21: As of today Tomasz is on Dune; Atlas loses a pair of hands.",
+  "- [2025-05-14] standup/atlas/2025-05-14: Reminder from team Atlas: page Priya for anything this cycle, not Tomasz.",
+  "- [2025-06-13] standup/atlas/2025-06-13: Rotation day for Atlas: Priya Raman hands the pager to Tomasz.",
+  "- [2025-04-04] standup/atlas/2025-04-04: Reminder from Atlas: page Tomasz Nowak for anything this cycle, not Priya.",
+  "- [2026-01-22] standup/dune/2026-01-22: Reminder from team Dune: page Farah for anything this cycle, not Tomasz.",
+  "- [2025-11-03] standup/dune/2025-11-03: On-call rotation: Farah Haddad is primary for Dune starting today; Tomasz is off rotation.",
+  "- [2025-02-19] standup/atlas/2025-02-19: Reminder from the Atlas team: page Priya Raman for anything this cycle, not Tomasz. Priya Raman runs the quarterly capacity review.",
+  "- [2025-09-04] standup/dune/2025-09-04: Rotation day for Dune: Farah hands the pager to Tomasz.",
+  "- [2026-04-09] standup/dune/2026-04-09: Reminder from the Dune team: page Farah for anything this cycle, not Tomasz Nowak.",
+  "- [2026-06-03] standup/dune/2026-06-03: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.",
+  "- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.",
+  "- [2026-02-24] standup/dune/2026-02-24: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.",
+  "- [2025-07-21] standup/atlas/2025-07-21-2: Team Atlas has moved to the second floor.",
+  "- [2025-09-09] handover/2025-09-09-event-bus: Boreal handed the bus to the Dune team today; Marcus Oyelaran wrote up the handover doc for Tomasz Nowak.",
+  "- [2026-04-14] standup/atlas/2026-04-14: Marcus Oyelaran picked up the Atlas on-call shift from Priya today.",
+  "- [2025-10-02] standup/cinder/2025-10-02: On-call rotation: Yuki is primary for team Cinder starting today; Diego is off rotation.",
+  "- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.",
+  "- [2025-08-12] standup/boreal/2025-08-12: Rotation day for the Boreal team: Marcus hands the pager to Lena Fischer.",
+  "- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.",
+  "- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki and Diego are on team Cinder.",
+  "- [2026-06-08] standup/atlas/2026-06-08: Reminder from team Atlas: page Priya for anything this cycle, not Marcus.",
+  "- [2025-04-23] standup/dune/2025-04-23: Team Dune adopted a monthly game day.",
+  "- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.",
+  "- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.",
+  "- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.",
+  "- [2025-06-13] standup/cinder/2025-06-13: Diego Alvarez has the Cinder pager this cycle, taking over from Yuki Tanaka.",
+  "- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.",
+  "- [2025-07-22] standup/cinder/2025-07-22: Cinder on-call swapped this morning. Yuki Tanaka carries the phone until the next rotation.",
+  "- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.",
+  "- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.",
+  "- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.",
+  "- [2025-01-31] standup/atlas/2025-01-31: Atlas adopted a no-deploy Friday.",
+  "- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.",
+  "- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar."
+ ],
+ "answer": "Dune"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Dune team owns the reports pipeline as of 2025-03-20. [valid 2025-03-20 to now; recorded by standup/dune/2025-03-20]\n- As of 2025-12-05, the reporting service is owned by the Ember team, having transferred from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is a Dune team service. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- The notifier is owned by the Dune team as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- The Dune team adopted a monthly game day as of 2025-04-21. [decision; valid 2025-04-21 to now; recorded by standup/dune/2025-04-21]\n- The job scheduler is owned by the Dune team as of 2025-06-25, when ownership moved from the Ember team. [decision; valid 2025-06-25 to now; recorded by handover/2025-06-25-scheduler]\n    earlier: The Ember team owns the job scheduler. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- On 2026-04-14, the Dune team observed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team, not the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- Farah runs the Dune team solo until the next hire lands. [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- The Cinder team owns the job scheduler as of 2025-09-23, when ownership transferred from the Dune team. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The Dune team owns the job scheduler as of 2025-09-05. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- Tomasz picked up the Dune team on-call shift from Farah on 2025-09-04. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- On 2026-05-22, Tomasz picked up the Dune team on-call shift from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- The Dune team sits on the fourth floor. [valid 2025-07-24 to now; recorded by standup/dune/2025-07-24]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- Farah has the Dune team pager this cycle as of 2025-10-15, taking over from Tomasz Nowak. [valid 2025-10-15 to now; recorded by standup/dune/2025-10-15]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team; ownership transferred from the Ember team on that date, and the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team; ownership transferred from the Ember team on that date. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team; ownership transferred from the Atlas team on that date. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- On 2026-04-14, Tomasz handed the Dune team pager to Farah on rotation day. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n- Farah is release captain for Q3 2025 for the Dune team. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- Ownership of the job scheduler transferred from the Dune team to the Cinder team on 2025-09-23. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n\nQuestion: Which team owned reporting before Dune?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654059-PT0VPLV9qrSn9BftuXyR",
+  "object": "chat.completion",
+  "created": 1788654059,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which team owned reporting before Dune?\"\n\nLooking at the memory:\n- The Dune team owns the reports pipeline as of 2025-03-20. [valid 2025-03-20 to now]\n- As of 2025-12-05, the reporting service is owned by the Ember team, having transferred from the Dune team.\n- Earlier: The reporting service is a Dune team service. [valid 2025-01-20 to 2025-12-05]\n\nSo the reporting service was owned by Dune starting 2025-01-20 (that's the earliest record of reporting ownership). Before Dune, was there any other owner mentioned? The memory shows Dune as the earliest owner on record. The handover on 2025-12-05 says it transferred from Dune to Ember, but before Dune there's no record.\n\nSo the answer is: the memory does not contain who owned reporting before Dune. The earliest record is Dune as of 2025-01-20. No prior owner mentioned.\n\nSo answer: \"I don't know\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which team owned reporting before Dune?\"\n\nLooking at the memory:\n- The Dune team owns the reports pipeline as of 2025-03-20. [valid 2025-03-20 to now]\n- As of 2025-12-05, the reporting service is owned by the Ember team, having transferred from the Dune team.\n- Earlier: The reporting service is a Dune team service. [valid 2025-01-20 to 2025-12-05]\n\nSo the reporting service was owned by Dune starting 2025-01-20 (that's the earliest record of reporting ownership). Before Dune, was there any other owner mentioned? The memory shows Dune as the earliest owner on record. The handover on 2025-12-05 says it transferred from Dune to Ember, but before Dune there's no record.\n\nSo the answer is: the memory does not contain who owned reporting before Dune. The earliest record is Dune as of 2025-01-20. No prior owner mentioned.\n\nSo answer: \"I don't know\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1614,
+   "completion_tokens": 241,
+   "total_tokens": 1855,
+   "cost": 0.00017362,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00017362,
+    "upstream_inference_prompt_cost": 0.00011337,
+    "upstream_inference_completions_cost": 6.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 235,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.9907818749779835,
+ "fetched_at": "2026-09-06T00:21:05Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-11-03] standup/dune/2025-11-03-2: For newcomers: the deploy window for the job scheduler is still on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.\n- [2025-08-08] standup/dune/2025-08-08: New deploy window for the job scheduler: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Tuesdays 13:00-15:00 UTC slot. Observation from the Dune team: after the marketing send, billing-api's queue depth hit 50,000.\n- [2025-09-26] standup/atlas/2025-09-26: For newcomers: the deploy window for the ledger service is still on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-04-14] standup/ember/2025-04-14: Auth-gateway deploy window: on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-05-28] standup/dune/2025-05-28: Reminder: the scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC.\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2025-05-02] standup/cinder/2025-05-02-2: The catalog deploy window: on Mondays between 10:00 and 12:00 UTC. Team Cinder holds planning on Mondays.\n- [2025-11-12] standup/boreal/2025-11-12: The catalog service's deploy window changes today: it is now on Tuesdays and Thursdays between 10:00 and 12:00 UTC. The old slot (Mondays 10:00-12:00 UTC) is retired.\n- [2025-04-04] handover/2025-04-04-scheduler: The Ember team handed scheduler to Dune today; Oskar Lind wrote up the handover doc for Farah.\n- [2026-01-12] standup/dune/2026-01-12: The scheduler remains a the Dune team service.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2026-05-22] incident-review/INC-2026-009: Incident review INC-2026-009. The scheduler ran the nightly jobs twice on 2026-05-16. Root cause: two leaders elected during a network partition. Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2025-03-28] standup/ember/2025-03-28: If feature-flags is down, the job scheduler is down: it relies on it for per-job kill switches.\n- [2025-04-24] standup/boreal/2025-04-24: Observation from Boreal: after the runtime upgrade, the scheduler's cold start time tripled.\n- [2025-03-21] standup/ember/2025-03-21: The job scheduler can be released on Tuesdays between 13:00 and 15:00 UTC; anything else needs an exception.\n- [2025-11-11] standup/atlas/2025-11-11: Deploy freeze for billing-api: 2025-11-24 to 2025-12-02 (the peak season). Observation from the Atlas team: after Tuesday's deploy, search-indexer's p99 latency doubled.\n- [2025-01-31] standup/atlas/2025-01-31: Atlas adopted a no-deploy Friday.\n- [2025-06-16] standup/dune/2025-06-16: The scheduler will use leader election instead of a single fixed node. Rationale: the fixed node turned every restart into a missed run.\n- [2026-03-17] standup/boreal/2026-03-17-2: Reminder: the event-bus deploys only on weekdays after 15:00 UTC.\n- [2025-04-22] standup/boreal/2025-04-22: Per the change policy, the event-bus deploys on weekdays after 15:00 UTC.\n- [2026-02-10] standup/boreal/2026-02-10: Reminder: the authentication gateway deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2026-03-13] standup/boreal/2026-03-13: Deploy freeze for the ledger: 2026-03-30 to 2026-04-03 (the fiscal year close).\n- [2026-05-01] standup/cinder/2026-05-01: From today the ledger service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n\nQuestion: What is the current deploy window for the scheduler?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651214-47QIUHgMBj7Q0G269c3d",
+  "object": "chat.completion",
+  "created": 1788651214,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Weekdays between 08:00 and 10:00 UTC, never on Fridays.",
+     "refusal": null,
+     "reasoning": "The scheduler (job scheduler) deploy window history:\n- 2025-03-21: Tuesdays 13:00-15:00 UTC\n- 2025-05-28: Tuesdays 13:00-15:00 UTC\n- 2025-08-08: new deploy window: weekdays 08:00-10:00 UTC, never Fridays\n- 2025-11-03: still weekdays 08:00-10:00 UTC, never Fridays\n\nLatest is 2025-11-03 confirming weekdays 08:00-10:00 UTC, never on Fridays. Today is 2026-06-30, no later entries. So answer: weekdays between 08:00 and 10:00 UTC, never on Fridays.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The scheduler (job scheduler) deploy window history:\n- 2025-03-21: Tuesdays 13:00-15:00 UTC\n- 2025-05-28: Tuesdays 13:00-15:00 UTC\n- 2025-08-08: new deploy window: weekdays 08:00-10:00 UTC, never Fridays\n- 2025-11-03: still weekdays 08:00-10:00 UTC, never Fridays\n\nLatest is 2025-11-03 confirming weekdays 08:00-10:00 UTC, never on Fridays. Today is 2026-06-30, no later entries. So answer: weekdays between 08:00 and 10:00 UTC, never on Fridays.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1676,
+   "completion_tokens": 182,
+   "total_tokens": 1858,
+   "cost": 0.00016352,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016352,
+    "upstream_inference_prompt_cost": 0.00011802,
+    "upstream_inference_completions_cost": 4.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 162,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.694985000009183,
+ "fetched_at": "2026-09-05T23:33:37Z"
+}

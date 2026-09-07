@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-07-06; the root cause was an expired intermediate certificate [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- Decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017 [decision; valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- INC-2025-011: the ledger saw write latency spike tenfold for an hour on 2025-04-13; the root cause was an index missing after the schema migration [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- INC-2026-003: webhooks delivered some events twice on 2026-02-08; the root cause was a retry loop that ignored idempotency keys [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-03-04; the root cause was a consumer offset stuck after a broker restart [valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- INC-2025-023: search-indexer served stale results for two days on 2025-10-24; the root cause was a reindex job that failed silently on a full disk [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-16; the root cause was two leaders elected during a network partition [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011 [decision; valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- Priya runs the quarterly capacity review [valid 2025-02-19 to now; recorded by standup/atlas/2025-02-19]\n- Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023 [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The handover note of 2025-06-25 wrongly recorded Ember as the owner of reporting [valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n- No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close [constraint; valid 2026-03-13 to now; recorded by standup/boreal/2026-03-13]\n- Oskar runs the weekly architecture review [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one [decision; valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- Changes to auth-gateway need two reviewer approvals and a security sign-off [constraint; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11]\n- The handover note of 2025-11-18 wrongly recorded Ember as the owner of search-indexer [valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n- Yuki runs the monthly cost review [valid 2025-01-17 to now; recorded by standup/cinder/2025-01-17-2]\n- The handover note of 2025-07-01 wrongly recorded Cinder as the owner of auth-gateway [valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n\nQuestion: On what date was the review of INC-2025-017 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658750-sm5xvbpTv1EB2U5eUqMO",
+  "object": "chat.completion",
+  "created": 1788658750,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-07-09",
+     "refusal": null,
+     "reasoning": "The memory says: \"INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-07-06; the root cause was an expired intermediate certificate [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\"\n\nThe question: \"On what date was the review of INC-2025-017 written?\"\n\nThe valid date of the entry is 2025-07-09. The entry validity start date presumably is the date the review was recorded. The incident was 2025-07-06; the review entry was valid from 2025-07-09. So the review was written on 2025-07-09.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-07-06; the root cause was an expired intermediate certificate [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\"\n\nThe question: \"On what date was the review of INC-2025-017 written?\"\n\nThe valid date of the entry is 2025-07-09. The entry validity start date presumably is the date the review was recorded. The incident was 2025-07-06; the review entry was valid from 2025-07-09. So the review was written on 2025-07-09.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1282,
+   "completion_tokens": 162,
+   "total_tokens": 1444,
+   "cost": 0.0002733,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002733,
+    "upstream_inference_prompt_cost": 0.0001923,
+    "upstream_inference_completions_cost": 8.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 154,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.3672902500256896,
+ "fetched_at": "2026-09-06T01:39:13Z"
+}

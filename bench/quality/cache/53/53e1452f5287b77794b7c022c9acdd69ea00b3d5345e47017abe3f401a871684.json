@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- Cinder adopted trunk-based development as of 2025-06-02. [decision; valid 2025-06-02 to now; recorded by standup/cinder/2025-06-02]\n- Team Cinder's on-call swapped on 2025-12-15, with Yuki carrying the Cinder on-call phone. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Team Cinder's on-call swapped on 2025-11-25, with Diego carrying the Cinder on-call phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n- Cinder has moved to the third floor. [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-3]\n- The authentication gateway went to team Boreal as of 2025-07-01, not the Cinder team; Cinder never owned it. [decision; valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n    earlier: The authentication gateway lives with team Cinder as of 2025-07-01. [decision; valid 2025-07-01 to 2025-07-18; recorded by handover/2025-07-01-auth-gateway]\n    earlier: The authentication gateway lives with team Ember. [valid 2025-01-20 to 2025-07-01; recorded by standup/ember/2025-01-20-2]\n- Ledger is owned by Cinder as of 2026-04-29, after Boreal handed it over. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n    earlier: Ledger is owned by the Boreal team as of 2025-12-10, after Team Atlas handed it over. [decision; valid 2025-12-10 to 2026-04-29; recorded by handover/2025-12-10-ledger]\n    earlier: Ledger is owned by Team Atlas as of 2025-01-08. [valid 2025-01-08 to 2025-12-10; recorded by standup/atlas/2025-01-08]\n- Cinder took over Ledger from Boreal on 2026-04-29. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n- The flags service moved from Team Atlas to the Cinder team as of 2025-02-13. [decision; valid 2025-02-13 to now; recorded by handover/2025-02-13-feature-flags]\n    earlier: Team Atlas looks after the flags service as of 2025-01-08. [valid 2025-01-08 to 2025-02-13; recorded by standup/atlas/2025-01-08-2]\n- Diego takes over the Cinder on-call pager from Yuki as of 2025-03-27. [decision; valid 2025-03-27 to now; recorded by standup/cinder/2025-03-27]\n- Cinder holds team planning on Mondays. [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-2]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- The notifier moved from the Boreal team to the Cinder team as of 2025-11-19. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n- Diego takes the first on-call shift of the year for Cinder. [decision; valid 2025-01-16 to now; recorded by standup/cinder/2025-01-16]\n- Diego left team Cinder and joined team Ember effective 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n- Yuki is the primary on-call to contact for anything on Cinder as of 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call to contact for anything on Cinder as of 2025-11-25; Yuki is off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call to contact for anything on Cinder as of 2025-10-02; Diego is off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Page Diego for anything on Cinder this cycle, as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Page Yuki for anything on Cinder this cycle, not Diego Alvarez, as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Page Diego Alvarez for anything on Cinder this cycle, not Yuki Tanaka, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Page Yuki Tanaka for anything on Cinder this cycle, not Diego, as of 2025-02-17. [decision; valid 2025-02-17 to 2025-06-13; recorded by standup/cinder/2025-02-17]\n- The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n\nQuestion: Which services does Cinder own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788656905-3EqiYmcw0p0jm7DGZeAK",
+  "object": "chat.completion",
+  "created": 1788656905,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Reka",
+  "system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp8-53169669",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Notifier, Ledger, and the flags service.",
+     "refusal": null,
+     "reasoning": "The question asks which services Cinder owns now (today is 2026-06-30).\n\nLet me go through the memory:\n\n1. Notifier: Cinder owns the notifier as of 2025-11-19; valid to now. So Cinder owns notifier now. But there's also an entry: \"The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it.\" [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]. Hmm, this is a conflict. The 2025-09-26 entry says the notifier is not Cinder's service. But the 2025-11-19 handover says Cinder owns the notifier as of 2025-11-19. The rule says \"Treat a later entry as superseding an earlier one on the same subject.\" The 2025-11-19 entry is later than 2025-09-26, so Cinder owns the notifier now.\n\n2. Authentication gateway: went to team Boreal as of 2025-07-01, not Cinder; Cinder never owned it. So not Cinder's.\n\n3. Ledger: owned by Cinder as of 2026-04-29. So Cinder owns Ledger now.\n\n4. Flags service: moved from Team Atlas to the Cinder team as of 2025-02-13, valid to now. So Cinder owns flags service.\n\n5. Product catalog: lived with Cinder from 2025-01-17 until 2025-10-20, when it moved to Boreal. So not Cinder's now.\n\nSo services Cinder owns now: notifier, Ledger, flags service.\n\nThe answer should be one short line with just the values. So: \"Notifier, Ledger, and the flags service.\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Cinder owns now (today is 2026-06-30).\n\nLet me go through the memory:\n\n1. Notifier: Cinder owns the notifier as of 2025-11-19; valid to now. So Cinder owns notifier now. But there's also an entry: \"The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it.\" [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]. Hmm, this is a conflict. The 2025-09-26 entry says the notifier is not Cinder's service. But the 2025-11-19 handover says Cinder owns the notifier as of 2025-11-19. The rule says \"Treat a later entry as superseding an earlier one on the same subject.\" The 2025-11-19 entry is later than 2025-09-26, so Cinder owns the notifier now.\n\n2. Authentication gateway: went to team Boreal as of 2025-07-01, not Cinder; Cinder never owned it. So not Cinder's.\n\n3. Ledger: owned by Cinder as of 2026-04-29. So Cinder owns Ledger now.\n\n4. Flags service: moved from Team Atlas to the Cinder team as of 2025-02-13, valid to now. So Cinder owns flags service.\n\n5. Product catalog: lived with Cinder from 2025-01-17 until 2025-10-20, when it moved to Boreal. So not Cinder's now.\n\nSo services Cinder owns now: notifier, Ledger, flags service.\n\nThe answer should be one short line with just the values. So: \"Notifier, Ledger, and the flags service.\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1765,
+   "completion_tokens": 380,
+   "total_tokens": 2145,
+   "cost": 0.00045475,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00045475,
+    "upstream_inference_prompt_cost": 0.00026475,
+    "upstream_inference_completions_cost": 0.00019
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 334,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 14.577896040980704,
+ "fetched_at": "2026-09-06T01:08:39Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-06; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-07-27; the root cause was an expired intermediate certificate [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- Decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017 [decision; valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- INC-2025-011: the ledger saw write latency spike tenfold for an hour on 2025-04-26; the root cause was an index missing after the schema migration [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- INC-2026-003: webhooks delivered some events twice on 2026-01-17; the root cause was a retry loop that ignored idempotency keys [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-03; the root cause was two leaders elected during a network partition [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- The handover note of 2025-11-07 wrongly recorded Boreal as the owner of reporting [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n- INC-2025-023: search-indexer served stale results for two days on 2025-10-13; the root cause was a reindex job that failed silently on a full disk [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011 [decision; valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- Priya runs the quarterly capacity review [valid 2025-06-23 to now; recorded by standup/atlas/2025-06-23]\n- No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n- Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023 [decision; valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- Oskar runs the weekly architecture review [valid 2026-06-16 to now; recorded by standup/ember/2026-06-16]\n- Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one [decision; valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- The handover note of 2025-08-29 wrongly recorded Cinder as the owner of the scheduler [valid 2025-09-05 to now; recorded by handover/2025-09-05-scheduler-correction]\n- Changes to auth-gateway need two reviewer approvals and a security sign-off [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- The handover note of 2025-06-20 wrongly recorded Ember as the owner of webhooks [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- Decision: webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review [decision; valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n\nQuestion: On what date was the review of INC-2025-004 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788655420-wsQADKc3MIFsE1ApPyl3",
+  "object": "chat.completion",
+  "created": 1788655420,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-02-11",
+     "refusal": null,
+     "reasoning": "The memory entry for INC-2025-004 says: \"the notifier missed alerts for 40 minutes on 2025-02-06; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\"\n\nThe question asks: On what date was the review of INC-2025-004 written?\n\nThe recorded by field is \"incident-review/INC-2025-004\" but there's no explicit recording date given. The \"valid 2025-02-11 to now\" suggests validity starts 2025-02-11. Does that mean the review was written on 2025-02-11? The memory says \"Memory entries carry the date they were recorded.\" So the entry for INC-2025-004 carries date 2025-02-11 (the valid-from date). The question asks when the review was written. The entry was recorded by incident-review/INC-2025-004 with valid date 2025-02-11. So presumably the review was written on 2025-02-11.\n\nHmm, but is \"valid from\" the same as \"recorded date\"? The rules say \"Memory entries carry the date they were recorded.\" The bracket shows [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]. The date carried is 2025-02-11. So the review was written on 2025-02-11.\n\nAnswer: 2025-02-11",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory entry for INC-2025-004 says: \"the notifier missed alerts for 40 minutes on 2025-02-06; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\"\n\nThe question asks: On what date was the review of INC-2025-004 written?\n\nThe recorded by field is \"incident-review/INC-2025-004\" but there's no explicit recording date given. The \"valid 2025-02-11 to now\" suggests validity starts 2025-02-11. Does that mean the review was written on 2025-02-11? The memory says \"Memory entries carry the date they were recorded.\" So the entry for INC-2025-004 carries date 2025-02-11 (the valid-from date). The question asks when the review was written. The entry was recorded by incident-review/INC-2025-004 with valid date 2025-02-11. So presumably the review was written on 2025-02-11.\n\nHmm, but is \"valid from\" the same as \"recorded date\"? The rules say \"Memory entries carry the date they were recorded.\" The bracket shows [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]. The date carried is 2025-02-11. So the review was written on 2025-02-11.\n\nAnswer: 2025-02-11",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1294,
+   "completion_tokens": 344,
+   "total_tokens": 1638,
+   "cost": 0.00018305,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00018305,
+    "upstream_inference_prompt_cost": 9.705e-05,
+    "upstream_inference_completions_cost": 8.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 336,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.6211285419994965,
+ "fetched_at": "2026-09-06T00:43:48Z"
+}

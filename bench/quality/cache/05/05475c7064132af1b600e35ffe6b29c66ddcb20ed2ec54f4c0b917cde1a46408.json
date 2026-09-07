@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 4 services.\n\nAnswer to grade: billing-api and the webhook dispatcher"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658899-kwMJhxYpuGMaw3qc9jRg",
+  "object": "chat.completion",
+  "created": 1788658899,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names billing-api and webhooks but omits image-resizer and scheduler, so not all 4 gold services are named.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is: billing-api, image-resizer, scheduler and webhooks (4 services).\n\nThe answer to grade: \"billing-api and the webhook dispatcher\" — names billing-api and webhook dispatcher (which might be \"webhooks\"). But it's missing image-resizer and scheduler. Also \"webhook dispatcher\" vs \"webhooks\" — arguably matches webhooks. But the rule says every item must be named and no extra item. Missing 2 items, so incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is: billing-api, image-resizer, scheduler and webhooks (4 services).\n\nThe answer to grade: \"billing-api and the webhook dispatcher\" — names billing-api and webhook dispatcher (which might be \"webhooks\"). But it's missing image-resizer and scheduler. Also \"webhook dispatcher\" vs \"webhooks\" — arguably matches webhooks. But the rule says every item must be named and no extra item. Missing 2 items, so incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 259,
+   "completion_tokens": 136,
+   "total_tokens": 395,
+   "cost": 4.5745e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.5745e-05,
+    "upstream_inference_prompt_cost": 1.1745e-05,
+    "upstream_inference_completions_cost": 3.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 97,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4095017079962417,
+ "fetched_at": "2026-09-06T01:41:41Z"
+}

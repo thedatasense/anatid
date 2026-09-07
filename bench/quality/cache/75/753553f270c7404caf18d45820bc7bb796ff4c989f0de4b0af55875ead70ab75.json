@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Boreal own now?\nGold answer: catalog and event-bus\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 2 services.\n\nAnswer to grade: Catalog service and event bus."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655594-dG92x0j6utqyr2BqL7tD",
+  "object": "chat.completion",
+  "created": 1788655594,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names both services in the gold list (catalog and event-bus) with no extra items, just using phrasing variants.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"catalog and event-bus\" - 2 services. The answer to grade says \"Catalog service and event bus\" - names both catalog and event bus. No extra items. This matches.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"catalog and event-bus\" - 2 services. The answer to grade says \"Catalog service and event bus\" - names both catalog and event bus. No extra items. This matches.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 253,
+   "completion_tokens": 82,
+   "total_tokens": 335,
+   "cost": 3.9475e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.9475e-05,
+    "upstream_inference_prompt_cost": 1.8975e-05,
+    "upstream_inference_completions_cost": 2.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 43,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.2275201249867678,
+ "fetched_at": "2026-09-06T00:46:37Z"
+}

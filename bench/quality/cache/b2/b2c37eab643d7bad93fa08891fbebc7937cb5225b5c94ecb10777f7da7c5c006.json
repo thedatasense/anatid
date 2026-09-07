@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- The billing service depends on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n- The catalog service depends on the resizer for thumbnails. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- The ledger depends on the auth gateway for service tokens. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- As of 2025-05-09, the reporting service must stay on Python 3.11 until the pandas 3 upgrade lands. [constraint; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- On 2026-03-10, Team Dune observed that after Tuesday's deploy, the reporting service's p99 latency doubled. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- The reporting service may be released only on Thursdays between 07:00 and 09:00 UTC, and any other release time requires an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- On 2025-03-17, Team Atlas handed the billing service to Team Boreal. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- The webhooks service ships only on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-17 to now; recorded by standup/boreal/2025-03-17]\n- As of 2026-03-16, the catalog service deploys on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16]\n    earlier: The catalog service ships only on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n\nQuestion: Which service depends on reporting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654001-LRLT85s1jZgDrc3nPiy0",
+  "object": "chat.completion",
+  "created": 1788654001,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service depends on reporting?\" I need to look through the memory for any service that depends on the reporting service.\n\nLooking through the memory:\n- Reporting service depends on ledger (earlier), now reads from event bus.\n- Billing depends on feature-flags.\n- Catalog depends on resizer.\n- Indexer depends on catalog.\n- Billing depends on ledger.\n- Ledger depends on auth gateway.\n- Webhooks depends on event bus.\n- Notifier depends on event bus.\n- Reports pipeline depends on ledger.\n\nNothing says any service depends on the reporting service. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service depends on reporting?\" I need to look through the memory for any service that depends on the reporting service.\n\nLooking through the memory:\n- Reporting service depends on ledger (earlier), now reads from event bus.\n- Billing depends on feature-flags.\n- Catalog depends on resizer.\n- Indexer depends on catalog.\n- Billing depends on ledger.\n- Ledger depends on auth gateway.\n- Webhooks depends on event bus.\n- Notifier depends on event bus.\n- Reports pipeline depends on ledger.\n\nNothing says any service depends on the reporting service. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1368,
+   "completion_tokens": 133,
+   "total_tokens": 1501,
+   "cost": 0.00013585,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013585,
+    "upstream_inference_prompt_cost": 0.0001026,
+    "upstream_inference_completions_cost": 3.325e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 127,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.8592894159955904,
+ "fetched_at": "2026-09-06T00:20:04Z"
+}

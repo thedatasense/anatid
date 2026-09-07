@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal reported at standup on 2026-02-04 that the scheduler's error rate crept up to 2 percent following the dependency bump. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- The scheduler is not a Boreal service; Boreal flagged the scheduler at standup on 2026-02-04. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- Team Dune owns the job scheduler as of 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n    earlier: Ember owns the job scheduler. [valid 2025-01-20 to 2025-04-04; recorded by standup/ember/2025-01-20]\n- The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- The job scheduler remains a Team Dune service as of 2026-01-12. [valid 2026-01-12 to now; recorded by standup/dune/2026-01-12]\n- The job scheduler's single fixed node turned every restart into a missed run. [valid 2025-06-16 to now; recorded by standup/dune/2025-06-16]\n- Boreal has a weekly dependency update day as of 2026-05-04. [decision; valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- The scheduler ran the nightly jobs twice on 2026-05-16 during INC-2026-009. [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- The scheduler leader lease will be shortened to ten seconds because two leaders ran the nightly jobs twice in INC-2026-009. [decision; valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- The job scheduler will use leader election instead of a single fixed node. [decision; valid 2025-06-16 to now; recorded by standup/dune/2025-06-16]\n- The job scheduler has a deploy window on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-08-08 to now; recorded by standup/dune/2025-08-08]\n    earlier: The job scheduler can be released on Tuesdays between 13:00 and 15:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-21 to 2025-08-08; recorded by standup/ember/2025-03-21]\n- After the runtime upgrade, the job scheduler's cold start time tripled. [valid 2025-04-24 to now; recorded by standup/boreal/2025-04-24]\n- Team Atlas saw on 2026-04-16 that billing-api's error rate crept up to 2 percent following the dependency bump. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Team Ember reported at standup on 2025-11-17 that the authentication gateway's error rate crept up to 2 percent following the dependency bump. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- The event bus deploys only on weekdays after 15:00 UTC per the change policy. [constraint; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17-2]\n    earlier: The event bus deploys on weekdays after 15:00 UTC per the change policy. [constraint; valid 2025-04-22 to 2026-03-17; recorded by standup/boreal/2025-04-22]\n- The reporting service still relies on the event bus as of 2025-11-13. [valid 2025-11-13 to now; recorded by standup/boreal/2025-11-13]\n- Oskar wrote up the handover doc for Farah for the job scheduler handover on 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n- Cinder holds team planning on Mondays. [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-2]\n- Yuki walked Lena through the notifier runbook on 2026-04-06. [valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n\nQuestion: What is the scheduler's dependency?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657599-URvP01OewbLiu2ZK8wHQ",
+  "object": "chat.completion",
+  "created": 1788657599,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "flags service",
+     "refusal": null,
+     "reasoning": "The question asks \"What is the scheduler's dependency?\"\n\nLooking at the memory:\n- \"The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down.\"\n\nSo the scheduler's dependency is the flags service.\n\nThe answer should be one short line with just the value: flags service.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks \"What is the scheduler's dependency?\"\n\nLooking at the memory:\n- \"The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down.\"\n\nSo the scheduler's dependency is the flags service.\n\nThe answer should be one short line with just the value: flags service.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1343,
+   "completion_tokens": 74,
+   "total_tokens": 1417,
+   "cost": 0.000111545,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000111545,
+    "upstream_inference_prompt_cost": 9.3045e-05,
+    "upstream_inference_completions_cost": 1.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 70,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.147996458981652,
+ "fetched_at": "2026-09-06T01:20:03Z"
+}

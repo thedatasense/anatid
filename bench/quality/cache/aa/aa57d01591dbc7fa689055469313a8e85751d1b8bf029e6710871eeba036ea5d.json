@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Lena is on call for Boreal [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n    earlier: Marcus is on call for Boreal [valid 2026-01-02 to 2026-02-04; recorded by standup/boreal/2026-01-02]\n    earlier: Lena is on call for Boreal [valid 2025-11-11 to 2026-01-02; recorded by standup/boreal/2025-11-11]\n    earlier: Marcus is on call for Boreal [valid 2025-09-24 to 2025-11-11; recorded by standup/boreal/2025-09-24]\n    earlier: Lena is on call for Boreal [valid 2025-08-12 to 2025-09-24; recorded by standup/boreal/2025-08-12]\n    earlier: Marcus is on call for Boreal [valid 2025-07-09 to 2025-08-12; recorded by standup/boreal/2025-07-09]\n    earlier: Lena is on call for Boreal [valid 2025-05-21 to 2025-07-09; recorded by standup/boreal/2025-05-21]\n    earlier: Marcus is on call for Boreal [valid 2025-03-31 to 2025-05-21; recorded by standup/boreal/2025-03-31]\n    earlier: Lena is on call for Boreal [valid 2025-02-10 to 2025-03-31; recorded by standup/boreal/2025-02-10]\n    earlier: Marcus is on call for Boreal [valid 2025-01-09 to 2025-02-10; recorded by standup/boreal/2025-01-09-3]\n- Lena is a member of Boreal [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Lena is the release captain for Q1 2026 [valid 2025-07-29 to now; recorded by standup/boreal/2025-07-29]\n- Boreal owns reporting [valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n    earlier: Ember owns reporting [valid 2025-06-25 to 2025-07-03; recorded by handover/2025-06-25-reporting]\n    earlier: Dune owns reporting [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20-2]\n- Boreal owns the notifier [valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n    earlier: Cinder owns the notifier [valid 2025-11-19 to 2026-04-06; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns the notifier [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- Boreal owns the event-bus [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: Dune owns the event-bus [valid 2025-09-09 to 2025-11-24; recorded by handover/2025-09-09-event-bus]\n    earlier: Boreal owns the event-bus [valid 2025-01-09 to 2025-09-09; recorded by standup/boreal/2025-01-09]\n- The ledger depends on auth-gateway [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- Priya is a member of Atlas [valid 2025-01-06 to now; recorded by standup/atlas/2025-01-06]\n- The handover note of 2025-06-25 wrongly recorded Ember as the owner of reporting [valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n- Priya is on call for Atlas [valid 2026-06-08 to now; recorded by standup/atlas/2026-06-08]\n    earlier: Marcus is on call for Atlas [valid 2026-04-14 to 2026-06-08; recorded by standup/atlas/2026-04-14]\n    earlier: Priya is on call for Atlas [valid 2025-07-16 to 2026-04-14; recorded by standup/atlas/2025-07-16]\n    earlier: Tomasz is on call for Atlas [valid 2025-06-13 to 2025-07-16; recorded by standup/atlas/2025-06-13]\n    earlier: Priya is on call for Atlas [valid 2025-05-14 to 2025-06-13; recorded by standup/atlas/2025-05-14]\n    earlier: Tomasz is on call for Atlas [valid 2025-04-04 to 2025-05-14; recorded by standup/atlas/2025-04-04]\n    earlier: Priya is on call for Atlas [valid 2025-02-19 to 2025-04-04; recorded by standup/atlas/2025-02-19]\n    earlier: Tomasz is on call for Atlas [valid 2025-01-09 to 2025-02-19; recorded by standup/atlas/2025-01-09]\n- Yuki is on call for Cinder [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is on call for Cinder [valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is on call for Cinder [valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego is on call for Cinder [valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki is on call for Cinder [valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Diego is on call for Cinder [valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Yuki is on call for Cinder [valid 2025-05-02 to 2025-06-13; recorded by standup/cinder/2025-05-02]\n    earlier: Diego is on call for Cinder [valid 2025-03-27 to 2025-05-02; recorded by standup/cinder/2025-03-27]\n    earlier: Yuki is on call for Cinder [valid 2025-02-17 to 2025-03-27; recorded by standup/cinder/2025-02-17]\n    earlier: Diego is on call for Cinder [valid 2025-01-16 to 2025-02-17; recorded by standup/cinder/2025-01-16]\n\nQuestion: Which team is Lena on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658506-JexuNaf1cb0OavMGQy8I",
+  "object": "chat.completion",
+  "created": 1788658506,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Boreal",
+     "refusal": null,
+     "reasoning": "The memory says \"Lena is a member of Boreal [valid 2025-01-07 to now]\". So Lena is on Boreal.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says \"Lena is a member of Boreal [valid 2025-01-07 to now]\". So Lena is on Boreal.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1871,
+   "completion_tokens": 36,
+   "total_tokens": 1907,
+   "cost": 0.00029865,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00029865,
+    "upstream_inference_prompt_cost": 0.00028065,
+    "upstream_inference_completions_cost": 1.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 32,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.755445749964565,
+ "fetched_at": "2026-09-06T01:35:07Z"
+}

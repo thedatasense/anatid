@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The reporting service still relies on the event bus as of 2025-11-13. [valid 2025-11-13 to now; recorded by standup/boreal/2025-11-13]\n- The event bus belongs to Boreal as of 2025-11-24, after Team Dune handed it over. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The event bus belongs to Team Dune as of 2025-09-09, after Boreal handed it over. [decision; valid 2025-09-09 to 2025-11-24; recorded by handover/2025-09-09-event-bus]\n    earlier: The event bus is a Boreal service. [valid 2025-01-09 to 2025-09-09; recorded by standup/boreal/2025-01-09]\n- Boreal handed the event bus to Team Dune on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- The event bus pager rings the Boreal team, not Team Dune, as of 2025-11-24. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly. [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Boreal decided at standup on 2026-05-05 that the event bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-05 to now; recorded by standup/boreal/2026-05-05]\n- The event bus deploys only on weekdays after 15:00 UTC per the change policy. [constraint; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17-2]\n    earlier: The event bus deploys on weekdays after 15:00 UTC per the change policy. [constraint; valid 2025-04-22 to 2026-03-17; recorded by standup/boreal/2025-04-22]\n- Team Boreal reported at standup on 2025-11-11 that the event bus's CPU sat at 90 percent after the traffic shift. [valid 2025-11-11 to now; recorded by standup/boreal/2025-11-11-2]\n- The notifier is owned by team Boreal as of 2026-04-06, after the Cinder team handed it over. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n    earlier: The notifier is owned by team Cinder as of 2026-03-17. [valid 2026-03-17 to 2026-04-06; recorded by standup/cinder/2026-03-17]\n- Boreal reported at standup on 2026-02-04 that the scheduler's error rate crept up to 2 percent following the dependency bump. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- The notifier's request volume halved following the client rollout, as noticed by Cinder on 2025-09-26. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- Team Dune reported on 2025-12-08 that the event bus's request volume halved following the client rollout. [valid 2025-12-08 to now; recorded by standup/dune/2025-12-08-2]\n- The notifier's previous flat one-second retry was hammering the push provider during its outages. [valid 2025-03-31 to now; recorded by standup/boreal/2025-03-31-2]\n- The notifier moved from the Cinder team to team Boreal as of 2026-04-06. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- The notifier moved from the Boreal team to the Cinder team as of 2025-11-19. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n- Yuki walked Lena through the notifier runbook on 2026-04-06. [valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- Marcus Oyelaran wrote up the handover doc for Tomasz for the event bus handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- Team Ember reported at standup on 2026-05-27 that the notifier's CPU sat at 90 percent after the traffic shift. [valid 2026-05-27 to now; recorded by standup/ember/2026-05-27]\n- The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n\nQuestion: Which note first recorded that the notifier depends on the event-bus, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657943-GAJxj0irv2OTUtxOFfXq",
+  "object": "chat.completion",
+  "created": 1788657943,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded that the notifier depends on the event bus, and when?\n\nLet me scan the memory for any note about the notifier depending on the event bus.\n\nLooking through entries:\n- Reporting service relies on event bus (standup/boreal/2025-11-13)\n- Event bus ownership changes\n- Event bus pager\n- Reporting service reads from event bus\n- Event bus retention\n- Event bus deploys\n- Event bus CPU\n- Notifier ownership (Boreal, Cinder, Boreal)\n- Scheduler error rate\n- Notifier request volume halved (Cinder 2025-09-26)\n- Event bus request volume halved (Dune 2025-12-08)\n- Notifier retry flat\n- Notifier moved teams\n- Yuki walked Lena through notifier runbook\n- Marcus Oyelaran handover doc\n- Team Ember notifier CPU\n- Notifier not Cinder's service\n- Cinder owns notifier\n\nThere is no note saying the notifier depends on the event bus. The reporting service depends on the event bus, but not the notifier. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded that the notifier depends on the event bus, and when?\n\nLet me scan the memory for any note about the notifier depending on the event bus.\n\nLooking through entries:\n- Reporting service relies on event bus (standup/boreal/2025-11-13)\n- Event bus ownership changes\n- Event bus pager\n- Reporting service reads from event bus\n- Event bus retention\n- Event bus deploys\n- Event bus CPU\n- Notifier ownership (Boreal, Cinder, Boreal)\n- Scheduler error rate\n- Notifier request volume halved (Cinder 2025-09-26)\n- Event bus request volume halved (Dune 2025-12-08)\n- Notifier retry flat\n- Notifier moved teams\n- Yuki walked Lena through notifier runbook\n- Marcus Oyelaran handover doc\n- Team Ember notifier CPU\n- Notifier not Cinder's service\n- Cinder owns notifier\n\nThere is no note saying the notifier depends on the event bus. The reporting service depends on the event bus, but not the notifier. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1513,
+   "completion_tokens": 243,
+   "total_tokens": 1756,
+   "cost": 0.000162705,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000162705,
+    "upstream_inference_prompt_cost": 0.000101955,
+    "upstream_inference_completions_cost": 6.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 237,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.083838750026189,
+ "fetched_at": "2026-09-06T01:25:46Z"
+}

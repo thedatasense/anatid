@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The catalog depends on image-resizer [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\n- Dune owns image-resizer [valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: Boreal owns image-resizer [valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n    earlier: Cinder owns image-resizer [valid 2025-06-25 to 2025-11-19; recorded by handover/2025-06-25-image-resizer]\n    earlier: Dune owns image-resizer [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20]\n- Boreal noticed that image-resizer's cold start time tripled after the runtime upgrade [observation; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- Decision: image-resizer will keep original uploads for 90 days only, because storage for originals doubled in six months [decision; valid 2026-03-20 to now; recorded by standup/dune/2026-03-20]\n- Ember noticed that image-resizer's queue depth hit 50,000 after the marketing send [observation; valid 2026-04-29 to now; recorded by standup/ember/2026-04-29]\n- Boreal noticed that the catalog's request volume halved after the client rollout [observation; valid 2025-04-10 to now; recorded by standup/boreal/2025-04-10]\n- Boreal noticed that the catalog's memory use grew steadily for a week after the cache change [observation; valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12-2]\n- Search-indexer depends on the catalog [valid 2025-03-03 to now; recorded by standup/boreal/2025-03-03]\n- Cinder noticed that the catalog's disk usage jumped 30 percent after the retention change [observation; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15-2]\n- Decision: the catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time [decision; valid 2025-04-01 to now; recorded by standup/cinder/2025-04-01]\n- Cinder noticed that search-indexer's disk usage jumped 30 percent after the retention change [observation; valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29-2]\n- Decision: search-indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes [decision; valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- Boreal noticed that reporting's disk usage jumped 30 percent after the retention change [observation; valid 2025-06-06 to now; recorded by standup/boreal/2025-06-06]\n- The catalog deploys only on Tuesdays and Thursdays between 10:00 and 12:00 UTC [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The catalog deploys only on Mondays between 10:00 and 12:00 UTC [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- Boreal owns the catalog [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: Cinder owns the catalog [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- Atlas noticed that billing-api's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Atlas noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Boreal noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- Cinder noticed that the notifier's request volume halved after the client rollout [observation; valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- The handover note of 2025-11-18 wrongly recorded Ember as the owner of search-indexer [valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n\nQuestion: Which note first recorded that the catalog depends on image-resizer, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658713-LlUwSPhnxuoXYUo5TeYf",
+  "object": "chat.completion",
+  "created": 1788658713,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/cinder/2025-03-28",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded that the catalog depends on image-resizer, and when?\n\nMemory: \"The catalog depends on image-resizer [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\" — only one entry about this dependency. So the answer is standup/cinder/2025-03-28.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded that the catalog depends on image-resizer, and when?\n\nMemory: \"The catalog depends on image-resizer [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\" — only one entry about this dependency. So the answer is standup/cinder/2025-03-28.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1331,
+   "completion_tokens": 93,
+   "total_tokens": 1424,
+   "cost": 0.000115395,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000115395,
+    "upstream_inference_prompt_cost": 9.2145e-05,
+    "upstream_inference_completions_cost": 2.325e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 80,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.5358371250331402,
+ "fetched_at": "2026-09-06T01:38:34Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2025-07-28, Team Cinder observed that the billing API's error rate crept up to 2 percent after the dependency bump. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- As of 2026-05-26, the billing service sits with Team Dune; Team Boreal no longer owns it. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: The billing service lives with Team Boreal as of the 2025-03-17 handover. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- On 2025-09-08, Team Boreal decided the billing service will gate the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- On 2025-03-17, Team Atlas handed the billing service to Team Boreal. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- As of 2025-09-09, changes to the billing service need a rollback plan attached to the pull request. [constraint; valid 2025-09-09 to now; recorded by standup/boreal/2025-09-09]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- The billing service depends on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- The billing service ships only on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-05-05 to now; recorded by standup/boreal/2025-05-05]\n- The billing service has no deploys from 2025-11-24 to 2025-12-02 because of the peak season. [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n- On 2025-12-23, Team Atlas noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2025-12-23 to now; recorded by standup/atlas/2025-12-23]\n- On 2025-03-17, Tomasz Nowak wrote the handover document for the billing service handover for Marcus. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas; Team Boreal kept it until then. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- On 2025-11-21, Team Dune reported that the billing service's queue depth hit 50,000 after the marketing send. [valid 2025-11-21 to now; recorded by standup/dune/2025-11-21]\n- As of 2025-03-28, the pager for the webhooks service rings Team Atlas instead of Team Boreal. [valid 2025-03-28 to now; recorded by handover/2025-03-28-webhooks]\n- As of 2025-12-23, the pager for the auth gateway rings Team Atlas instead of Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n- As of 2025-12-29, the ledger remains an Ember team service. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- As of 2025-11-13, the ledger lives with the Ember team; Team Atlas kept it until then. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- The ledger depends on the auth gateway for service tokens. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n\nQuestion: As of now, which team is responsible for billing-api?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654159-8E4uHlCmTTxSbczUaIBD",
+  "object": "chat.completion",
+  "created": 1788654159,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Dune",
+     "refusal": null,
+     "reasoning": "The memory says: \"As of 2026-05-26, the billing service sits with Team Dune; Team Boreal no longer owns it. [valid 2026-05-26 to now]\" — this supersedes the earlier entries. Today is 2026-06-30, so the answer is Team Dune.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"As of 2026-05-26, the billing service sits with Team Dune; Team Boreal no longer owns it. [valid 2026-05-26 to now]\" — this supersedes the earlier entries. Today is 2026-06-30, so the answer is Team Dune.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1498,
+   "completion_tokens": 76,
+   "total_tokens": 1574,
+   "cost": 0.00012367,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012367,
+    "upstream_inference_prompt_cost": 0.00010467,
+    "upstream_inference_completions_cost": 1.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 71,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.7983406250132248,
+ "fetched_at": "2026-09-06T00:22:41Z"
+}

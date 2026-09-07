@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-03-31 to now; recorded by standup/boreal/2025-03-31-2]\n- The notifier's previous flat one-second retry was hammering the push provider during its outages. [valid 2025-03-31 to now; recorded by standup/boreal/2025-03-31-2]\n- Team Ember now does pairing on every production change. [decision; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- The indexer's incremental updates left stale entries behind after failed writes. [valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- The webhooks service will sign payloads with rotating keys. [decision; valid 2025-09-16 to now; recorded by standup/atlas/2025-09-16]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Team Cinder's on-call swapped on 2025-12-15, with Yuki carrying the Cinder on-call phone. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Team Cinder's on-call swapped on 2025-11-25, with Diego carrying the Cinder on-call phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- Yuki walked Lena through the notifier runbook on 2026-04-06. [valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- Ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011. [decision; valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- The notifier moved from the Cinder team to team Boreal as of 2026-04-06. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- Notifier missed alerts for 40 minutes on 2025-03-04 during incident INC-2025-004. [valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- The notifier moved from the Boreal team to the Cinder team as of 2025-11-19. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- The notifier's memory use grew steadily for a week after the cache change. [valid 2025-11-05 to now; recorded by standup/ember/2025-11-05]\n- The notifier's request volume halved following the client rollout, as noticed by Cinder on 2025-09-26. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- The notifier is owned by team Boreal as of 2026-04-06, after the Cinder team handed it over. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n    earlier: The notifier is owned by team Cinder as of 2026-03-17. [valid 2026-03-17 to 2026-04-06; recorded by standup/cinder/2026-03-17]\n- INC-2025-004 was caused by a notifier consumer offset stuck after a broker restart. [valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n\nQuestion: Why does the notifier retry failed pushes three times with exponential backoff?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657123-NaUHDgx1iFIBFHvqezos",
+  "object": "chat.completion",
+  "created": 1788657123,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The previous flat one-second retry was hammering the push provider during its outages.",
+     "refusal": null,
+     "reasoning": "The question asks why the notifier retries failed pushes three times with exponential backoff.\n\nMemory has:\n- \"The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-03-31 to now]\"\n- \"The notifier's previous flat one-second retry was hammering the push provider during its outages. [valid 2025-03-31 to now]\"\n\nThe reason: the previous flat one-second retry was hammering the push provider during its outages. Answer in one short line.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks why the notifier retries failed pushes three times with exponential backoff.\n\nMemory has:\n- \"The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-03-31 to now]\"\n- \"The notifier's previous flat one-second retry was hammering the push provider during its outages. [valid 2025-03-31 to now]\"\n\nThe reason: the previous flat one-second retry was hammering the push provider during its outages. Answer in one short line.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1379,
+   "completion_tokens": 127,
+   "total_tokens": 1506,
+   "cost": 0.000127495,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000127495,
+    "upstream_inference_prompt_cost": 9.5745e-05,
+    "upstream_inference_completions_cost": 3.175e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 108,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9458918750169687,
+ "fetched_at": "2026-09-06T01:12:05Z"
+}

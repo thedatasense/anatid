@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Boreal own now?\nGold answer: catalog and event-bus\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 2 services.\n\nAnswer to grade: Catalog service, billing service, and event bus."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655602-Ezm3xi4p3gFjs0uiIfDP",
+  "object": "chat.completion",
+  "created": 1788655602,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer includes an extra service (billing service) beyond the gold items catalog and event-bus, which violates the rule that no extra item may be named.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"catalog and event-bus\" with 2 services. The answer to grade names \"Catalog service, billing service, and event bus\" - which includes an extra item (billing service). According to the grading rule, every item must be named and no extra item. So this is incorrect because it includes an extra item.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"catalog and event-bus\" with 2 services. The answer to grade names \"Catalog service, billing service, and event bus\" - which includes an extra item (billing service). According to the grading rule, every item must be named and no extra item. So this is incorrect because it includes an extra item.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 249,
+   "completion_tokens": 113,
+   "total_tokens": 362,
+   "cost": 4.3085e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.3085e-05,
+    "upstream_inference_prompt_cost": 1.4835e-05,
+    "upstream_inference_completions_cost": 2.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 69,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.730088041978888,
+ "fetched_at": "2026-09-06T00:46:45Z"
+}

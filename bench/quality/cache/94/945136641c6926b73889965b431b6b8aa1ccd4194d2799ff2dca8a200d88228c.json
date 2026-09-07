@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What does a change to billing-api need before it can merge?\nGold answer: a rollback plan attached to the pull request\nAlso accepted: (none)\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: Ledger (billing-api depends on Ledger to work)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658864-FCXEYUurydxmz3xUkPXz",
+  "object": "chat.completion",
+  "created": 1788658864,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names Ledger as a dependency instead of stating the required rollback plan attached to the pull request, so it does not match the gold fact.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"Ledger (billing-api depends on Ledger to work)\". The gold answer is \"a rollback plan attached to the pull request\". The submitted answer does not state the gold fact. It mentions Ledger, which is different. So incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"Ledger (billing-api depends on Ledger to work)\". The gold answer is \"a rollback plan attached to the pull request\". The submitted answer does not state the gold fact. It mentions Ledger, which is different. So incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 248,
+   "completion_tokens": 93,
+   "total_tokens": 341,
+   "cost": 4.185e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.185e-05,
+    "upstream_inference_prompt_cost": 1.86e-05,
+    "upstream_inference_completions_cost": 2.325e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 52,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.897877416980918,
+ "fetched_at": "2026-09-06T01:41:14Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-06-25] handover/2025-06-25-image-resizer: Handover: as of today image-resizer moves from Dune to Cinder. Farah Haddad walked Yuki through the runbook this morning.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2026-01-20] handover/2026-01-20-image-resizer: From today the pager for the resizer rings team Dune, not team Boreal. Ownership transferred.\n- [2025-11-19] handover/2025-11-19-image-resizer: From today the pager for image-resizer rings the Boreal team, not Cinder. Ownership transferred.\n- [2026-03-20] standup/dune/2026-03-20: Decision: image-resizer will keep original uploads for 90 days only, because storage for originals doubled in six months.\n- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.\n- [2025-03-28] standup/cinder/2025-03-28: The product catalog depends on image-resizer for thumbnails.\n- [2026-05-13] standup/ember/2026-05-13: Diego has the Ember pager this cycle, taking over from Oskar.\n- [2025-02-10] standup/boreal/2025-02-10: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2025-06-13] standup/cinder/2025-06-13: Diego Alvarez has the Cinder pager this cycle, taking over from Yuki Tanaka.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n- [2026-04-29] handover/2026-04-29-ledger: Cinder is taking over the ledger from team Boreal, effective today. Dashboards and alerts are being repointed.\n- [2026-03-18] standup/boreal/2026-03-18: Reminder that the product catalog depends on the resizer.\n- [2025-04-01] standup/cinder/2025-04-01: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.\n- [2026-04-29] standup/ember/2026-04-29: Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-03-16] standup/ember/2026-03-16: Oskar has the Ember pager this cycle, taking over from Diego Alvarez. Ember noticed that search-indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-03-31] standup/dune/2025-03-31: Farah still has the Dune pager.\n- [2026-03-09] standup/dune/2026-03-09: Dune sits on the fourth floor.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for Dune goes to Farah.\n- [2026-01-12] standup/dune/2026-01-12: The scheduler remains a the Dune team service.\n- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-04-23] standup/dune/2025-04-23: Team Dune adopted a monthly game day.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.\n- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2026-06-03] standup/dune/2026-06-03: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.\n- [2026-02-24] standup/dune/2026-02-24: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.\n- [2026-01-22] standup/dune/2026-01-22: Reminder from team Dune: page Farah for anything this cycle, not Tomasz.\n- [2025-09-04] standup/dune/2025-09-04: Rotation day for Dune: Farah hands the pager to Tomasz.\n- [2026-04-09] standup/dune/2026-04-09: Reminder from the Dune team: page Farah for anything this cycle, not Tomasz Nowak.\n- [2025-12-08] standup/dune/2025-12-08-2: Heads-up from team Dune: the bus' request volume halved after the client rollout.\n- [2025-11-03] standup/dune/2025-11-03: On-call rotation: Farah Haddad is primary for Dune starting today; Tomasz is off rotation.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2026-04-22] handover/2026-04-22-webhooks: The webhook dispatcher has a new home: Dune. Team Atlas kept it until today.\n- [2025-09-18] standup/dune/2025-09-18-2: Farah Haddad is the release captain for Q3 2025.\n\nQuestion: When did Dune take over image-resizer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651223-4pizhleyRHOge4Q4PokK",
+  "object": "chat.completion",
+  "created": 1788651223,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2026-01-20",
+     "refusal": null,
+     "reasoning": "The question asks when Dune took over image-resizer.\n\nMemory entries about image-resizer ownership:\n- [2025-01-20] image-resizer owned by team Dune.\n- [2025-06-25] image-resizer moves from Dune to Cinder.\n- [2025-11-19] pager rings Boreal, not Cinder. Ownership transferred.\n- [2026-01-20] pager rings team Dune, not team Boreal. Ownership transferred.\n\nSo the question is \"When did Dune take over image-resizer?\" The most recent transfer to Dune is 2026-01-20: \"From today the pager for the resizer rings team Dune, not team Boreal. Ownership transferred.\"\n\nDune previously owned it from 2025-01-20 (but no takeover date mentioned), then it moved to Cinder on 2025-06-25, then to Boreal on 2025-11-19, then back to Dune on 2026-01-20.\n\nThe takeover by Dune explicitly dated is 2026-01-20. Answer: 2026-01-20.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Dune took over image-resizer.\n\nMemory entries about image-resizer ownership:\n- [2025-01-20] image-resizer owned by team Dune.\n- [2025-06-25] image-resizer moves from Dune to Cinder.\n- [2025-11-19] pager rings Boreal, not Cinder. Ownership transferred.\n- [2026-01-20] pager rings team Dune, not team Boreal. Ownership transferred.\n\nSo the question is \"When did Dune take over image-resizer?\" The most recent transfer to Dune is 2026-01-20: \"From today the pager for the resizer rings team Dune, not team Boreal. Ownership transferred.\"\n\nDune previously owned it from 2025-01-20 (but no takeover date mentioned), then it moved to Cinder on 2025-06-25, then to Boreal on 2025-11-19, then back to Dune on 2026-01-20.\n\nThe takeover by Dune explicitly dated is 2026-01-20. Answer: 2026-01-20.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1730,
+   "completion_tokens": 248,
+   "total_tokens": 1978,
+   "cost": 0.00018407,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00018407,
+    "upstream_inference_prompt_cost": 0.00012207,
+    "upstream_inference_completions_cost": 6.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 240,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.713309290993493,
+ "fetched_at": "2026-09-05T23:33:46Z"
+}

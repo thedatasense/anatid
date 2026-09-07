@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Team Cinder's on-call swapped on 2025-12-15, with Yuki carrying the Cinder on-call phone. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Team Cinder's on-call swapped on 2025-11-25, with Diego carrying the Cinder on-call phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n- Yuki is the primary on-call to contact for anything on Cinder as of 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call to contact for anything on Cinder as of 2025-11-25; Yuki is off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call to contact for anything on Cinder as of 2025-10-02; Diego is off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Page Diego for anything on Cinder this cycle, as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Page Yuki for anything on Cinder this cycle, not Diego Alvarez, as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Page Diego Alvarez for anything on Cinder this cycle, not Yuki Tanaka, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Page Yuki Tanaka for anything on Cinder this cycle, not Diego, as of 2025-02-17. [decision; valid 2025-02-17 to 2025-06-13; recorded by standup/cinder/2025-02-17]\n- Diego takes the first on-call shift of the year for Cinder. [decision; valid 2025-01-16 to now; recorded by standup/cinder/2025-01-16]\n- Yuki picked up the Cinder on-call shift from Diego on 2025-05-02. [decision; valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02]\n- Diego takes over the Cinder on-call pager from Yuki as of 2025-03-27. [decision; valid 2025-03-27 to now; recorded by standup/cinder/2025-03-27]\n- Yuki is the primary on-call for team Cinder as of 2025-12-15, taking over from Diego. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call for team Cinder as of 2025-11-25, taking over from Yuki. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call for team Cinder as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- Cinder holds team planning on Mondays. [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-2]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- Diego carried the Cinder on-call phone from 2025-11-25 until 2025-12-15, when Yuki took over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is back on the Cinder on-call rotation as of 2025-11-25, carrying the phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Diego is off the Cinder on-call rotation as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- Cinder has moved to the third floor. [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-3]\n- Cinder took over Ledger from Boreal on 2026-04-29. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n- The notifier moved from the Boreal team to the Cinder team as of 2025-11-19. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n\nQuestion: Who is on call for Cinder right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657653-jHmrvJ0e5Ibe8AwbOdxc",
+  "object": "chat.completion",
+  "created": 1788657653,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Yuki",
+     "refusal": null,
+     "reasoning": "The question asks who is on call for Cinder right now (2026-06-30). The latest entries say Yuki is the primary on-call as of 2025-12-15, valid to now. So answer: Yuki.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who is on call for Cinder right now (2026-06-30). The latest entries say Yuki is the primary on-call as of 2025-12-15, valid to now. So answer: Yuki.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1783,
+   "completion_tokens": 54,
+   "total_tokens": 1837,
+   "cost": 0.000139545,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000139545,
+    "upstream_inference_prompt_cost": 0.000126045,
+    "upstream_inference_completions_cost": 1.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 50,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.4851454999879934,
+ "fetched_at": "2026-09-06T01:20:54Z"
+}

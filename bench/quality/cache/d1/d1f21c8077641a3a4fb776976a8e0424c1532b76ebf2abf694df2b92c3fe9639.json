@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.\n- [2025-04-11] handover/2025-04-11-webhooks: Quick one: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\n- [2026-02-11] incident-review/INC-2026-003: Incident review INC-2026-003. The webhook dispatcher delivered some events twice on 2026-02-08. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2026-04-22] handover/2026-04-22-webhooks: The webhook dispatcher has a new home: Dune. Team Atlas kept it until today.\n- [2025-09-16] standup/atlas/2025-09-16: Decision: webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review.\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2025-09-09] handover/2025-09-09-webhooks: The Ember team handed the webhook dispatcher to team Atlas today; Oskar wrote up the handover doc for Priya.\n- [2025-03-11] standup/ember/2025-03-11-2: Observation from team Ember: after the cache change, the webhooks service's memory use grew steadily for a week. Team Ember now does pairing on every production change.\n- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved.\n- [2025-03-14] standup/atlas/2025-03-14: Dependency map update: the ledger needs the auth gateway (service tokens).\n- [2025-11-17] standup/ember/2025-11-17: Team Ember saw that the authentication gateway's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it. The weekly architecture review is run by Oskar.\n- [2025-04-14] standup/ember/2025-04-14: Auth-gateway deploy window: on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.\n- [2025-10-21] standup/atlas/2025-10-21: New dependency for the billing service: the feature flag service. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch.\n- [2025-09-26] standup/atlas/2025-09-26: For newcomers: the deploy window for the ledger service is still on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.\n- [2026-02-10] standup/boreal/2026-02-10: Reminder: the authentication gateway deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-01-20] standup/ember/2025-01-20-2: The authentication gateway lives with team Ember.\n- [2026-01-12] standup/dune/2026-01-12: The scheduler remains a the Dune team service.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-11-12] standup/boreal/2025-11-12: The catalog service's deploy window changes today: it is now on Tuesdays and Thursdays between 10:00 and 12:00 UTC. The old slot (Mondays 10:00-12:00 UTC) is retired.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2026-04-16] standup/atlas/2026-04-16: Team Atlas saw that the billing service's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2026-05-01] standup/cinder/2026-05-01: From today the ledger service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-08-08] standup/dune/2025-08-08: New deploy window for the job scheduler: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Tuesdays 13:00-15:00 UTC slot. Observation from the Dune team: after the marketing send, billing-api's queue depth hit 50,000.\n- [2025-03-03] standup/boreal/2025-03-03: Dependency map update: the search indexer needs the product catalog (product documents).\n- [2025-03-31] standup/boreal/2025-03-31-2: We agreed today that the notifier will retry failed pushes three times with exponential backoff. The reason is that the flat one-second retry was hammering the push provider during its outages.\n\nQuestion: Which service depends on webhooks?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652107-9XKToQM36hfpLqGumJSr",
+  "object": "chat.completion",
+  "created": 1788652107,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service depends on webhooks?\"\n\nLet me look through the memory for dependency information regarding webhooks.\n\n- [2025-02-13] standup/boreal/2025-02-13: \"The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\"\n\nSo webhooks needs the event-bus. That means webhooks depends on event-bus, not the other way around.\n\nIs there any entry saying some service depends on webhooks? Let me scan:\n\n- The ledger needs the auth gateway.\n- The search indexer needs the product catalog.\n- Billing-api calls the ledger service.\n- Billing service new dependency: feature flag service.\n- Webhooks needs the event-bus.\n\nNo entry states that a service depends on webhooks. The question asks which service depends on webhooks — i.e., which service has webhooks as a dependency. The memory doesn't contain that. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service depends on webhooks?\"\n\nLet me look through the memory for dependency information regarding webhooks.\n\n- [2025-02-13] standup/boreal/2025-02-13: \"The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\"\n\nSo webhooks needs the event-bus. That means webhooks depends on event-bus, not the other way around.\n\nIs there any entry saying some service depends on webhooks? Let me scan:\n\n- The ledger needs the auth gateway.\n- The search indexer needs the product catalog.\n- Billing-api calls the ledger service.\n- Billing service new dependency: feature flag service.\n- Webhooks needs the event-bus.\n\nNo entry states that a service depends on webhooks. The question asks which service depends on webhooks — i.e., which service has webhooks as a dependency. The memory doesn't contain that. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1607,
+   "completion_tokens": 230,
+   "total_tokens": 1837,
+   "cost": 0.000170345,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000170345,
+    "upstream_inference_prompt_cost": 0.000112845,
+    "upstream_inference_completions_cost": 5.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 224,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0392208750126883,
+ "fetched_at": "2026-09-05T23:48:30Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note recorded Marcus's move to Atlas, and when?\nGold answer: standup/boreal/2026-03-17 (2026-03-17)\nAlso accepted: standup/boreal/2026-03-17; 2026-03-17; 17 March 2026; March 17, 2026; the standup note of 2026-03-17; the standup note of 17 March 2026; the standup note of March 17, 2026\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: [2026-03-17] standup/boreal/2026-03-17"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658971-RISAhwEsRjY6RAxejYS2",
+  "object": "chat.completion",
+  "created": 1788658971,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the gold source label standup/boreal/2026-03-17 along with the correct date 2026-03-17.\"}\n",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"[2026-03-17] standup/boreal/2026-03-17\". This includes the label \"standup/boreal/2026-03-17\" and the date. The gold answer is \"standup/boreal/2026-03-17 (2026-03-17)\". The answer identifies the source label correctly. So it's correct.\n\nOutput JSON: {\"correct\": true, \"reason\": \"...\"}. Must end with code block ending in ```.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"[2026-03-17] standup/boreal/2026-03-17\". This includes the label \"standup/boreal/2026-03-17\" and the date. The gold answer is \"standup/boreal/2026-03-17 (2026-03-17)\". The answer identifies the source label correctly. So it's correct.\n\nOutput JSON: {\"correct\": true, \"reason\": \"...\"}. Must end with code block ending in ```.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 337,
+   "completion_tokens": 153,
+   "total_tokens": 490,
+   "cost": 5.9685e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.9685e-05,
+    "upstream_inference_prompt_cost": 2.1435e-05,
+    "upstream_inference_completions_cost": 3.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 106,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.90957558300579,
+ "fetched_at": "2026-09-06T01:42:56Z"
+}

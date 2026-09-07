@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Boreal own now?\nGold answer: notifier, search-indexer, auth-gateway, catalog, event-bus and reporting\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: Indexer, product catalog, notifier, reports pipeline, and event bus."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659051-4vYRhtTFwCm7356iJmlb",
+  "object": "chat.completion",
+  "created": 1788659051,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer lists only five services and omits auth-gateway, so it does not name all six gold services.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer lists 6 services: notifier, search-indexer, auth-gateway, catalog, event-bus and reporting.\n\nThe answer to grade names: Indexer, product catalog, notifier, reports pipeline, and event bus — that's 5 items.\n\nLet me map:\n- Indexer ≈ search-indexer (roughly, but \"Indexer\" vs \"search-indexer\" — arguably matches)\n- product catalog ≈ catalog\n- notifier ≈ notifier\n- reports pipeline ≈ reporting (maybe)\n- event bus ≈ event bus\n\nMissing: auth-gateway.\n\nSo the answer misses auth-gateway. Per the rule, every item must be named and no extra item. So it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer lists 6 services: notifier, search-indexer, auth-gateway, catalog, event-bus and reporting.\n\nThe answer to grade names: Indexer, product catalog, notifier, reports pipeline, and event bus — that's 5 items.\n\nLet me map:\n- Indexer ≈ search-indexer (roughly, but \"Indexer\" vs \"search-indexer\" — arguably matches)\n- product catalog ≈ catalog\n- notifier ≈ notifier\n- reports pipeline ≈ reporting (maybe)\n- event bus ≈ event bus\n\nMissing: auth-gateway.\n\nSo the answer misses auth-gateway. Per the rule, every item must be named and no extra item. So it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 274,
+   "completion_tokens": 182,
+   "total_tokens": 456,
+   "cost": 5.069e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.069e-05,
+    "upstream_inference_prompt_cost": 5.19e-06,
+    "upstream_inference_completions_cost": 4.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 147,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4644693750306033,
+ "fetched_at": "2026-09-06T01:44:13Z"
+}

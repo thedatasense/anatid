@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- For anything Boreal-related, page Lena. [constraint; valid 2025-09-23 to now; recorded by standup/boreal/2025-09-23]\n    earlier: For anything Boreal-related, page Marcus. [constraint; valid 2025-05-29 to 2025-09-23; recorded by standup/boreal/2025-05-29]\n- The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- As of 2025-12-18, the Boreal team adopted a weekly dependency update day. [decision; valid 2025-12-18 to now; recorded by standup/boreal/2025-12-18]\n- On 2026-03-20, Marcus moved from the Boreal team to the Atlas team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- Boreal noticed the ledger service's memory growth and pinged the owners on 2025-02-21. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- The Boreal team consists of Lena, after Marcus moved to the Atlas team on 2026-03-20. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: The Boreal team consists of Lena and Marcus. [valid 2025-01-07 to 2026-03-20; recorded by standup/boreal/2025-01-07]\n- As of 2026-03-20, Lena has the Boreal team pager this cycle, taking over from Marcus. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: As of 2026-02-10, Marcus has the Boreal team pager this cycle, taking over from Lena. [valid 2026-02-10 to 2026-03-20; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, Lena has the Boreal team pager this cycle, taking over from Marcus. [valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: As of 2025-11-06, Marcus has the Boreal team pager this cycle, taking over from Lena. [valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: Lena has the pager rotation for the Boreal team as of 2025-06-27, taking over from Marcus. [valid 2025-06-27 to 2025-11-06; recorded by standup/boreal/2025-06-27]\n    earlier: Marcus has the pager rotation for the Boreal team as of 2025-05-07, taking over from Lena. [valid 2025-05-07 to 2025-06-27; recorded by standup/boreal/2025-05-07]\n    earlier: Lena has the pager rotation for the Boreal team as of 2025-03-17, taking over from Marcus. [valid 2025-03-17 to 2025-05-07; recorded by standup/boreal/2025-03-17]\n    earlier: Marcus has the pager rotation for the Boreal team as of 2025-02-12. [valid 2025-02-12 to 2025-03-17; recorded by standup/boreal/2025-02-12]\n    earlier: Lena has the first pager rotation for the Boreal team. [valid 2025-01-09 to 2025-02-12; recorded by standup/boreal/2025-01-09-4]\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n- As of 2025-09-23, the Boreal team says to page Lena for anything this cycle, not Marcus. [constraint; valid 2025-09-23 to now; recorded by standup/boreal/2025-09-23]\n    earlier: As of 2025-08-15, the Boreal team says to page Marcus for anything this cycle, not Lena Fischer. [constraint; valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [constraint; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- The notifier is owned by the Dune team as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n\nQuestion: Which services does Boreal own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653399-EcQoGgrOL3eGuovFO3j4",
+  "object": "chat.completion",
+  "created": 1788653399,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which services does Boreal own now?\n\nLet me go through the memory entries about service ownership:\n\n1. The bus: \"As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team.\" - So Boreal does NOT own the bus now.\n\n2. The notifier: \"The notifier is owned by the Dune team as of 2025-06-27, when ownership passed from the Boreal team.\" - So Boreal does NOT own the notifier now.\n\n3. The ledger service: \"Boreal noticed the ledger service's memory growth and pinged the owners on 2025-02-21.\" - This says Boreal pinged the owners, implying Boreal doesn't own the ledger service.\n\n4. Webhooks pager rings Boreal team (as of 2025-05-15). The indexer pager rings Boreal team (as of 2026-04-01). But pager routing isn't the same as ownership.\n\nSo based on the memory, Boreal doesn't clearly own any service now. The bus went to Atlas, the notifier went to Dune. The memory doesn't state that Boreal owns any service currently.\n\nHmm, but the question asks \"which services does Boreal own now?\" - if the memory doesn't contain the answer, I should reply \"I don't know\".\n\nWait, but maybe the pager routing for webhooks and indexer implies ownership? No, the memory explicitly says \"the pager for webhooks rings the Boreal team\" - that's pager routing, not ownership. The question asks about ownership.\n\nThe entries that explicitly talk about ownership:\n- Bus: Atlas owns it now (since 2025-11-24)\n- Notifier: Dune owns it now (since 2025-06-27)\n\nThere's no entry saying Boreal currently owns any service. So the answer would be \"I don't know\" - or possibly the answer is that no services are owned by Boreal per the memory.\n\nThe rules say: \"If the memory does not contain the answer, reply exactly: I don't know\"\n\nThe memory does not state which services Boreal owns now. It only states what Boreal used to own and what was taken over. So strictly, I don't know.\n\nHowever, one could argue the answer is \"none\" based on the memory. But the memory doesn't explicitly say Boreal owns nothing; it just doesn't mention any current Boreal ownership. The safest answer per the rules is \"I don't know\".\n\nActually, let me reconsider. The memory shows Boreal previously owned the bus and the notifier, both of which were taken over by other teams. There's no current ownership entry for Boreal. The question \"Which services does Boreal own now?\" - the memory doesn't contain a positive statement of Boreal owning any service. So the answer per the rules is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which services does Boreal own now?\n\nLet me go through the memory entries about service ownership:\n\n1. The bus: \"As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team.\" - So Boreal does NOT own the bus now.\n\n2. The notifier: \"The notifier is owned by the Dune team as of 2025-06-27, when ownership passed from the Boreal team.\" - So Boreal does NOT own the notifier now.\n\n3. The ledger service: \"Boreal noticed the ledger service's memory growth and pinged the owners on 2025-02-21.\" - This says Boreal pinged the owners, implying Boreal doesn't own the ledger service.\n\n4. Webhooks pager rings Boreal team (as of 2025-05-15). The indexer pager rings Boreal team (as of 2026-04-01). But pager routing isn't the same as ownership.\n\nSo based on the memory, Boreal doesn't clearly own any service now. The bus went to Atlas, the notifier went to Dune. The memory doesn't state that Boreal owns any service currently.\n\nHmm, but the question asks \"which services does Boreal own now?\" - if the memory doesn't contain the answer, I should reply \"I don't know\".\n\nWait, but maybe the pager routing for webhooks and indexer implies ownership? No, the memory explicitly says \"the pager for webhooks rings the Boreal team\" - that's pager routing, not ownership. The question asks about ownership.\n\nThe entries that explicitly talk about ownership:\n- Bus: Atlas owns it now (since 2025-11-24)\n- Notifier: Dune owns it now (since 2025-06-27)\n\nThere's no entry saying Boreal currently owns any service. So the answer would be \"I don't know\" - or possibly the answer is that no services are owned by Boreal per the memory.\n\nThe rules say: \"If the memory does not contain the answer, reply exactly: I don't know\"\n\nThe memory does not state which services Boreal owns now. It only states what Boreal used to own and what was taken over. So strictly, I don't know.\n\nHowever, one could argue the answer is \"none\" based on the memory. But the memory doesn't explicitly say Boreal owns nothing; it just doesn't mention any current Boreal ownership. The safest answer per the rules is \"I don't know\".\n\nActually, let me reconsider. The memory shows Boreal previously owned the bus and the notifier, both of which were taken over by other teams. There's no current ownership entry for Boreal. The question \"Which services does Boreal own now?\" - the memory doesn't contain a positive statement of Boreal owning any service. So the answer per the rules is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1725,
+   "completion_tokens": 613,
+   "total_tokens": 2338,
+   "cost": 0.00056525,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00056525,
+    "upstream_inference_prompt_cost": 0.00025875,
+    "upstream_inference_completions_cost": 0.0003065
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 607,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 14.951218208007049,
+ "fetched_at": "2026-09-06T00:10:14Z"
+}

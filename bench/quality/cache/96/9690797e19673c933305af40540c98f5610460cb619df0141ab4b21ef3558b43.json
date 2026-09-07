@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-04-14, Farah is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is primary on-call for the Dune team, having taken over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz Nowak has the Dune team pager, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still has the Dune team pager. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- Diego is on call for Cinder to start the year. [valid 2025-01-09 to now; recorded by standup/cinder/2025-01-09]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- Priya Raman is the primary on-call for the Atlas team as of 2025-07-30, when on-call passed from Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-06-19, until the next rotation. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya Raman is the primary on-call for the Atlas team as of 2025-05-13, until the next rotation. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-04-03, replacing Priya Raman. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n- Farah is release captain for Q3 2025 for the Dune team. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- Farah holds the first on-call rotation for the Dune team as of 2026-04-14, having taken over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz holds the first on-call rotation for the Dune team as of 2026-03-11, having taken over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: Farah has the first on-call rotation for the Dune team. [valid 2025-01-13 to 2026-03-11; recorded by standup/dune/2025-01-13]\n- On 2025-07-30, on-call for the Atlas team passed from Tomasz to Priya Raman when Tomasz moved to the Dune team. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- Tomasz picked up the Dune team on-call shift from Farah on 2025-09-04. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n- On 2026-05-22, Tomasz picked up the Dune team on-call shift from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- Oskar takes the first on-call shift of the year for the Ember team. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- Tomasz was on the Atlas team on-call rotation as of 2025-04-03, but left it on 2025-07-30 when he moved to the Dune team. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is back on the Atlas team on-call rotation as of 2025-04-03. [valid 2025-04-03 to 2025-07-30; recorded by standup/atlas/2025-04-03]\n    earlier: Tomasz had the first on-call rotation for the Atlas team but is off rotation as of 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- The notifier depends on the bus for delivery events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n\nQuestion: Who is the secondary on-call for Dune?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653549-76VBPNcfJuI8VnmecT3V",
+  "object": "chat.completion",
+  "created": 1788653549,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks about the secondary on-call for the Dune team. Let me scan the memory.\n\nThe memory contains entries about primary on-call for Dune, first on-call rotation, release captain, but I don't see anything about a secondary on-call for Dune. There's no mention of \"secondary\" anywhere.\n\nSo the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the secondary on-call for the Dune team. Let me scan the memory.\n\nThe memory contains entries about primary on-call for Dune, first on-call rotation, release captain, but I don't see anything about a secondary on-call for Dune. There's no mention of \"secondary\" anywhere.\n\nSo the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1888,
+   "completion_tokens": 81,
+   "total_tokens": 1969,
+   "cost": 5.049e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1856,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.049e-05,
+    "upstream_inference_prompt_cost": 3.024e-05,
+    "upstream_inference_completions_cost": 2.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 75,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2390789169585332,
+ "fetched_at": "2026-09-06T00:12:31Z"
+}

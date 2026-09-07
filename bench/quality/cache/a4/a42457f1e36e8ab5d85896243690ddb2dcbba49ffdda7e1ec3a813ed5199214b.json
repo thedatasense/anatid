@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2026-04-16] standup/atlas/2026-04-16: Team Atlas saw that the billing service's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-11-13] standup/boreal/2025-11-13: The reporting service still relies on the bus; keep that in mind for the maintenance.\n- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-11-17] standup/ember/2025-11-17: Team Ember saw that the authentication gateway's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it. The weekly architecture review is run by Oskar.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-12-31] standup/atlas/2025-12-31: The Atlas team noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-09-26] standup/cinder/2025-09-26: The Cinder team saw that the notifier's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2026-04-16] standup/atlas/2026-04-16-2: Atlas saw that Ledger's disk usage jumped 30 percent following the retention change; not their service, so they flagged it. Atlas planning meeting is every Tuesday.\n- [2026-04-29] handover/2026-04-29-ledger: Cinder is taking over the ledger from team Boreal, effective today. Dashboards and alerts are being repointed.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-11-19] handover/2025-11-19-notifier: Notifier has a new home: the Cinder team. Boreal kept it until today.\n- [2025-10-21] standup/atlas/2025-10-21: New dependency for the billing service: the feature flag service. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n\nQuestion: Which team owns the service that reporting depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651925-vmUabCvSgmWAHSZodAwj",
+  "object": "chat.completion",
+  "created": 1788651925,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Boreal",
+     "refusal": null,
+     "reasoning": "The question: \"Which team owns the service that reporting depends on?\"\n\nFirst, what does reporting depend on? Memory entries:\n- 2025-02-06: reports pipeline relies on ledger service (nightly balance export).\n- 2025-09-19: reporting will read from event-bus instead of querying ledger directly. That removes the dependency on Ledger.\n- 2025-11-13: reporting still relies on the bus.\n\nSo currently (today 2026-06-30), reporting depends on the event-bus. The event bus is a Boreal team service (2025-01-09: \"The event bus is a the Boreal team service\").\n\nSo the answer: Boreal.\n\nCheck for later changes: any handover of event-bus? No. Ledger ownership changed to Cinder (2026-04-29), but reporting no longer depends on ledger. So answer: Boreal.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Which team owns the service that reporting depends on?\"\n\nFirst, what does reporting depend on? Memory entries:\n- 2025-02-06: reports pipeline relies on ledger service (nightly balance export).\n- 2025-09-19: reporting will read from event-bus instead of querying ledger directly. That removes the dependency on Ledger.\n- 2025-11-13: reporting still relies on the bus.\n\nSo currently (today 2026-06-30), reporting depends on the event-bus. The event bus is a Boreal team service (2025-01-09: \"The event bus is a the Boreal team service\").\n\nSo the answer: Boreal.\n\nCheck for later changes: any handover of event-bus? No. Ledger ownership changed to Cinder (2026-04-29), but reporting no longer depends on ledger. So answer: Boreal.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1515,
+   "completion_tokens": 193,
+   "total_tokens": 1708,
+   "cost": 0.000161875,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000161875,
+    "upstream_inference_prompt_cost": 0.000113625,
+    "upstream_inference_completions_cost": 4.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 189,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.512868916033767,
+ "fetched_at": "2026-09-05T23:45:29Z"
+}

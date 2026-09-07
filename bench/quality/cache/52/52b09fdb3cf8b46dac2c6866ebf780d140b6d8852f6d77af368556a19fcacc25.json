@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Atlas own now?\nGold answer: catalog, image-resizer, event-bus and feature-flags\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 4 services.\n\nAnswer to grade: Product catalog, bus, image resizer"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655029-7u9NOnwDMxwQcqg5I9lt",
+  "object": "chat.completion",
+  "created": 1788655029,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names only three services (catalog, event-bus, image-resizer) and omits feature-flags, so it does not name every item in the gold list.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is: catalog, image-resizer, event-bus and feature-flags (4 services).\n\nThe answer to grade: \"Product catalog, bus, image resizer\" — that's 3 items: product catalog (≈catalog), bus (≈event-bus?), image resizer (≈image-resizer). Missing feature-flags. Also \"bus\" vs \"event-bus\" — arguably matches event-bus. But feature-flags is missing, so per the rule, every item must be named and no extra item. Missing feature-flags → incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is: catalog, image-resizer, event-bus and feature-flags (4 services).\n\nThe answer to grade: \"Product catalog, bus, image resizer\" — that's 3 items: product catalog (≈catalog), bus (≈event-bus?), image resizer (≈image-resizer). Missing feature-flags. Also \"bus\" vs \"event-bus\" — arguably matches event-bus. But feature-flags is missing, so per the rule, every item must be named and no extra item. Missing feature-flags → incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 254,
+   "completion_tokens": 165,
+   "total_tokens": 419,
+   "cost": 5.646e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.646e-05,
+    "upstream_inference_prompt_cost": 1.521e-05,
+    "upstream_inference_completions_cost": 4.125e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 117,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.160143457993399,
+ "fetched_at": "2026-09-06T00:37:15Z"
+}

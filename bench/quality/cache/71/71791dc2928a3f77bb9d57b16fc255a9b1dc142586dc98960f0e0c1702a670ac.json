@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note recorded Marcus's move to Atlas, and when?\nGold answer: standup/boreal/2026-03-20 (2026-03-20)\nAlso accepted: standup/boreal/2026-03-20; 2026-03-20; 20 March 2026; March 20, 2026; the standup note of 2026-03-20; the standup note of 20 March 2026; the standup note of March 20, 2026\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: Recorded by standup/boreal/2026-03-20, on 2026-03-20."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655026-B4e0tX3pwElmFbGiJzk9",
+  "object": "chat.completion",
+  "created": 1788655026,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the source label standup/boreal/2026-03-20 together with the gold date 2026-03-20, matching the gold answer exactly.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade says \"Recorded by standup/boreal/2026-03-20, on 2026-03-20.\" This matches the gold answer: standup/boreal/2026-03-20 (2026-03-20). It identifies the source label and the date. So it's correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade says \"Recorded by standup/boreal/2026-03-20, on 2026-03-20.\" This matches the gold answer: standup/boreal/2026-03-20 (2026-03-20). It identifies the source label and the date. So it's correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 349,
+   "completion_tokens": 117,
+   "total_tokens": 466,
+   "cost": 4.7745e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.7745e-05,
+    "upstream_inference_prompt_cost": 1.8495e-05,
+    "upstream_inference_completions_cost": 2.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 69,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2316958750016056,
+ "fetched_at": "2026-09-06T00:37:08Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2025-11-20, Team Boreal took over the event bus from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- As of 2026-02-19, the Boreal team consists of Lena only, after Marcus moved to Team Atlas. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19]\n    earlier: As of January 2025, the Boreal team consists of Lena and Marcus. [valid 2025-01-07 to 2026-02-19; recorded by standup/boreal/2025-01-07]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- The webhook dispatcher needs the event bus to work. [valid 2026-02-04 to now; recorded by standup/dune/2026-02-04-2]\n- On 2025-06-27, Team Boreal observed that the event bus's request volume halved following the client rollout, and flagged it since the event bus is not Team Boreal's service. [valid 2025-06-27 to now; recorded by standup/boreal/2025-06-27]\n- As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- As of 2025-11-20, the event bus is owned by Team Boreal; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is owned by Team Cinder; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: The event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n- As of 2025-11-20, the event bus is a Team Boreal service; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is a Team Cinder service; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is a Team Atlas service. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: As of 2025-03-31, the event bus remains a Team Boreal service. [valid 2025-03-31 to 2025-04-03; recorded by standup/boreal/2025-03-31]\n- On 2025-03-17, Team Atlas handed the billing service to Team Boreal. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The event bus deploys on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- As of 2025-11-20, dashboards and alerts for the event bus are being repointed. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- On 2025-07-03, Team Cinder observed that the event bus's CPU sat at 90 percent following the traffic shift, and flagged it since the event bus is not Team Cinder's service. [valid 2025-07-03 to now; recorded by standup/cinder/2025-07-03]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- On 2026-05-04, Team Boreal decided that the event bus will retain messages for seven days because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- As of 2026-03-12, Lena is the contact to page for anything related to Team Boreal. [valid 2026-03-12 to now; recorded by standup/boreal/2026-03-12]\n\nQuestion: Why was the event-bus moved from Boreal to Atlas?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654045-ZY3GAvejvdNUwCeaqUkU",
+  "object": "chat.completion",
+  "created": 1788654045,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Why was the event-bus moved from Boreal to Atlas?\"\n\nLet me look at the memory about the event bus ownership:\n- As of 2025-11-20, the event bus is owned by Team Boreal; Team Cinder kept it until then.\n- As of 2025-08-26, the event bus is owned by Team Cinder; Team Atlas kept it until then.\n- The event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26]\n- The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03]\n\nSo historically, the event bus moved from Boreal to Atlas around 2025-04-03, but the memory does not say why it was moved. There is no reason recorded for that handover.\n\nThe memory contains reasons for other decisions (e.g., reporting service reading from event bus because nightly ledger scans were blocking billing runs; retention for seven days because replaying a full week covered incident recoveries). But no reason for the event bus moving from Boreal to Atlas.\n\nSo the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Why was the event-bus moved from Boreal to Atlas?\"\n\nLet me look at the memory about the event bus ownership:\n- As of 2025-11-20, the event bus is owned by Team Boreal; Team Cinder kept it until then.\n- As of 2025-08-26, the event bus is owned by Team Cinder; Team Atlas kept it until then.\n- The event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26]\n- The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03]\n\nSo historically, the event bus moved from Boreal to Atlas around 2025-04-03, but the memory does not say why it was moved. There is no reason recorded for that handover.\n\nThe memory contains reasons for other decisions (e.g., reporting service reading from event bus because nightly ledger scans were blocking billing runs; retention for seven days because replaying a full week covered incident recoveries). But no reason for the event bus moving from Boreal to Atlas.\n\nSo the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1630,
+   "completion_tokens": 255,
+   "total_tokens": 1885,
+   "cost": 0.00017832,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00017832,
+    "upstream_inference_prompt_cost": 0.00011457,
+    "upstream_inference_completions_cost": 6.375e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 249,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.6153578750090674,
+ "fetched_at": "2026-09-06T00:20:48Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note recorded Marcus's move to Atlas, and when?\nGold answer: standup/boreal/2026-02-19 (2026-02-19)\nAlso accepted: standup/boreal/2026-02-19; 2026-02-19; 19 February 2026; February 19, 2026; the standup note of 2026-02-19; the standup note of 19 February 2026; the standup note of February 19, 2026\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/atlas/2026-05-25, on 2026-05-25"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655619-UxWRxRFbXxsBESW2xFu5",
+  "object": "chat.completion",
+  "created": 1788655619,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer cites a different note (standup/atlas/2026-05-25) and a different date (2026-05-25), whereas the gold answer is standup/boreal/2026-02-19 on 2026-02-19.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is standup/boreal/2026-02-19. The answer to grade is standup/atlas/2026-05-25, on 2026-05-25. That's a different note and different date. So it's wrong.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is standup/boreal/2026-02-19. The answer to grade is standup/atlas/2026-05-25, on 2026-05-25. That's a different note and different date. So it's wrong.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 346,
+   "completion_tokens": 124,
+   "total_tokens": 470,
+   "cost": 4.927e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.927e-05,
+    "upstream_inference_prompt_cost": 1.827e-05,
+    "upstream_inference_completions_cost": 3.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 56,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6873231659992598,
+ "fetched_at": "2026-09-06T00:47:00Z"
+}

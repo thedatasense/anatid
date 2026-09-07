@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-08-12] standup/boreal/2025-08-12-2: Observation from team Boreal: after the cache change, the catalog service's memory use grew steadily for a week.\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-11-13] standup/boreal/2025-11-13: The reporting service still relies on the bus; keep that in mind for the maintenance.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2025-12-24] handover/2025-12-24-billing-api: Handover: as of today the billing service moves from the Atlas team to team Boreal. Priya walked Lena through the runbook this morning.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-11-12] standup/boreal/2025-11-12: The catalog service's deploy window changes today: it is now on Tuesdays and Thursdays between 10:00 and 12:00 UTC. The old slot (Mondays 10:00-12:00 UTC) is retired.\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2026-04-16] standup/atlas/2026-04-16: Team Atlas saw that the billing service's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.\n- [2025-10-21] standup/atlas/2025-10-21: New dependency for the billing service: the feature flag service. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch.\n- [2026-01-12] standup/dune/2026-01-12: The scheduler remains a the Dune team service.\n- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.\n- [2025-09-15] standup/boreal/2025-09-15: Lena still has the Boreal pager.\n\nQuestion: Which services does Boreal own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651403-Inayf4NRuw3v51QI0DSg",
+  "object": "chat.completion",
+  "created": 1788651403,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Event bus, webhooks, search-indexer, reporting, auth-gateway, and billing-api.",
+     "refusal": null,
+     "reasoning": "I need to determine which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the memory entries:\n\n1. [2025-01-09] Boreal team owns notifier. But later: [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder. So notifier moved to Cinder — later entry supersedes. Not Boreal now.\n\n2. [2025-01-09] The event bus is a the Boreal team service. No later change mentioned. So event bus owned by Boreal.\n\n3. [2025-01-09-2] The webhooks service is a Boreal service. No later change. Webhooks owned by Boreal.\n\n4. [2025-09-15-2] Team Boreal still owns search-indexer. Then [2026-04-22] handover: the search indexer now sits with the Boreal team. The Dune team no longer owns it. So search-indexer is Boreal (confirms).\n\n5. [2025-07-03] reporting went to Boreal, not Ember. Correction to handover of 2025-06-25. So reporting owned by Boreal.\n\n6. [2025-07-18] auth-gateway went to team Boreal, not Cinder. Correction to handover of 2025-07-01. So auth-gateway owned by Boreal. But wait, [2025-04-10] Ember: authentication gateway owned by Ember team. That was earlier (2025-04-10). The correction note 2025-07-18 says auth-gateway went to team Boreal, correcting the handover of 2025-07-01. Hmm, there's conflicting info: Ember claims auth gateway (2025-04-10), but handover correction (2025-07-18) says auth-gateway went to Boreal, not Cinder. The correction is later and explicit: \"auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\" So Boreal owns auth-gateway.\n\nWait, but the Ember note from 2025-04-10 says Ember owns the authentication gateway. Hmm. The correction note 2025-07-18 says the handover note of 2025-07-01 was written against the wrong team — it should be Boreal, not Cinder. Does that contradict Ember's claim? The handover presumably said ownership moved from Ember to Cinder, but actually it went to Boreal. So Boreal owns auth-gateway now.\n\n7. [2025-12-24] Handover: billing service moves from Atlas team to team Boreal. So billing-api/billing service owned by Boreal now. Also [2026-04-16] Atlas saw billing service's error rate — \"not their service, so they flagged it\" — consistent with Boreal owning it.\n\n8. [2025-01-08] Atlas owns billing-api — superseded by handover 2025-12-24.\n\n9. Job scheduler: [2025-01-20] Ember owns job scheduler; [2025-05-15] Dune: job scheduler owned by Dune; [2026-01-12] scheduler remains Dune team service. So not Boreal.\n\n10. Reporting service: also [2025-11-13] reporting still relies on bus. Reporting owned by Boreal per correction.\n\n11. Image-resizer: Dune. Product catalog: Cinder. Indexer (Cinder's indexer — separate from search-indexer? The 2025-01-17 Cinder note says \"Cinder owns the indexer.\" And 2025-09-15-2 Boreal says \"Team Boreal still owns search-indexer\". These are distinct: \"indexer\" vs \"search-indexer\". The 2026-04-22 handover says search indexer now sits with Boreal, Dune no longer owns it. So search-indexer is Boreal's.\n\nHmm, wait — [2025-09-15-2] Boreal \"still owns search-indexer\" — then handover 2026-04-22 confirms search indexer with Boreal, Dune no longer owns it. So yes, Boreal.\n\nSo Boreal owns now:\n- event bus\n- webhooks\n- reporting\n- auth-gateway\n- billing-api (billing service)\n- search-indexer\n\nNot: notifier (moved to Cinder), ledger (Atlas), flags (Atlas).\n\nAnswer in one short line listing the services.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "I need to determine which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the memory entries:\n\n1. [2025-01-09] Boreal team owns notifier. But later: [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder. So notifier moved to Cinder — later entry supersedes. Not Boreal now.\n\n2. [2025-01-09] The event bus is a the Boreal team service. No later change mentioned. So event bus owned by Boreal.\n\n3. [2025-01-09-2] The webhooks service is a Boreal service. No later change. Webhooks owned by Boreal.\n\n4. [2025-09-15-2] Team Boreal still owns search-indexer. Then [2026-04-22] handover: the search indexer now sits with the Boreal team. The Dune team no longer owns it. So search-indexer is Boreal (confirms).\n\n5. [2025-07-03] reporting went to Boreal, not Ember. Correction to handover of 2025-06-25. So reporting owned by Boreal.\n\n6. [2025-07-18] auth-gateway went to team Boreal, not Cinder. Correction to handover of 2025-07-01. So auth-gateway owned by Boreal. But wait, [2025-04-10] Ember: authentication gateway owned by Ember team. That was earlier (2025-04-10). The correction note 2025-07-18 says auth-gateway went to team Boreal, correcting the handover of 2025-07-01. Hmm, there's conflicting info: Ember claims auth gateway (2025-04-10), but handover correction (2025-07-18) says auth-gateway went to Boreal, not Cinder. The correction is later and explicit: \"auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\" So Boreal owns auth-gateway.\n\nWait, but the Ember note from 2025-04-10 says Ember owns the authentication gateway. Hmm. The correction note 2025-07-18 says the handover note of 2025-07-01 was written against the wrong team — it should be Boreal, not Cinder. Does that contradict Ember's claim? The handover presumably said ownership moved from Ember to Cinder, but actually it went to Boreal. So Boreal owns auth-gateway now.\n\n7. [2025-12-24] Handover: billing service moves from Atlas team to team Boreal. So billing-api/billing service owned by Boreal now. Also [2026-04-16] Atlas saw billing service's error rate — \"not their service, so they flagged it\" — consistent with Boreal owning it.\n\n8. [2025-01-08] Atlas owns billing-api — superseded by handover 2025-12-24.\n\n9. Job scheduler: [2025-01-20] Ember owns job scheduler; [2025-05-15] Dune: job scheduler owned by Dune; [2026-01-12] scheduler remains Dune team service. So not Boreal.\n\n10. Reporting service: also [2025-11-13] reporting still relies on bus. Reporting owned by Boreal per correction.\n\n11. Image-resizer: Dune. Product catalog: Cinder. Indexer (Cinder's indexer — separate from search-indexer? The 2025-01-17 Cinder note says \"Cinder owns the indexer.\" And 2025-09-15-2 Boreal says \"Team Boreal still owns search-indexer\". These are distinct: \"indexer\" vs \"search-indexer\". The 2026-04-22 handover says search indexer now sits with Boreal, Dune no longer owns it. So search-indexer is Boreal's.\n\nHmm, wait — [2025-09-15-2] Boreal \"still owns search-indexer\" — then handover 2026-04-22 confirms search indexer with Boreal, Dune no longer owns it. So yes, Boreal.\n\nSo Boreal owns now:\n- event bus\n- webhooks\n- reporting\n- auth-gateway\n- billing-api (billing service)\n- search-indexer\n\nNot: notifier (moved to Cinder), ledger (Atlas), flags (Atlas).\n\nAnswer in one short line listing the services.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1605,
+   "completion_tokens": 993,
+   "total_tokens": 2598,
+   "cost": 0.000357105,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000357105,
+    "upstream_inference_prompt_cost": 0.000108855,
+    "upstream_inference_completions_cost": 0.00024825
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 971,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.75898862502072,
+ "fetched_at": "2026-09-05T23:36:53Z"
+}

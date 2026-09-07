@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Ember team does pairing on every production change. [decision; valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- Oskar is the only engineer on the Ember team for now. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- For anything Ember-related, page Diego. [decision; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n    earlier: For anything Ember-related, page Oskar. [decision; valid 2025-03-19 to 2026-03-31; recorded by standup/ember/2025-03-19-3]\n- Effective 2025-12-05, Diego Alvarez joined the Ember team. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n- The Ember team holds its planning meeting every Friday. [valid 2025-06-13 to now; recorded by standup/ember/2025-06-13-2]\n- As of 2025-12-29, the ledger remains an Ember team service. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- As of the 2026-06-18 rotation, Diego holds the Ember team pager. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of the 2026-05-18 rotation, Oskar holds the Ember team pager, having taken it over from Diego. [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of the 2026-03-31 rotation, Diego Alvarez holds the Ember team pager, having taken it over from Oskar. [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- On the 2025-12-29 rotation day, Oskar handed the Ember team pager to Diego. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29]\n- On 2026-05-18, Oskar picked up the Ember team on-call shift from Diego. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18]\n- As of 2025-04-29, the Ember team has taken over the resizer from Team Dune. [valid 2025-04-29 to now; recorded by handover/2025-04-29-image-resizer]\n- As of 2025-04-29, the Ember team has taken over the resizer from Team Dune. [valid 2025-04-29 to now; recorded by handover/2025-04-29-image-resizer]\n    earlier: The resizer lives with Team Dune. [valid 2025-01-20 to 2025-04-29; recorded by standup/dune/2025-01-20]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- On 2025-05-23, the Ember team observed that the webhooks service's request volume halved following the client rollout, and flagged it since the webhooks service is not the Ember team's service. [valid 2025-05-23 to now; recorded by standup/ember/2025-05-23]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy, and flagged it since the feature-flags service is not the Ember team's service. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- As of 2025-11-13, the ledger lives with the Ember team; Team Atlas kept it until then. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2025-12-01, the resizer lives with Team Dune; the Ember team kept it until then. [valid 2025-12-01 to now; recorded by handover/2025-12-01-image-resizer]\n- As of 2026-02-10, the reports pipeline lives with Team Cinder; the Ember team kept it until then. [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n\nQuestion: Which services does Ember own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653882-AQaZJXieAqvaVAPB0gMD",
+  "object": "chat.completion",
+  "created": 1788653882,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger and the reporting service.",
+     "refusal": null,
+     "reasoning": "The question asks which services Ember owns now (today is 2026-06-30).\n\nLet me go through the memory entries about service ownership:\n\n1. Ledger: \"As of 2025-12-29, the ledger remains an Ember team service.\" [valid to now]. Also \"As of 2025-11-13, the ledger lives with the Ember team; Team Atlas kept it until then.\" [valid to now]. So ledger is owned by Ember now.\n\n2. Resizer: \"As of 2025-04-29, the Ember team has taken over the resizer from Team Dune.\" But then \"As of 2025-12-01, the resizer lives with Team Dune; the Ember team kept it until then.\" [valid 2025-12-01 to now]. So resizer now belongs to Team Dune, not Ember.\n\n3. Reporting service: \"As of 2025-11-07, the reporting service moved from Team Dune to the Ember team.\" [valid to now, corrected entry]. So reporting service belongs to Ember now.\n\n4. Reports pipeline: \"As of 2026-02-10, the reports pipeline lives with Team Cinder; the Ember team kept it until then.\" So reports pipeline now belongs to Team Cinder, not Ember. Wait — is the \"reports pipeline\" the same as \"reporting service\"? They seem to be different names. The handover note says reports pipeline moved from Ember to Team Cinder on 2026-02-10. The reporting service moved to Ember on 2025-11-07. These could be different things: \"reporting service\" vs \"reports pipeline\". The pipeline may be the pipeline feeding the reporting service? Hard to say. But we should take entries at face value. Reporting service moved to Ember 2025-11-07 (corrected). Reports pipeline moved from Ember to Team Cinder 2026-02-10. If they were the same, then the later entry would supersede. But they're distinct names, so treat separately.\n\nWebhooks is explicitly not Ember's service. Feature-flags not Ember's.\n\nSo Ember owns now: the ledger, the reporting service. Possibly also mention that the resizer and reports pipeline were handed back/moved away.\n\nAnswer in one short line with just the values: \"The ledger and the reporting service.\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Ember owns now (today is 2026-06-30).\n\nLet me go through the memory entries about service ownership:\n\n1. Ledger: \"As of 2025-12-29, the ledger remains an Ember team service.\" [valid to now]. Also \"As of 2025-11-13, the ledger lives with the Ember team; Team Atlas kept it until then.\" [valid to now]. So ledger is owned by Ember now.\n\n2. Resizer: \"As of 2025-04-29, the Ember team has taken over the resizer from Team Dune.\" But then \"As of 2025-12-01, the resizer lives with Team Dune; the Ember team kept it until then.\" [valid 2025-12-01 to now]. So resizer now belongs to Team Dune, not Ember.\n\n3. Reporting service: \"As of 2025-11-07, the reporting service moved from Team Dune to the Ember team.\" [valid to now, corrected entry]. So reporting service belongs to Ember now.\n\n4. Reports pipeline: \"As of 2026-02-10, the reports pipeline lives with Team Cinder; the Ember team kept it until then.\" So reports pipeline now belongs to Team Cinder, not Ember. Wait — is the \"reports pipeline\" the same as \"reporting service\"? They seem to be different names. The handover note says reports pipeline moved from Ember to Team Cinder on 2026-02-10. The reporting service moved to Ember on 2025-11-07. These could be different things: \"reporting service\" vs \"reports pipeline\". The pipeline may be the pipeline feeding the reporting service? Hard to say. But we should take entries at face value. Reporting service moved to Ember 2025-11-07 (corrected). Reports pipeline moved from Ember to Team Cinder 2026-02-10. If they were the same, then the later entry would supersede. But they're distinct names, so treat separately.\n\nWebhooks is explicitly not Ember's service. Feature-flags not Ember's.\n\nSo Ember owns now: the ledger, the reporting service. Possibly also mention that the resizer and reports pipeline were handed back/moved away.\n\nAnswer in one short line with just the values: \"The ledger and the reporting service.\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1562,
+   "completion_tokens": 500,
+   "total_tokens": 2062,
+   "cost": 0.00023447,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00023447,
+    "upstream_inference_prompt_cost": 0.00010947,
+    "upstream_inference_completions_cost": 0.000125
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 491,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.0363567500025965,
+ "fetched_at": "2026-09-06T00:18:08Z"
+}

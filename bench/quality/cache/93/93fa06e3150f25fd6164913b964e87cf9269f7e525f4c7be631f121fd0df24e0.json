@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-11-24] handover/2025-11-24-event-bus: From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\n- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.\n- [2025-09-09] handover/2025-09-09-event-bus: Boreal handed the bus to the Dune team today; Marcus Oyelaran wrote up the handover doc for Tomasz Nowak.\n- [2025-11-13] standup/boreal/2025-11-13: The reporting service still relies on the bus; keep that in mind for the maintenance.\n- [2026-03-17] standup/boreal/2026-03-17-2: Reminder: the event-bus deploys only on weekdays after 15:00 UTC.\n- [2025-04-22] standup/boreal/2025-04-22: Per the change policy, the event-bus deploys on weekdays after 15:00 UTC.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-10-21] standup/atlas/2025-10-21: New dependency for the billing service: the feature flag service. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch.\n- [2025-11-11] standup/boreal/2025-11-11-2: Heads-up from team Boreal: the event bus' CPU sat at 90 percent after the traffic shift.\n- [2026-05-05] standup/boreal/2026-05-05: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far.\n- [2025-08-13] standup/boreal/2025-08-13: The search indexer must stay on OpenSearch 2.11 until the full reindex completes. Reminder that reporting depends on the ledger.\n- [2025-03-28] standup/ember/2025-03-28: If feature-flags is down, the job scheduler is down: it relies on it for per-job kill switches.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.\n- [2026-03-18] standup/boreal/2026-03-18: Reminder that the product catalog depends on the resizer.\n- [2025-05-15] standup/dune/2025-05-15: Reporting must stay on Python 3.11 until the pandas 3 upgrade lands.\n- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.\n- [2025-03-28] standup/cinder/2025-03-28: The product catalog depends on image-resizer for thumbnails.\n- [2025-12-08] standup/dune/2025-12-08-2: Heads-up from team Dune: the bus' request volume halved after the client rollout.\n- [2025-03-14] standup/atlas/2025-03-14: Dependency map update: the ledger needs the auth gateway (service tokens).\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-03-03] standup/boreal/2025-03-03: Dependency map update: the search indexer needs the product catalog (product documents).\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2026-04-16] standup/atlas/2026-04-16: Team Atlas saw that the billing service's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.\n- [2025-11-17] standup/ember/2025-11-17: Team Ember saw that the authentication gateway's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it. The weekly architecture review is run by Oskar.\n\nQuestion: What did reporting depend on before it switched to the event-bus?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651217-bdI9rxouSFV9sJm3D1yE",
+  "object": "chat.completion",
+  "created": 1788651217,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger",
+     "refusal": null,
+     "reasoning": "The question asks: What did reporting depend on before it switched to the event-bus?\n\nFrom memory: [2025-09-19] reporting will read from the event-bus instead of querying the ledger directly. Before, reporting depended on the ledger.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: What did reporting depend on before it switched to the event-bus?\n\nFrom memory: [2025-09-19] reporting will read from the event-bus instead of querying the ledger directly. Before, reporting depended on the ledger.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1545,
+   "completion_tokens": 56,
+   "total_tokens": 1601,
+   "cost": 0.000122195,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000122195,
+    "upstream_inference_prompt_cost": 0.000108195,
+    "upstream_inference_completions_cost": 1.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 52,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.458847833040636,
+ "fetched_at": "2026-09-05T23:33:38Z"
+}

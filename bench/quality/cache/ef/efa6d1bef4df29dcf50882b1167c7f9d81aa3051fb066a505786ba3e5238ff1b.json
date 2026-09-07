@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Team Dune owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal still owns the indexer as of 2025-09-15. [valid 2025-09-15 to 2025-11-18; recorded by standup/boreal/2025-09-15-2]\n- The product catalog belongs to the Boreal team as of 2025-10-20, after being run by the Cinder team until then. [decision; valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n- Marcus Oyelaran took over the Boreal on-call from Lena as of 2026-01-02. [decision; valid 2026-01-02 to now; recorded by standup/boreal/2026-01-02]\n- The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns the indexer as of 2025-01-17. [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- The notifier is owned by team Boreal as of 2026-04-06, after the Cinder team handed it over. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n    earlier: The notifier is owned by team Cinder as of 2026-03-17. [valid 2026-03-17 to 2026-04-06; recorded by standup/cinder/2026-03-17]\n- The Boreal roster consists of Lena and Marcus Oyelaran as of 2025-01-07. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Billing-api is owned by Team Dune as of 2026-03-25, after Boreal handed it over. [decision; valid 2026-03-25 to now; recorded by handover/2026-03-25-billing-api]\n    earlier: Billing-api is owned by Boreal as of 2025-12-24, after Team Atlas handed it over. [decision; valid 2025-12-24 to 2026-03-25; recorded by handover/2025-12-24-billing-api]\n    earlier: Team Atlas owns billing-api as of 2025-01-08. [valid 2025-01-08 to 2025-12-24; recorded by standup/atlas/2025-01-08-2]\n- The image-resizer is not a Boreal service. [valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- The reports pipeline is not a Boreal service. [valid 2025-06-06 to now; recorded by standup/boreal/2025-06-06]\n- The reports pipeline went to Boreal as of 2025-06-25, not Ember; Team Ember never owned it, and Team Dune no longer owns it. [decision; valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n    earlier: Team Ember owns the reports pipeline as of 2025-06-25, and Team Dune no longer owns it. [decision; valid 2025-06-25 to 2025-07-03; recorded by handover/2025-06-25-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20-2]\n- Boreal has a weekly dependency update day as of 2026-05-04. [decision; valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- The event bus belongs to Boreal as of 2025-11-24, after Team Dune handed it over. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The event bus belongs to Team Dune as of 2025-09-09, after Boreal handed it over. [decision; valid 2025-09-09 to 2025-11-24; recorded by handover/2025-09-09-event-bus]\n    earlier: The event bus is a Boreal service. [valid 2025-01-09 to 2025-09-09; recorded by standup/boreal/2025-01-09]\n- The indexer moved from Team Dune to Boreal as of 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n- The notifier moved from the Cinder team to team Boreal as of 2026-04-06. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- Marcus Oyelaran holds the Boreal on-call pager as of 2025-09-24, after picking it up from Lena. [valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n    earlier: Lena still holds the Boreal on-call pager as of 2025-09-15. [valid 2025-09-15 to 2025-09-24; recorded by standup/boreal/2025-09-15]\n\nQuestion: Which services does Boreal own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657870-3AXVLkpz8QlZ5UbcSNir",
+  "object": "chat.completion",
+  "created": 1788657870,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Reka",
+  "system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp8-53169669",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Indexer, product catalog, notifier, reports pipeline, event bus.",
+     "refusal": null,
+     "reasoning": "The question asks which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the memory entries and determine current ownership as of 2026-06-30.\n\n1. Indexer: Boreal owns as of 2026-04-22 (valid to now). So Boreal owns the indexer now.\n\n2. Product catalog: Boreal team as of 2025-10-20, valid to now. So Boreal owns the product catalog.\n\n3. Notifier: There are conflicting entries:\n   - \"The notifier is owned by team Boreal as of 2026-04-06, after the Cinder team handed it over. [decision; valid 2026-04-06 to now]\"\n   - \"Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now]\"\n   \n   The later entry (2026-04-06) supersedes the earlier one (2025-11-19). So Boreal owns the notifier now.\n\n4. Billing-api: Team Dune as of 2026-03-25, valid to now. Not Boreal.\n\n5. Image-resizer: not a Boreal service.\n\n6. Reports pipeline: \"The reports pipeline went to Boreal as of 2025-06-25, not Ember... [decision; valid 2025-07-03 to now]\". But also \"The reports pipeline is not a Boreal service. [valid 2025-06-06 to now]\". Hmm, conflict. The correction entry (2025-07-03) says reports pipeline went to Boreal as of 2025-06-25, valid to now. The \"not a Boreal service\" entry is valid 2025-06-06 to now, recorded 2025-06-06. The correction is later (recorded 2025-07-03), so it supersedes. So Boreal owns the reports pipeline.\n\n   Wait, but the \"not a Boreal service\" entry has valid range 2025-06-06 to now, which overlaps. The rule says \"Treat a later entry as superseding an earlier one on the same subject.\" The correction entry recorded 2025-07-03 is later than the standup recorded 2025-06-06. So the correction wins: reports pipeline belongs to Boreal.\n\n7. Event bus: Boreal as of 2025-11-24, valid to now. So Boreal owns the event bus.\n\n8. The indexer entry \"The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now]\" — this is consistent with Boreal owning it now (though there were intermediate handovers, the latest is Boreal as of 2026-04-22).\n\nSo services Boreal owns now:\n- indexer (search indexer)\n- product catalog\n- notifier\n- reports pipeline\n- event bus\n\nNot: billing-api (Team Dune), image-resizer (not Boreal).\n\nThe answer should be one short line with just the values. The question asks \"which services\" — so list them.\n\nAnswer: indexer, product catalog, notifier, reports pipeline, event bus.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Boreal owns now (today is 2026-06-30).\n\nLet me go through the memory entries and determine current ownership as of 2026-06-30.\n\n1. Indexer: Boreal owns as of 2026-04-22 (valid to now). So Boreal owns the indexer now.\n\n2. Product catalog: Boreal team as of 2025-10-20, valid to now. So Boreal owns the product catalog.\n\n3. Notifier: There are conflicting entries:\n   - \"The notifier is owned by team Boreal as of 2026-04-06, after the Cinder team handed it over. [decision; valid 2026-04-06 to now]\"\n   - \"Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now]\"\n   \n   The later entry (2026-04-06) supersedes the earlier one (2025-11-19). So Boreal owns the notifier now.\n\n4. Billing-api: Team Dune as of 2026-03-25, valid to now. Not Boreal.\n\n5. Image-resizer: not a Boreal service.\n\n6. Reports pipeline: \"The reports pipeline went to Boreal as of 2025-06-25, not Ember... [decision; valid 2025-07-03 to now]\". But also \"The reports pipeline is not a Boreal service. [valid 2025-06-06 to now]\". Hmm, conflict. The correction entry (2025-07-03) says reports pipeline went to Boreal as of 2025-06-25, valid to now. The \"not a Boreal service\" entry is valid 2025-06-06 to now, recorded 2025-06-06. The correction is later (recorded 2025-07-03), so it supersedes. So Boreal owns the reports pipeline.\n\n   Wait, but the \"not a Boreal service\" entry has valid range 2025-06-06 to now, which overlaps. The rule says \"Treat a later entry as superseding an earlier one on the same subject.\" The correction entry recorded 2025-07-03 is later than the standup recorded 2025-06-06. So the correction wins: reports pipeline belongs to Boreal.\n\n7. Event bus: Boreal as of 2025-11-24, valid to now. So Boreal owns the event bus.\n\n8. The indexer entry \"The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now]\" — this is consistent with Boreal owning it now (though there were intermediate handovers, the latest is Boreal as of 2026-04-22).\n\nSo services Boreal owns now:\n- indexer (search indexer)\n- product catalog\n- notifier\n- reports pipeline\n- event bus\n\nNot: billing-api (Team Dune), image-resizer (not Boreal).\n\nThe answer should be one short line with just the values. The question asks \"which services\" — so list them.\n\nAnswer: indexer, product catalog, notifier, reports pipeline, event bus.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1710,
+   "completion_tokens": 716,
+   "total_tokens": 2426,
+   "cost": 0.0006145,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0006145,
+    "upstream_inference_prompt_cost": 0.0002565,
+    "upstream_inference_completions_cost": 0.000358
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 614,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 20.208422083000187,
+ "fetched_at": "2026-09-06T01:24:50Z"
+}

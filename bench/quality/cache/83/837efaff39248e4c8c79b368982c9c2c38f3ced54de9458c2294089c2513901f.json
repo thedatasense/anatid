@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-12-19, the Atlas team owns the product catalog, having taken it over from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- On 2026-06-04, the Boreal team observed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- Priya Raman is the primary on-call for the Atlas team as of 2025-07-30, when on-call passed from Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-06-19, until the next rotation. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya Raman is the primary on-call for the Atlas team as of 2025-05-13, until the next rotation. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-04-03, replacing Priya Raman. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n- On 2025-12-19, the Atlas team took over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [constraint; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, when ownership passed from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- As of 2025-09-03, the product catalog can be deployed on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2026-01-22, the product catalog deploy window remains weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- On 2026-03-20, the Boreal team observed that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- The catalog service still relies on the resizer. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2025-10-13, the ledger service is owned by Cinder; ownership transferred from the Atlas team on that date. [decision; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n    earlier: As of 2025-07-17, the ledger service is owned by the Atlas team. [valid 2025-07-17 to 2025-10-13; recorded by standup/atlas/2025-07-17]\n    earlier: The ledger service is owned by the Atlas team. [valid 2025-01-08 to 2025-07-17; recorded by standup/atlas/2025-01-08]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- As of 2025-09-03, the product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays; the previous Mon-Thu 09:00-17:00 UTC slot no longer applies. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- As of 2025-09-23, the pager for the job scheduler rings the Cinder team, not the Dune team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- As of 2025-10-13, the pager for the ledger service rings Cinder, not the Atlas team. [constraint; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n\nQuestion: Who is on call for the team that owns the service the catalog depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653781-jlk1T9pzldgaYNjW7Erk",
+  "object": "chat.completion",
+  "created": 1788653781,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nFirst, what service does the catalog depend on? Memory says \"The catalog service still relies on the resizer.\" [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]. So the catalog depends on the resizer.\n\nWho owns the resizer? Memory doesn't mention resizer ownership. Hmm.\n\nWait, maybe \"the service the catalog depends on\" — the indexer depends on the catalog, not the other way. The catalog relies on the resizer. No ownership info for resizer.\n\nAlternatively, maybe they mean the team that owns the catalog — Atlas — and its on-call is Priya Raman. But the question is \"the team that owns the service the catalog depends on.\" The catalog depends on the resizer. The resizer's owner isn't stated.\n\nHmm, is there any dependency statement? \"The indexer depends on the product catalog for product documents.\" That's indexer → catalog. The catalog depends on resizer (\"relies on\").\n\nSo service the catalog depends on = resizer. Owner of resizer = not in memory. So answer: I don't know.\n\nBut wait — maybe intended interpretation: the catalog is owned by Atlas; the catalog depends on... hmm. The only dependency from catalog is the resizer. No owner recorded for the resizer. So \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nFirst, what service does the catalog depend on? Memory says \"The catalog service still relies on the resizer.\" [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]. So the catalog depends on the resizer.\n\nWho owns the resizer? Memory doesn't mention resizer ownership. Hmm.\n\nWait, maybe \"the service the catalog depends on\" — the indexer depends on the catalog, not the other way. The catalog relies on the resizer. No ownership info for resizer.\n\nAlternatively, maybe they mean the team that owns the catalog — Atlas — and its on-call is Priya Raman. But the question is \"the team that owns the service the catalog depends on.\" The catalog depends on the resizer. The resizer's owner isn't stated.\n\nHmm, is there any dependency statement? \"The indexer depends on the product catalog for product documents.\" That's indexer → catalog. The catalog depends on resizer (\"relies on\").\n\nSo service the catalog depends on = resizer. Owner of resizer = not in memory. So answer: I don't know.\n\nBut wait — maybe intended interpretation: the catalog is owned by Atlas; the catalog depends on... hmm. The only dependency from catalog is the resizer. No owner recorded for the resizer. So \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1759,
+   "completion_tokens": 306,
+   "total_tokens": 2065,
+   "cost": 0.000200745,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000200745,
+    "upstream_inference_prompt_cost": 0.000124245,
+    "upstream_inference_completions_cost": 7.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 300,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.022777208010666,
+ "fetched_at": "2026-09-06T00:16:25Z"
+}

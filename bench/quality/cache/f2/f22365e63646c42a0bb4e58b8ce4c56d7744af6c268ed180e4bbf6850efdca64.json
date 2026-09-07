@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000306\" [constraint]: For anything Ember-related, page Oskar.  (about: Ember team, Oskar)\n- memory_id \"1000302\": Priya Raman still has the Atlas pager as of 2025-03-28.  (about: Atlas team, Priya Raman)\n- memory_id \"1000281\" [decision]: The Ember team owns the image resizer as of 2025-03-20.  (about: Ember team, image resizer)\n- memory_id \"1000263\" [decision]: The Ember team owns the billing API as of 2025-03-07, when ownership passed from the Atlas team.  (about: Atlas team, billing API, Ember team)\n- memory_id \"1000250\": The webhook dispatcher is owned by the Ember team, which took over ownership from the Boreal team on 2025-03-03.  (about: Boreal team, webhook dispatcher, Ember team)\n- memory_id \"1000246\": As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team.  (about: Boreal team, webhook dispatcher, Ember team)\n- memory_id \"1000236\": Boreal noticed the ledger service's memory growth and pinged the owners on 2025-02-21.  (about: Boreal team, ledger service)\n- memory_id \"1000232\": The ledger service's memory use grew steadily for a week after the cache change.  (about: ledger service, cache change)\n- memory_id \"1000218\" [constraint]: Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC.  (about: authentication gateway, change policy)\n- memory_id \"1000198\" [constraint]: The billing API only ships on weekdays after 15:00 UTC.  (about: billing API)\n- memory_id \"1000183\" [decision]: The Ember team does pairing on every production change.  (about: Ember team)\n- memory_id \"1000163\" [constraint]: The ledger service must stay on Postgres 14 until the partitioning work finishes.  (about: ledger service, Postgres 14, partitioning work)\n- memory_id \"1000147\": The reporting service depends on the ledger service for the nightly balance export.  (about: ledger service, reporting service)\n- memory_id \"1000140\": The Ember team owns the authentication gateway.  (about: Ember team, authentication gateway)\n- memory_id \"1000136\": The Ember team owns the job scheduler.  (about: Ember team, job scheduler)\n- memory_id \"1000109\" [constraint]: The ledger service only ships on weekday mornings before 11:00 UTC.  (about: ledger service)\n- memory_id \"1000105\": Oskar takes the first on-call shift of the year for the Ember team.  (about: Ember team, Oskar)\n- memory_id \"1000094\": The Ember team is a one-person team consisting of Oskar.  (about: Ember team, Oskar)\n- memory_id \"1000089\": The billing API depends on the ledger service for invoice postings.  (about: ledger service, billing API)\n- memory_id \"1000033\": The ledger service is owned by the Atlas team.  (about: Atlas team, ledger service)\nExisting entity names: Ember team, Oskar, Atlas team, Priya Raman, image resizer, billing API, Boreal team, webhook dispatcher, ledger service, cache change, authentication gateway, change policy, Postgres 14, partitioning work, reporting service, job scheduler\n\nThe note:\n\n[2025-04-02] standup/ember/2025-04-02: Changes to the billing API need a rollback plan attached to the pull request."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788650435-dJKGxhApvflcpRd2xMji",
+  "object": "chat.completion",
+  "created": 1788650435,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\":[{\"content\":\"Changes to the billing API need a rollback plan attached to the pull request.\",\"entities\":[\"billing API\"],\"kind\":\"constraint\",\"confidence\":0.95,\"evidence\":\"Changes to the billing API need a rollback plan attached to the pull request.\"}],\"corrections\":[],\"add_relations\":[],\"remove_relations\":[],\"entity_aliases\":[]}",
+     "refusal": null,
+     "reasoning": "The note is a standup note from 2025-04-02: \"Changes to the billing API need a rollback plan attached to the pull request.\"\n\nThis is a durable constraint/policy about the billing API: changes to the billing API need a rollback plan attached to the PR.\n\nDoes it contradict any existing fact? Existing facts about billing API:\n- 1000198 [constraint]: The billing API only ships on weekdays after 15:00 UTC.\n- 1000263: Ember team owns billing API.\n\nNo contradiction; this is a new constraint.\n\nAdd fact:\ncontent: \"Changes to the billing API need a rollback plan attached to the pull request.\"\nentities: [\"billing API\"]\nkind: \"constraint\"\nconfidence: maybe 0.95 or so.\nevidence: \"Changes to the billing API need a rollback plan attached to the pull request.\"\n\nShould I add any relations? The note doesn't state relationships between entities beyond that. The rollback plan / pull request aren't established entities; the fact is about billing API. No relations needed.\n\nNo aliases, no corrections.\n\nOutput a single JSON object, nothing else, no code fence per the system prompt (memory patch says one JSON object and nothing else, no prose, no code fence). But the first message said end with ``` to indicate end of JSON object... Wait, there's a conflict: the first system-ish message says \"Ensure you always end the code block with ```\" but the actual task instruction says \"one JSON object and nothing else, no prose, no code fence\". The later instruction (the graph memory one) is more specific: \"one JSON object and nothing else, no prose, no code fence, matching this JSON schema\". I should follow the most specific and relevant instruction: no code fence.\n\nOutput:\n\n{\"add_facts\":[{\"content\":\"Changes to the billing API need a rollback plan attached to the pull request.\",\"entities\":[\"billing API\"],\"kind\":\"constraint\",\"confidence\":0.9,\"evidence\":\"Changes to the billing API need a rollback plan attached to the pull request.\"}],\"corrections\":[],\"add_relations\":[],\"remove_relations\":[],\"entity_aliases\":[]}",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note is a standup note from 2025-04-02: \"Changes to the billing API need a rollback plan attached to the pull request.\"\n\nThis is a durable constraint/policy about the billing API: changes to the billing API need a rollback plan attached to the PR.\n\nDoes it contradict any existing fact? Existing facts about billing API:\n- 1000198 [constraint]: The billing API only ships on weekdays after 15:00 UTC.\n- 1000263: Ember team owns billing API.\n\nNo contradiction; this is a new constraint.\n\nAdd fact:\ncontent: \"Changes to the billing API need a rollback plan attached to the pull request.\"\nentities: [\"billing API\"]\nkind: \"constraint\"\nconfidence: maybe 0.95 or so.\nevidence: \"Changes to the billing API need a rollback plan attached to the pull request.\"\n\nShould I add any relations? The note doesn't state relationships between entities beyond that. The rollback plan / pull request aren't established entities; the fact is about billing API. No relations needed.\n\nNo aliases, no corrections.\n\nOutput a single JSON object, nothing else, no code fence per the system prompt (memory patch says one JSON object and nothing else, no prose, no code fence). But the first message said end with ``` to indicate end of JSON object... Wait, there's a conflict: the first system-ish message says \"Ensure you always end the code block with ```\" but the actual task instruction says \"one JSON object and nothing else, no prose, no code fence\". The later instruction (the graph memory one) is more specific: \"one JSON object and nothing else, no prose, no code fence, matching this JSON schema\". I should follow the most specific and relevant instruction: no code fence.\n\nOutput:\n\n{\"add_facts\":[{\"content\":\"Changes to the billing API need a rollback plan attached to the pull request.\",\"entities\":[\"billing API\"],\"kind\":\"constraint\",\"confidence\":0.9,\"evidence\":\"Changes to the billing API need a rollback plan attached to the pull request.\"}],\"corrections\":[],\"add_relations\":[],\"remove_relations\":[],\"entity_aliases\":[]}",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2206,
+   "completion_tokens": 513,
+   "total_tokens": 2719,
+   "cost": 0.00042612,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1344,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00042612,
+    "upstream_inference_prompt_cost": 0.00016962,
+    "upstream_inference_completions_cost": 0.0002565
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 438,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 9.111489666975103,
+ "fetched_at": "2026-09-05T23:20:44Z"
+}

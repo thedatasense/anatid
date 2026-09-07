@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-11-19] handover/2025-11-19-notifier: Notifier has a new home: the Cinder team. Boreal kept it until today.\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2025-09-26] standup/cinder/2025-09-26: The Cinder team saw that the notifier's request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-04-16] standup/atlas/2026-04-16: Team Atlas saw that the billing service's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2026-04-06] handover/2026-04-06-notifier: Handover: as of today the notifier moves from the Cinder team to team Boreal. Yuki walked Lena through the runbook this morning.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-03-31] standup/boreal/2025-03-31-2: We agreed today that the notifier will retry failed pushes three times with exponential backoff. The reason is that the flat one-second retry was hammering the push provider during its outages.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2026-05-27] standup/ember/2026-05-27: Heads-up from team Ember: notifier's CPU sat at 90 percent after the traffic shift.\n- [2025-03-06] incident-review/INC-2025-004: INC-2025-004 review. What happened: notifier missed alerts for 40 minutes on 2025-03-04. Why: a consumer offset stuck after a broker restart. Follow-up decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004.\n- [2025-11-24] handover/2025-11-24-event-bus: From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-12-31] standup/atlas/2025-12-31: The Atlas team noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-11-17] standup/ember/2025-11-17: Team Ember saw that the authentication gateway's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it. The weekly architecture review is run by Oskar.\n- [2025-03-14] standup/atlas/2025-03-14: Dependency map update: the ledger needs the auth gateway (service tokens).\n\nQuestion: Which team owns the service that the notifier depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651933-6HQzOZObsOu6YxdiqGdW",
+  "object": "chat.completion",
+  "created": 1788651933,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Boreal team",
+     "refusal": null,
+     "reasoning": "The question asks: which team owns the service that the notifier depends on?\n\nFrom the memory: [2025-02-13] standup/boreal/2025-02-13: \"The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier.\"\n\nSo the notifier depends on the event-bus. Which team owns the event-bus?\n\nMemory entries about event-bus ownership:\n- [2025-01-09] standup/boreal/2025-01-09: \"The event bus is a the Boreal team service.\"\n- [2025-11-24] handover/2025-11-24-event-bus: \"From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\"\n\nWait, the handover says \"rings the Boreal team, not team Dune. Ownership transferred.\" That's a bit contradictory with the 2025-01-09 entry saying it's Boreal. But anyway, the latest entry (2025-11-24) says ownership transferred to Boreal team. So today (2026-06-30), the event-bus is owned by Boreal team.\n\nNote: there's also a \"dependency map update: webhooks needs the event-bus\" in the same 2025-02-13 entry, but the question is about the notifier's dependency, which is the event-bus.\n\nSo the answer: Boreal team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which team owns the service that the notifier depends on?\n\nFrom the memory: [2025-02-13] standup/boreal/2025-02-13: \"The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier.\"\n\nSo the notifier depends on the event-bus. Which team owns the event-bus?\n\nMemory entries about event-bus ownership:\n- [2025-01-09] standup/boreal/2025-01-09: \"The event bus is a the Boreal team service.\"\n- [2025-11-24] handover/2025-11-24-event-bus: \"From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\"\n\nWait, the handover says \"rings the Boreal team, not team Dune. Ownership transferred.\" That's a bit contradictory with the 2025-01-09 entry saying it's Boreal. But anyway, the latest entry (2025-11-24) says ownership transferred to Boreal team. So today (2026-06-30), the event-bus is owned by Boreal team.\n\nNote: there's also a \"dependency map update: webhooks needs the event-bus\" in the same 2025-02-13 entry, but the question is about the notifier's dependency, which is the event-bus.\n\nSo the answer: Boreal team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1582,
+   "completion_tokens": 317,
+   "total_tokens": 1899,
+   "cost": 0.00018638,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00018638,
+    "upstream_inference_prompt_cost": 0.00010713,
+    "upstream_inference_completions_cost": 7.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 312,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0483483750140294,
+ "fetched_at": "2026-09-05T23:45:36Z"
+}

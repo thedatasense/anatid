@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The product catalog has a deploy window on Tuesdays and Thursdays between 10:00 and 12:00 UTC as of 2025-11-12. [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The product catalog has a deploy window on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-04-14 to now; recorded by standup/ember/2025-04-14]\n- The indexer must stay on OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-08-13 to now; recorded by standup/boreal/2025-08-13]\n- Team Atlas observed on 2025-11-11 that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- The indexer will rebuild the index nightly instead of on every catalog write, as agreed on 2025-11-07. [decision; valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- The indexer's disk usage jumped 30 percent after the retention change, as noticed by Cinder on 2025-08-29. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29-2]\n- The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns the indexer as of 2025-01-17. [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The indexer moved from Boreal to Team Dune as of 2025-11-18. [decision; valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: The indexer moved from Boreal to Ember as of 2025-11-18. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n- A silent reindex failure left stale results for two days in INC-2025-023. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The indexer depends on the product catalog for product documents. [valid 2025-03-03 to now; recorded by standup/boreal/2025-03-03]\n- The indexer moved from Team Dune to Boreal as of 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n- Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Team Dune owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal still owns the indexer as of 2025-09-15. [valid 2025-09-15 to 2025-11-18; recorded by standup/boreal/2025-09-15-2]\n- Marcus Oyelaran walked Oskar through the indexer runbook on 2025-11-18. [valid 2025-11-18 to now; recorded by handover/2025-11-18-search-indexer]\n- On 2026-03-16, Ember noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-03-16 to now; recorded by standup/ember/2026-03-16]\n- Boreal announced at standup on 2026-03-13 a deploy freeze for Ledger from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-13 to now; recorded by standup/boreal/2026-03-13]\n- The event bus deploys only on weekdays after 15:00 UTC per the change policy. [constraint; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17-2]\n    earlier: The event bus deploys on weekdays after 15:00 UTC per the change policy. [constraint; valid 2025-04-22 to 2026-03-17; recorded by standup/boreal/2025-04-22]\n- The indexer's incremental updates left stale entries behind after failed writes. [valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- Reindex jobs will page on failure. [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n\nQuestion: What is the deploy window for search-indexer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657089-raXvAcrih2Nw6GSlgT1l",
+  "object": "chat.completion",
+  "created": 1788657089,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks about the deploy window for \"search-indexer\". Looking through the memory, I see deploy windows for:\n- product catalog\n- authentication gateway\n- event bus\n- reporting service\n\nThere is no deploy window entry for the indexer / search-indexer. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the deploy window for \"search-indexer\". Looking through the memory, I see deploy windows for:\n- product catalog\n- authentication gateway\n- event bus\n- reporting service\n\nThere is no deploy window entry for the indexer / search-indexer. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1607,
+   "completion_tokens": 70,
+   "total_tokens": 1677,
+   "cost": 0.00027605,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00027605,
+    "upstream_inference_prompt_cost": 0.00024105,
+    "upstream_inference_completions_cost": 3.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 64,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1709967080387287,
+ "fetched_at": "2026-09-06T01:11:31Z"
+}

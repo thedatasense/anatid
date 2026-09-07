@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- As of 2025-08-19, deploys to the job scheduler happen only on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: Deploys to the job scheduler happen only on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date. [decision; valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: The Ember team owns the authentication gateway. [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- As of 2025-10-13, the ledger service is owned by Cinder; ownership transferred from the Atlas team on that date. [decision; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n    earlier: As of 2025-07-17, the ledger service is owned by the Atlas team. [valid 2025-07-17 to 2025-10-13; recorded by standup/atlas/2025-07-17]\n    earlier: The ledger service is owned by the Atlas team. [valid 2025-01-08 to 2025-07-17; recorded by standup/atlas/2025-01-08]\n- The notifier missed alerts for 40 minutes on 2025-02-01 during incident INC-2025-004. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- During INC-2026-003, the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- During INC-2026-009, the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The indexer served stale results for two days on 2025-10-03 during incident INC-2025-023. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team; ownership transferred from the Ember team on that date, and the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team; ownership transferred from the Ember team on that date. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team; ownership transferred from the Atlas team on that date. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- Follow-up decision from the INC-2026-003 review: the webhook dispatcher will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- Reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023. [decision; valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- The cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The root cause of INC-2025-004 was a consumer offset stuck after a broker restart. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The job scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- On 2025-07-17, Yuki Tanaka handed the Cinder pager to Diego on rotation day. [valid 2025-07-17 to now; recorded by standup/cinder/2025-07-17]\n\nQuestion: On what date did INC-2025-011 happen?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653149-DKG6dNPIH6VhOzZ8Gc9C",
+  "object": "chat.completion",
+  "created": 1788653149,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Morph",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The memory says: \"The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\"\n\nThe validity date starts 2025-05-30, which suggests the incident happened on 2025-05-30. But does the memory explicitly state the date the incident happened? The entry says the root cause, valid from 2025-05-30. The question asks on what date INC-2025-011 happened.\n\nLooking at other entries: \"The notifier missed alerts for 40 minutes on 2025-02-01 during incident INC-2025-004.\" — that explicitly states the date. For INC-2025-011, there's no explicit statement of the incident date; only the validity start date of the root cause entry.\n\nHmm. The rules say answer only from memory, don't guess. The validity date \"valid 2025-05-30 to now\" — is that the incident date? In other entries, the validity start date matches the incident date (e.g., INC-2025-004: missed alerts on 2025-02-01, entry valid 2025-02-05 — recorded 4 days later). So the validity start isn't necessarily the incident date; it's when the entry became valid (recorded date roughly).\n\nFor INC-2025-011, the entry is valid from 2025-05-30. That's likely the recording date, not necessarily the incident date. The memory doesn't explicitly state when INC-2025-011 happened.\n\nBut the pattern in this task: the question likely expects the answer 2025-05-30 based on the validity date. However, strictly, the memory doesn't say the incident date. The instruction says \"If the memory does not contain the answer, reply exactly: I don't know.\"\n\nLet me think. The memory entry: \"The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\". The \"valid 2025-05-30 to now\" indicates the fact is valid from that date. It doesn't say the incident occurred on that date. In other incidents, the incident date is explicitly mentioned (\"on 2025-02-01 during incident INC-2025-004\"). For INC-2025-011, no date is given for the incident itself.\n\nSo strictly, the memory does not contain the answer. The answer should be \"I don't know\".\n\nBut wait — could the validity date be interpreted as the incident date? The pattern: incident reviews are recorded after the incident. E.g., INC-2025-004: incident on 2025-02-01, review valid from 2025-02-05. INC-2025-017: incident on 2025-08-02, review valid from 2025-08-07. INC-2025-023: incident on 2025-10-03, review valid from 2025-10-07. So the validity start is the review date, not the incident date. For INC-2025-011, we only know the review was valid from 2025-05-30; the incident date is unknown.\n\nSo the correct answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\"\n\nThe validity date starts 2025-05-30, which suggests the incident happened on 2025-05-30. But does the memory explicitly state the date the incident happened? The entry says the root cause, valid from 2025-05-30. The question asks on what date INC-2025-011 happened.\n\nLooking at other entries: \"The notifier missed alerts for 40 minutes on 2025-02-01 during incident INC-2025-004.\" — that explicitly states the date. For INC-2025-011, there's no explicit statement of the incident date; only the validity start date of the root cause entry.\n\nHmm. The rules say answer only from memory, don't guess. The validity date \"valid 2025-05-30 to now\" — is that the incident date? In other entries, the validity start date matches the incident date (e.g., INC-2025-004: missed alerts on 2025-02-01, entry valid 2025-02-05 — recorded 4 days later). So the validity start isn't necessarily the incident date; it's when the entry became valid (recorded date roughly).\n\nFor INC-2025-011, the entry is valid from 2025-05-30. That's likely the recording date, not necessarily the incident date. The memory doesn't explicitly state when INC-2025-011 happened.\n\nBut the pattern in this task: the question likely expects the answer 2025-05-30 based on the validity date. However, strictly, the memory doesn't say the incident date. The instruction says \"If the memory does not contain the answer, reply exactly: I don't know.\"\n\nLet me think. The memory entry: \"The root cause of INC-2025-011 was an index missing after the schema migration. [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\". The \"valid 2025-05-30 to now\" indicates the fact is valid from that date. It doesn't say the incident occurred on that date. In other incidents, the incident date is explicitly mentioned (\"on 2025-02-01 during incident INC-2025-004\"). For INC-2025-011, no date is given for the incident itself.\n\nSo strictly, the memory does not contain the answer. The answer should be \"I don't know\".\n\nBut wait — could the validity date be interpreted as the incident date? The pattern: incident reviews are recorded after the incident. E.g., INC-2025-004: incident on 2025-02-01, review valid from 2025-02-05. INC-2025-017: incident on 2025-08-02, review valid from 2025-08-07. INC-2025-023: incident on 2025-10-03, review valid from 2025-10-07. So the validity start is the review date, not the incident date. For INC-2025-011, we only know the review was valid from 2025-05-30; the incident date is unknown.\n\nSo the correct answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1675,
+   "completion_tokens": 745,
+   "total_tokens": 2420,
+   "cost": 0.0004154025,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0004154025,
+    "upstream_inference_prompt_cost": 0.000162475,
+    "upstream_inference_completions_cost": 0.0002529275
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 741,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 26.366783166013192,
+ "fetched_at": "2026-09-06T00:06:15Z"
+}

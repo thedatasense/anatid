@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-12-23, the auth gateway is owned by Team Atlas; Team Boreal kept it until then. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- As of 2025-12-23, the pager for the auth gateway rings Team Atlas instead of Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n- On 2025-03-17, Team Atlas handed the billing service to Team Boreal. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- As of 2026-05-26, the billing service sits with Team Dune; Team Boreal no longer owns it. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: The billing service lives with Team Boreal as of the 2025-03-17 handover. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- As of 2025-11-20, the event bus is owned by Team Boreal; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is owned by Team Cinder; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: The event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n- As of 2025-06-16, Team Boreal has taken over the catalog service from Team Dune. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: Team Dune owns the catalog service as of the 2025-03-20 ownership transfer. [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Team Cinder owns the catalog service. [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n- On 2025-11-20, Team Boreal took over the event bus from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- As of 2026-02-24, the flags service belongs to Team Cinder; Team Boreal kept it until then. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the flags service belongs to Team Boreal; Team Cinder kept it until then. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the flags service belongs to Team Cinder; Team Atlas ran it until then. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n- Team Boreal kept the notifier until 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-notifier]\n- As of 2025-11-20, the event bus is a Team Boreal service; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is a Team Cinder service; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is a Team Atlas service. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: As of 2025-03-31, the event bus remains a Team Boreal service. [valid 2025-03-31 to 2025-04-03; recorded by standup/boreal/2025-03-31]\n- As of 2025-03-28, the pager for the webhooks service rings Team Atlas instead of Team Boreal. [valid 2025-03-28 to now; recorded by handover/2025-03-28-webhooks]\n- As of 2026-03-12, Lena is the contact to page for anything related to Team Boreal. [valid 2026-03-12 to now; recorded by standup/boreal/2026-03-12]\n- As of 2026-02-19, the Boreal team consists of Lena only, after Marcus moved to Team Atlas. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19]\n    earlier: As of January 2025, the Boreal team consists of Lena and Marcus. [valid 2025-01-07 to 2026-02-19; recorded by standup/boreal/2025-01-07]\n- On 2025-09-08, Team Boreal observed that the notifier's request volume halved after the client rollout and pinged the owners. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n\nQuestion: Which team owned auth-gateway before Boreal took it over?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654258-wvnqiGWWepg3SNzoTcvX",
+  "object": "chat.completion",
+  "created": 1788654258,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Ember",
+     "refusal": null,
+     "reasoning": "The question asks: Which team owned auth-gateway before Boreal took it over?\n\nMemory:\n- As of 2025-12-23, the auth gateway is owned by Team Atlas; Team Boreal kept it until then.\n- earlier: As of 2025-03-31, the auth gateway is a Team Boreal service.\n- earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31]\n\nSo Boreal took over from Ember. Before Boreal took it over, the owner was Team Ember.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which team owned auth-gateway before Boreal took it over?\n\nMemory:\n- As of 2025-12-23, the auth gateway is owned by Team Atlas; Team Boreal kept it until then.\n- earlier: As of 2025-03-31, the auth gateway is a Team Boreal service.\n- earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31]\n\nSo Boreal took over from Ember. Before Boreal took it over, the owner was Team Ember.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1776,
+   "completion_tokens": 125,
+   "total_tokens": 1901,
+   "cost": 0.00014525,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014525,
+    "upstream_inference_prompt_cost": 0.000114,
+    "upstream_inference_completions_cost": 3.125e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 121,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9173085420043208,
+ "fetched_at": "2026-09-06T00:24:20Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz.\n- [2025-02-19] standup/atlas/2025-02-19: Reminder from the Atlas team: page Priya Raman for anything this cycle, not Tomasz. Priya Raman runs the quarterly capacity review.\n- [2026-06-08] standup/atlas/2026-06-08: Reminder from team Atlas: page Priya for anything this cycle, not Marcus.\n- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-05-14] standup/atlas/2025-05-14: Reminder from team Atlas: page Priya for anything this cycle, not Tomasz.\n- [2026-04-14] standup/atlas/2026-04-14: Marcus Oyelaran picked up the Atlas on-call shift from Priya today.\n- [2025-04-04] standup/atlas/2025-04-04: Reminder from Atlas: page Tomasz Nowak for anything this cycle, not Priya.\n- [2025-06-13] standup/atlas/2025-06-13: Rotation day for Atlas: Priya Raman hands the pager to Tomasz.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-12-24] handover/2025-12-24-billing-api: Handover: as of today the billing service moves from the Atlas team to team Boreal. Priya walked Lena through the runbook this morning.\n- [2025-12-10] handover/2025-12-10-ledger: Atlas handed the ledger to the Boreal team today; Priya wrote up the handover doc for Lena.\n- [2025-09-09] handover/2025-09-09-webhooks: The Ember team handed the webhook dispatcher to team Atlas today; Oskar wrote up the handover doc for Priya.\n- [2025-07-21] standup/atlas/2025-07-21-2: Team Atlas has moved to the second floor.\n- [2025-02-13] handover/2025-02-13-feature-flags: Handover: as of today the flags service moves from team Atlas to the Cinder team. Priya walked Diego through the runbook this morning.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-12-31] standup/atlas/2025-12-31: The Atlas team noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.\n- [2026-04-16] standup/atlas/2026-04-16: Team Atlas saw that the billing service's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-01-31] standup/atlas/2025-01-31: Atlas adopted a no-deploy Friday.\n- [2025-07-21] standup/atlas/2025-07-21: As of today Tomasz is on Dune; Atlas loses a pair of hands.\n- [2026-04-16] standup/atlas/2026-04-16-2: Atlas saw that Ledger's disk usage jumped 30 percent following the retention change; not their service, so they flagged it. Atlas planning meeting is every Tuesday.\n- [2026-04-21] handover/2026-04-21-feature-flags: The feature flag service has a new home: the Atlas team. The Dune team kept it until today.\n- [2026-04-22] handover/2026-04-22-webhooks: The webhook dispatcher has a new home: Dune. Team Atlas kept it until today.\n- [2025-11-11] standup/atlas/2025-11-11: Deploy freeze for billing-api: 2025-11-24 to 2025-12-02 (the peak season). Observation from the Atlas team: after Tuesday's deploy, search-indexer's p99 latency doubled.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-05-30] standup/atlas/2025-05-30: The ledger is pinned to Postgres 14; the pin lifts when the partitioning work finishes.\n- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.\n- [2026-04-06] handover/2026-04-06-notifier: Handover: as of today the notifier moves from the Cinder team to team Boreal. Yuki walked Lena through the runbook this morning.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki and Diego are on team Cinder.\n- [2025-07-01] handover/2025-07-01-auth-gateway: Quick one: the auth gateway belongs to team Cinder starting today. Thanks to the Ember team for running it until now.\n- [2025-03-14] standup/atlas/2025-03-14: Dependency map update: the ledger needs the auth gateway (service tokens).\n- [2026-01-20] handover/2026-01-20-image-resizer: From today the pager for the resizer rings team Dune, not team Boreal. Ownership transferred.\n\nQuestion: Which team was Priya on before joining Atlas?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652746-zqLC5rAccvLrKF0oX6L9",
+  "object": "chat.completion",
+  "created": 1788652746,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which team was Priya on before joining Atlas?\"\n\nLet me scan the memory for any mention of Priya joining Atlas or being on another team before Atlas.\n\nMemory entries mentioning Priya:\n- 2025-01-06: Team Atlas this year is Priya and Tomasz.\n- 2025-02-19: page Priya Raman...\n- 2026-06-08: page Priya...\n- 2025-07-16: Priya is primary for Atlas on-call...\n- 2025-05-14: page Priya...\n- 2025-04-04: page Tomasz, not Priya...\n- 2025-06-13: Priya Raman hands the pager to Tomasz.\n- 2025-12-24: Priya walked Lena through runbook (billing moves Atlas → Boreal).\n- 2025-12-10: Priya wrote handover doc for Lena.\n- 2025-09-09: Oskar wrote handover doc for Priya.\n\nThere's no entry about Priya joining Atlas from another team. The memory only says Team Atlas is Priya and Tomasz as of 2025-01-06. No information about where Priya came from before Atlas.\n\nTeam changes mentioned:\n- Marcus leaves Boreal and joins Atlas (2026-03-17).\n- Diego leaves Cinder and joins Ember (2025-12-15).\n\nNothing about Priya's prior team. So the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which team was Priya on before joining Atlas?\"\n\nLet me scan the memory for any mention of Priya joining Atlas or being on another team before Atlas.\n\nMemory entries mentioning Priya:\n- 2025-01-06: Team Atlas this year is Priya and Tomasz.\n- 2025-02-19: page Priya Raman...\n- 2026-06-08: page Priya...\n- 2025-07-16: Priya is primary for Atlas on-call...\n- 2025-05-14: page Priya...\n- 2025-04-04: page Tomasz, not Priya...\n- 2025-06-13: Priya Raman hands the pager to Tomasz.\n- 2025-12-24: Priya walked Lena through runbook (billing moves Atlas → Boreal).\n- 2025-12-10: Priya wrote handover doc for Lena.\n- 2025-09-09: Oskar wrote handover doc for Priya.\n\nThere's no entry about Priya joining Atlas from another team. The memory only says Team Atlas is Priya and Tomasz as of 2025-01-06. No information about where Priya came from before Atlas.\n\nTeam changes mentioned:\n- Marcus leaves Boreal and joins Atlas (2026-03-17).\n- Diego leaves Cinder and joins Ember (2025-12-15).\n\nNothing about Priya's prior team. So the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1672,
+   "completion_tokens": 325,
+   "total_tokens": 1997,
+   "cost": 0.00019897,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00019897,
+    "upstream_inference_prompt_cost": 0.00011772,
+    "upstream_inference_completions_cost": 8.125e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 319,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.3755838749930263,
+ "fetched_at": "2026-09-05T23:59:10Z"
+}

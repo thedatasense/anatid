@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The product catalog belongs to the Boreal team as of 2025-10-20, after being run by the Cinder team until then. [decision; valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n- Yuki is the primary on-call to contact for anything on Cinder as of 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call to contact for anything on Cinder as of 2025-11-25; Yuki is off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call to contact for anything on Cinder as of 2025-10-02; Diego is off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Page Diego for anything on Cinder this cycle, as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Page Yuki for anything on Cinder this cycle, not Diego Alvarez, as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Page Diego Alvarez for anything on Cinder this cycle, not Yuki Tanaka, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Page Yuki Tanaka for anything on Cinder this cycle, not Diego, as of 2025-02-17. [decision; valid 2025-02-17 to 2025-06-13; recorded by standup/cinder/2025-02-17]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- Team Cinder's on-call swapped on 2025-12-15, with Yuki carrying the Cinder on-call phone. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Team Cinder's on-call swapped on 2025-11-25, with Diego carrying the Cinder on-call phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n- Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14. [decision; valid 2026-04-14 to now; recorded by standup/atlas/2026-04-14]\n- Lena carries the Boreal on-call phone as of 2026-02-04, after the on-call swap that morning, until the next rotation. [decision; valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- The product catalog has a deploy window on Tuesdays and Thursdays between 10:00 and 12:00 UTC as of 2025-11-12. [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The product catalog has a deploy window on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- The first on-call rotation for Team Atlas goes to Tomasz. [decision; valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09]\n\nQuestion: Who is on call for the team that owns the service the catalog depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657770-q1QEBumkkTEc2zKW92Qm",
+  "object": "chat.completion",
+  "created": 1788657770,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Reka",
+  "system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp8-53169669",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nLet me look at the memory. The memory says the product catalog belongs to the Boreal team as of 2025-10-20. But the question asks about the team that owns the service the catalog depends on. The memory doesn't mention any service that the catalog depends on. There's no dependency information in the memory.\n\nThe memory mentions:\n- Product catalog ownership (Boreal team, previously Cinder)\n- On-call for Cinder (Yuki as of 2025-12-15)\n- On-call for Team Atlas (Marcus Oyelaran as of 2026-04-14)\n- On-call for Boreal (Lena as of 2026-02-04)\n- Deploy windows for the catalog\n- First on-call rotation for Team Atlas goes to Tomasz\n\nBut nothing about what service the catalog depends on. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Who is on call for the team that owns the service the catalog depends on?\"\n\nLet me look at the memory. The memory says the product catalog belongs to the Boreal team as of 2025-10-20. But the question asks about the team that owns the service the catalog depends on. The memory doesn't mention any service that the catalog depends on. There's no dependency information in the memory.\n\nThe memory mentions:\n- Product catalog ownership (Boreal team, previously Cinder)\n- On-call for Cinder (Yuki as of 2025-12-15)\n- On-call for Team Atlas (Marcus Oyelaran as of 2026-04-14)\n- On-call for Boreal (Lena as of 2026-02-04)\n- Deploy windows for the catalog\n- First on-call rotation for Team Atlas goes to Tomasz\n\nBut nothing about what service the catalog depends on. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1194,
+   "completion_tokens": 208,
+   "total_tokens": 1402,
+   "cost": 0.0002831,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0002831,
+    "upstream_inference_prompt_cost": 0.0001791,
+    "upstream_inference_completions_cost": 0.000104
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 207,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.860478916962165,
+ "fetched_at": "2026-09-06T01:22:57Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The webhook dispatcher's deploy window is on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- As of 2026-02-23, the scheduler's deploy window remains weekday mornings before 11:00 UTC. [constraint; valid 2026-02-23 to now; recorded by standup/dune/2026-02-23]\n- Dashboards and alerts for the catalog service are being repointed as of 2025-06-16. [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n- Farah takes the first on-call rotation for Team Dune. [valid 2025-01-16 to now; recorded by standup/dune/2025-01-16]\n- The indexer's OpenSearch 2.11 pin lifts when the full reindex completes. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- The catalog service depends on the resizer for thumbnails. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- Priya takes the first Atlas pager shift. [valid 2025-01-14 to now; recorded by standup/atlas/2025-01-14]\n- As of 2026-03-16, the catalog service deploys on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16]\n    earlier: The catalog service ships only on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- On 2025-05-08, Team Boreal observed that the catalog service's memory use grew steadily for a week following the cache change, and flagged it since the catalog service is not Team Boreal's service. [valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- Lena takes the first Boreal on-call shift of the year. [valid 2025-01-13 to now; recorded by standup/boreal/2025-01-13]\n- As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder. [valid 2025-03-20 to now; recorded by handover/2025-03-20-catalog]\n- Yuki takes the first Team Cinder on-call shift of the year. [valid 2025-01-14 to now; recorded by standup/cinder/2025-01-14]\n- The catalog service's joined writes were locking product updates for seconds at a time. [valid 2025-04-04 to now; recorded by standup/dune/2025-04-04]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Dashboards and alerts for the resizer are being repointed as of 2025-04-29. [valid 2025-04-29 to now; recorded by handover/2025-04-29-image-resizer]\n- As of 2025-11-20, dashboards and alerts for the event bus are being repointed. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy, and flagged it since the feature-flags service is not the Ember team's service. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n\nQuestion: Which note first recorded the deploy window for the catalog, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653995-dLFy18myWMIEBzVKsDhB",
+  "object": "chat.completion",
+  "created": 1788653995,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/dune/2025-03-24, recorded 2025-03-24.",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which note first recorded the deploy window for the catalog, and when?\"\n\nThere are two entries about catalog deploy windows:\n- \"As of 2026-03-16, the catalog service deploys on Tuesdays between 13:00 and 15:00 UTC.\" [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16], with earlier: \"The catalog service ships only on Mondays to Thursdays between 09:00 and 17:00 UTC.\" [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n\nThe first record would be the earlier one: standup/dune/2025-03-24, recorded 2025-03-24.\n\nSo the answer: standup/dune/2025-03-24, on 2025-03-24.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which note first recorded the deploy window for the catalog, and when?\"\n\nThere are two entries about catalog deploy windows:\n- \"As of 2026-03-16, the catalog service deploys on Tuesdays between 13:00 and 15:00 UTC.\" [constraint; valid 2026-03-16 to now; recorded by standup/boreal/2026-03-16], with earlier: \"The catalog service ships only on Mondays to Thursdays between 09:00 and 17:00 UTC.\" [constraint; valid 2025-03-24 to 2026-03-16; recorded by standup/dune/2025-03-24]\n\nThe first record would be the earlier one: standup/dune/2025-03-24, recorded 2025-03-24.\n\nSo the answer: standup/dune/2025-03-24, on 2025-03-24.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1252,
+   "completion_tokens": 226,
+   "total_tokens": 1478,
+   "cost": 0.00013888,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013888,
+    "upstream_inference_prompt_cost": 8.238e-05,
+    "upstream_inference_completions_cost": 5.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 203,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.6787987499847077,
+ "fetched_at": "2026-09-06T00:19:58Z"
+}

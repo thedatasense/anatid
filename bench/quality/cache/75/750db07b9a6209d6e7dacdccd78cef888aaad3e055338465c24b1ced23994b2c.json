@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-09-26] standup/cinder/2025-09-26: The Cinder team saw that the notifier's request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-05-01] standup/cinder/2026-05-01-2: Observation from the Cinder team: after the marketing send, the flags service's queue depth hit 50,000.\n- [2025-12-15] standup/cinder/2025-12-15-2: Observation from the Cinder team: after the retention change, the catalog service's disk usage jumped 30 percent.\n- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.\n- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-02-13] handover/2025-02-13-feature-flags: Handover: as of today the flags service moves from team Atlas to the Cinder team. Priya walked Diego through the runbook this morning.\n- [2026-01-29] handover/2026-01-29-feature-flags: Handover: as of today the feature flag service moves from Cinder to team Dune. Yuki walked Farah Haddad through the runbook this morning.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2026-05-01] standup/cinder/2026-05-01: From today the ledger service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2026-05-28] standup/cinder/2026-05-28: Yuki Tanaka still has the Cinder pager.\n- [2025-05-02] standup/cinder/2025-05-02-3: Cinder has moved to the third floor.\n- [2025-06-02] standup/cinder/2025-06-02: Cinder adopted trunk-based development.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki and Diego are on team Cinder.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-05-02] standup/cinder/2025-05-02: Yuki picked up the Cinder on-call shift from Diego today.\n- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.\n- [2025-08-29] standup/cinder/2025-08-29: Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-06-13] standup/cinder/2025-06-13: Diego Alvarez has the Cinder pager this cycle, taking over from Yuki Tanaka.\n- [2025-03-27] standup/cinder/2025-03-27: Rotation day for Cinder: Yuki hands the pager to Diego Alvarez.\n- [2025-02-17] standup/cinder/2025-02-17: Reminder from the Cinder team: page Yuki Tanaka for anything this cycle, not Diego.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n\nQuestion: Which services does Cinder own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651413-hHjYU161JsRJvIKOtooq",
+  "object": "chat.completion",
+  "created": 1788651413,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The notifier and the product catalog.",
+     "refusal": null,
+     "reasoning": "Let me look at the memory for Cinder's ownership.\n\n- 2025-01-17: product catalog lives with Cinder team. Cinder owns the indexer. But later, 2026-04-22: search indexer now sits with Boreal team (Dune no longer owns it) — wait, the 2025-01-17 says Cinder owns \"the indexer\". The 2025-09-15 says Boreal still owns search-indexer. So that supersedes the indexer claim. Actually the 2025-09-15 says Boreal owns search-indexer, correcting earlier confusion.\n\n- 2025-01-09: Boreal owns notifier; 2026-03-17: notifier is owned by Cinder. Later entry supersedes: notifier owned by Cinder as of 2026-03-17. That's the latest entry about notifier. So currently notifier is owned by Cinder.\n\n- flags service: 2025-02-13 moves from Atlas to Cinder. 2026-01-29: moves from Cinder to Dune. So now (2026-06-30) Dune owns flags, not Cinder.\n\n- product catalog: 2025-01-17 says product catalog lives with Cinder. No later entry changes it. So catalog service owned by Cinder? The catalog service... 2025-01-17 \"The product catalog lives with the Cinder team.\" Nothing later supersedes. So Cinder owns product catalog.\n\n- auth-gateway: correction says it went to Boreal, not Cinder. And 2025-04-10 says Ember owns authentication gateway. Wait, conflict: 2025-04-10 Ember owns auth gateway; 2025-07-18 correction says auth-gateway went to Boreal. The correction is later (2025-07-18), so auth-gateway is Boreal. Not Cinder anyway.\n\nSo now (2026-06-30): Cinder owns notifier (per 2026-03-17) and product catalog (per 2025-01-17).\n\nAnswer: notifier and the product catalog.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Let me look at the memory for Cinder's ownership.\n\n- 2025-01-17: product catalog lives with Cinder team. Cinder owns the indexer. But later, 2026-04-22: search indexer now sits with Boreal team (Dune no longer owns it) — wait, the 2025-01-17 says Cinder owns \"the indexer\". The 2025-09-15 says Boreal still owns search-indexer. So that supersedes the indexer claim. Actually the 2025-09-15 says Boreal owns search-indexer, correcting earlier confusion.\n\n- 2025-01-09: Boreal owns notifier; 2026-03-17: notifier is owned by Cinder. Later entry supersedes: notifier owned by Cinder as of 2026-03-17. That's the latest entry about notifier. So currently notifier is owned by Cinder.\n\n- flags service: 2025-02-13 moves from Atlas to Cinder. 2026-01-29: moves from Cinder to Dune. So now (2026-06-30) Dune owns flags, not Cinder.\n\n- product catalog: 2025-01-17 says product catalog lives with Cinder. No later entry changes it. So catalog service owned by Cinder? The catalog service... 2025-01-17 \"The product catalog lives with the Cinder team.\" Nothing later supersedes. So Cinder owns product catalog.\n\n- auth-gateway: correction says it went to Boreal, not Cinder. And 2025-04-10 says Ember owns authentication gateway. Wait, conflict: 2025-04-10 Ember owns auth gateway; 2025-07-18 correction says auth-gateway went to Boreal. The correction is later (2025-07-18), so auth-gateway is Boreal. Not Cinder anyway.\n\nSo now (2026-06-30): Cinder owns notifier (per 2026-03-17) and product catalog (per 2025-01-17).\n\nAnswer: notifier and the product catalog.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1658,
+   "completion_tokens": 442,
+   "total_tokens": 2100,
+   "cost": 0.00022717,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00022717,
+    "upstream_inference_prompt_cost": 0.00011667,
+    "upstream_inference_completions_cost": 0.0001105
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 433,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.698344542004634,
+ "fetched_at": "2026-09-05T23:36:57Z"
+}

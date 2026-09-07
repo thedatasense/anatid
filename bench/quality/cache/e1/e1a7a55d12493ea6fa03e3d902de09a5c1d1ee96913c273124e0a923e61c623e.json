@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The product catalog depends on image-resizer for thumbnails. [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\n- The indexer depends on the product catalog for product documents. [valid 2025-03-03 to now; recorded by standup/boreal/2025-03-03]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- Yuki is the primary on-call for team Cinder as of 2025-12-15, taking over from Diego. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call for team Cinder as of 2025-11-25, taking over from Yuki. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call for team Cinder as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- The reports pipeline depends on Ledger for the nightly balance export, so if Ledger is down the reports pipeline is down. [valid 2025-02-06 to now; recorded by standup/dune/2025-02-06]\n- Yuki is the primary on-call to contact for anything on Cinder as of 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call to contact for anything on Cinder as of 2025-11-25; Yuki is off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call to contact for anything on Cinder as of 2025-10-02; Diego is off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Page Diego for anything on Cinder this cycle, as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Page Yuki for anything on Cinder this cycle, not Diego Alvarez, as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Page Diego Alvarez for anything on Cinder this cycle, not Yuki Tanaka, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Page Yuki Tanaka for anything on Cinder this cycle, not Diego, as of 2025-02-17. [decision; valid 2025-02-17 to 2025-06-13; recorded by standup/cinder/2025-02-17]\n- Billing-api depends on the flags service as of 2025-10-21. [valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- Tomasz is back on the Team Dune on-call rotation as of 2025-12-08. [decision; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n    earlier: Tomasz is off the Team Dune on-call rotation as of 2025-11-03. [decision; valid 2025-11-03 to 2025-12-08; recorded by standup/dune/2025-11-03]\n- Tomasz is off the Team Atlas on-call rotation as of 2025-07-16. [decision; valid 2025-07-16 to now; recorded by standup/atlas/2025-07-16]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- The first on-call rotation for Team Atlas goes to Tomasz. [decision; valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09]\n- The first on-call rotation for Team Dune goes to Farah. [decision; valid 2025-01-13 to now; recorded by standup/dune/2025-01-13]\n- The first on-call rotation for team Ember goes to Oskar. [decision; valid 2025-01-13 to now; recorded by standup/ember/2025-01-13]\n- Yuki is on team Cinder as of 2025-01-08; Diego left team Cinder for team Ember on 2025-12-15. [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Yuki and Diego are on team Cinder as of 2025-01-08. [valid 2025-01-08 to 2025-12-15; recorded by standup/cinder/2025-01-08]\n\nQuestion: Who is on call for the team that owns the service the catalog depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657331-rvNN6Qp46z6gqp5tNb0R",
+  "object": "chat.completion",
+  "created": 1788657331,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The catalog depends on image-resizer. Who owns image-resizer? The memory doesn't say who owns image-resizer. Let me check the entries.\n\n- The product catalog depends on image-resizer for thumbnails.\n- The indexer depends on the product catalog.\n- Ledger depends on auth gateway.\n- Job scheduler depends on flags service.\n- Reports pipeline depends on Ledger.\n- Billing-api depends on flags service.\n- Cinder owns the notifier; Boreal owned it until then.\n- On-call rotations...\n\nNo ownership info for image-resizer. So we can't determine the team that owns image-resizer, nor its on-call. Answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The catalog depends on image-resizer. Who owns image-resizer? The memory doesn't say who owns image-resizer. Let me check the entries.\n\n- The product catalog depends on image-resizer for thumbnails.\n- The indexer depends on the product catalog.\n- Ledger depends on auth gateway.\n- Job scheduler depends on flags service.\n- Reports pipeline depends on Ledger.\n- Billing-api depends on flags service.\n- Cinder owns the notifier; Boreal owned it until then.\n- On-call rotations...\n\nNo ownership info for image-resizer. So we can't determine the team that owns image-resizer, nor its on-call. Answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1548,
+   "completion_tokens": 139,
+   "total_tokens": 1687,
+   "cost": 0.0003017,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003017,
+    "upstream_inference_prompt_cost": 0.0002322,
+    "upstream_inference_completions_cost": 6.95e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 133,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.246632833965123,
+ "fetched_at": "2026-09-06T01:15:35Z"
+}

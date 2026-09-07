@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of the 2026-05-29 cycle, the Ember team says to page Oskar, not Diego. [constraint; valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of the 2026-04-13 cycle, the Ember team says to page Diego, not Oskar. [constraint; valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: For anything Ember-related, page Oskar Lind; as of the 2026-03-02 cycle, the Ember team says to page Oskar Lind, not Diego. [constraint; valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: For anything Ember-related, page Oskar. [constraint; valid 2025-03-31 to 2026-03-02; recorded by standup/ember/2025-03-31]\n- As of 2026-05-29, Oskar has the Ember pager, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of the 2026-04-13 cycle, Diego has the Ember pager, taking over from Oskar. [valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n- On 2026-05-28, the Ember team observed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- On 2026-04-14, the Dune team observed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- On 2026-03-11, the Cinder team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team; ownership transferred from the Ember team on that date, and the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team; ownership transferred from the Ember team on that date. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team; ownership transferred from the Atlas team on that date. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- Oskar wrote up the feature-flags handover doc for Farah on 2026-02-11. [valid 2026-02-11 to now; recorded by handover/2026-02-11-feature-flags]\n- As of 2026-01-12, the billing API is owned by the Ember team, having been run by the Atlas team until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: The Atlas team owns the billing API as of 2025-06-09, when ownership passed from the Ember team; the Boreal team was recorded by mistake and never held it. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: The Boreal team owns the billing API as of 2025-06-09, when ownership passed from the Ember team. [decision; valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: The Ember team owns the billing API as of 2025-03-07, when ownership passed from the Atlas team. [decision; valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- As of 2025-12-05, the reporting service is owned by the Ember team, having transferred from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is a Dune team service. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team, not the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n\nQuestion: Which team is Diego on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654134-LwYsdqRldNbO66tSkeVl",
+  "object": "chat.completion",
+  "created": 1788654134,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember",
+     "refusal": null,
+     "reasoning": "The question asks which team Diego is on now. Looking at the memory, Diego is mentioned in the context of the Ember team on-call rotation — e.g., \"As of 2026-05-29, Diego is off the Ember team on-call rotation.\" That implies Diego is on the Ember team (he was primary on-call for Ember earlier). So the answer is Ember.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Diego is on now. Looking at the memory, Diego is mentioned in the context of the Ember team on-call rotation — e.g., \"As of 2026-05-29, Diego is off the Ember team on-call rotation.\" That implies Diego is on the Ember team (he was primary on-call for Ember earlier). So the answer is Ember.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1765,
+   "completion_tokens": 81,
+   "total_tokens": 1846,
+   "cost": 0.00030525,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00030525,
+    "upstream_inference_prompt_cost": 0.00026475,
+    "upstream_inference_completions_cost": 4.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 77,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0981375420233235,
+ "fetched_at": "2026-09-06T00:22:18Z"
+}

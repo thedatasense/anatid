@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The billing service depends on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- The catalog service depends on the resizer for thumbnails. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- The ledger depends on the auth gateway for service tokens. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- On 2025-07-03, Team Atlas observed that the notifier's memory use grew steadily for a week following the cache change, and flagged it since the notifier is not Team Atlas's service. [valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03-2]\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- Team Boreal kept the notifier until 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-notifier]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- Notifier consumers will commit offsets every five seconds. [decision; valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-02-20 to now; recorded by standup/boreal/2025-02-20]\n- On 2025-09-08, Team Boreal observed that the notifier's request volume halved after the client rollout and pinged the owners. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- On 2025-06-12, Team Dune noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-06-12 to now; recorded by standup/dune/2025-06-12]\n- As of 2025-06-19, the notifier lives with Team Dune; Team Cinder kept it until then. [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: As of 2025-04-04, the notifier lives with Team Cinder. [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: The notifier lives with Team Boreal. [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n\nQuestion: Which service depends on the notifier?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654004-cAS3lVbL2VAHdUFYK9rL",
+  "object": "chat.completion",
+  "created": 1788654004,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which service depends on the notifier. Let me look through the memory.\n\nLooking through dependencies:\n- The notifier depends on the event bus.\n- The billing service depends on feature-flags.\n- The catalog service depends on the resizer.\n- The indexer depends on the catalog service.\n- The billing service depends on the ledger.\n- The ledger depends on the auth gateway.\n- The webhooks service depends on the event bus.\n- The reporting service no longer depends on the ledger; reads from event bus.\n- The reports pipeline depends on the ledger.\n\nNothing says any service depends on the notifier. The notifier is mentioned in various observations, but no service depends on the notifier.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which service depends on the notifier. Let me look through the memory.\n\nLooking through dependencies:\n- The notifier depends on the event bus.\n- The billing service depends on feature-flags.\n- The catalog service depends on the resizer.\n- The indexer depends on the catalog service.\n- The billing service depends on the ledger.\n- The ledger depends on the auth gateway.\n- The webhooks service depends on the event bus.\n- The reporting service no longer depends on the ledger; reads from event bus.\n- The reports pipeline depends on the ledger.\n\nNothing says any service depends on the notifier. The notifier is mentioned in various observations, but no service depends on the notifier.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1265,
+   "completion_tokens": 144,
+   "total_tokens": 1409,
+   "cost": 0.000123195,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000123195,
+    "upstream_inference_prompt_cost": 8.7195e-05,
+    "upstream_inference_completions_cost": 3.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 138,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.590458041988313,
+ "fetched_at": "2026-09-06T00:20:07Z"
+}

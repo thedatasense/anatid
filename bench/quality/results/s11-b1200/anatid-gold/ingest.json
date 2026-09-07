@@ -1,0 +1,48 @@
+{
+ "seconds": 9.798879540991038,
+ "llm": {
+  "calls": 369,
+  "cache_hits": 369,
+  "network_calls": 0,
+  "chat_calls": 0,
+  "embed_calls": 369,
+  "embed_texts": 369,
+  "prompt_tokens": 0,
+  "completion_tokens": 0,
+  "embed_tokens": 10052,
+  "cost_usd": 0.00020103999999970812,
+  "cost_usd_charged": 0.0,
+  "cost_known": true,
+  "wall_s": 0.0,
+  "recorded_wall_s": 107.55871677654795,
+  "provider_failures": 0,
+  "hit_rate": 1.0
+ },
+ "report": {
+  "notes": 178,
+  "extractor": "gold",
+  "memories_created": 193,
+  "memories_closed": 70,
+  "relations_opened": 101,
+  "relations_closed": 67,
+  "dedupe_drops": 35,
+  "downgraded_corrections": 0,
+  "parser_notes": 0,
+  "empty_patches": 18,
+  "extraction_failures": 0,
+  "failed_notes": [],
+  "store": {
+   "memories": 193,
+   "entities": 31,
+   "episodes": 178,
+   "edges_about": 342,
+   "edges_relates": 101,
+   "edges_supersedes": 70,
+   "anatid_audit": 70,
+   "memory_versions": 263,
+   "current_memories": 123,
+   "tenant_id": 1,
+   "expand_path": "sql"
+  }
+ }
+}

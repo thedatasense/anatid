@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded the deploy window for the ledger, and when?\nGold answer: standup/atlas/2025-02-28 (2025-02-28)\nAlso accepted: standup/atlas/2025-02-28; 2025-02-28; 28 February 2025; February 28, 2025; the standup note of 2025-02-28; the standup note of 28 February 2025; the standup note of February 28, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/atlas/2025-02-28, recorded on 2025-02-28 (Ledger ships Wednesdays 09:00–11:00 UTC)"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658976-fH59f2rncs6PxedaJJh1",
+  "object": "chat.completion",
+  "created": 1788658976,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Parasail",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the gold note's source label standup/atlas/2025-02-28 and its date 2025-02-28, matching the gold answer.\"}",
+     "refusal": null,
+     "reasoning": "The answer identifies the source label \"standup/atlas/2025-02-28\" and the date \"2025-02-28\". This matches the gold answer. The extra parenthetical about Ledger shipping Wednesdays doesn't contradict. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer identifies the source label \"standup/atlas/2025-02-28\" and the date \"2025-02-28\". This matches the gold answer. The extra parenthetical about Ledger shipping Wednesdays doesn't contradict. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 305,
+   "completion_tokens": 101,
+   "total_tokens": 406,
+   "cost": 9.625e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.625e-05,
+    "upstream_inference_prompt_cost": 4.575e-05,
+    "upstream_inference_completions_cost": 5.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 53,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.171186749998014,
+ "fetched_at": "2026-09-06T01:43:01Z"
+}

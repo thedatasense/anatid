@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-01-22, the product catalog deploy window remains weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, during the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- As of 2025-09-03, the product catalog can be deployed on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n- As of 2025-09-03, the product catalog can be released on weekdays between 08:00 and 10:00 UTC, never on Fridays; the previous Mon-Thu 09:00-17:00 UTC slot no longer applies. [constraint; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03]\n    earlier: The product catalog can be released on Mondays to Thursdays between 09:00 and 17:00 UTC; anything else needs an exception. [constraint; valid 2025-03-17 to 2025-09-03; recorded by standup/cinder/2025-03-17]\n- On 2025-12-19, the Atlas team took over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- On 2026-02-16, the Dune team observed that the product catalog's request volume halved after the client rollout and pinged the owners. [valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- As of 2026-02-03, the Atlas team observes a no-deploy Friday, with no deployments on Fridays. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- As of 2025-12-19, the Atlas team owns the product catalog, having taken it over from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of the 2025-12-19 handover, the product catalog's dashboards and alerts are being repointed. [valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- As of 2025-08-19, deploys to the job scheduler happen only on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: Deploys to the job scheduler happen only on Tuesdays between 13:00 and 15:00 UTC. [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- The catalog service still relies on the resizer. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-03-20, the Boreal team observed that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- On 2026-06-04, the Boreal team observed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- On 2025-12-18, the Atlas team decided that the indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes. [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-18 to now; recorded by standup/ember/2025-02-18]\n- On 2026-05-27, the Atlas team observed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- The product catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time. [decision; valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n\nQuestion: What is the current deploy window for the catalog?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652755-NvvyBlb4sCQ1OEAzhaak",
+  "object": "chat.completion",
+  "created": 1788652755,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Weekdays between 08:00 and 10:00 UTC, never on Fridays.",
+     "refusal": null,
+     "reasoning": "The question asks about the current deploy window for the catalog (product catalog). Today is 2026-06-30.\n\nMemory entries about the product catalog deploy window:\n- As of 2026-01-22, weekdays between 08:00 and 10:00 UTC, never on Fridays. [valid 2026-01-22 to now]\n- As of 2025-09-03, weekdays between 08:00 and 10:00 UTC, never on Fridays. [valid 2025-09-03 to now]\n- Earlier: Mon-Thu 09:00-17:00 UTC (superseded).\n\nThe latest entry (2026-01-22) says weekdays 08:00-10:00 UTC, never Fridays. Also there's the Atlas no-deploy Friday as of 2026-02-03, which reinforces no Fridays.\n\nAnswer: weekdays between 08:00 and 10:00 UTC, never on Fridays.\n\nOne short line with just the value.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the current deploy window for the catalog (product catalog). Today is 2026-06-30.\n\nMemory entries about the product catalog deploy window:\n- As of 2026-01-22, weekdays between 08:00 and 10:00 UTC, never on Fridays. [valid 2026-01-22 to now]\n- As of 2025-09-03, weekdays between 08:00 and 10:00 UTC, never on Fridays. [valid 2025-09-03 to now]\n- Earlier: Mon-Thu 09:00-17:00 UTC (superseded).\n\nThe latest entry (2026-01-22) says weekdays 08:00-10:00 UTC, never Fridays. Also there's the Atlas no-deploy Friday as of 2026-02-03, which reinforces no Fridays.\n\nAnswer: weekdays between 08:00 and 10:00 UTC, never on Fridays.\n\nOne short line with just the value.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1564,
+   "completion_tokens": 231,
+   "total_tokens": 1795,
+   "cost": 0.00016737,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016737,
+    "upstream_inference_prompt_cost": 0.00010962,
+    "upstream_inference_completions_cost": 5.775e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 211,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.728213875030633,
+ "fetched_at": "2026-09-05T23:59:19Z"
+}

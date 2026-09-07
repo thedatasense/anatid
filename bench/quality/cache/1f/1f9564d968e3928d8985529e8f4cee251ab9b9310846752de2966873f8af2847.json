@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of the 2026-06-18 rotation, Diego holds the Ember team pager. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of the 2026-05-18 rotation, Oskar holds the Ember team pager, having taken it over from Diego. [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of the 2026-03-31 rotation, Diego Alvarez holds the Ember team pager, having taken it over from Oskar. [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n- On 2026-06-18, the Ember team on-call swapped and Diego carries the phone until the next rotation. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n- On 2026-05-18, Oskar picked up the Ember team on-call shift from Diego. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18]\n- For anything Ember-related, page Diego. [decision; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n    earlier: For anything Ember-related, page Oskar. [decision; valid 2025-03-19 to 2026-03-31; recorded by standup/ember/2025-03-19-3]\n- As of 2026-02-24, the feature-flags service lives with Team Cinder; Team Boreal kept it until then. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: The feature-flags service lives with Team Boreal as of 2025-09-29. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: The feature-flags service lives with Team Atlas. [valid 2025-01-08 to 2025-09-29; recorded by standup/atlas/2025-01-08-2]\n- As of 2026-02-24, the flags service belongs to Team Cinder; Team Boreal kept it until then. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the flags service belongs to Team Boreal; Team Cinder kept it until then. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the flags service belongs to Team Cinder; Team Atlas ran it until then. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n- As of 2026-02-10, the reports pipeline lives with Team Cinder; the Ember team kept it until then. [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- On 2026-01-05, Team Cinder observed that the ledger's disk usage jumped 30 percent after the retention change. [valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- On 2026-01-01, Team Cinder noticed that the indexer's disk usage jumped 30 percent after the retention change and pinged the owners. [valid 2026-01-01 to now; recorded by standup/cinder/2026-01-01]\n- On the 2025-12-29 rotation day, Oskar handed the Ember team pager to Diego. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29]\n- As of 2025-12-08, the indexer lives with Team Dune; Team Cinder kept it until then. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- As of 2025-12-08, the pager for the indexer rings Team Dune instead of Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n- Team Cinder consists of Yuki; Diego Alvarez left the team on 2025-12-05. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n    earlier: Team Cinder consists of Yuki and Diego. [valid 2025-01-08 to 2025-12-05; recorded by standup/cinder/2025-01-08]\n- Effective 2025-12-05, Diego Alvarez joined the Ember team. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n- Effective 2025-12-05, Diego Alvarez left Team Cinder. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n- As of 2025-11-20, the event bus is a Team Boreal service; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is a Team Cinder service; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is a Team Atlas service. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: As of 2025-03-31, the event bus remains a Team Boreal service. [valid 2025-03-31 to 2025-04-03; recorded by standup/boreal/2025-03-31]\n\nQuestion: Who runs the monthly cost review?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654623-7aOEoQlOdTgTAKO9aPva",
+  "object": "chat.completion",
+  "created": 1788654623,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The user asks: \"Who runs the monthly cost review?\" Looking through the memory, there's nothing about a monthly cost review. The entries cover pager rotations, service ownership, disk usage, team composition. No mention of cost review.\n\nAnswer: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"Who runs the monthly cost review?\" Looking through the memory, there's nothing about a monthly cost review. The entries cover pager rotations, service ownership, disk usage, team composition. No mention of cost review.\n\nAnswer: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1658,
+   "completion_tokens": 59,
+   "total_tokens": 1717,
+   "cost": 0.00011606,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 384,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00011606,
+    "upstream_inference_prompt_cost": 0.00010131,
+    "upstream_inference_completions_cost": 1.475e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 53,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6601052500191145,
+ "fetched_at": "2026-09-06T00:30:24Z"
+}

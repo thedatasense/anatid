@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns the indexer as of 2025-01-17. [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- The indexer must stay on OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-08-13 to now; recorded by standup/boreal/2025-08-13]\n- Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Team Dune owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal still owns the indexer as of 2025-09-15. [valid 2025-09-15 to 2025-11-18; recorded by standup/boreal/2025-09-15-2]\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Reindex jobs will page on failure. [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- On 2026-03-16, Ember noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-03-16 to now; recorded by standup/ember/2026-03-16]\n- The indexer moved from Boreal to Team Dune as of 2025-11-18. [decision; valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: The indexer moved from Boreal to Ember as of 2025-11-18. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n- Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14. [decision; valid 2026-04-14 to now; recorded by standup/atlas/2026-04-14]\n- Marcus Oyelaran holds the Boreal on-call pager as of 2025-09-24, after picking it up from Lena. [valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n    earlier: Lena still holds the Boreal on-call pager as of 2025-09-15. [valid 2025-09-15 to 2025-09-24; recorded by standup/boreal/2025-09-15]\n- Yuki is the primary on-call to contact for anything on Cinder as of 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call to contact for anything on Cinder as of 2025-11-25; Yuki is off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call to contact for anything on Cinder as of 2025-10-02; Diego is off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Page Diego for anything on Cinder this cycle, as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Page Yuki for anything on Cinder this cycle, not Diego Alvarez, as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Page Diego Alvarez for anything on Cinder this cycle, not Yuki Tanaka, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Page Yuki Tanaka for anything on Cinder this cycle, not Diego, as of 2025-02-17. [decision; valid 2025-02-17 to 2025-06-13; recorded by standup/cinder/2025-02-17]\n- The indexer will rebuild the index nightly instead of on every catalog write, as agreed on 2025-11-07. [decision; valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- The indexer moved from Team Dune to Boreal as of 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n- The indexer's disk usage jumped 30 percent after the retention change, as noticed by Cinder on 2025-08-29. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29-2]\n- The indexer depends on the product catalog for product documents. [valid 2025-03-03 to now; recorded by standup/boreal/2025-03-03]\n- Diego takes over the Cinder on-call pager from Yuki as of 2025-03-27. [decision; valid 2025-03-27 to now; recorded by standup/cinder/2025-03-27]\n\nQuestion: Who is on call for the team that owns search-indexer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657829-Jvm22c4tH4oGeco2Wsjr",
+  "object": "chat.completion",
+  "created": 1788657829,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Marcus Oyelaran",
+     "refusal": null,
+     "reasoning": "The question asks: Who is on call for the team that owns search-indexer?\n\nFirst, determine who owns search-indexer now (today is 2026-06-30). Memory says:\n- \"Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over.\" [decision; valid 2026-04-22 to now]\n\nSo Boreal owns the indexer now.\n\nNow, who is on call for Boreal? Memory says:\n- \"Marcus Oyelaran holds the Boreal on-call pager as of 2025-09-24, after picking it up from Lena.\" [valid 2025-09-24 to now]\n\nAlso there's \"Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14.\" — but that's Team Atlas, not Boreal.\n\nSo the answer is Marcus Oyelaran.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Who is on call for the team that owns search-indexer?\n\nFirst, determine who owns search-indexer now (today is 2026-06-30). Memory says:\n- \"Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over.\" [decision; valid 2026-04-22 to now]\n\nSo Boreal owns the indexer now.\n\nNow, who is on call for Boreal? Memory says:\n- \"Marcus Oyelaran holds the Boreal on-call pager as of 2025-09-24, after picking it up from Lena.\" [valid 2025-09-24 to now]\n\nAlso there's \"Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14.\" — but that's Team Atlas, not Boreal.\n\nSo the answer is Marcus Oyelaran.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1655,
+   "completion_tokens": 196,
+   "total_tokens": 1851,
+   "cost": 0.000165445,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000165445,
+    "upstream_inference_prompt_cost": 0.000116445,
+    "upstream_inference_completions_cost": 4.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 190,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4020466249785386,
+ "fetched_at": "2026-09-06T01:23:52Z"
+}

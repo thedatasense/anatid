@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-011 was caused by an index missing after the schema migration. [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- INC-2025-004 was caused by a notifier consumer offset stuck after a broker restart. [valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- Duplicate deliveries in INC-2026-003 came from retries without an idempotency key. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The webhook dispatcher delivered some events twice on 2026-02-08 during INC-2026-003. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-07-06. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- The scheduler ran the nightly jobs twice on 2026-05-16 during INC-2026-009. [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- A silent reindex failure left stale results for two days in INC-2025-023. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Notifier consumers will commit offsets every five seconds as follow-up to INC-2025-004. [decision; valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- Certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017. [decision; valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- Notifier missed alerts for 40 minutes on 2025-03-04 during incident INC-2025-004. [valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- Ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011. [decision; valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- Ledger saw write latency spike tenfold for an hour on 2025-04-13 during incident INC-2025-011. [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- A partner asked for key rotation in their security review. [valid 2025-09-16 to now; recorded by standup/atlas/2025-09-16]\n- Priya wrote up the handover doc for Lena for the Ledger handover on 2025-12-10. [valid 2025-12-10 to now; recorded by handover/2025-12-10-ledger]\n- Priya runs the quarterly capacity review. [valid 2025-02-19 to now; recorded by standup/atlas/2025-02-19]\n\nQuestion: On what date was the review of INC-2025-017 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657994-5gpDWkmLp7u7VfTGoEQp",
+  "object": "chat.completion",
+  "created": 1788657994,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-07-09",
+     "refusal": null,
+     "reasoning": "The question asks: \"On what date was the review of INC-2025-017 written?\"\n\nLooking at the memory entries about INC-2025-017:\n- INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-07-06. [valid 2025-07-09 to now]\n- Certificate expiry will alert 30 days ahead... [decision; valid 2025-07-09 to now]\n\nThe entries are \"valid 2025-07-09 to now\". This suggests the review was recorded/valid starting 2025-07-09. But does the memory explicitly say when the review was written? The validity start date is 2025-07-09, which likely corresponds to when the review was recorded. However, the memory doesn't explicitly state \"the review of INC-2025-017 was written on X date.\"\n\nHmm. The rule says answer only from memory. The memory shows entries recorded by incident-review/INC-2025-017 valid from 2025-07-09. The convention seems to be that the valid-from date is the date the review was recorded. But is that \"the date the review was written\"? It's a reasonable inference that the review was written on 2025-07-09, but the memory doesn't explicitly state this.\n\nThis is ambiguous. The instructions say if the memory does not contain the answer, reply \"I don't know\". The memory entries carry dates they were recorded — actually the rules say \"Memory entries carry the date they were recorded.\" The entries for INC-2025-017 are valid from 2025-07-09. So the review was recorded on 2025-07-09? Actually \"valid 2025-07-09 to now\" — that's the validity start, which for these entries corresponds to the recording period.\n\nGiven the pattern of other incidents: INC-2025-023 incident occurred 2025-10-24, entries valid from 2025-10-27. INC-2026-003 event on 2026-02-08, entries valid from 2026-02-11. INC-2026-009 event on 2026-05-16, entries valid from 2026-05-22. So the valid-from date is when the review was written.\n\nSo the review of INC-2025-017 was written on 2025-07-09. That seems like the intended answer.\n\nThe answer: 2025-07-09.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"On what date was the review of INC-2025-017 written?\"\n\nLooking at the memory entries about INC-2025-017:\n- INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-07-06. [valid 2025-07-09 to now]\n- Certificate expiry will alert 30 days ahead... [decision; valid 2025-07-09 to now]\n\nThe entries are \"valid 2025-07-09 to now\". This suggests the review was recorded/valid starting 2025-07-09. But does the memory explicitly say when the review was written? The validity start date is 2025-07-09, which likely corresponds to when the review was recorded. However, the memory doesn't explicitly state \"the review of INC-2025-017 was written on X date.\"\n\nHmm. The rule says answer only from memory. The memory shows entries recorded by incident-review/INC-2025-017 valid from 2025-07-09. The convention seems to be that the valid-from date is the date the review was recorded. But is that \"the date the review was written\"? It's a reasonable inference that the review was written on 2025-07-09, but the memory doesn't explicitly state this.\n\nThis is ambiguous. The instructions say if the memory does not contain the answer, reply \"I don't know\". The memory entries carry dates they were recorded — actually the rules say \"Memory entries carry the date they were recorded.\" The entries for INC-2025-017 are valid from 2025-07-09. So the review was recorded on 2025-07-09? Actually \"valid 2025-07-09 to now\" — that's the validity start, which for these entries corresponds to the recording period.\n\nGiven the pattern of other incidents: INC-2025-023 incident occurred 2025-10-24, entries valid from 2025-10-27. INC-2026-003 event on 2026-02-08, entries valid from 2026-02-11. INC-2026-009 event on 2026-05-16, entries valid from 2026-05-22. So the valid-from date is when the review was written.\n\nSo the review of INC-2025-017 was written on 2025-07-09. That seems like the intended answer.\n\nThe answer: 2025-07-09.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1160,
+   "completion_tokens": 588,
+   "total_tokens": 1748,
+   "cost": 0.00022632,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00022632,
+    "upstream_inference_prompt_cost": 7.932e-05,
+    "upstream_inference_completions_cost": 0.000147
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 580,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.880630417028442,
+ "fetched_at": "2026-09-06T01:26:40Z"
+}

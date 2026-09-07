@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal announced at standup on 2026-03-13 a deploy freeze for Ledger from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-13 to now; recorded by standup/boreal/2026-03-13]\n- The webhooks service has a deploy window on Thursdays between 07:00 and 09:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-04-14 to now; recorded by standup/ember/2025-04-14]\n- The job scheduler has a deploy window on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-08-08 to now; recorded by standup/dune/2025-08-08]\n    earlier: The job scheduler can be released on Tuesdays between 13:00 and 15:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-21 to 2025-08-08; recorded by standup/ember/2025-03-21]\n- The product catalog has a deploy window on Tuesdays and Thursdays between 10:00 and 12:00 UTC as of 2025-11-12. [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The product catalog has a deploy window on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- The reporting service was moved off direct Ledger queries because nightly Ledger scans were blocking billing runs. [valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Priya wrote up the handover doc for Lena for the Ledger handover on 2025-12-10. [valid 2025-12-10 to now; recorded by handover/2025-12-10-ledger]\n- Team Dune observed on 2025-12-08 that Ledger's p99 latency doubled following Tuesday's deploy. [valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- Ledger is owned by Cinder as of 2026-04-29, after Boreal handed it over. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n    earlier: Ledger is owned by the Boreal team as of 2025-12-10, after Team Atlas handed it over. [decision; valid 2025-12-10 to 2026-04-29; recorded by handover/2025-12-10-ledger]\n    earlier: Ledger is owned by Team Atlas as of 2025-01-08. [valid 2025-01-08 to 2025-12-10; recorded by standup/atlas/2025-01-08]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- The reports pipeline depends on Ledger for the nightly balance export, so if Ledger is down the reports pipeline is down. [valid 2025-02-06 to now; recorded by standup/dune/2025-02-06]\n- billing-api can be released on weekday mornings before 11:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-24 to now; recorded by standup/atlas/2025-03-24]\n- Ledger is not Team Dune's service, so Team Dune flagged the latency issue instead of fixing it. [valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n- After the cache change, Ledger's memory use grew steadily for a week. [valid 2025-05-28 to now; recorded by standup/ember/2025-05-28]\n- Ledger is not Team Atlas's service, so Team Atlas flagged the disk usage jump instead of fixing it. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- Ledger saw write latency spike tenfold for an hour on 2025-04-13 during incident INC-2025-011. [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n\nQuestion: What was the deploy window for the ledger before it changed?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657312-bG7BCcUJT1L1IP8uSgaG",
+  "object": "chat.completion",
+  "created": 1788657312,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"What was the deploy window for the ledger before it changed?\"\n\nLooking through the memory for Ledger deploy windows... I see a deploy freeze for Ledger from 2026-03-30 to 2026-04-03, but that's a freeze, not a deploy window. There are deploy windows for webhooks, reporting, authentication gateway, job scheduler, product catalog, and billing-api — but no deploy window for Ledger itself.\n\nSo the memory does not contain a deploy window for Ledger, nor any record of it changing. The answer should be \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"What was the deploy window for the ledger before it changed?\"\n\nLooking through the memory for Ledger deploy windows... I see a deploy freeze for Ledger from 2026-03-30 to 2026-04-03, but that's a freeze, not a deploy window. There are deploy windows for webhooks, reporting, authentication gateway, job scheduler, product catalog, and billing-api — but no deploy window for Ledger itself.\n\nSo the memory does not contain a deploy window for Ledger, nor any record of it changing. The answer should be \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1581,
+   "completion_tokens": 127,
+   "total_tokens": 1708,
+   "cost": 0.00030065,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00030065,
+    "upstream_inference_prompt_cost": 0.00023715,
+    "upstream_inference_completions_cost": 6.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 121,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 10.555728334002197,
+ "fetched_at": "2026-09-06T01:15:23Z"
+}

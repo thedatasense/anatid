@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-04-22, the search indexer is pinned to OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- The Dune team owns the reports pipeline as of 2025-03-20. [valid 2025-03-20 to now; recorded by standup/dune/2025-03-20]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- The Cinder team owns the job scheduler as of 2025-09-23, when ownership transferred from the Dune team. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The Dune team owns the job scheduler as of 2025-09-05. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- The Atlas team owns the image resizer as of 2025-11-26, when ownership transferred from the Ember team. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The Ember team owns the image resizer as of 2025-03-20. [decision; valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: The Dune team owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- As of 2025-12-19, the Atlas team owns the product catalog, having taken it over from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [constraint; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, when ownership passed from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date. [decision; valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: The Ember team owns the authentication gateway. [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- On 2026-06-09, the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The indexer served stale results for two days on 2025-10-03 during incident INC-2025-023. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- On 2026-02-10, the Boreal team observed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-02-10 to now; recorded by standup/boreal/2026-02-10-2]\n- On 2026-05-27, the Atlas team observed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2025-12-18, the Atlas team decided that the indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes. [decision; valid 2025-12-18 to now; recorded by standup/atlas/2025-12-18]\n- The Ember team is a one-person team consisting of Oskar. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- Tomasz left the Atlas team and joined the Dune team on 2025-07-30. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n- On 2026-03-20, Marcus moved from the Boreal team to the Atlas team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- On 2025-12-19, the Atlas team took over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n\nQuestion: Which team owns search-indexer now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653225-gwZWnRbTat8G16jIrAcM",
+  "object": "chat.completion",
+  "created": 1788653226,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The Boreal team",
+     "refusal": null,
+     "reasoning": "The question asks which team owns the search-indexer now (today is 2026-06-30).\n\nLooking at the memory:\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n\nThis is the latest entry, valid to now. So the answer is the Boreal team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owns the search-indexer now (today is 2026-06-30).\n\nLooking at the memory:\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n\nThis is the latest entry, valid to now. So the answer is the Boreal team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1650,
+   "completion_tokens": 110,
+   "total_tokens": 1760,
+   "cost": 0.00013973,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013973,
+    "upstream_inference_prompt_cost": 0.00011223,
+    "upstream_inference_completions_cost": 2.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 104,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.792564624978695,
+ "fetched_at": "2026-09-06T00:07:07Z"
+}

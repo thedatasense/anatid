@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of the 2026-06-18 rotation, Diego holds the Ember team pager. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of the 2026-05-18 rotation, Oskar holds the Ember team pager, having taken it over from Diego. [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of the 2026-03-31 rotation, Diego Alvarez holds the Ember team pager, having taken it over from Oskar. [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n- On 2026-06-18, the Ember team on-call swapped and Diego carries the phone until the next rotation. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n- Oskar runs the weekly architecture review. [valid 2026-06-16 to now; recorded by standup/ember/2026-06-16]\n- As of 2026-06-08, Farah is back on the Team Dune on-call rotation as the primary on-call. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Farah is off the Team Dune on-call rotation. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n- As of 2026-06-08, Farah is the primary on-call for Team Dune. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Tomasz Nowak is the primary on-call for Team Dune. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n- On the 2026-06-08 rotation day, Tomasz Nowak handed the Team Dune pager to Farah. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n- As of 2026-05-26, the billing service sits with Team Dune; Team Boreal no longer owns it. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: The billing service lives with Team Boreal as of the 2025-03-17 handover. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- On 2026-05-25, Team Atlas observed that the webhook dispatcher's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- As of 2026-05-25, Marcus has the Team Atlas pager for this cycle, taking over from Priya. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, Priya has the Team Atlas pager for this cycle, taking over from Marcus. [decision; valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Marcus carries the Team Atlas pager for this cycle instead of Priya. [decision; valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n    earlier: As of 2025-07-03, Priya carries the Team Atlas pager for this cycle instead of Tomasz Nowak. [decision; valid 2025-07-03 to 2026-03-09; recorded by standup/atlas/2025-07-03]\n    earlier: As of 2025-05-09, Tomasz Nowak carries the Team Atlas pager for this cycle instead of Priya. [decision; valid 2025-05-09 to 2025-07-03; recorded by standup/atlas/2025-05-09]\n    earlier: As of 2025-04-07, Priya carries the Team Atlas pager until the next rotation. [decision; valid 2025-04-07 to 2025-05-09; recorded by standup/atlas/2025-04-07]\n    earlier: Tomasz Nowak takes the Atlas pager for the cycle starting 2025-02-19. [decision; valid 2025-02-19 to 2025-04-07; recorded by standup/atlas/2025-02-19]\n- As of 2026-05-25, Marcus carries the Team Atlas pager this cycle, having picked up the on-call shift from Priya. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25]\n    earlier: As of 2026-04-23, Priya is back on the Team Atlas on-call rotation, carrying the pager this cycle. [valid 2026-04-23 to 2026-05-25; recorded by standup/atlas/2026-04-23]\n    earlier: As of 2026-03-09, Priya is off the Team Atlas on-call rotation. [valid 2026-03-09 to 2026-04-23; recorded by standup/atlas/2026-03-09]\n- On 2026-05-18, the Ember team observed that the auth gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- On 2026-05-18, Oskar picked up the Ember team on-call shift from Diego. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- On 2026-05-04, Team Boreal decided that the event bus will retain messages for seven days because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n\nQuestion: Which version is the ledger pinned to, and until when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654656-bMXiWjtdoVGuig8U49AT",
+  "object": "chat.completion",
+  "created": 1788654656,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The user asks: \"Which version is the ledger pinned to, and until when?\"\n\nLooking through the memory, there's nothing about a ledger or version pinning. The memory covers pager rotations, service ownership, decisions about event bus retention, no-deploy Friday, webhook dispatcher memory, auth gateway error rates. No mention of a ledger version.\n\nSo the answer is: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"Which version is the ledger pinned to, and until when?\"\n\nLooking through the memory, there's nothing about a ledger or version pinning. The memory covers pager rotations, service ownership, decisions about event bus retention, no-deploy Friday, webhook dispatcher memory, auth gateway error rates. No mention of a ledger version.\n\nSo the answer is: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1823,
+   "completion_tokens": 84,
+   "total_tokens": 1907,
+   "cost": 5.0205e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1792,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.0205e-05,
+    "upstream_inference_prompt_cost": 2.9205e-05,
+    "upstream_inference_completions_cost": 2.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 78,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8794748329673894,
+ "fetched_at": "2026-09-06T00:30:58Z"
+}

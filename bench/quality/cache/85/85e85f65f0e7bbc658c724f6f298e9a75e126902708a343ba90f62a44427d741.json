@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Yuki Tanaka is on Cinder. [valid 2025-01-08 to now; recorded by standup/cinder/2025-01-08]\n- On 2025-07-17, Yuki Tanaka handed the Cinder pager to Diego on rotation day. [valid 2025-07-17 to now; recorded by standup/cinder/2025-07-17]\n- Yuki Tanaka runs the monthly cost review. [valid 2025-06-27 to now; recorded by standup/cinder/2025-06-27]\n- As of 2025-11-27, Yuki Tanaka takes the Cinder pager from Diego. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n- As of 2025-11-27, the Cinder pager pages Yuki Tanaka, not Diego. [constraint; valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: As of 2025-10-24, the Cinder pager pages Diego this cycle, not Yuki Tanaka. [constraint; valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n    earlier: As of 2025-09-05, the Cinder team says to page Yuki Tanaka for anything this cycle, not Diego. [constraint; valid 2025-09-05 to 2025-10-24; recorded by standup/cinder/2025-09-05]\n    earlier: Diego has the Cinder pager as of 2025-07-17, taking over from Yuki Tanaka. [valid 2025-07-17 to 2025-09-05; recorded by standup/cinder/2025-07-17]\n    earlier: Yuki Tanaka has the Cinder pager as of 2025-06-06, taking over from Diego. [valid 2025-06-06 to 2025-07-17; recorded by standup/cinder/2025-06-06]\n    earlier: Diego has the Cinder pager as of 2025-04-24, taking over from Yuki Tanaka. [valid 2025-04-24 to 2025-06-06; recorded by standup/cinder/2025-04-24]\n    earlier: Yuki Tanaka has the Cinder pager for the cycle starting 2025-02-27, taking over from Diego. [valid 2025-02-27 to 2025-04-24; recorded by standup/cinder/2025-02-27]\n- As of 2025-11-27, Diego is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on Cinder. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2025-10-24, Diego has the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to now; recorded by standup/cinder/2025-10-24]\n- As of 2025-11-27, Diego Alvarez is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- The Atlas team planning meeting is every Tuesday. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- The Ember team is a one-person team consisting of Oskar. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- As of 2026-04-14, Farah is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is primary on-call for the Dune team, having taken over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz Nowak has the Dune team pager, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still has the Dune team pager. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n\nQuestion: Which team is Yuki on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653180-FZ4dGewpBIPEQg4KeX3H",
+  "object": "chat.completion",
+  "created": 1788653180,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "SiliconFlow",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Cinder",
+     "refusal": null,
+     "reasoning": "The question asks which team Yuki is on. Memory says \"Yuki Tanaka is on Cinder\" valid 2025-01-08 to now. No later entry supersedes that. Diego left Cinder for Ember, but Yuki remains on Cinder.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Yuki is on. Memory says \"Yuki Tanaka is on Cinder\" valid 2025-01-08 to now. No later entry supersedes that. Diego left Cinder for Ember, but Yuki remains on Cinder.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1643,
+   "completion_tokens": 57,
+   "total_tokens": 1700,
+   "cost": 0.00027495,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00027495,
+    "upstream_inference_prompt_cost": 0.00024645,
+    "upstream_inference_completions_cost": 2.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 53,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.5676273750141263,
+ "fetched_at": "2026-09-06T00:06:22Z"
+}

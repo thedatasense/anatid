@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns the indexer as of 2025-01-17. [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- Marcus Oyelaran walked Oskar through the indexer runbook on 2025-11-18. [valid 2025-11-18 to now; recorded by handover/2025-11-18-search-indexer]\n- The indexer moved from Boreal to Team Dune as of 2025-11-18. [decision; valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: The indexer moved from Boreal to Ember as of 2025-11-18. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n- Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Team Dune owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal still owns the indexer as of 2025-09-15. [valid 2025-09-15 to 2025-11-18; recorded by standup/boreal/2025-09-15-2]\n- The indexer's disk usage jumped 30 percent after the retention change, as noticed by Cinder on 2025-08-29. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29-2]\n- Team Atlas observed on 2025-11-11 that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- The indexer moved from Team Dune to Boreal as of 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n- The indexer must stay on OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-08-13 to now; recorded by standup/boreal/2025-08-13]\n- The indexer will rebuild the index nightly instead of on every catalog write, as agreed on 2025-11-07. [decision; valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- A silent reindex failure left stale results for two days in INC-2025-023. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- On 2026-03-16, Ember noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-03-16 to now; recorded by standup/ember/2026-03-16]\n- The indexer's incremental updates left stale entries behind after failed writes. [valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- Reindex jobs will page on failure. [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Lena picked up the Boreal on-call pager from Marcus Oyelaran on 2025-08-12. [decision; valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12]\n- The image-resizer pager rings Team Dune, not Boreal, as of 2026-01-20. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: The image-resizer pager rings the Boreal team, not Cinder, as of 2025-11-19. [decision; valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n- Team Dune took over image-resizer from Boreal on 2026-01-20. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n- Yuki walked Lena through the notifier runbook on 2026-04-06. [valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- Farah Haddad walked Yuki through the image-resizer runbook on 2025-06-25. [valid 2025-06-25 to now; recorded by handover/2025-06-25-image-resizer]\n\nQuestion: Who was responsible for search-indexer on 2025-12-24?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788656737-4r1AG95pzf1diQlL4MAh",
+  "object": "chat.completion",
+  "created": 1788656737,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Dune",
+     "refusal": null,
+     "reasoning": "The question asks about who was responsible for search-indexer on 2025-12-24.\n\nLooking at ownership timeline:\n- Boreal owns as of 2025-02-28 (valid 2025-02-28 to now, but superseded)\n- Ember owns as of 2025-11-18 (valid 2025-11-18 to 2025-12-15)\n- Team Dune owns as of 2025-11-18 (valid 2025-12-15 to 2026-04-22)\n- Boreal owns as of 2026-04-22 (valid 2026-04-22 to now)\n\nOn 2025-12-24, Team Dune owns the indexer (valid from 2025-12-15 to 2026-04-22).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about who was responsible for search-indexer on 2025-12-24.\n\nLooking at ownership timeline:\n- Boreal owns as of 2025-02-28 (valid 2025-02-28 to now, but superseded)\n- Ember owns as of 2025-11-18 (valid 2025-11-18 to 2025-12-15)\n- Team Dune owns as of 2025-11-18 (valid 2025-12-15 to 2026-04-22)\n- Boreal owns as of 2026-04-22 (valid 2026-04-22 to now)\n\nOn 2025-12-24, Team Dune owns the indexer (valid from 2025-12-15 to 2026-04-22).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1536,
+   "completion_tokens": 180,
+   "total_tokens": 1716,
+   "cost": 0.00015252,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015252,
+    "upstream_inference_prompt_cost": 0.00010752,
+    "upstream_inference_completions_cost": 4.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 175,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.750570583040826,
+ "fetched_at": "2026-09-06T01:05:40Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Why do notifier consumers commit offsets every five seconds?\nGold answer: a stuck offset went unnoticed for 40 minutes during INC-2025-004\nAlso accepted: (none)\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: Because INC-2025-004's root cause was a consumer offset stuck after a broker restart."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655589-s22ggUubytTNY9Z2SYZM",
+  "object": "chat.completion",
+  "created": 1788655589,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Sail Research",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\":true,\"reason\":\"The answer states the core gold fact that a stuck consumer offset was involved in INC-2025-004, with additional context that is acceptable under the rule.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer: \"a stuck offset went unnoticed for 40 minutes during INC-2025-004\". The answer to grade: \"Because INC-2025-004's root cause was a consumer offset stuck after a broker restart.\"\n\nThe answer states a stuck offset related to INC-2025-004. It mentions \"stuck after a broker restart\" — extra context, but the core fact (stuck offset during INC-2025-004) is present. The rule says extra correct context is fine. Does \"after a broker restart\" contradict? It adds a cause not in gold, but rule says extra correct context is fine; we can't verify but the core fact matches. The gold says \"went unnoticed for 40 minutes\" — the answer doesn't mention 40 minutes but that's not required; it states the stuck offset fact. I'd say correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer: \"a stuck offset went unnoticed for 40 minutes during INC-2025-004\". The answer to grade: \"Because INC-2025-004's root cause was a consumer offset stuck after a broker restart.\"\n\nThe answer states a stuck offset related to INC-2025-004. It mentions \"stuck after a broker restart\" — extra context, but the core fact (stuck offset during INC-2025-004) is present. The rule says extra correct context is fine. Does \"after a broker restart\" contradict? It adds a cause not in gold, but rule says extra correct context is fine; we can't verify but the core fact matches. The gold says \"went unnoticed for 40 minutes\" — the answer doesn't mention 40 minutes but that's not required; it states the stuck offset fact. I'd say correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 226,
+   "completion_tokens": 228,
+   "total_tokens": 454,
+   "cost": 0.0001479,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001479,
+    "upstream_inference_prompt_cost": 3.39e-05,
+    "upstream_inference_completions_cost": 0.000114
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 0,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.468549000041094,
+ "fetched_at": "2026-09-06T00:46:33Z"
+}

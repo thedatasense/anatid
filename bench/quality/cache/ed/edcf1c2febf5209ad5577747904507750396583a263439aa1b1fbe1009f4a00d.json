@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- The root cause of INC-2025-004 was a consumer offset stuck after a broker restart. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- On 2025-09-08, Team Boreal observed that the notifier's request volume halved after the client rollout and pinged the owners. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- On 2025-04-26, the ledger saw write latency spike tenfold for an hour during INC-2025-011. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- On 2026-01-13, Team Atlas noticed that the ledger's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- INC-2025-011 was caused by an index missing after the schema migration. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- On 2026-01-05, Team Cinder observed that the ledger's disk usage jumped 30 percent after the retention change. [valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- Team Boreal kept the notifier until 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-notifier]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- On 2026-01-01, Team Cinder noticed that the indexer's disk usage jumped 30 percent after the retention change and pinged the owners. [valid 2026-01-01 to now; recorded by standup/cinder/2026-01-01]\n- On 2025-03-17, Tomasz Nowak wrote the handover document for the billing service handover for Marcus. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- On 2025-07-28, Team Cinder observed that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- As of 2025-11-13, the ledger lives with the Ember team; Team Atlas kept it until then. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n- A silent reindex failure left stale results for two days in INC-2025-023. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n\nQuestion: Which note corrected the recorded owner of reporting, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 12000
+ },
+ "response": {
+  "id": "gen-1788654457-sbd0uS3WQqfBjbHddInt",
+  "object": "chat.completion",
+  "created": 1788654457,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which note corrected the recorded owner of reporting, and when?\"\n\nLooking at the memory, I need to find entries about the reporting service's owner. Let me scan:\n\n- \"On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\"\n\nHmm, this is a runbook walkthrough, not ownership. The reporting service dependency entries:\n- \"As of 2025-09-15, the reporting service no longer depends on the ledger...\" recorded by standup/dune/2025-09-15\n- \"The reporting service depends on the ledger...\" recorded by standup/dune/2025-04-08\n\nNone of these record an owner of the reporting service. There's no handover entry saying \"the reporting service lives with Team X\" or \"Team Y kept the reporting service until...\".\n\nThe handover/2025-11-07-reporting note is about a runbook walkthrough, not ownership correction. So the memory does not contain an answer about who corrected the recorded owner of reporting.\n\nSo the answer should be \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which note corrected the recorded owner of reporting, and when?\"\n\nLooking at the memory, I need to find entries about the reporting service's owner. Let me scan:\n\n- \"On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\"\n\nHmm, this is a runbook walkthrough, not ownership. The reporting service dependency entries:\n- \"As of 2025-09-15, the reporting service no longer depends on the ledger...\" recorded by standup/dune/2025-09-15\n- \"The reporting service depends on the ledger...\" recorded by standup/dune/2025-04-08\n\nNone of these record an owner of the reporting service. There's no handover entry saying \"the reporting service lives with Team X\" or \"Team Y kept the reporting service until...\".\n\nThe handover/2025-11-07-reporting note is about a runbook walkthrough, not ownership correction. So the memory does not contain an answer about who corrected the recorded owner of reporting.\n\nSo the answer should be \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1304,
+   "completion_tokens": 261,
+   "total_tokens": 1565,
+   "cost": 0.00015537,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015537,
+    "upstream_inference_prompt_cost": 9.012e-05,
+    "upstream_inference_completions_cost": 6.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 255,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.294973124982789,
+ "fetched_at": "2026-09-06T00:27:40Z"
+}

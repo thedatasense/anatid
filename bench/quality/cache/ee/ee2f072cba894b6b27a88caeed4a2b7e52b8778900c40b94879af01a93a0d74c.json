@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- As of 2025-09-23, the reporting service no longer relies on the ledger service; it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to 2025-09-23; recorded by standup/dune/2025-06-24]\n- The reporting service no longer depends on the ledger service for the nightly balance export; as of 2025-09-23 it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- The notifier depends on the bus for delivery events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- The webhook dispatcher depends on the bus for outbound events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- The reporting service stopped using the ledger service because the nightly ledger scans were blocking billing runs. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- As of the 2025-11-24 handover, the bus' dashboards and alerts are being repointed. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- As of 2025-12-05, the reporting service is owned by the Ember team, having transferred from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is a Dune team service. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- The Dune team observed on 2025-09-23 that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- The Boreal team observed on 2025-11-03 that the notification service's CPU sat at 90 percent after the traffic shift. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n- The Dune team observed on 2025-12-29 that the bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team, not the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- The webhook dispatcher is owned by the Boreal team as of 2025-05-15, when ownership moved from the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team, which took over ownership from the Boreal team on 2025-03-03. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- On 2026-05-27, the Atlas team decided that the bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- During INC-2026-003, the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- The Boreal team observed on 2025-12-01 that the billing API's error rate crept up to 2 percent after the dependency bump. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- On 2026-04-14, the Dune team observed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n\nQuestion: What did reporting depend on before it switched to the event-bus?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653706-M8X6m3vJMpCac8cqMmhs",
+  "object": "chat.completion",
+  "created": 1788653706,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger service",
+     "refusal": null,
+     "reasoning": "The question asks what the reporting service depended on before it switched to the bus. According to memory, the reporting service relied on the ledger service until 2025-09-23, when it switched to the bus. So the answer: the ledger service.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks what the reporting service depended on before it switched to the bus. According to memory, the reporting service relied on the ledger service until 2025-09-23, when it switched to the bus. So the answer: the ledger service.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1558,
+   "completion_tokens": 57,
+   "total_tokens": 1615,
+   "cost": 0.00012342,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012342,
+    "upstream_inference_prompt_cost": 0.00010917,
+    "upstream_inference_completions_cost": 1.425e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 52,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.3647628329927102,
+ "fetched_at": "2026-09-06T00:15:07Z"
+}

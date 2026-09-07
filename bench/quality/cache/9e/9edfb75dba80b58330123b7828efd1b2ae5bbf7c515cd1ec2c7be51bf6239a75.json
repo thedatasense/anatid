@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-03-20, Marcus moved from the Boreal team to the Atlas team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team; ownership transferred from the Ember team on that date, and the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team; ownership transferred from the Ember team on that date. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team; ownership transferred from the Atlas team on that date. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- On 2025-07-30, on-call for the Atlas team passed from Tomasz to Priya Raman when Tomasz moved to the Dune team. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n- The Atlas team has moved to the second floor. [valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- Clients will cache feature-flags evaluations for 30 seconds, decided at the Atlas standup on 2025-09-02. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- Tomasz was on the Atlas team on-call rotation as of 2025-04-03, but left it on 2025-07-30 when he moved to the Dune team. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is back on the Atlas team on-call rotation as of 2025-04-03. [valid 2025-04-03 to 2025-07-30; recorded by standup/atlas/2025-04-03]\n    earlier: Tomasz had the first on-call rotation for the Atlas team but is off rotation as of 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- On 2025-12-31, the Atlas team observed that the feature-flags service's queue depth hit 50,000 following the marketing send, and since it was not their service, they flagged it. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- The job scheduler depends on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- The Boreal team consists of Lena, after Marcus moved to the Atlas team on 2026-03-20. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: The Boreal team consists of Lena and Marcus. [valid 2025-01-07 to 2026-03-20; recorded by standup/boreal/2025-01-07]\n- Oskar wrote up the feature-flags handover doc for Farah on 2026-02-11. [valid 2026-02-11 to now; recorded by handover/2026-02-11-feature-flags]\n- The webhook dispatcher is owned by the Boreal team as of 2025-05-15, when ownership moved from the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team, which took over ownership from the Boreal team on 2025-03-03. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- The job scheduler is owned by the Dune team as of 2025-06-25, when ownership moved from the Ember team. [decision; valid 2025-06-25 to now; recorded by handover/2025-06-25-scheduler]\n    earlier: The Ember team owns the job scheduler. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- The Cinder team reported on 2025-04-24 that feature-flags' p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- As of 2026-03-20, the Atlas team consists of Priya Raman and Marcus, after Marcus moved from the Boreal team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: As of 2025-07-30, the Atlas team consists of Priya Raman, after Tomasz left the team to join the Dune team. [valid 2025-07-30 to 2026-03-20; recorded by standup/atlas/2025-07-30]\n    earlier: The Atlas team in 2025 consists of Priya Raman and Tomasz. [valid 2025-01-06 to 2025-07-30; recorded by standup/atlas/2025-01-06]\n- The feature-flags service saw 40,000 requests per second at peak, most of them identical, as of 2025-09-02. [valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n\nQuestion: Why was feature-flags moved from Atlas to Ember?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653540-g0ci7aVoAikGmZHYuJGN",
+  "object": "chat.completion",
+  "created": 1788653540,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Why was feature-flags moved from Atlas to Ember?\"\n\nLooking at the memory: The feature-flags service was owned by Atlas team from 2025-01-08 to 2025-11-06. Then on 2025-11-06, ownership transferred from Atlas to Ember team. The memory entry says: \"As of 2025-11-06, the feature-flags service is owned by the Ember team; ownership transferred from the Atlas team on that date. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\"\n\nHowever, there's no reason stated for why the transfer happened. The memory just records that it happened, not why.\n\nWait, also note: the entry from 2026-03-09 says the Dune team never owned it, and the transfer on 2025-11-06 from Atlas to Ember — hmm, wait. Let's re-check. The 2026-03-09 correction says: \"As of 2026-02-11, the feature-flags service is owned by the Atlas team; ownership transferred from the Ember team on that date, and the Dune team never owned it.\" So the timeline: Atlas (2025-01-08 to 2025-11-06), then Ember (2025-11-06 to 2026-02-11), then Atlas (2026-02-11 to now).\n\nBut regardless of the timeline, the question asks for the reason WHY it was moved from Atlas to Ember. The memory doesn't state any reason for that transfer. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Why was feature-flags moved from Atlas to Ember?\"\n\nLooking at the memory: The feature-flags service was owned by Atlas team from 2025-01-08 to 2025-11-06. Then on 2025-11-06, ownership transferred from Atlas to Ember team. The memory entry says: \"As of 2025-11-06, the feature-flags service is owned by the Ember team; ownership transferred from the Atlas team on that date. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\"\n\nHowever, there's no reason stated for why the transfer happened. The memory just records that it happened, not why.\n\nWait, also note: the entry from 2026-03-09 says the Dune team never owned it, and the transfer on 2025-11-06 from Atlas to Ember — hmm, wait. Let's re-check. The 2026-03-09 correction says: \"As of 2026-02-11, the feature-flags service is owned by the Atlas team; ownership transferred from the Ember team on that date, and the Dune team never owned it.\" So the timeline: Atlas (2025-01-08 to 2025-11-06), then Ember (2025-11-06 to 2026-02-11), then Atlas (2026-02-11 to now).\n\nBut regardless of the timeline, the question asks for the reason WHY it was moved from Atlas to Ember. The memory doesn't state any reason for that transfer. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1707,
+   "completion_tokens": 365,
+   "total_tokens": 2072,
+   "cost": 0.000211595,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000211595,
+    "upstream_inference_prompt_cost": 0.000120345,
+    "upstream_inference_completions_cost": 9.125e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 359,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.26271804200951,
+ "fetched_at": "2026-09-06T00:12:24Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What is the scheduler's dependency?\nGold answer: feature-flags\nAlso accepted: the flags service; the feature flag service\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: I don't know"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658865-PyOQ4882fv1dRtTn6Ym9",
+  "object": "chat.completion",
+  "created": 1788658865,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer is 'I don't know', which the grading rule explicitly marks as wrong since it does not state the gold fact 'feature-flags' or an accepted alias.\"}",
+     "refusal": null,
+     "reasoning": "The question asks about the scheduler's dependency. Gold answer: feature-flags. Accepted aliases: the flags service; the feature flag service.\n\nThe answer to grade: \"I don't know\"\n\nPer the grading rule: \"A different value, or 'I don't know', is wrong.\"\n\nSo the answer is incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the scheduler's dependency. Gold answer: feature-flags. Accepted aliases: the flags service; the feature flag service.\n\nThe answer to grade: \"I don't know\"\n\nPer the grading rule: \"A different value, or 'I don't know', is wrong.\"\n\nSo the answer is incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 237,
+   "completion_tokens": 112,
+   "total_tokens": 349,
+   "cost": 3.8095e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.8095e-05,
+    "upstream_inference_prompt_cost": 1.0095e-05,
+    "upstream_inference_completions_cost": 2.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 65,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1108318750048056,
+ "fetched_at": "2026-09-06T01:41:07Z"
+}

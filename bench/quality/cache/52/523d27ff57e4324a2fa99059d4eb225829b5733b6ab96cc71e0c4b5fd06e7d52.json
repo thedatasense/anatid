@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- The webhook dispatcher needs the event bus to work. [valid 2026-02-04 to now; recorded by standup/dune/2026-02-04-2]\n- As of 2025-11-20, dashboards and alerts for the event bus are being repointed. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- On 2025-06-27, Team Boreal observed that the event bus's request volume halved following the client rollout, and flagged it since the event bus is not Team Boreal's service. [valid 2025-06-27 to now; recorded by standup/boreal/2025-06-27]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- As of 2025-11-20, the event bus is a Team Boreal service; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is a Team Cinder service; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is a Team Atlas service. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: As of 2025-03-31, the event bus remains a Team Boreal service. [valid 2025-03-31 to 2025-04-03; recorded by standup/boreal/2025-03-31]\n- On 2025-07-03, Team Cinder observed that the event bus's CPU sat at 90 percent following the traffic shift, and flagged it since the event bus is not Team Cinder's service. [valid 2025-07-03 to now; recorded by standup/cinder/2025-07-03]\n- The event bus deploys on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- As of 2025-11-20, the event bus is owned by Team Boreal; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is owned by Team Cinder; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: The event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n- On 2026-05-04, Team Boreal decided that the event bus will retain messages for seven days because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- On 2025-11-20, Team Boreal took over the event bus from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- As of 2026-02-10, the reports pipeline lives with Team Cinder; the Ember team kept it until then. [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- The reporting service may be released only on Thursdays between 07:00 and 09:00 UTC, and any other release time requires an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- On 2026-03-19, the Ember team observed that the scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n- On 2025-05-23, the Ember team observed that the webhooks service's request volume halved following the client rollout, and flagged it since the webhooks service is not the Ember team's service. [valid 2025-05-23 to now; recorded by standup/ember/2025-05-23]\n\nQuestion: What did reporting depend on before it switched to the event-bus?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654209-6AVqI4nJt9AbFoAUhxL0",
+  "object": "chat.completion",
+  "created": 1788654209,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger",
+     "refusal": null,
+     "reasoning": "The question asks what the reporting service depended on before it switched to the event bus. Memory says: \"As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. earlier: The reporting service depends on the ledger.\" So the answer is the ledger.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks what the reporting service depended on before it switched to the event bus. Memory says: \"As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. earlier: The reporting service depends on the ledger.\" So the answer is the ledger.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1723,
+   "completion_tokens": 70,
+   "total_tokens": 1793,
+   "cost": 0.000146725,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000146725,
+    "upstream_inference_prompt_cost": 0.000129225,
+    "upstream_inference_completions_cost": 1.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 66,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.6622843330260366,
+ "fetched_at": "2026-09-06T00:23:31Z"
+}

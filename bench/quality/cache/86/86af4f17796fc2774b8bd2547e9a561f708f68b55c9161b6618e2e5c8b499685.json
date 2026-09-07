@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal handed the event bus to Team Dune on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- The reporting service still relies on the event bus as of 2025-11-13. [valid 2025-11-13 to now; recorded by standup/boreal/2025-11-13]\n- The event bus pager rings the Boreal team, not Team Dune, as of 2025-11-24. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- The event bus deploys only on weekdays after 15:00 UTC per the change policy. [constraint; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17-2]\n    earlier: The event bus deploys on weekdays after 15:00 UTC per the change policy. [constraint; valid 2025-04-22 to 2026-03-17; recorded by standup/boreal/2025-04-22]\n- The event bus belongs to Boreal as of 2025-11-24, after Team Dune handed it over. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The event bus belongs to Team Dune as of 2025-09-09, after Boreal handed it over. [decision; valid 2025-09-09 to 2025-11-24; recorded by handover/2025-09-09-event-bus]\n    earlier: The event bus is a Boreal service. [valid 2025-01-09 to 2025-09-09; recorded by standup/boreal/2025-01-09]\n- Marcus Oyelaran wrote up the handover doc for Tomasz for the event bus handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly. [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Team Dune reported on 2025-12-08 that the event bus's request volume halved following the client rollout. [valid 2025-12-08 to now; recorded by standup/dune/2025-12-08-2]\n- Team Boreal reported at standup on 2025-11-11 that the event bus's CPU sat at 90 percent after the traffic shift. [valid 2025-11-11 to now; recorded by standup/boreal/2025-11-11-2]\n- Team Dune owns the job scheduler as of 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n    earlier: Ember owns the job scheduler. [valid 2025-01-20 to 2025-04-04; recorded by standup/ember/2025-01-20]\n- Boreal decided at standup on 2026-05-05 that the event bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-05 to now; recorded by standup/boreal/2026-05-05]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Team Dune owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal still owns the indexer as of 2025-09-15. [valid 2025-09-15 to 2025-11-18; recorded by standup/boreal/2025-09-15-2]\n- Team Dune owns image-resizer as of 2026-01-20, after Boreal handed it over. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: Boreal owns image-resizer as of 2025-11-19, after Cinder handed it over. [decision; valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n    earlier: Cinder owns image-resizer as of 2025-06-25. [decision; valid 2025-06-25 to 2025-11-19; recorded by handover/2025-06-25-image-resizer]\n    earlier: Team Dune owns image-resizer. [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20]\n- The reports pipeline went to Boreal as of 2025-06-25, not Ember; Team Ember never owned it, and Team Dune no longer owns it. [decision; valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n    earlier: Team Ember owns the reports pipeline as of 2025-06-25, and Team Dune no longer owns it. [decision; valid 2025-06-25 to 2025-07-03; recorded by handover/2025-06-25-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20-2]\n- The notifier moved from the Boreal team to the Cinder team as of 2025-11-19. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n\nQuestion: Who owns the event-bus today?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657233-fu3b3Gk4x6NcssuCjGKL",
+  "object": "chat.completion",
+  "created": 1788657233,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Boreal",
+     "refusal": null,
+     "reasoning": "The question asks who owns the event bus today (2026-06-30).\n\nMemory entries:\n- \"The event bus belongs to Boreal as of 2025-11-24, after Team Dune handed it over. [decision; valid 2025-11-24 to now]\" — this is the latest entry, valid to now.\n\nSo the answer is Boreal.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who owns the event bus today (2026-06-30).\n\nMemory entries:\n- \"The event bus belongs to Boreal as of 2025-11-24, after Team Dune handed it over. [decision; valid 2025-11-24 to now]\" — this is the latest entry, valid to now.\n\nSo the answer is Boreal.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1738,
+   "completion_tokens": 83,
+   "total_tokens": 1821,
+   "cost": 0.00028684,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00028684,
+    "upstream_inference_prompt_cost": 0.00024534,
+    "upstream_inference_completions_cost": 4.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 79,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.5711584169766866,
+ "fetched_at": "2026-09-06T01:13:54Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Diego is a member of Ember [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is a member of Cinder [valid 2025-01-08 to 2025-12-15; recorded by standup/cinder/2025-01-08]\n- Oskar is on call for Ember [valid 2026-06-17 to now; recorded by standup/ember/2026-06-17]\n    earlier: Diego is on call for Ember [valid 2026-05-13 to 2026-06-17; recorded by standup/ember/2026-05-13]\n    earlier: Oskar is on call for Ember [valid 2026-03-16 to 2026-05-13; recorded by standup/ember/2026-03-16]\n    earlier: Diego is on call for Ember [valid 2026-01-23 to 2026-03-16; recorded by standup/ember/2026-01-23]\n    earlier: Oskar is on call for Ember [valid 2025-01-13 to 2026-01-23; recorded by standup/ember/2025-01-13]\n- Oskar is a member of Ember [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- Oskar runs the weekly architecture review [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- Tomasz is on call for Dune [valid 2026-06-03 to now; recorded by standup/dune/2026-06-03]\n    earlier: Farah is on call for Dune [valid 2026-04-09 to 2026-06-03; recorded by standup/dune/2026-04-09]\n    earlier: Tomasz is on call for Dune [valid 2026-02-24 to 2026-04-09; recorded by standup/dune/2026-02-24]\n    earlier: Farah is on call for Dune [valid 2026-01-22 to 2026-02-24; recorded by standup/dune/2026-01-22]\n    earlier: Tomasz is on call for Dune [valid 2025-12-08 to 2026-01-22; recorded by standup/dune/2025-12-08]\n    earlier: Farah is on call for Dune [valid 2025-11-03 to 2025-12-08; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Dune [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Dune [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n- Ember adopted pairing on every production change [valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Marcus is a member of Atlas [valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n    earlier: Marcus is a member of Boreal [valid 2025-01-07 to 2026-03-17; recorded by standup/boreal/2025-01-07]\n- Priya is on call for Atlas [valid 2026-06-08 to now; recorded by standup/atlas/2026-06-08]\n    earlier: Marcus is on call for Atlas [valid 2026-04-14 to 2026-06-08; recorded by standup/atlas/2026-04-14]\n    earlier: Priya is on call for Atlas [valid 2025-07-16 to 2026-04-14; recorded by standup/atlas/2025-07-16]\n    earlier: Tomasz is on call for Atlas [valid 2025-06-13 to 2025-07-16; recorded by standup/atlas/2025-06-13]\n    earlier: Priya is on call for Atlas [valid 2025-05-14 to 2025-06-13; recorded by standup/atlas/2025-05-14]\n    earlier: Tomasz is on call for Atlas [valid 2025-04-04 to 2025-05-14; recorded by standup/atlas/2025-04-04]\n    earlier: Priya is on call for Atlas [valid 2025-02-19 to 2025-04-04; recorded by standup/atlas/2025-02-19]\n    earlier: Tomasz is on call for Atlas [valid 2025-01-09 to 2025-02-19; recorded by standup/atlas/2025-01-09]\n- Tomasz is a member of Dune [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Tomasz is a member of Atlas [valid 2025-01-06 to 2025-07-21; recorded by standup/atlas/2025-01-06]\n- Yuki is on call for Cinder [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is on call for Cinder [valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is on call for Cinder [valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego is on call for Cinder [valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki is on call for Cinder [valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Diego is on call for Cinder [valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Yuki is on call for Cinder [valid 2025-05-02 to 2025-06-13; recorded by standup/cinder/2025-05-02]\n    earlier: Diego is on call for Cinder [valid 2025-03-27 to 2025-05-02; recorded by standup/cinder/2025-03-27]\n    earlier: Yuki is on call for Cinder [valid 2025-02-17 to 2025-03-27; recorded by standup/cinder/2025-02-17]\n    earlier: Diego is on call for Cinder [valid 2025-01-16 to 2025-02-17; recorded by standup/cinder/2025-01-16]\n- The handover note of 2025-06-25 wrongly recorded Ember as the owner of reporting [valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n- Ember holds its planning meeting on Fridays [valid 2025-04-23 to now; recorded by standup/ember/2025-04-23]\n- The handover note of 2025-11-18 wrongly recorded Ember as the owner of search-indexer [valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n\nQuestion: Which team is Diego on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658554-T424ABef8xRmJ7m6zqrv",
+  "object": "chat.completion",
+  "created": 1788658554,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember",
+     "refusal": null,
+     "reasoning": "The question asks: Which team is Diego on now? Today is 2026-06-30.\n\nMemory: Diego is a member of Ember [valid 2025-12-15 to now]. Earlier: Diego was member of Cinder. So now Diego is on Ember.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which team is Diego on now? Today is 2026-06-30.\n\nMemory: Diego is a member of Ember [valid 2025-12-15 to now]. Earlier: Diego was member of Cinder. So now Diego is on Ember.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1932,
+   "completion_tokens": 60,
+   "total_tokens": 1992,
+   "cost": 0.00015222,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015222,
+    "upstream_inference_prompt_cost": 0.00013722,
+    "upstream_inference_completions_cost": 1.5e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 56,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.1344559999997728,
+ "fetched_at": "2026-09-06T01:35:57Z"
+}

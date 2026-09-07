@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What is the catalog's dependency?\nGold answer: image-resizer\nAlso accepted: the image resizer; the resizer\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: The resizer (for thumbnails)"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655589-uOi94fI1qj5zeH6thfU3",
+  "object": "chat.completion",
+  "created": 1788655589,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states 'the resizer', which is an accepted alias for the gold answer 'image-resizer', and the extra context about thumbnails is permissible.\"}\n",
+     "refusal": null,
+     "reasoning": "The answer is \"The resizer (for thumbnails)\". The gold answer is \"image-resizer\", accepted aliases include \"the resizer\". The answer states \"The resizer\" which is an accepted alias. The \"(for thumbnails)\" is extra context, which is fine per the rule. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer is \"The resizer (for thumbnails)\". The gold answer is \"image-resizer\", accepted aliases include \"the resizer\". The answer states \"The resizer\" which is an accepted alias. The \"(for thumbnails)\" is extra context, which is fine per the rule. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 232,
+   "completion_tokens": 110,
+   "total_tokens": 342,
+   "cost": 4.49e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.49e-05,
+    "upstream_inference_prompt_cost": 1.74e-05,
+    "upstream_inference_completions_cost": 2.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 63,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.7499344579991885,
+ "fetched_at": "2026-09-06T00:46:33Z"
+}

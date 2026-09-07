@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Priya wrote up the handover doc for Lena for the Ledger handover on 2025-12-10. [valid 2025-12-10 to now; recorded by handover/2025-12-10-ledger]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- As of 2026-05-01, Ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC. [decision; valid 2026-05-01 to now; recorded by standup/cinder/2026-05-01]\n- Ledger only ships on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-02-28 to now; recorded by standup/atlas/2025-02-28]\n- Ledger is pinned to Postgres 14 as of 2025-05-30. [constraint; valid 2025-05-30 to now; recorded by standup/atlas/2025-05-30]\n- The Boreal roster consists of Lena and Marcus Oyelaran as of 2025-01-07. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Oskar wrote up the handover doc for Farah for the job scheduler handover on 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n- Oskar wrote up the handover doc for Priya for the webhooks service handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- Billing-api depends on Ledger to work. [constraint; valid 2026-03-05 to now; recorded by standup/boreal/2026-03-05]\n- Boreal announced at standup on 2026-03-13 a deploy freeze for Ledger from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-13 to now; recorded by standup/boreal/2026-03-13]\n- Marcus Oyelaran wrote up the handover doc for Tomasz for the event bus handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- Cinder took over Ledger from Boreal on 2026-04-29. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n- The reports pipeline went to Boreal as of 2025-06-25, not Ember; Team Ember never owned it, and Team Dune no longer owns it. [decision; valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n    earlier: Team Ember owns the reports pipeline as of 2025-06-25, and Team Dune no longer owns it. [decision; valid 2025-06-25 to 2025-07-03; recorded by handover/2025-06-25-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20-2]\n- Priya walked Diego through the flags service runbook on 2025-02-13 as part of the handover. [valid 2025-02-13 to now; recorded by handover/2025-02-13-feature-flags]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- Marcus Oyelaran left Boreal and joined Team Atlas on 2026-03-17. [decision; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns the indexer as of 2025-01-17. [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- Ledger is owned by Cinder as of 2026-04-29, after Boreal handed it over. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n    earlier: Ledger is owned by the Boreal team as of 2025-12-10, after Team Atlas handed it over. [decision; valid 2025-12-10 to 2026-04-29; recorded by handover/2025-12-10-ledger]\n    earlier: Ledger is owned by Team Atlas as of 2025-01-08. [valid 2025-01-08 to 2025-12-10; recorded by standup/atlas/2025-01-08]\n- The indexer moved from Boreal to Team Dune as of 2025-11-18. [decision; valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: The indexer moved from Boreal to Ember as of 2025-11-18. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n\nQuestion: Which note recorded the handover of the ledger to Boreal, and on what date?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657482-T68wgIrwkYcQLIk19Jdr",
+  "object": "chat.completion",
+  "created": 1788657482,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "handover/2025-12-10-ledger, on 2025-12-10.",
+     "refusal": null,
+     "reasoning": "The question asks: which note recorded the handover of the ledger to Boreal, and on what date?\n\nLooking at memory: \"Ledger is owned by the Boreal team as of 2025-12-10, after Team Atlas handed it over.\" [recorded by handover/2025-12-10-ledger]\n\nAlso: \"Priya wrote up the handover doc for Lena for the Ledger handover on 2025-12-10.\" [recorded by handover/2025-12-10-ledger]\n\nThe note is handover/2025-12-10-ledger, date 2025-12-10.\n\nAnswer in one short line with just the value asked for: note name and date.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note recorded the handover of the ledger to Boreal, and on what date?\n\nLooking at memory: \"Ledger is owned by the Boreal team as of 2025-12-10, after Team Atlas handed it over.\" [recorded by handover/2025-12-10-ledger]\n\nAlso: \"Priya wrote up the handover doc for Lena for the Ledger handover on 2025-12-10.\" [recorded by handover/2025-12-10-ledger]\n\nThe note is handover/2025-12-10-ledger, date 2025-12-10.\n\nAnswer in one short line with just the value asked for: note name and date.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1821,
+   "completion_tokens": 176,
+   "total_tokens": 1997,
+   "cost": 0.000172895,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000172895,
+    "upstream_inference_prompt_cost": 0.000128895,
+    "upstream_inference_completions_cost": 4.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 153,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.5814740829518996,
+ "fetched_at": "2026-09-06T01:18:05Z"
+}

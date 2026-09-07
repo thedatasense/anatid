@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Dune owns the notifier [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: Cinder owns the notifier [valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: Boreal owns the notifier [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- Dune noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- Ember owns reporting [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: Dune owns reporting [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- Dune adopted a monthly game day [valid 2025-04-21 to now; recorded by standup/dune/2025-04-21]\n- Tomasz is on call for Dune [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n    earlier: Farah is on call for Dune [valid 2026-04-14 to 2026-05-22; recorded by standup/dune/2026-04-14]\n    earlier: Tomasz is on call for Dune [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: Farah is on call for Dune [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: Tomasz is on call for Dune [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: Farah is on call for Dune [valid 2025-10-15 to 2025-12-10; recorded by standup/dune/2025-10-15]\n    earlier: Tomasz is on call for Dune [valid 2025-09-04 to 2025-10-15; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Dune [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n- Dune holds its planning meeting on Wednesdays [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- Farah is a member of Dune [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- The handover note of 2026-02-11 wrongly recorded Dune as the owner of feature-flags [valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n- Tomasz is a member of Dune [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is a member of Atlas [valid 2025-01-06 to 2025-07-30; recorded by standup/atlas/2025-01-06]\n- Dune noticed that the catalog's request volume halved after the client rollout [observation; valid 2026-02-16 to now; recorded by standup/dune/2026-02-16]\n- Dune sits on the fourth floor [valid 2025-07-24 to now; recorded by standup/dune/2025-07-24]\n- Reporting depends on the event-bus [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: Reporting depends on the ledger [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- Dune noticed that the event-bus's request volume halved after the client rollout [observation; valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- Dune noticed that search-indexer's disk usage jumped 30 percent after the retention change [observation; valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- Dune noticed that auth-gateway's CPU sat at 90 percent after the traffic shift [observation; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- Reporting must stay on Python 3.11 until the pandas 3 upgrade lands [constraint; valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- Dune noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- Dune noticed that the notifier's memory use grew steadily for a week after the cache change [observation; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- Dune noticed that the event-bus's CPU sat at 90 percent after the traffic shift [observation; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- Dune noticed that image-resizer's cold start time tripled after the runtime upgrade [observation; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19-2]\n\nQuestion: Which team owned reporting before Dune?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788655003-RughrpdJ9aSCVr9SviE3",
+  "object": "chat.completion",
+  "created": 1788655003,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Novita",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which team owned reporting before Dune. From memory: \"Ember owns reporting [valid 2025-12-05 to now], earlier: Dune owns reporting [valid 2025-01-20 to 2025-12-05]\". So before Dune, who owned reporting? The memory only shows Dune and Ember owning reporting. There is no entry for who owned reporting before Dune (before 2025-01-20). The memory doesn't contain an earlier owner before Dune's tenure. So the answer should be \"I don't know\"? Wait — but the question could be interpreted as \"who owned reporting before Dune [i.e., the previous owner]\" — the chain is Ember (2025-12-05 to now) after Dune (2025-01-20 to 2025-12-05). Dune owned reporting from 2025-01-20. There's no earlier entry before 2025-01-20. So the memory doesn't say who owned reporting before Dune. Hmm, but wait — the current owner is Ember, and Dune owned it before Ember. Maybe the question is asking about before Dune — but there is no record. Alternatively, someone might misinterpret: \"before Dune\" could mean the earlier entry, which is Dune itself (since Ember currently owns). The earlier entry relative to now is Dune. But the question asks who owned reporting before Dune did. There is no record before 2025-01-20.\n\nActually, let me reconsider. The chain of entries: Ember (now), earlier Dune. So Dune is the predecessor of Ember. The question \"Which team owned reporting before Dune?\" — before Dune's ownership, there's no record. Answer: I don't know.\n\nHmm, but perhaps the intended trick: people might answer Ember (current owner) confusing it. But strictly, before Dune there's no record. So \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owned reporting before Dune. From memory: \"Ember owns reporting [valid 2025-12-05 to now], earlier: Dune owns reporting [valid 2025-01-20 to 2025-12-05]\". So before Dune, who owned reporting? The memory only shows Dune and Ember owning reporting. There is no entry for who owned reporting before Dune (before 2025-01-20). The memory doesn't contain an earlier owner before Dune's tenure. So the answer should be \"I don't know\"? Wait — but the question could be interpreted as \"who owned reporting before Dune [i.e., the previous owner]\" — the chain is Ember (2025-12-05 to now) after Dune (2025-01-20 to 2025-12-05). Dune owned reporting from 2025-01-20. There's no earlier entry before 2025-01-20. So the memory doesn't say who owned reporting before Dune. Hmm, but wait — the current owner is Ember, and Dune owned it before Ember. Maybe the question is asking about before Dune — but there is no record. Alternatively, someone might misinterpret: \"before Dune\" could mean the earlier entry, which is Dune itself (since Ember currently owns). The earlier entry relative to now is Dune. But the question asks who owned reporting before Dune did. There is no record before 2025-01-20.\n\nActually, let me reconsider. The chain of entries: Ember (now), earlier Dune. So Dune is the predecessor of Ember. The question \"Which team owned reporting before Dune?\" — before Dune's ownership, there's no record. Answer: I don't know.\n\nHmm, but perhaps the intended trick: people might answer Ember (current owner) confusing it. But strictly, before Dune there's no record. So \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1533,
+   "completion_tokens": 420,
+   "total_tokens": 1953,
+   "cost": 0.000219975,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000219975,
+    "upstream_inference_prompt_cost": 0.000114975,
+    "upstream_inference_completions_cost": 0.000105
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 414,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.7209957909653895,
+ "fetched_at": "2026-09-06T00:36:49Z"
+}

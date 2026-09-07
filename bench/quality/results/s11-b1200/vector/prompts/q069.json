@@ -1,0 +1,53 @@
+{
+ "qid": "q069",
+ "system": "vector",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2026-04-22] handover/2026-04-22-webhooks: The webhook dispatcher has a new home: Dune. Team Atlas kept it until today.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-04-11] handover/2025-04-11-webhooks: Quick one: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-11-24] handover/2025-11-24-event-bus: From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\n- [2025-09-09] handover/2025-09-09-webhooks: The Ember team handed the webhook dispatcher to team Atlas today; Oskar wrote up the handover doc for Priya.\n- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2026-03-25] handover/2026-03-25-billing-api: The billing API has a new home: team Dune. Boreal kept it until today.\n- [2025-04-23] standup/dune/2025-04-23: Team Dune adopted a monthly game day.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-12-15] handover/2025-12-15-search-indexer-correction: The 2025-11-18 note about the indexer named the wrong team. The Dune team took it over on that date; the Ember team did not.\n- [2026-01-12] standup/dune/2026-01-12: The scheduler remains a the Dune team service.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2026-04-21] handover/2026-04-21-feature-flags: The feature flag service has a new home: the Atlas team. The Dune team kept it until today.\n- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.\n- [2025-04-04] handover/2025-04-04-scheduler: The Ember team handed scheduler to Dune today; Oskar Lind wrote up the handover doc for Farah.\n- [2026-01-20] handover/2026-01-20-image-resizer: From today the pager for the resizer rings team Dune, not team Boreal. Ownership transferred.\n- [2025-03-31] standup/dune/2025-03-31: Farah still has the Dune pager.\n- [2025-09-16] standup/atlas/2025-09-16: Decision: webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review.\n- [2025-09-09] handover/2025-09-09-event-bus: Boreal handed the bus to the Dune team today; Marcus Oyelaran wrote up the handover doc for Tomasz Nowak.\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2025-08-08] standup/dune/2025-08-08: New deploy window for the job scheduler: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Tuesdays 13:00-15:00 UTC slot. Observation from the Dune team: after the marketing send, billing-api's queue depth hit 50,000.\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2025-12-08] standup/dune/2025-12-08-2: Heads-up from team Dune: the bus' request volume halved after the client rollout.\n- [2026-01-29] handover/2026-01-29-feature-flags: Handover: as of today the feature flag service moves from Cinder to team Dune. Yuki walked Farah Haddad through the runbook this morning.\n- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.\n- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for Dune goes to Farah.\n- [2026-06-03] standup/dune/2026-06-03: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2026-04-09] standup/dune/2026-04-09: Reminder from the Dune team: page Farah for anything this cycle, not Tomasz Nowak.\n- [2026-01-22] standup/dune/2026-01-22: Reminder from team Dune: page Farah for anything this cycle, not Tomasz.\n- [2026-02-24] standup/dune/2026-02-24: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.\n- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved.\n\nQuestion: Which team owned webhooks before Dune took it over?"
+  }
+ ],
+ "contexts": [
+  "- [2026-04-22] handover/2026-04-22-webhooks: The webhook dispatcher has a new home: Dune. Team Atlas kept it until today.",
+  "- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.",
+  "- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.",
+  "- [2025-04-11] handover/2025-04-11-webhooks: Quick one: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.",
+  "- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.",
+  "- [2025-11-24] handover/2025-11-24-event-bus: From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.",
+  "- [2025-09-09] handover/2025-09-09-webhooks: The Ember team handed the webhook dispatcher to team Atlas today; Oskar wrote up the handover doc for Priya.",
+  "- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.",
+  "- [2026-03-25] handover/2026-03-25-billing-api: The billing API has a new home: team Dune. Boreal kept it until today.",
+  "- [2025-04-23] standup/dune/2025-04-23: Team Dune adopted a monthly game day.",
+  "- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.",
+  "- [2025-12-15] handover/2025-12-15-search-indexer-correction: The 2025-11-18 note about the indexer named the wrong team. The Dune team took it over on that date; the Ember team did not.",
+  "- [2026-01-12] standup/dune/2026-01-12: The scheduler remains a the Dune team service.",
+  "- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.",
+  "- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.",
+  "- [2026-04-21] handover/2026-04-21-feature-flags: The feature flag service has a new home: the Atlas team. The Dune team kept it until today.",
+  "- [2025-01-09] standup/dune/2025-01-09: Team Dune is a one-person team at the moment: Farah.",
+  "- [2025-04-04] handover/2025-04-04-scheduler: The Ember team handed scheduler to Dune today; Oskar Lind wrote up the handover doc for Farah.",
+  "- [2026-01-20] handover/2026-01-20-image-resizer: From today the pager for the resizer rings team Dune, not team Boreal. Ownership transferred.",
+  "- [2025-03-31] standup/dune/2025-03-31: Farah still has the Dune pager.",
+  "- [2025-09-16] standup/atlas/2025-09-16: Decision: webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review.",
+  "- [2025-09-09] handover/2025-09-09-event-bus: Boreal handed the bus to the Dune team today; Marcus Oyelaran wrote up the handover doc for Tomasz Nowak.",
+  "- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.",
+  "- [2025-08-08] standup/dune/2025-08-08: New deploy window for the job scheduler: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Tuesdays 13:00-15:00 UTC slot. Observation from the Dune team: after the marketing send, billing-api's queue depth hit 50,000.",
+  "- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.",
+  "- [2025-12-08] standup/dune/2025-12-08-2: Heads-up from team Dune: the bus' request volume halved after the client rollout.",
+  "- [2026-01-29] handover/2026-01-29-feature-flags: Handover: as of today the feature flag service moves from Cinder to team Dune. Yuki walked Farah Haddad through the runbook this morning.",
+  "- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.",
+  "- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.",
+  "- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for Dune goes to Farah.",
+  "- [2026-06-03] standup/dune/2026-06-03: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.",
+  "- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.",
+  "- [2026-04-09] standup/dune/2026-04-09: Reminder from the Dune team: page Farah for anything this cycle, not Tomasz Nowak.",
+  "- [2026-01-22] standup/dune/2026-01-22: Reminder from team Dune: page Farah for anything this cycle, not Tomasz.",
+  "- [2026-02-24] standup/dune/2026-02-24: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.",
+  "- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved."
+ ],
+ "answer": "Atlas"
+}

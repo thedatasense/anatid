@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The first on-call rotation for Team Dune goes to Farah. [decision; valid 2025-01-13 to now; recorded by standup/dune/2025-01-13]\n- Farah and Tomasz are the members of Team Dune as of 2025-07-21. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Farah is the sole member of Team Dune as of 2025-01-09. [valid 2025-01-09 to 2025-07-21; recorded by standup/dune/2025-01-09]\n- Page Tomasz for anything this cycle for Team Dune, not Farah, as of 2026-06-03. [decision; valid 2026-06-03 to now; recorded by standup/dune/2026-06-03]\n    earlier: Page Farah for anything this cycle for Team Dune, not Tomasz, as of 2026-04-09. [decision; valid 2026-04-09 to 2026-06-03; recorded by standup/dune/2026-04-09]\n    earlier: Page Tomasz for anything this cycle for Team Dune, not Farah, as of 2026-02-24. [decision; valid 2026-02-24 to 2026-04-09; recorded by standup/dune/2026-02-24]\n    earlier: Farah is on call for Team Dune this cycle as of 2026-01-22, not Tomasz. [decision; valid 2026-01-22 to 2026-02-24; recorded by standup/dune/2026-01-22]\n    earlier: Tomasz is on call for Team Dune this cycle as of 2026-01-14. [valid 2026-01-14 to 2026-01-22; recorded by standup/dune/2026-01-14]\n- Tomasz took over the Team Dune on-call shift from Farah on 2025-12-08. [decision; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n    earlier: Farah is primary on call for Team Dune starting 2025-11-03. [decision; valid 2025-11-03 to 2025-12-08; recorded by standup/dune/2025-11-03]\n- Farah handed the Team Dune pager to Tomasz on 2025-09-04. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- Team Dune is a two-person team as of 2025-07-21. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Team Dune is a one-person team as of 2025-01-09. [valid 2025-01-09 to 2025-07-21; recorded by standup/dune/2025-01-09]\n- Farah is the release captain for Q3 2025. [valid 2025-09-18 to now; recorded by standup/dune/2025-09-18-2]\n- The indexer moved from Boreal to Team Dune as of 2025-11-18. [decision; valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: The indexer moved from Boreal to Ember as of 2025-11-18. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n- Team Atlas consists of Priya as of 2025-07-21, after Tomasz moved to Team Dune. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Team Atlas consists of Priya and Tomasz as of 2025. [valid 2025-01-06 to 2025-07-21; recorded by standup/atlas/2025-01-06]\n- The flags service moved from Cinder to Team Dune on 2026-01-29. [decision; valid 2026-01-29 to now; recorded by handover/2026-01-29-feature-flags]\n- Team Dune adopted a monthly game day as of 2025-04-23. [decision; valid 2025-04-23 to now; recorded by standup/dune/2025-04-23]\n- Boreal handed the event bus to Team Dune on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- Team Dune sits on the fourth floor as of 2026-03-09. [valid 2026-03-09 to now; recorded by standup/dune/2026-03-09]\n- The flags service moved from Team Dune to Team Atlas on 2026-04-21. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n- The indexer moved from Team Dune to Boreal as of 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n- Team Dune owns the job scheduler as of 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n    earlier: Ember owns the job scheduler. [valid 2025-01-20 to 2025-04-04; recorded by standup/ember/2025-01-20]\n- The webhook dispatcher moved from Team Atlas to Team Dune on 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- Tomasz is back on the Team Dune on-call rotation as of 2025-12-08. [decision; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n    earlier: Tomasz is off the Team Dune on-call rotation as of 2025-11-03. [decision; valid 2025-11-03 to 2025-12-08; recorded by standup/dune/2025-11-03]\n- Team Dune has a planning meeting every Wednesday. [valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n\nQuestion: Which team was Farah on before joining Dune?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657064-bdcfEM57OjR8mUiHBX9O",
+  "object": "chat.completion",
+  "created": 1788657064,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which team was Farah on before joining Dune?\n\nLooking through the memory:\n- Farah is a member of Team Dune as of 2025-01-09 (sole member).\n- Team Atlas consists of Priya and Tomasz as of 2025-01-06, then Priya as of 2025-07-21 after Tomasz moved to Team Dune.\n- There's no mention of Farah being on any team before Team Dune.\n\nThe memory doesn't contain information about which team Farah was on before joining Dune. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which team was Farah on before joining Dune?\n\nLooking through the memory:\n- Farah is a member of Team Dune as of 2025-01-09 (sole member).\n- Team Atlas consists of Priya and Tomasz as of 2025-01-06, then Priya as of 2025-07-21 after Tomasz moved to Team Dune.\n- There's no mention of Farah being on any team before Team Dune.\n\nThe memory doesn't contain information about which team Farah was on before joining Dune. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1894,
+   "completion_tokens": 135,
+   "total_tokens": 2029,
+   "cost": 0.0001758,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001758,
+    "upstream_inference_prompt_cost": 0.00014205,
+    "upstream_inference_completions_cost": 3.375e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 129,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.423246708000079,
+ "fetched_at": "2026-09-06T01:11:08Z"
+}

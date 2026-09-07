@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The indexer must stay on OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-08-13 to now; recorded by standup/boreal/2025-08-13]\n- The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns the indexer as of 2025-01-17. [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- The indexer moved from Boreal to Team Dune as of 2025-11-18. [decision; valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: The indexer moved from Boreal to Ember as of 2025-11-18. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n- Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Team Dune owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal still owns the indexer as of 2025-09-15. [valid 2025-09-15 to 2025-11-18; recorded by standup/boreal/2025-09-15-2]\n- The indexer moved from Team Dune to Boreal as of 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n- The indexer will rebuild the index nightly instead of on every catalog write, as agreed on 2025-11-07. [decision; valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- The indexer's disk usage jumped 30 percent after the retention change, as noticed by Cinder on 2025-08-29. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29-2]\n- The indexer depends on the product catalog for product documents. [valid 2025-03-03 to now; recorded by standup/boreal/2025-03-03]\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- On 2026-03-16, Ember noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-03-16 to now; recorded by standup/ember/2026-03-16]\n- The indexer's incremental updates left stale entries behind after failed writes. [valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- Team Atlas observed on 2025-11-11 that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Marcus Oyelaran walked Oskar through the indexer runbook on 2025-11-18. [valid 2025-11-18 to now; recorded by handover/2025-11-18-search-indexer]\n- A silent reindex failure left stale results for two days in INC-2025-023. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Reindex jobs will page on failure. [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- As of 2026-03-20, the image-resizer will keep original uploads for 90 days only. [decision; valid 2026-03-20 to now; recorded by standup/dune/2026-03-20]\n- The product catalog belongs to the Boreal team as of 2025-10-20, after being run by the Cinder team until then. [decision; valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n- Boreal reported at standup on 2026-02-04 that the scheduler's error rate crept up to 2 percent following the dependency bump. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n\nQuestion: Which version is search-indexer pinned to, and until when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788656549-MdvSbEtztAPYOJ5wi1cq",
+  "object": "chat.completion",
+  "created": 1788656549,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "OpenSearch 2.11, until the full reindex completes",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which version is search-indexer pinned to, and until when?\"\n\nMemory: \"The indexer must stay on OpenSearch 2.11 until the full reindex completes.\" So the version is OpenSearch 2.11, until the full reindex completes.\n\nAnswer should be one short line: OpenSearch 2.11, until the full reindex completes.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which version is search-indexer pinned to, and until when?\"\n\nMemory: \"The indexer must stay on OpenSearch 2.11 until the full reindex completes.\" So the version is OpenSearch 2.11, until the full reindex completes.\n\nAnswer should be one short line: OpenSearch 2.11, until the full reindex completes.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1581,
+   "completion_tokens": 93,
+   "total_tokens": 1674,
+   "cost": 0.000134145,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000134145,
+    "upstream_inference_prompt_cost": 0.000110895,
+    "upstream_inference_completions_cost": 2.325e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 78,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6796507500112057,
+ "fetched_at": "2026-09-06T01:02:31Z"
+}

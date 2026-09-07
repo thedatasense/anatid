@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-04-22, the search indexer is pinned to OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-04-22 to now; recorded by standup/cinder/2025-04-22]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- Priya Raman is the primary on-call for the Atlas team as of 2025-07-30, when on-call passed from Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-06-19, until the next rotation. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya Raman is the primary on-call for the Atlas team as of 2025-05-13, until the next rotation. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-04-03, replacing Priya Raman. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n- Diego is on call for Cinder to start the year. [valid 2025-01-09 to now; recorded by standup/cinder/2025-01-09]\n- As of 2026-04-14, Farah is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is primary on-call for the Dune team, having taken over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz Nowak has the Dune team pager, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still has the Dune team pager. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date. [decision; valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: The Ember team owns the authentication gateway. [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, when ownership passed from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- On 2026-06-09, the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- Oskar takes the first on-call shift of the year for the Ember team. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- The indexer served stale results for two days on 2025-10-03 during incident INC-2025-023. [valid 2025-10-07 to now; recorded by incident-review/INC-2025-023]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [constraint; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- Farah is release captain for Q3 2025 for the Dune team. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-3]\n- On 2025-07-30, on-call for the Atlas team passed from Tomasz to Priya Raman when Tomasz moved to the Dune team. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n\nQuestion: Who is on call for the team that owns search-indexer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653368-1xF0nroSEkDyqGPAuz6T",
+  "object": "chat.completion",
+  "created": 1788653368,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Lena",
+     "refusal": null,
+     "reasoning": "The indexer is owned by the Boreal team as of 2026-04-01 (ownership passed from Atlas). The pager for the indexer rings the Boreal team.\n\nWho is on call for the Boreal team? On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now]. Today is 2026-06-30, so Lena is the current on-call for Boreal.\n\nAnswer: Lena.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The indexer is owned by the Boreal team as of 2026-04-01 (ownership passed from Atlas). The pager for the indexer rings the Boreal team.\n\nWho is on call for the Boreal team? On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now]. Today is 2026-06-30, so Lena is the current on-call for Boreal.\n\nAnswer: Lena.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1824,
+   "completion_tokens": 108,
+   "total_tokens": 1932,
+   "cost": 0.0003276,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003276,
+    "upstream_inference_prompt_cost": 0.0002736,
+    "upstream_inference_completions_cost": 5.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 104,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0738117920118384,
+ "fetched_at": "2026-09-06T00:09:30Z"
+}

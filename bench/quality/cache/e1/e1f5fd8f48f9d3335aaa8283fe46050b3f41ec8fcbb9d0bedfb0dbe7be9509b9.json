@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Priya is on call for Atlas [valid 2026-06-08 to now; recorded by standup/atlas/2026-06-08]\n    earlier: Marcus is on call for Atlas [valid 2026-04-14 to 2026-06-08; recorded by standup/atlas/2026-04-14]\n    earlier: Priya is on call for Atlas [valid 2025-07-16 to 2026-04-14; recorded by standup/atlas/2025-07-16]\n    earlier: Tomasz is on call for Atlas [valid 2025-06-13 to 2025-07-16; recorded by standup/atlas/2025-06-13]\n    earlier: Priya is on call for Atlas [valid 2025-05-14 to 2025-06-13; recorded by standup/atlas/2025-05-14]\n    earlier: Tomasz is on call for Atlas [valid 2025-04-04 to 2025-05-14; recorded by standup/atlas/2025-04-04]\n    earlier: Priya is on call for Atlas [valid 2025-02-19 to 2025-04-04; recorded by standup/atlas/2025-02-19]\n    earlier: Tomasz is on call for Atlas [valid 2025-01-09 to 2025-02-19; recorded by standup/atlas/2025-01-09]\n- Marcus is a member of Atlas [valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n    earlier: Marcus is a member of Boreal [valid 2025-01-07 to 2026-03-17; recorded by standup/boreal/2025-01-07]\n- Atlas holds its planning meeting on Tuesdays [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- Priya is a member of Atlas [valid 2025-01-06 to now; recorded by standup/atlas/2025-01-06]\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-16; the root cause was two leaders elected during a network partition [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- Atlas noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Atlas owns feature-flags [valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n    earlier: Dune owns feature-flags [valid 2026-01-29 to 2026-04-21; recorded by handover/2026-01-29-feature-flags]\n    earlier: Cinder owns feature-flags [valid 2025-02-13 to 2026-01-29; recorded by handover/2025-02-13-feature-flags]\n    earlier: Atlas owns feature-flags [valid 2025-01-08 to 2025-02-13; recorded by standup/atlas/2025-01-08-2]\n- Atlas sits on the second floor [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21-2]\n- Atlas adopted a no-deploy Friday [valid 2025-01-31 to now; recorded by standup/atlas/2025-01-31]\n- Atlas noticed that billing-api's cold start time tripled after the runtime upgrade [observation; valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- The scheduler deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-08-08 to now; recorded by standup/dune/2025-08-08]\n    earlier: The scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC [constraint; valid 2025-03-21 to 2025-08-08; recorded by standup/ember/2025-03-21]\n- Atlas noticed that billing-api's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Atlas noticed that the ledger's disk usage jumped 30 percent after the retention change [observation; valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- Lena is on call for Boreal [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n    earlier: Marcus is on call for Boreal [valid 2026-01-02 to 2026-02-04; recorded by standup/boreal/2026-01-02]\n    earlier: Lena is on call for Boreal [valid 2025-11-11 to 2026-01-02; recorded by standup/boreal/2025-11-11]\n    earlier: Marcus is on call for Boreal [valid 2025-09-24 to 2025-11-11; recorded by standup/boreal/2025-09-24]\n    earlier: Lena is on call for Boreal [valid 2025-08-12 to 2025-09-24; recorded by standup/boreal/2025-08-12]\n    earlier: Marcus is on call for Boreal [valid 2025-07-09 to 2025-08-12; recorded by standup/boreal/2025-07-09]\n    earlier: Lena is on call for Boreal [valid 2025-05-21 to 2025-07-09; recorded by standup/boreal/2025-05-21]\n    earlier: Marcus is on call for Boreal [valid 2025-03-31 to 2025-05-21; recorded by standup/boreal/2025-03-31]\n    earlier: Lena is on call for Boreal [valid 2025-02-10 to 2025-03-31; recorded by standup/boreal/2025-02-10]\n    earlier: Marcus is on call for Boreal [valid 2025-01-09 to 2025-02-10; recorded by standup/boreal/2025-01-09-3]\n- Billing-api deploys only on weekday mornings before 11:00 UTC [constraint; valid 2025-03-24 to now; recorded by standup/atlas/2025-03-24]\n\nQuestion: Who was on call for Atlas on 2025-06-05?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658591-9KVxycrSEiTDcRZCKqNm",
+  "object": "chat.completion",
+  "created": 1788658591,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Priya",
+     "refusal": null,
+     "reasoning": "The question asks who was on call for Atlas on 2025-06-05. Looking at the memory entries:\n\n- Priya is on call for Atlas [valid 2025-05-14 to 2025-06-13] — this covers 2025-06-05.\n\nSo the answer is Priya.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was on call for Atlas on 2025-06-05. Looking at the memory entries:\n\n- Priya is on call for Atlas [valid 2025-05-14 to 2025-06-13] — this covers 2025-06-05.\n\nSo the answer is Priya.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1764,
+   "completion_tokens": 72,
+   "total_tokens": 1836,
+   "cost": 0.00014262,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014262,
+    "upstream_inference_prompt_cost": 0.00012462,
+    "upstream_inference_completions_cost": 1.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 68,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6915292920311913,
+ "fetched_at": "2026-09-06T01:36:33Z"
+}

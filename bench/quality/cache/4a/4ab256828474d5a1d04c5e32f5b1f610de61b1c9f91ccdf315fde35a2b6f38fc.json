@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- Oskar wrote up the handover doc for Priya for the webhooks service handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- The webhooks service belongs to Team Atlas as of 2025-09-09, after Ember handed it over. [decision; valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n    earlier: The webhooks service belongs to team Ember as of 2025-04-11. [decision; valid 2025-04-11 to 2025-09-09; recorded by handover/2025-04-11-webhooks]\n    earlier: The webhooks service is a Boreal service as of 2025-01-09. [valid 2025-01-09 to 2025-04-11; recorded by standup/boreal/2025-01-09-2]\n- The reports pipeline went to Boreal as of 2025-06-25, not Ember; Team Ember never owned it, and Team Dune no longer owns it. [decision; valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n    earlier: Team Ember owns the reports pipeline as of 2025-06-25, and Team Dune no longer owns it. [decision; valid 2025-06-25 to 2025-07-03; recorded by handover/2025-06-25-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20-2]\n- The webhooks service has a deploy window on Thursdays between 07:00 and 09:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- Priya wrote up the handover doc for Lena for the Ledger handover on 2025-12-10. [valid 2025-12-10 to now; recorded by handover/2025-12-10-ledger]\n- Oskar wrote up the handover doc for Farah for the job scheduler handover on 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n- As of 2026-05-01, Ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC. [decision; valid 2026-05-01 to now; recorded by standup/cinder/2026-05-01]\n- Marcus Oyelaran wrote up the handover doc for Tomasz for the event bus handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- Diego left team Cinder and joined team Ember effective 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n- Priya walked Diego through the flags service runbook on 2025-02-13 as part of the handover. [valid 2025-02-13 to now; recorded by handover/2025-02-13-feature-flags]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- The first on-call rotation for team Ember goes to Oskar. [decision; valid 2025-01-13 to now; recorded by standup/ember/2025-01-13]\n- On 2026-03-16, Ember noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-03-16 to now; recorded by standup/ember/2026-03-16]\n- On 2026-04-29, Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-04-29 to now; recorded by standup/ember/2026-04-29]\n- The product catalog has a deploy window on Tuesdays and Thursdays between 10:00 and 12:00 UTC as of 2025-11-12. [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The product catalog has a deploy window on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-04-14 to now; recorded by standup/ember/2025-04-14]\n- Oskar is the only engineer on team Ember as of 2025-01-10. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n\nQuestion: Which note recorded the handover of webhooks to Ember, and on what date?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657487-uirYZID9AuqttcbfftMu",
+  "object": "chat.completion",
+  "created": 1788657487,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "handover/2025-04-11-webhooks, on 2025-04-11",
+     "refusal": null,
+     "reasoning": "The question asks which note recorded the handover of webhooks to Ember, and on what date.\n\nWait, actually — let me re-read. \"Which note recorded the handover of webhooks to Ember?\" Hmm, the memory says Ember handed the webhooks service to Team Atlas on 2025-09-09, recorded by handover/2025-09-09-webhooks. But \"handover of webhooks to Ember\" — actually earlier the webhooks belonged to team Ember as of 2025-04-11, recorded by handover/2025-04-11-webhooks.\n\nThe question might be slightly ambiguous. \"handover of webhooks to Ember\" — the entry where webhooks belonged to team Ember as of 2025-04-11 was recorded by handover/2025-04-11-webhooks. Hmm, but the memory doesn't say Ember received webhooks from someone; it says \"The webhooks service belongs to team Ember as of 2025-04-11. [decision; ... recorded by handover/2025-04-11-webhooks]\".\n\nSo the note recording webhooks belonging to Ember is handover/2025-04-11-webhooks, dated 2025-04-11.\n\nAlternatively, they might mean \"handover of webhooks from Ember\" (Ember handed to Atlas) — recorded by handover/2025-09-09-webhooks on 2025-09-09. But the question says \"to Ember\", so the correct interpretation: webhooks went to Ember as of 2025-04-11, recorded by handover/2025-04-11-webhooks.\n\nAnswer: handover/2025-04-11-webhooks, 2025-04-11. One short line.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which note recorded the handover of webhooks to Ember, and on what date.\n\nWait, actually — let me re-read. \"Which note recorded the handover of webhooks to Ember?\" Hmm, the memory says Ember handed the webhooks service to Team Atlas on 2025-09-09, recorded by handover/2025-09-09-webhooks. But \"handover of webhooks to Ember\" — actually earlier the webhooks belonged to team Ember as of 2025-04-11, recorded by handover/2025-04-11-webhooks.\n\nThe question might be slightly ambiguous. \"handover of webhooks to Ember\" — the entry where webhooks belonged to team Ember as of 2025-04-11 was recorded by handover/2025-04-11-webhooks. Hmm, but the memory doesn't say Ember received webhooks from someone; it says \"The webhooks service belongs to team Ember as of 2025-04-11. [decision; ... recorded by handover/2025-04-11-webhooks]\".\n\nSo the note recording webhooks belonging to Ember is handover/2025-04-11-webhooks, dated 2025-04-11.\n\nAlternatively, they might mean \"handover of webhooks from Ember\" (Ember handed to Atlas) — recorded by handover/2025-09-09-webhooks on 2025-09-09. But the question says \"to Ember\", so the correct interpretation: webhooks went to Ember as of 2025-04-11, recorded by handover/2025-04-11-webhooks.\n\nAnswer: handover/2025-04-11-webhooks, 2025-04-11. One short line.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1798,
+   "completion_tokens": 393,
+   "total_tokens": 2191,
+   "cost": 0.00022542,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00022542,
+    "upstream_inference_prompt_cost": 0.00012717,
+    "upstream_inference_completions_cost": 9.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 371,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.485330375027843,
+ "fetched_at": "2026-09-06T01:18:12Z"
+}

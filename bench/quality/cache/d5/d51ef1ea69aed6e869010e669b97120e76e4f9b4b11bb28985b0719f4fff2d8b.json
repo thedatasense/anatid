@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Ledger is pinned to Postgres 14 as of 2025-05-30. [constraint; valid 2025-05-30 to now; recorded by standup/atlas/2025-05-30]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- Diego carried the Cinder on-call phone from 2025-11-25 until 2025-12-15, when Yuki took over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is back on the Cinder on-call rotation as of 2025-11-25, carrying the phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Diego is off the Cinder on-call rotation as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- The Postgres 14 pin on Ledger lifts when the partitioning work finishes. [valid 2025-05-30 to now; recorded by standup/atlas/2025-05-30]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- Ledger only ships on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-02-28 to now; recorded by standup/atlas/2025-02-28]\n- As of 2026-05-01, Ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC. [decision; valid 2026-05-01 to now; recorded by standup/cinder/2026-05-01]\n- The reports pipeline depends on Ledger for the nightly balance export, so if Ledger is down the reports pipeline is down. [valid 2025-02-06 to now; recorded by standup/dune/2025-02-06]\n- Billing-api depends on Ledger to work. [constraint; valid 2026-03-05 to now; recorded by standup/boreal/2026-03-05]\n- The webhook dispatcher is owned by Team Dune as of 2026-04-22, after Team Atlas kept it until then. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- Ledger is owned by Cinder as of 2026-04-29, after Boreal handed it over. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n    earlier: Ledger is owned by the Boreal team as of 2025-12-10, after Team Atlas handed it over. [decision; valid 2025-12-10 to 2026-04-29; recorded by handover/2025-12-10-ledger]\n    earlier: Ledger is owned by Team Atlas as of 2025-01-08. [valid 2025-01-08 to 2025-12-10; recorded by standup/atlas/2025-01-08]\n- The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-04-14 to now; recorded by standup/ember/2025-04-14]\n- The product catalog belongs to the Boreal team as of 2025-10-20, after being run by the Cinder team until then. [decision; valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n- Ledger is not Team Dune's service, so Team Dune flagged the latency issue instead of fixing it. [valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n\nQuestion: Which version is the ledger pinned to, and until when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657180-K1lLu4VSkcV3Mq4ZLKzA",
+  "object": "chat.completion",
+  "created": 1788657180,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Postgres 14, until the partitioning work finishes.",
+     "refusal": null,
+     "reasoning": "The memory says: \"Ledger is pinned to Postgres 14 as of 2025-05-30. [constraint; valid 2025-05-30 to now]\". Also \"The Postgres 14 pin on Ledger lifts when the partitioning work finishes.\"\n\nQuestion: \"Which version is the ledger pinned to, and until when?\"\n\nAnswer: Postgres 14, until the partitioning work finishes. One short line.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"Ledger is pinned to Postgres 14 as of 2025-05-30. [constraint; valid 2025-05-30 to now]\". Also \"The Postgres 14 pin on Ledger lifts when the partitioning work finishes.\"\n\nQuestion: \"Which version is the ledger pinned to, and until when?\"\n\nAnswer: Postgres 14, until the partitioning work finishes. One short line.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1644,
+   "completion_tokens": 104,
+   "total_tokens": 1748,
+   "cost": 0.00014162,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014162,
+    "upstream_inference_prompt_cost": 0.00011562,
+    "upstream_inference_completions_cost": 2.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 90,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6863614590256475,
+ "fetched_at": "2026-09-06T01:13:02Z"
+}

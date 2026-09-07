@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Oskar picked up the Ember on-call shift from Diego on 2026-06-17. [decision; valid 2026-06-17 to now; recorded by standup/ember/2026-06-17]\n- Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08. [decision; valid 2026-06-08 to now; recorded by standup/atlas/2026-06-08]\n    earlier: Page Marcus Oyelaran for anything this cycle for Team Atlas, not Priya, as of 2026-04-14. [decision; valid 2026-04-14 to 2026-06-08; recorded by standup/atlas/2026-04-14]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-07-16. [decision; valid 2025-07-16 to 2026-04-14; recorded by standup/atlas/2025-07-16]\n    earlier: Page Tomasz for anything this cycle for Team Atlas, not Priya, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-16; recorded by standup/atlas/2025-06-13]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-05-14. [decision; valid 2025-05-14 to 2025-06-13; recorded by standup/atlas/2025-05-14]\n    earlier: Page Tomasz Nowak for anything this cycle for Team Atlas, not Priya, as of 2025-04-04. [decision; valid 2025-04-04 to 2025-05-14; recorded by standup/atlas/2025-04-04]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-02-19. [decision; valid 2025-02-19 to 2025-04-04; recorded by standup/atlas/2025-02-19]\n- As of 2026-05-28, Yuki Tanaka still has the Cinder pager. [valid 2026-05-28 to now; recorded by standup/cinder/2026-05-28]\n- Team Ember reported at standup on 2026-05-27 that the notifier's CPU sat at 90 percent after the traffic shift. [valid 2026-05-27 to now; recorded by standup/ember/2026-05-27]\n- Diego has the Ember pager as of the 2026-05-13 cycle, taking over from Oskar. [decision; valid 2026-05-13 to now; recorded by standup/ember/2026-05-13]\n    earlier: Oskar has the Ember pager as of the 2026-03-16 cycle, taking over from Diego. [decision; valid 2026-03-16 to 2026-05-13; recorded by standup/ember/2026-03-16]\n    earlier: Diego carries the Team Ember on-call phone as of the 2026-01-23 on-call swap, until the next rotation. [decision; valid 2026-01-23 to 2026-03-16; recorded by standup/ember/2026-01-23]\n    earlier: Oskar is on call for team Ember this cycle. [valid 2025-05-28 to 2026-01-23; recorded by standup/ember/2025-05-28]\n- Boreal decided at standup on 2026-05-05 that the event bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-05 to now; recorded by standup/boreal/2026-05-05]\n- On 2026-05-01, the Cinder team observed that the flags service's queue depth hit 50,000 after the marketing send. [valid 2026-05-01 to now; recorded by standup/cinder/2026-05-01-2]\n- On 2026-04-29, Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-04-29 to now; recorded by standup/ember/2026-04-29]\n- Ledger is owned by Cinder as of 2026-04-29, after Boreal handed it over. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n    earlier: Ledger is owned by the Boreal team as of 2025-12-10, after Team Atlas handed it over. [decision; valid 2025-12-10 to 2026-04-29; recorded by handover/2025-12-10-ledger]\n    earlier: Ledger is owned by Team Atlas as of 2025-01-08. [valid 2025-01-08 to 2025-12-10; recorded by standup/atlas/2025-01-08]\n- Cinder took over Ledger from Boreal on 2026-04-29. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n- The webhook dispatcher moved from Team Atlas to Team Dune on 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- The webhook dispatcher is owned by Team Dune as of 2026-04-22, after Team Atlas kept it until then. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- The flags service is Team Atlas's service as of 2026-04-21, after moving from Team Dune. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n    earlier: The flags service is Team Dune's service as of 2026-01-29, after moving from Cinder. [decision; valid 2026-01-29 to 2026-04-21; recorded by handover/2026-01-29-feature-flags]\n    earlier: The flags service is not Team Dune's service, so Team Dune flagged the issue instead of fixing it. [valid 2025-09-18 to 2026-01-29; recorded by standup/dune/2025-09-18]\n- The flags service moved from Team Dune to Team Atlas on 2026-04-21. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n- Cinder observed at standup on 2026-04-17 that the authentication gateway's cold start time tripled after the runtime upgrade. [valid 2026-04-17 to now; recorded by standup/cinder/2026-04-17]\n\nQuestion: Who was on call for Ember on 2026-05-30?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658258-ZWlltSqbtIkxL0BM4XZy",
+  "object": "chat.completion",
+  "created": 1788658258,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Diego",
+     "refusal": null,
+     "reasoning": "The question asks who was on call for Ember on 2026-05-30.\n\nMemory entries about Ember on-call:\n- Oskar picked up the Ember on-call shift from Diego on 2026-06-17. [valid 2026-06-17 to now]\n- Diego has the Ember pager as of the 2026-05-13 cycle, taking over from Oskar. [valid 2026-05-13 to now]\n\nOn 2026-05-30, the valid entry is Diego (since 2026-05-13 to 2026-06-17). The Oskar entry starts 2026-06-17, which doesn't apply to 2026-05-30.\n\nAnswer: Diego.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was on call for Ember on 2026-05-30.\n\nMemory entries about Ember on-call:\n- Oskar picked up the Ember on-call shift from Diego on 2026-06-17. [valid 2026-06-17 to now]\n- Diego has the Ember pager as of the 2026-05-13 cycle, taking over from Oskar. [valid 2026-05-13 to now]\n\nOn 2026-05-30, the valid entry is Diego (since 2026-05-13 to 2026-06-17). The Oskar entry starts 2026-06-17, which doesn't apply to 2026-05-30.\n\nAnswer: Diego.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1791,
+   "completion_tokens": 163,
+   "total_tokens": 1954,
+   "cost": 7.1395e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1728,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 7.1395e-05,
+    "upstream_inference_prompt_cost": 3.0645e-05,
+    "upstream_inference_completions_cost": 4.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 159,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1490477499901317,
+ "fetched_at": "2026-09-06T01:31:00Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-08-13] standup/boreal/2025-08-13: The search indexer must stay on OpenSearch 2.11 until the full reindex completes. Reminder that reporting depends on the ledger.\n- [2025-11-07] standup/boreal/2025-11-07: We agreed today that search-indexer will rebuild the index nightly instead of on every catalog write. The reason is that incremental updates left stale entries behind after failed writes.\n- [2025-02-28] handover/2025-02-28-search-indexer: Quick one: the indexer belongs to the Boreal team starting today. Thanks to Cinder for running it until now.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-10-27] incident-review/INC-2025-023: Review of INC-2025-023 (the search indexer, 2025-10-24). The root cause was a reindex job that failed silently on a full disk. We decided that reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2025-11-18] handover/2025-11-18-search-indexer: Handover: as of today the indexer moves from Boreal to Ember. Marcus walked Oskar through the runbook this morning.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-03-03] standup/boreal/2025-03-03: Dependency map update: the search indexer needs the product catalog (product documents).\n- [2025-08-29] standup/cinder/2025-08-29-2: The Cinder team noticed that search-indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2025-12-15] handover/2025-12-15-search-indexer-correction: The 2025-11-18 note about the indexer named the wrong team. The Dune team took it over on that date; the Ember team did not.\n- [2026-03-16] standup/ember/2026-03-16: Oskar has the Ember pager this cycle, taking over from Diego Alvarez. Ember noticed that search-indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2025-11-11] standup/atlas/2025-11-11: Deploy freeze for billing-api: 2025-11-24 to 2025-12-02 (the peak season). Observation from the Atlas team: after Tuesday's deploy, search-indexer's p99 latency doubled.\n- [2025-08-12] standup/boreal/2025-08-12-2: Observation from team Boreal: after the cache change, the catalog service's memory use grew steadily for a week.\n- [2025-12-15] standup/cinder/2025-12-15-2: Observation from the Cinder team: after the retention change, the catalog service's disk usage jumped 30 percent.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-11-13] standup/boreal/2025-11-13: The reporting service still relies on the bus; keep that in mind for the maintenance.\n- [2025-11-12] standup/boreal/2025-11-12: The catalog service's deploy window changes today: it is now on Tuesdays and Thursdays between 10:00 and 12:00 UTC. The old slot (Mondays 10:00-12:00 UTC) is retired.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved.\n- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n\nQuestion: Which service depends on search-indexer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653252-ureiaVBh2gPIUwOq5577",
+  "object": "chat.completion",
+  "created": 1788653252,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question: \"Which service depends on search-indexer?\"\n\nLet me look through the memory for dependency information involving search-indexer.\n\n- 2025-03-03: \"the search indexer needs the product catalog (product documents).\" — that's search-indexer depends on catalog, not the reverse.\n- 2025-08-13: \"reporting depends on the ledger\" — not search-indexer.\n- 2025-09-15: \"the catalog service depends on image-resizer\" — not search-indexer.\n- 2026-02-06 (2025-02-06): \"the reports pipeline... relies on [ledger]\" — not search-indexer.\n\nHmm, is there anything that says a service depends on search-indexer? I see observations about search-indexer's p99 latency, queue depth, disk usage. Dependencies: search indexer needs product catalog. Nothing says X depends on search-indexer.\n\nWait — 2025-08-13: \"The search indexer must stay on OpenSearch 2.11 until the full reindex completes. Reminder that reporting depends on the ledger.\" That's reporting depends on ledger.\n\nSo no service is recorded as depending on search-indexer. The answer should be \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Which service depends on search-indexer?\"\n\nLet me look through the memory for dependency information involving search-indexer.\n\n- 2025-03-03: \"the search indexer needs the product catalog (product documents).\" — that's search-indexer depends on catalog, not the reverse.\n- 2025-08-13: \"reporting depends on the ledger\" — not search-indexer.\n- 2025-09-15: \"the catalog service depends on image-resizer\" — not search-indexer.\n- 2026-02-06 (2025-02-06): \"the reports pipeline... relies on [ledger]\" — not search-indexer.\n\nHmm, is there anything that says a service depends on search-indexer? I see observations about search-indexer's p99 latency, queue depth, disk usage. Dependencies: search indexer needs product catalog. Nothing says X depends on search-indexer.\n\nWait — 2025-08-13: \"The search indexer must stay on OpenSearch 2.11 until the full reindex completes. Reminder that reporting depends on the ledger.\" That's reporting depends on ledger.\n\nSo no service is recorded as depending on search-indexer. The answer should be \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1547,
+   "completion_tokens": 264,
+   "total_tokens": 1811,
+   "cost": 0.00036405,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00036405,
+    "upstream_inference_prompt_cost": 0.00023205,
+    "upstream_inference_completions_cost": 0.000132
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 258,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.74490649998188,
+ "fetched_at": "2026-09-06T00:07:38Z"
+}

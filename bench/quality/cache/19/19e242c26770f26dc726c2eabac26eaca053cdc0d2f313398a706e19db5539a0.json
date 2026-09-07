@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded that the catalog depends on image-resizer, and when?\nGold answer: standup/cinder/2025-04-14 (2025-04-14)\nAlso accepted: standup/cinder/2025-04-14; 2025-04-14; 14 April 2025; April 14, 2025; the standup note of 2025-04-14; the standup note of 14 April 2025; the standup note of April 14, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/cinder, on 2025-04-14."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655041-184dwyQChTbsM1P0dyTT",
+  "object": "chat.completion",
+  "created": 1788655041,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the source label standup/cinder together with the correct date 2025-04-14, matching the gold note standup/cinder/2025-04-14.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"standup/cinder/2025-04-14 (2025-04-14)\". The grading rule says: \"Correct if the answer identifies the source label of the gold note, or its kind together with the gold date.\"\n\nThe answer to grade is \"standup/cinder, on 2025-04-14.\" This identifies the source label as \"standup/cinder\" and the date 2025-04-14. The gold label is \"standup/cinder/2025-04-14\" — this appears to be a standup note for the \"cinder\" project on 2025-04-14. The answer identifies \"standup/cinder\" (the kind/source label) together with the date. The rule says \"its kind together with the gold date\" is acceptable. The kind here would be a standup note (standup/cinder). The answer gives the label \"standup/cinder\" and the correct date, which identifies the note standup/cinder/2025-04-14. So this should be correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"standup/cinder/2025-04-14 (2025-04-14)\". The grading rule says: \"Correct if the answer identifies the source label of the gold note, or its kind together with the gold date.\"\n\nThe answer to grade is \"standup/cinder, on 2025-04-14.\" This identifies the source label as \"standup/cinder\" and the date 2025-04-14. The gold label is \"standup/cinder/2025-04-14\" — this appears to be a standup note for the \"cinder\" project on 2025-04-14. The answer identifies \"standup/cinder\" (the kind/source label) together with the date. The rule says \"its kind together with the gold date\" is acceptable. The kind here would be a standup note (standup/cinder). The answer gives the label \"standup/cinder\" and the correct date, which identifies the note standup/cinder/2025-04-14. So this should be correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 336,
+   "completion_tokens": 276,
+   "total_tokens": 612,
+   "cost": 9.42e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.42e-05,
+    "upstream_inference_prompt_cost": 2.52e-05,
+    "upstream_inference_completions_cost": 6.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 225,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.992682333046105,
+ "fetched_at": "2026-09-06T00:37:28Z"
+}

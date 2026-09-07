@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal owns the catalog [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: Dune owns the catalog [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Cinder owns the catalog [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n- Boreal owns the event-bus [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: Cinder owns the event-bus [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: Atlas owns the event-bus [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: Boreal owns the event-bus [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n- The handover note of 2025-11-07 wrongly recorded Boreal as the owner of reporting [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n- Lena is a member of Boreal [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Lena is on call for Boreal [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19-2]\n    earlier: Marcus is on call for Boreal [valid 2025-12-26 to 2026-02-19; recorded by standup/boreal/2025-12-26]\n    earlier: Lena is on call for Boreal [valid 2025-10-31 to 2025-12-26; recorded by standup/boreal/2025-10-31]\n    earlier: Marcus is on call for Boreal [valid 2025-09-08 to 2025-10-31; recorded by standup/boreal/2025-09-08]\n    earlier: Lena is on call for Boreal [valid 2025-08-01 to 2025-09-08; recorded by standup/boreal/2025-08-01]\n    earlier: Marcus is on call for Boreal [valid 2025-06-05 to 2025-08-01; recorded by standup/boreal/2025-06-05]\n    earlier: Lena is on call for Boreal [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: Marcus is on call for Boreal [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n    earlier: Lena is on call for Boreal [valid 2025-01-13 to 2025-02-27; recorded by standup/boreal/2025-01-13]\n- Boreal holds its planning meeting on Thursdays [valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n- Boreal adopted a weekly dependency update day [valid 2025-06-27 to now; recorded by standup/boreal/2025-06-27-2]\n- Boreal noticed that the notifier's request volume halved after the client rollout [observation; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Boreal noticed that the event-bus's request volume halved after the client rollout [observation; valid 2025-06-27 to now; recorded by standup/boreal/2025-06-27]\n- Boreal noticed that the catalog's memory use grew steadily for a week after the cache change [observation; valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n- Boreal noticed that feature-flags's queue depth hit 50,000 after the marketing send [observation; valid 2025-02-27 to now; recorded by standup/boreal/2025-02-27]\n- Cinder owns reporting [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n    earlier: Ember owns reporting [valid 2025-11-17 to 2026-02-10; recorded by handover/2025-11-17-reporting-correction]\n    earlier: Boreal owns reporting [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Dune owns reporting [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- Atlas noticed that the catalog's request volume halved after the client rollout [observation; valid 2025-08-29 to now; recorded by standup/atlas/2025-08-29]\n- The handover note of 2025-06-20 wrongly recorded Ember as the owner of webhooks [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- Dune owns search-indexer [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: Cinder owns search-indexer [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- Dune owns the notifier [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: Cinder owns the notifier [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: Boreal owns the notifier [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n\nQuestion: Which services does Boreal own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788655337-hDxs44wpzZbXh9PAdqPs",
+  "object": "chat.completion",
+  "created": 1788655337,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The catalog and the event-bus",
+     "refusal": null,
+     "reasoning": "Looking at the memory for services Boreal owns \"now\" (2026-06-30).\n\n- Boreal owns the catalog [valid 2025-06-16 to now] — yes, currently valid.\n- Boreal owns the event-bus [valid 2025-11-20 to now] — yes, currently valid.\n- Reporting: Boreal owned it 2025-11-07 to 2025-11-17, then corrected; currently Cinder owns it. No.\n- Notifier: Boreal owned until 2025-04-04, now Dune. No.\n\nSo: the catalog and the event-bus.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Looking at the memory for services Boreal owns \"now\" (2026-06-30).\n\n- Boreal owns the catalog [valid 2025-06-16 to now] — yes, currently valid.\n- Boreal owns the event-bus [valid 2025-11-20 to now] — yes, currently valid.\n- Reporting: Boreal owned it 2025-11-07 to 2025-11-17, then corrected; currently Cinder owns it. No.\n- Notifier: Boreal owned until 2025-04-04, now Dune. No.\n\nSo: the catalog and the event-bus.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1668,
+   "completion_tokens": 144,
+   "total_tokens": 1812,
+   "cost": 0.00015342,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015342,
+    "upstream_inference_prompt_cost": 0.00011742,
+    "upstream_inference_completions_cost": 3.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 135,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.1622864170349203,
+ "fetched_at": "2026-09-06T00:42:20Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note corrected the recorded owner of auth-gateway, and when?\nGold answer: handover/2025-07-18-auth-gateway-correction (2025-07-18)\nAlso accepted: handover/2025-07-18-auth-gateway-correction; 2025-07-18; 18 July 2025; July 18, 2025; the handover message of 2025-07-18; the handover message of 18 July 2025; the handover message of July 18, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: handover/2025-07-18-auth-gateway-correction, on 2025-07-18 (it corrected the 2025-07-01 note: auth-gateway went to Boreal, not Cinder)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659024-fuR2bPDM5MWSD73UTy1P",
+  "object": "chat.completion",
+  "created": 1788659024,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the exact source label handover/2025-07-18-auth-gateway-correction together with the gold date 2025-07-18, matching the gold answer.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade: \"handover/2025-07-18-auth-gateway-correction, on 2025-07-18 (it corrected the 2025-07-01 note: auth-gateway went to Boreal, not Cinder).\"\n\nGold answer: handover/2025-07-18-auth-gateway-correction (2025-07-18). The answer identifies the source label exactly and the date matches. Extra details don't matter unless they contradict. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade: \"handover/2025-07-18-auth-gateway-correction, on 2025-07-18 (it corrected the 2025-07-01 note: auth-gateway went to Boreal, not Cinder).\"\n\nGold answer: handover/2025-07-18-auth-gateway-correction (2025-07-18). The answer identifies the source label exactly and the date matches. Extra details don't matter unless they contradict. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 381,
+   "completion_tokens": 156,
+   "total_tokens": 537,
+   "cost": 4.8375e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.8375e-05,
+    "upstream_inference_prompt_cost": 9.375e-06,
+    "upstream_inference_completions_cost": 3.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 105,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0025483340141363,
+ "fetched_at": "2026-09-06T01:43:46Z"
+}

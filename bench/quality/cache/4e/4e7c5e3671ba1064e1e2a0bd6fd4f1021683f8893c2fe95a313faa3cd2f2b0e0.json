@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-06-18, the Ember team on-call swapped and Diego carries the phone until the next rotation. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n- On 2026-05-18, Oskar picked up the Ember team on-call shift from Diego. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18]\n- On the 2026-02-12 rotation day, the Ember team on-call swapped and Oskar carries the phone until the next rotation. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n    earlier: As of the 2025-12-29 rotation day, Diego is on call for the Ember team, having received the pager from Oskar. [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n- Oskar is on call for the Ember team to start the year. [valid 2025-01-14 to now; recorded by standup/ember/2025-01-14]\n- As of the 2026-06-18 rotation, Diego holds the Ember team pager. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n    earlier: As of the 2026-05-18 rotation, Oskar holds the Ember team pager, having taken it over from Diego. [valid 2026-05-18 to 2026-06-18; recorded by standup/ember/2026-05-18]\n    earlier: As of the 2026-03-31 rotation, Diego Alvarez holds the Ember team pager, having taken it over from Oskar. [valid 2026-03-31 to 2026-05-18; recorded by standup/ember/2026-03-31]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- On the 2025-12-29 rotation day, Oskar handed the Ember team pager to Diego. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29]\n- On 2026-02-12, the Ember team observed that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n- On 2026-03-19, the Ember team observed that the scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n- On 2025-12-29, the Ember team observed that the auth gateway's CPU sat at 90 percent after the traffic shift. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- The Ember team holds its planning meeting every Friday. [valid 2025-06-13 to now; recorded by standup/ember/2025-06-13-2]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy, and flagged it since the feature-flags service is not the Ember team's service. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- On 2025-05-23, the Ember team observed that the webhooks service's request volume halved following the client rollout, and flagged it since the webhooks service is not the Ember team's service. [valid 2025-05-23 to now; recorded by standup/ember/2025-05-23]\n- On 2025-07-10, the Team Cinder on-call swapped and Yuki carries the phone until the next rotation. [valid 2025-07-10 to now; recorded by standup/cinder/2025-07-10]\n- The Ember team does pairing on every production change. [decision; valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- As of 2025-12-29, the ledger remains an Ember team service. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- On 2026-05-18, the Ember team observed that the auth gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- For anything Ember-related, page Diego. [decision; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n    earlier: For anything Ember-related, page Oskar. [decision; valid 2025-03-19 to 2026-03-31; recorded by standup/ember/2025-03-19-3]\n- On 2025-09-08, the Team Boreal on-call swapped and Marcus carries the phone until the next rotation. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08]\n- As of 2026-06-08, Farah is back on the Team Dune on-call rotation as the primary on-call. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Farah is off the Team Dune on-call rotation. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n\nQuestion: Who was on call for Ember on 2026-06-09?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654237-UNoyxUPPdnTanGZVJmpN",
+  "object": "chat.completion",
+  "created": 1788654237,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "SiliconFlow",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Oskar",
+     "refusal": null,
+     "reasoning": "The question asks about who was on call for Ember on 2026-06-09.\n\nLet me trace the on-call history:\n- 2025-12-29: Oskar handed pager to Diego (valid 2025-12-29 to 2026-02-12)\n- 2026-02-12: Oskar carries the phone until next rotation (valid 2026-02-12 to now)... but wait, there's also a 2026-03-31 entry: Diego Alvarez holds the Ember team pager (valid 2026-03-31 to 2026-05-18)\n- 2026-05-18: Oskar picked up the shift from Diego / Oskar holds the pager (valid 2026-05-18 to 2026-06-18)\n- 2026-06-18: Diego holds the pager (valid 2026-06-18 to now)\n\nSo on 2026-06-09, which is between 2026-05-18 and 2026-06-18, Oskar was on call.\n\nThe entries valid for 2026-06-09:\n- \"On 2026-05-18, Oskar picked up the Ember team on-call shift from Diego.\" [valid 2026-05-18 to now]\n- \"As of the 2026-05-18 rotation, Oskar holds the Ember team pager\" [valid 2026-05-18 to 2026-06-18]\n\nSo the answer is Oskar.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about who was on call for Ember on 2026-06-09.\n\nLet me trace the on-call history:\n- 2025-12-29: Oskar handed pager to Diego (valid 2025-12-29 to 2026-02-12)\n- 2026-02-12: Oskar carries the phone until next rotation (valid 2026-02-12 to now)... but wait, there's also a 2026-03-31 entry: Diego Alvarez holds the Ember team pager (valid 2026-03-31 to 2026-05-18)\n- 2026-05-18: Oskar picked up the shift from Diego / Oskar holds the pager (valid 2026-05-18 to 2026-06-18)\n- 2026-06-18: Diego holds the pager (valid 2026-06-18 to now)\n\nSo on 2026-06-09, which is between 2026-05-18 and 2026-06-18, Oskar was on call.\n\nThe entries valid for 2026-06-09:\n- \"On 2026-05-18, Oskar picked up the Ember team on-call shift from Diego.\" [valid 2026-05-18 to now]\n- \"As of the 2026-05-18 rotation, Oskar holds the Ember team pager\" [valid 2026-05-18 to 2026-06-18]\n\nSo the answer is Oskar.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1662,
+   "completion_tokens": 339,
+   "total_tokens": 2001,
+   "cost": 0.0004188,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0004188,
+    "upstream_inference_prompt_cost": 0.0002493,
+    "upstream_inference_completions_cost": 0.0001695
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 334,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.156822958029807,
+ "fetched_at": "2026-09-06T00:24:03Z"
+}

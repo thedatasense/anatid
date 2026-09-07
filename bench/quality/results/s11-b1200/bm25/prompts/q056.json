@@ -1,0 +1,56 @@
+{
+ "qid": "q056",
+ "system": "bm25",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.\n- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz.\n- [2025-06-13] standup/atlas/2025-06-13: Rotation day for Atlas: Priya Raman hands the pager to Tomasz.\n- [2025-05-14] standup/atlas/2025-05-14: Reminder from team Atlas: page Priya for anything this cycle, not Tomasz.\n- [2026-06-08] standup/atlas/2026-06-08: Reminder from team Atlas: page Priya for anything this cycle, not Marcus.\n- [2025-05-21] standup/boreal/2025-05-21: Lena picked up the Boreal on-call shift from Marcus today.\n- [2025-05-02] standup/cinder/2025-05-02: Yuki picked up the Cinder on-call shift from Diego today.\n- [2026-06-17] standup/ember/2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.\n- [2025-05-30] standup/atlas/2025-05-30: The ledger is pinned to Postgres 14; the pin lifts when the partitioning work finishes.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.\n- [2025-05-28] standup/ember/2025-05-28: Observation from Ember: after the cache change, Ledger's memory use grew steadily for a week. Reminder: Oskar Lind is on call for team Ember this cycle.\n- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2026-04-14] standup/atlas/2026-04-14: Marcus Oyelaran picked up the Atlas on-call shift from Priya today.\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-06-02] standup/cinder/2025-06-02: Cinder adopted trunk-based development.\n- [2025-06-13] standup/cinder/2025-06-13: Diego Alvarez has the Cinder pager this cycle, taking over from Yuki Tanaka.\n- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.\n- [2025-05-02] standup/cinder/2025-05-02-3: Cinder has moved to the third floor.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2026-05-05] standup/boreal/2026-05-05: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far.\n- [2025-06-16] standup/dune/2025-06-16: The scheduler will use leader election instead of a single fixed node. Rationale: the fixed node turned every restart into a missed run.\n- [2025-06-25] handover/2025-06-25-image-resizer: Handover: as of today image-resizer moves from Dune to Cinder. Farah Haddad walked Yuki through the runbook this morning.\n- [2025-11-05] standup/ember/2025-11-05: Heads-up from Ember: notifier's memory use grew steadily for a week after the cache change.\n- [2025-05-28] standup/dune/2025-05-28: Reminder: the scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC.\n- [2025-05-15] standup/dune/2025-05-15: Reporting must stay on Python 3.11 until the pandas 3 upgrade lands.\n- [2026-06-03] standup/dune/2026-06-03: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.\n- [2026-05-28] standup/cinder/2026-05-28: Yuki Tanaka still has the Cinder pager.\n- [2026-03-05] standup/boreal/2026-03-05: As before, billing-api needs Ledger to work.\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2026-05-13] standup/ember/2026-05-13: Diego has the Ember pager this cycle, taking over from Oskar.\n- [2025-05-02] standup/cinder/2025-05-02-2: The catalog deploy window: on Mondays between 10:00 and 12:00 UTC. Team Cinder holds planning on Mondays.\n- [2026-04-06] handover/2026-04-06-notifier: Handover: as of today the notifier moves from the Cinder team to team Boreal. Yuki walked Lena through the runbook this morning.\n- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-01-31] standup/atlas/2025-01-31: Atlas adopted a no-deploy Friday.\n- [2026-05-27] standup/ember/2026-05-27: Heads-up from team Ember: notifier's CPU sat at 90 percent after the traffic shift.\n- [2025-07-21] standup/atlas/2025-07-21-2: Team Atlas has moved to the second floor.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n\nQuestion: Who was on call for Atlas on 2025-06-05?"
+  }
+ ],
+ "contexts": [
+  "- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.",
+  "- [2025-01-06] standup/atlas/2025-01-06: Team Atlas this year is Priya and Tomasz.",
+  "- [2025-06-13] standup/atlas/2025-06-13: Rotation day for Atlas: Priya Raman hands the pager to Tomasz.",
+  "- [2025-05-14] standup/atlas/2025-05-14: Reminder from team Atlas: page Priya for anything this cycle, not Tomasz.",
+  "- [2026-06-08] standup/atlas/2026-06-08: Reminder from team Atlas: page Priya for anything this cycle, not Marcus.",
+  "- [2025-05-21] standup/boreal/2025-05-21: Lena picked up the Boreal on-call shift from Marcus today.",
+  "- [2025-05-02] standup/cinder/2025-05-02: Yuki picked up the Cinder on-call shift from Diego today.",
+  "- [2026-06-17] standup/ember/2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.",
+  "- [2025-05-30] standup/atlas/2025-05-30: The ledger is pinned to Postgres 14; the pin lifts when the partitioning work finishes.",
+  "- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.",
+  "- [2025-05-28] standup/ember/2025-05-28: Observation from Ember: after the cache change, Ledger's memory use grew steadily for a week. Reminder: Oskar Lind is on call for team Ember this cycle.",
+  "- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.",
+  "- [2026-04-14] standup/atlas/2026-04-14: Marcus Oyelaran picked up the Atlas on-call shift from Priya today.",
+  "- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.",
+  "- [2025-06-02] standup/cinder/2025-06-02: Cinder adopted trunk-based development.",
+  "- [2025-06-13] standup/cinder/2025-06-13: Diego Alvarez has the Cinder pager this cycle, taking over from Yuki Tanaka.",
+  "- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.",
+  "- [2025-05-02] standup/cinder/2025-05-02-3: Cinder has moved to the third floor.",
+  "- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.",
+  "- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.",
+  "- [2026-05-05] standup/boreal/2026-05-05: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far.",
+  "- [2025-06-16] standup/dune/2025-06-16: The scheduler will use leader election instead of a single fixed node. Rationale: the fixed node turned every restart into a missed run.",
+  "- [2025-06-25] handover/2025-06-25-image-resizer: Handover: as of today image-resizer moves from Dune to Cinder. Farah Haddad walked Yuki through the runbook this morning.",
+  "- [2025-11-05] standup/ember/2025-11-05: Heads-up from Ember: notifier's memory use grew steadily for a week after the cache change.",
+  "- [2025-05-28] standup/dune/2025-05-28: Reminder: the scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC.",
+  "- [2025-05-15] standup/dune/2025-05-15: Reporting must stay on Python 3.11 until the pandas 3 upgrade lands.",
+  "- [2026-06-03] standup/dune/2026-06-03: Reminder from team Dune: page Tomasz for anything this cycle, not Farah.",
+  "- [2026-05-28] standup/cinder/2026-05-28: Yuki Tanaka still has the Cinder pager.",
+  "- [2026-03-05] standup/boreal/2026-03-05: As before, billing-api needs Ledger to work.",
+  "- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.",
+  "- [2026-05-13] standup/ember/2026-05-13: Diego has the Ember pager this cycle, taking over from Oskar.",
+  "- [2025-05-02] standup/cinder/2025-05-02-2: The catalog deploy window: on Mondays between 10:00 and 12:00 UTC. Team Cinder holds planning on Mondays.",
+  "- [2026-04-06] handover/2026-04-06-notifier: Handover: as of today the notifier moves from the Cinder team to team Boreal. Yuki walked Lena through the runbook this morning.",
+  "- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.",
+  "- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.",
+  "- [2025-01-31] standup/atlas/2025-01-31: Atlas adopted a no-deploy Friday.",
+  "- [2026-05-27] standup/ember/2026-05-27: Heads-up from team Ember: notifier's CPU sat at 90 percent after the traffic shift.",
+  "- [2025-07-21] standup/atlas/2025-07-21-2: Team Atlas has moved to the second floor.",
+  "- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas."
+ ],
+ "answer": "Priya"
+}

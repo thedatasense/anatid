@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 4 services.\n\nAnswer to grade: job scheduler, billing-api, event bus, image-resizer"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659070-cQ80oGnkZ6t6KPXF3gNB",
+  "object": "chat.completion",
+  "created": 1788659070,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer omits 'webhooks' and includes an extra item 'event bus', so it does not exactly name the four gold services.\"}\n",
+     "refusal": null,
+     "reasoning": "The gold answer lists: billing-api, image-resizer, scheduler and webhooks (4 services).\n\nThe answer to grade lists: job scheduler, billing-api, event bus, image-resizer.\n\nChecking:\n- billing-api: present ✓\n- image-resizer: present ✓\n- scheduler: \"job scheduler\" - arguably names the scheduler. Hmm, \"job scheduler\" could be considered naming the scheduler service. But strictly, the gold is \"scheduler\". \"job scheduler\" might be accepted as a phrasing.\n- webhooks: missing ✗\n- event bus: extra item not in gold ✗\n\nThe rule says: every item must be named and no extra item. The answer includes \"event bus\" which is an extra item, and misses \"webhooks\". So incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer lists: billing-api, image-resizer, scheduler and webhooks (4 services).\n\nThe answer to grade lists: job scheduler, billing-api, event bus, image-resizer.\n\nChecking:\n- billing-api: present ✓\n- image-resizer: present ✓\n- scheduler: \"job scheduler\" - arguably names the scheduler. Hmm, \"job scheduler\" could be considered naming the scheduler service. But strictly, the gold is \"scheduler\". \"job scheduler\" might be accepted as a phrasing.\n- webhooks: missing ✗\n- event bus: extra item not in gold ✗\n\nThe rule says: every item must be named and no extra item. The answer includes \"event bus\" which is an extra item, and misses \"webhooks\". So incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 265,
+   "completion_tokens": 204,
+   "total_tokens": 469,
+   "cost": 5.9355e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.9355e-05,
+    "upstream_inference_prompt_cost": 8.355e-06,
+    "upstream_inference_completions_cost": 5.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 160,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7810720420093276,
+ "fetched_at": "2026-09-06T01:44:32Z"
+}

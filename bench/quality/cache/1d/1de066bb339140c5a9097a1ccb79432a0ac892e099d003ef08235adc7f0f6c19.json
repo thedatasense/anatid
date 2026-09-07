@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Team Atlas has moved to the second floor. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21-2]\n- Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14. [decision; valid 2026-04-14 to now; recorded by standup/atlas/2026-04-14]\n- Marcus Oyelaran left Boreal and joined Team Atlas on 2026-03-17. [decision; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- Team Atlas observed on 2025-11-11 that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Team Atlas saw on 2026-04-16 that Ledger's disk usage jumped 30 percent following the retention change. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- Team Atlas consists of Priya as of 2025-07-21, after Tomasz moved to Team Dune. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Team Atlas consists of Priya and Tomasz as of 2025. [valid 2025-01-06 to 2025-07-21; recorded by standup/atlas/2025-01-06]\n- Team Atlas's planning meeting is every Tuesday. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- Team Atlas pinged the owners of billing-api on 2025-12-31. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08. [decision; valid 2026-06-08 to now; recorded by standup/atlas/2026-06-08]\n    earlier: Page Marcus Oyelaran for anything this cycle for Team Atlas, not Priya, as of 2026-04-14. [decision; valid 2026-04-14 to 2026-06-08; recorded by standup/atlas/2026-04-14]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-07-16. [decision; valid 2025-07-16 to 2026-04-14; recorded by standup/atlas/2025-07-16]\n    earlier: Page Tomasz for anything this cycle for Team Atlas, not Priya, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-16; recorded by standup/atlas/2025-06-13]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-05-14. [decision; valid 2025-05-14 to 2025-06-13; recorded by standup/atlas/2025-05-14]\n    earlier: Page Tomasz Nowak for anything this cycle for Team Atlas, not Priya, as of 2025-04-04. [decision; valid 2025-04-04 to 2025-05-14; recorded by standup/atlas/2025-04-04]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-02-19. [decision; valid 2025-02-19 to 2025-04-04; recorded by standup/atlas/2025-02-19]\n- Team Atlas adopted a no-deploy Friday as of 2025-01-31. [constraint; valid 2025-01-31 to now; recorded by standup/atlas/2025-01-31]\n- The flags service moved from Team Dune to Team Atlas on 2026-04-21. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n- Tomasz is off the Team Atlas on-call rotation as of 2025-07-16. [decision; valid 2025-07-16 to now; recorded by standup/atlas/2025-07-16]\n- The flags service is Team Atlas's service as of 2026-04-21, after moving from Team Dune. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n    earlier: The flags service is Team Dune's service as of 2026-01-29, after moving from Cinder. [decision; valid 2026-01-29 to 2026-04-21; recorded by handover/2026-01-29-feature-flags]\n    earlier: The flags service is not Team Dune's service, so Team Dune flagged the issue instead of fixing it. [valid 2025-09-18 to 2026-01-29; recorded by standup/dune/2025-09-18]\n- Lena picked up the Boreal on-call pager from Marcus Oyelaran on 2025-08-12. [decision; valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12]\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- Ledger is not Team Atlas's service, so Team Atlas flagged the disk usage jump instead of fixing it. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- Lena picked up the Boreal on-call shift from Marcus Oyelaran on 2025-05-21. [decision; valid 2025-05-21 to now; recorded by standup/boreal/2025-05-21]\n- The first on-call rotation for Team Atlas goes to Tomasz. [decision; valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09]\n- Team Atlas saw on 2026-04-16 that billing-api's error rate crept up to 2 percent following the dependency bump. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Team Atlas noticed on 2025-12-31 that billing-api's cold start time tripled after the runtime upgrade. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n\nQuestion: Which note recorded Marcus's move to Atlas, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657977-LNx0Pa3EWLDmkoINPp8k",
+  "object": "chat.completion",
+  "created": 1788657977,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/boreal/2026-03-17, on 2026-03-17.",
+     "refusal": null,
+     "reasoning": "The question asks which note recorded Marcus's move to Atlas, and when.\n\nMemory entry: \"Marcus Oyelaran left Boreal and joined Team Atlas on 2026-03-17. [decision; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\"\n\nSo the note is standup/boreal/2026-03-17, and the move happened on 2026-03-17.\n\nAnswer in one short line: standup/boreal/2026-03-17, on 2026-03-17.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which note recorded Marcus's move to Atlas, and when.\n\nMemory entry: \"Marcus Oyelaran left Boreal and joined Team Atlas on 2026-03-17. [decision; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\"\n\nSo the note is standup/boreal/2026-03-17, and the move happened on 2026-03-17.\n\nAnswer in one short line: standup/boreal/2026-03-17, on 2026-03-17.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1729,
+   "completion_tokens": 147,
+   "total_tokens": 1876,
+   "cost": 0.000158745,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000158745,
+    "upstream_inference_prompt_cost": 0.000121995,
+    "upstream_inference_completions_cost": 3.675e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 124,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0303802919806913,
+ "fetched_at": "2026-09-06T01:26:19Z"
+}

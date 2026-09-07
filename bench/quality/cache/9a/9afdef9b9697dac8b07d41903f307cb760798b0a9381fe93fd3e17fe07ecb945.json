@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2025-11-24] handover/2025-11-24-event-bus: From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-09-09] handover/2025-09-09-event-bus: Boreal handed the bus to the Dune team today; Marcus Oyelaran wrote up the handover doc for Tomasz Nowak.\n- [2026-03-17] standup/boreal/2026-03-17-2: Reminder: the event-bus deploys only on weekdays after 15:00 UTC.\n- [2025-04-22] standup/boreal/2025-04-22: Per the change policy, the event-bus deploys on weekdays after 15:00 UTC.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-11-11] standup/boreal/2025-11-11-2: Heads-up from team Boreal: the event bus' CPU sat at 90 percent after the traffic shift.\n- [2026-02-11] incident-review/INC-2026-003: Incident review INC-2026-003. The webhook dispatcher delivered some events twice on 2026-02-08. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2026-05-05] standup/boreal/2026-05-05: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2026-04-22] handover/2026-04-22-webhooks: The webhook dispatcher has a new home: Dune. Team Atlas kept it until today.\n- [2025-04-11] handover/2025-04-11-webhooks: Quick one: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\n- [2025-09-09] handover/2025-09-09-webhooks: The Ember team handed the webhook dispatcher to team Atlas today; Oskar wrote up the handover doc for Priya.\n- [2025-12-15] handover/2025-12-15-search-indexer-correction: The 2025-11-18 note about the indexer named the wrong team. The Dune team took it over on that date; the Ember team did not.\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2025-11-13] standup/boreal/2025-11-13: The reporting service still relies on the bus; keep that in mind for the maintenance.\n- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.\n- [2026-03-18] standup/boreal/2026-03-18: Reminder that the product catalog depends on the resizer.\n- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved.\n- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.\n- [2025-03-28] standup/cinder/2025-03-28: The product catalog depends on image-resizer for thumbnails.\n- [2025-12-08] standup/dune/2025-12-08-2: Heads-up from team Dune: the bus' request volume halved after the client rollout.\n- [2025-09-16] standup/atlas/2025-09-16: Decision: webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review.\n- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.\n- [2025-03-14] standup/atlas/2025-03-14: Dependency map update: the ledger needs the auth gateway (service tokens).\n- [2025-03-03] standup/boreal/2025-03-03: Dependency map update: the search indexer needs the product catalog (product documents).\n- [2025-03-11] standup/ember/2025-03-11-2: Observation from team Ember: after the cache change, the webhooks service's memory use grew steadily for a week. Team Ember now does pairing on every production change.\n\nQuestion: Which note first recorded that webhooks depends on the event-bus, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651479-KGntSZtvgYGftHPD2nxQ",
+  "object": "chat.completion",
+  "created": 1788651479,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/boreal/2025-02-13, on 2025-02-13",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded that webhooks depends on the event-bus, and when?\n\nLooking through memory:\n- [2025-02-13] standup/boreal/2025-02-13: \"The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\"\n\nThis is the only entry mentioning webhooks depends on the event-bus. So the note is standup/boreal/2025-02-13, recorded 2025-02-13.\n\nAnswer should be one short line with the value: \"standup/boreal/2025-02-13, 2025-02-13\" or similar.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded that webhooks depends on the event-bus, and when?\n\nLooking through memory:\n- [2025-02-13] standup/boreal/2025-02-13: \"The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\"\n\nThis is the only entry mentioning webhooks depends on the event-bus. So the note is standup/boreal/2025-02-13, recorded 2025-02-13.\n\nAnswer should be one short line with the value: \"standup/boreal/2025-02-13, 2025-02-13\" or similar.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1613,
+   "completion_tokens": 185,
+   "total_tokens": 1798,
+   "cost": 0.000155705,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000155705,
+    "upstream_inference_prompt_cost": 0.000109455,
+    "upstream_inference_completions_cost": 4.625e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 163,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.128486708039418,
+ "fetched_at": "2026-09-05T23:38:01Z"
+}

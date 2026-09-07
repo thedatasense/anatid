@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-06-08, Farah is the primary on-call for Team Dune. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Tomasz Nowak is the primary on-call for Team Dune. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n- As of 2026-03-10, Farah is the primary on-call for Team Dune for this cycle. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10]\n- As of 2026-06-08, Farah is back on the Team Dune on-call rotation as the primary on-call. [valid 2026-06-08 to now; recorded by standup/dune/2026-06-08]\n    earlier: As of 2026-04-13, Farah is off the Team Dune on-call rotation. [valid 2026-04-13 to 2026-06-08; recorded by standup/dune/2026-04-13]\n- Farah takes the first on-call rotation for Team Dune. [valid 2025-01-16 to now; recorded by standup/dune/2025-01-16]\n- As of 2026-02-04, Tomasz Nowak is the primary on-call for Team Dune for this cycle, instead of Farah. [valid 2026-02-04 to now; recorded by standup/dune/2026-02-04]\n    earlier: As of 2025-12-15, Farah is the primary on-call for Team Dune for this cycle, instead of Tomasz Nowak. [valid 2025-12-15 to 2026-02-04; recorded by standup/dune/2025-12-15]\n    earlier: As of 2025-10-27, Tomasz Nowak is the primary on-call for Team Dune for this cycle, instead of Farah. [valid 2025-10-27 to 2025-12-15; recorded by standup/dune/2025-10-27]\n    earlier: As of 2025-09-22, Farah is the primary on-call for Team Dune. [valid 2025-09-22 to 2025-10-27; recorded by standup/dune/2025-09-22]\n- On the 2026-02-04 rotation day, Team Dune's on-call swapped and Tomasz Nowak carries the phone until the next rotation. [valid 2026-02-04 to now; recorded by standup/dune/2026-02-04]\n- Farah is off the Team Dune on-call rotation as of 2026-04-13; as of 2026-02-04 the Team Dune pager for that cycle was carried by Tomasz Nowak. [valid 2026-04-13 to now; recorded by standup/dune/2026-04-13]\n    earlier: Farah is on the Team Dune on-call rotation; as of 2026-02-04 the pager for this cycle is carried by Tomasz Nowak. [valid 2026-02-04 to 2026-04-13; recorded by standup/dune/2026-02-04]\n    earlier: As of 2025-12-15, Farah is back on the Team Dune on-call rotation, carrying the pager for this cycle. [valid 2025-12-15 to 2026-02-04; recorded by standup/dune/2025-12-15]\n    earlier: As of 2025-10-27, Tomasz Nowak is back on the Team Dune on-call rotation, carrying the pager for this cycle. [valid 2025-10-27 to 2025-12-15; recorded by standup/dune/2025-10-27]\n    earlier: As of 2025-09-22, Tomasz Nowak is off the Team Dune on-call rotation, after holding the pager since 2025-07-30. [valid 2025-09-22 to 2025-10-27; recorded by standup/dune/2025-09-22]\n    earlier: As of 2025-07-30, Tomasz Nowak is on call for Team Dune this cycle, having received the pager from Farah. [valid 2025-07-30 to 2025-09-22; recorded by standup/dune/2025-07-30]\n    earlier: As of 2025-07-17, Farah is on call for Team Dune this cycle. [valid 2025-07-17 to 2025-07-30; recorded by standup/dune/2025-07-17]\n- As of 2026-03-10, Tomasz Nowak is off the Team Dune on-call rotation. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10]\n- Team Dune holds its planning meeting every Wednesday. [valid 2025-11-06 to now; recorded by standup/dune/2025-11-06-2]\n- Farah runs Team Dune solo until the next hire lands. [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- As of 2025-10-15, the pager for the scheduler rings Team Dune instead of Team Atlas. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n- Farah is the release captain for Team Dune for Q3 2025. [valid 2025-10-22 to now; recorded by standup/dune/2025-10-22-2]\n- As of January 2025, Team Dune consists of Farah alone. [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- As of 2026-03-04, the webhook dispatcher remains a Team Dune service. [valid 2026-03-04 to now; recorded by standup/dune/2026-03-04]\n- As of 2025-10-15, the scheduler is owned by Team Dune; Team Atlas kept it until then. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler went to Team Atlas, not Team Cinder; Team Cinder never owned it, and the Ember team no longer owns it. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder; the Ember team no longer owns it. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- Team Dune sits on the fourth floor. [valid 2025-06-12 to now; recorded by standup/dune/2025-06-12]\n\nQuestion: Who is the secondary on-call for Dune?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654582-DWUBSeSHJRw0gQ0LYwQR",
+  "object": "chat.completion",
+  "created": 1788654582,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks who is the secondary on-call for Team Dune. Looking through the memory, I see entries about primary on-call for Team Dune (Farah, Tomasz Nowak at various times), but nothing about a secondary on-call. The memory mentions primary on-call, pager carriers, rotation members, but never a \"secondary on-call.\"\n\nSo the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who is the secondary on-call for Team Dune. Looking through the memory, I see entries about primary on-call for Team Dune (Farah, Tomasz Nowak at various times), but nothing about a secondary on-call. The memory mentions primary on-call, pager carriers, rotation members, but never a \"secondary on-call.\"\n\nSo the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1870,
+   "completion_tokens": 87,
+   "total_tokens": 1957,
+   "cost": 0.00015432,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015432,
+    "upstream_inference_prompt_cost": 0.00013257,
+    "upstream_inference_completions_cost": 2.175e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 81,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0102830000105314,
+ "fetched_at": "2026-09-06T00:29:44Z"
+}

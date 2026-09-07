@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- INC-2025-011 was caused by an index missing after the schema migration. [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- INC-2025-004 was caused by a notifier consumer offset stuck after a broker restart. [valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- Yuki runs the monthly cost review. [valid 2025-01-17 to now; recorded by standup/cinder/2025-01-17-2]\n- Priya runs the quarterly capacity review. [valid 2025-02-19 to now; recorded by standup/atlas/2025-02-19]\n- Oskar runs the weekly architecture review. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- A partner asked for key rotation in their security review. [valid 2025-09-16 to now; recorded by standup/atlas/2025-09-16]\n- The scheduler ran the nightly jobs twice on 2026-05-16 during INC-2026-009. [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- The webhook dispatcher delivered some events twice on 2026-02-08 during INC-2026-003. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-07-06. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- Notifier missed alerts for 40 minutes on 2025-03-04 during incident INC-2025-004. [valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- Ledger saw write latency spike tenfold for an hour on 2025-04-13 during incident INC-2025-011. [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- The notifier's previous flat one-second retry was hammering the push provider during its outages. [valid 2025-03-31 to now; recorded by standup/boreal/2025-03-31-2]\n- The reporting service was moved off direct Ledger queries because nightly Ledger scans were blocking billing runs. [valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n\nQuestion: On what date was the review of INC-2025-017 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657502-GC29sXS0TFOZnGHZ8Q9P",
+  "object": "chat.completion",
+  "created": 1788657502,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-07-09",
+     "refusal": null,
+     "reasoning": "The question asks: \"On what date was the review of INC-2025-017 written?\"\n\nThe memory entries say: \"INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\"\n\nThe recorded date is 2025-07-09. But is that the date the review was written? The memory says it was recorded by incident-review/INC-2025-017, valid from 2025-07-09. The recording date is presumably 2025-07-09. The question asks for the date the review was written — the recorded by date is 2025-07-09. That seems to be the answer.\n\nHowever, the rules say: answer with just the value asked for. The recorded date is 2025-07-09. So answer: 2025-07-09.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"On what date was the review of INC-2025-017 written?\"\n\nThe memory entries say: \"INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\"\n\nThe recorded date is 2025-07-09. But is that the date the review was written? The memory says it was recorded by incident-review/INC-2025-017, valid from 2025-07-09. The recording date is presumably 2025-07-09. The question asks for the date the review was written — the recorded by date is 2025-07-09. That seems to be the answer.\n\nHowever, the rules say: answer with just the value asked for. The recorded date is 2025-07-09. So answer: 2025-07-09.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1294,
+   "completion_tokens": 207,
+   "total_tokens": 1501,
+   "cost": 0.00013728,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013728,
+    "upstream_inference_prompt_cost": 8.553e-05,
+    "upstream_inference_completions_cost": 5.175e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 199,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.1054975829902105,
+ "fetched_at": "2026-09-06T01:18:25Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which service does reporting depend on now?\nGold answer: event-bus\nAlso accepted: the event-bus; the event bus; the bus\nGrading rule: Correct only if the answer gives the CURRENT value (the gold). Naming an earlier value listed under distractors is wrong, even if it was once true. 'I don't know' is wrong.\n\nAnswer to grade: the event bus"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655597-8z5pjVX9r4J2ijZDp8Ce",
+  "object": "chat.completion",
+  "created": 1788655597,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'the event bus' is an accepted alternative phrasing of the gold answer 'event-bus' and names the current dependency.\"}",
+     "refusal": null,
+     "reasoning": "The answer \"the event bus\" is listed as an accepted alternative phrasing. So it's correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer \"the event bus\" is listed as an accepted alternative phrasing. So it's correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 247,
+   "completion_tokens": 61,
+   "total_tokens": 308,
+   "cost": 2.6095e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.6095e-05,
+    "upstream_inference_prompt_cost": 1.0845e-05,
+    "upstream_inference_completions_cost": 1.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 21,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.4193922920385376,
+ "fetched_at": "2026-09-06T00:46:41Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team; ownership transferred from the Ember team on that date, and the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team; ownership transferred from the Ember team on that date. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team; ownership transferred from the Atlas team on that date. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- The job scheduler depends on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- The feature-flags service saw 40,000 requests per second at peak, most of them identical, as of 2025-09-02. [valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- The Cinder team reported on 2025-04-24 that feature-flags' p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- Clients will cache feature-flags evaluations for 30 seconds, decided at the Atlas standup on 2025-09-02. [decision; valid 2025-09-02 to now; recorded by standup/atlas/2025-09-02]\n- On 2025-12-31, the Atlas team observed that the feature-flags service's queue depth hit 50,000 following the marketing send, and since it was not their service, they flagged it. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- As of 2025-09-30, the billing API depends on the feature flag service. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- As of 2025-09-30, the billing API will gate the new invoice flow behind feature-flags because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- As of 2025-12-18, the Boreal team adopted a weekly dependency update day. [decision; valid 2025-12-18 to now; recorded by standup/boreal/2025-12-18]\n- The notifier is owned by the Dune team as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- As of 2026-02-03, the Atlas team observes a no-deploy Friday, with no deployments on Fridays. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- The webhook dispatcher is owned by the Boreal team as of 2025-05-15, when ownership moved from the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team, which took over ownership from the Boreal team on 2025-03-03. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- The job scheduler is owned by the Dune team as of 2025-06-25, when ownership moved from the Ember team. [decision; valid 2025-06-25 to now; recorded by handover/2025-06-25-scheduler]\n    earlier: The Ember team owns the job scheduler. [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- The Boreal team noticed on 2025-05-07 that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07-2]\n- The Ember team runs its planning on Fridays. [valid 2025-07-21 to now; recorded by standup/ember/2025-07-21]\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n\nQuestion: As of now, which team is responsible for feature-flags?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652711-NIQtiBONo5SN3PmSVk8p",
+  "object": "chat.completion",
+  "created": 1788652711,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Atlas team",
+     "refusal": null,
+     "reasoning": "The question asks: as of now (2026-06-30), which team owns feature-flags?\n\nThe latest entry: feature-flags owned by Atlas team, valid 2026-03-09 to now.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: as of now (2026-06-30), which team owns feature-flags?\n\nThe latest entry: feature-flags owned by Atlas team, valid 2026-03-09 to now.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1691,
+   "completion_tokens": 49,
+   "total_tokens": 1740,
+   "cost": 0.000139075,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000139075,
+    "upstream_inference_prompt_cost": 0.000126825,
+    "upstream_inference_completions_cost": 1.225e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 45,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.7528174580074847,
+ "fetched_at": "2026-09-05T23:58:32Z"
+}

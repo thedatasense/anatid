@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023 [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-023: search-indexer served stale results for two days on 2025-10-24; the root cause was a reindex job that failed silently on a full disk [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Decision: search-indexer will rebuild the index nightly instead of on every catalog write, because incremental updates left stale entries behind after failed writes [decision; valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- INC-2025-011: the ledger saw write latency spike tenfold for an hour on 2025-04-13; the root cause was an index missing after the schema migration [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- Search-indexer must stay on OpenSearch 2.11 until the full reindex completes [constraint; valid 2025-08-13 to now; recorded by standup/boreal/2025-08-13]\n- Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011 [decision; valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-16; the root cause was two leaders elected during a network partition [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Atlas noticed that search-indexer's p99 latency doubled after Tuesday's deploy [observation; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Cinder noticed that search-indexer's disk usage jumped 30 percent after the retention change [observation; valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29-2]\n- Decision: the event-bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far [decision; valid 2026-05-05 to now; recorded by standup/boreal/2026-05-05]\n- Atlas noticed that the ledger's disk usage jumped 30 percent after the retention change [observation; valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- The handover note of 2025-11-18 wrongly recorded Ember as the owner of search-indexer [valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n- Decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017 [decision; valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- The ledger must stay on Postgres 14 until the partitioning work finishes [constraint; valid 2025-05-30 to now; recorded by standup/atlas/2025-05-30]\n- Decision: the notifier will retry failed pushes three times with exponential backoff, because the flat one-second retry was hammering the push provider during its outages [decision; valid 2025-03-31 to now; recorded by standup/boreal/2025-03-31-2]\n- Decision: the catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time [decision; valid 2025-04-01 to now; recorded by standup/cinder/2025-04-01]\n- Dune noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n\nQuestion: Which note records the decision that reindex jobs will page on failure, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658707-IWFsmxw2pB8C7Ar6N6ly",
+  "object": "chat.completion",
+  "created": 1788658707,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "incident-review/INC-2025-023, recorded 2025-10-27.",
+     "refusal": null,
+     "reasoning": "The question asks which note records the decision that reindex jobs will page on failure, and when it was written.\n\nFrom memory: \"Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023 [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\"\n\nSo it was recorded by incident-review/INC-2025-023, dated 2025-10-27 (the valid date is when it starts... the memory says \"valid 2025-10-27 to now\"). The recording note is incident-review/INC-2025-023. The date the entry was recorded — the valid date is 2025-10-27, which typically aligns with recording. The answer should be: incident-review/INC-2025-023, written 2025-10-27.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which note records the decision that reindex jobs will page on failure, and when it was written.\n\nFrom memory: \"Decision: reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023 [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\"\n\nSo it was recorded by incident-review/INC-2025-023, dated 2025-10-27 (the valid date is when it starts... the memory says \"valid 2025-10-27 to now\"). The recording note is incident-review/INC-2025-023. The date the entry was recorded — the valid date is 2025-10-27, which typically aligns with recording. The answer should be: incident-review/INC-2025-023, written 2025-10-27.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1290,
+   "completion_tokens": 221,
+   "total_tokens": 1511,
+   "cost": 0.00014432,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014432,
+    "upstream_inference_prompt_cost": 8.907e-05,
+    "upstream_inference_completions_cost": 5.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 199,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.9816672499873675,
+ "fetched_at": "2026-09-06T01:38:30Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: When can billing-api be deployed?\nGold answer: on weekday mornings before 11:00 UTC\nAlso accepted: weekday mornings before 11:00 UTC\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: On weekday mornings before 11:00 UTC (any other time requires an exception)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659044-0dgIMuJ5kOCiW0dBDfGt",
+  "object": "chat.completion",
+  "created": 1788659044,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states the gold fact that billing-api can be deployed on weekday mornings before 11:00 UTC, with additional non-contradicting context.\"}",
+     "refusal": null,
+     "reasoning": "The answer says \"On weekday mornings before 11:00 UTC (any other time requires an exception).\" This matches the gold answer with extra context. The extra context \"any other time requires an exception\" - is that extra correct context or a potentially wrong addition? The grading rule says \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine.\" The extra info doesn't contradict the gold fact. It seems like it could be accurate context. I'll mark it correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer says \"On weekday mornings before 11:00 UTC (any other time requires an exception).\" This matches the gold answer with extra context. The extra context \"any other time requires an exception\" - is that extra correct context or a potentially wrong addition? The grading rule says \"Correct if the answer states the gold fact or an accepted alias; extra correct context is fine.\" The extra info doesn't contradict the gold fact. It seems like it could be accurate context. I'll mark it correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 256,
+   "completion_tokens": 146,
+   "total_tokens": 402,
+   "cost": 4.418e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.418e-05,
+    "upstream_inference_prompt_cost": 7.68e-06,
+    "upstream_inference_completions_cost": 3.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 102,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4616359579958953,
+ "fetched_at": "2026-09-06T01:44:07Z"
+}

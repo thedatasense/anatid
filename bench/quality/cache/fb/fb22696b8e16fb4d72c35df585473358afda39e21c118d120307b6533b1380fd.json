@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- As of 2025-09-23, the reporting service no longer relies on the ledger service; it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to 2025-09-23; recorded by standup/dune/2025-06-24]\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- The reporting service no longer depends on the ledger service for the nightly balance export; as of 2025-09-23 it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- The notifier depends on the bus for delivery events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- The webhook dispatcher depends on the bus for outbound events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- The Dune team observed on 2025-12-29 that the bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- The ledger service relies on the authentication gateway for service tokens. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- As of the 2025-11-24 handover, the bus' dashboards and alerts are being repointed. [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- The Dune team observed on 2025-09-23 that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- The catalog service still relies on the resizer. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- The job scheduler depends on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- On 2026-05-27, the Atlas team decided that the bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- As of 2025-09-30, the billing API depends on the feature flag service. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- The ledger service must stay on Postgres 14 until the partitioning work finishes. [constraint; valid 2025-01-31 to now; recorded by standup/atlas/2025-01-31]\n- The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n\nQuestion: Which service does the event-bus depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653523-5GnPu53eigT8NifjoR3o",
+  "object": "chat.completion",
+  "created": 1788653523,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which service does the event-bus depend on?\n\nLooking at the memory, I see entries about the bus. Let me check dependencies of the bus:\n- The notifier depends on the bus for delivery events (that's the notifier depending on the bus, not the bus depending on something).\n- The webhook dispatcher depends on the bus (again, not the bus's dependency).\n- The ledger service relies on the authentication gateway for service tokens — that's the ledger service.\n- The reporting service uses the bus as its source — the reporting service depends on the bus.\n- The catalog service still relies on the resizer.\n- The job scheduler depends on the feature-flags service.\n- The billing API depends on the ledger service and feature flag service.\n\nThere is no entry saying the bus depends on some service. So the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which service does the event-bus depend on?\n\nLooking at the memory, I see entries about the bus. Let me check dependencies of the bus:\n- The notifier depends on the bus for delivery events (that's the notifier depending on the bus, not the bus depending on something).\n- The webhook dispatcher depends on the bus (again, not the bus's dependency).\n- The ledger service relies on the authentication gateway for service tokens — that's the ledger service.\n- The reporting service uses the bus as its source — the reporting service depends on the bus.\n- The catalog service still relies on the resizer.\n- The job scheduler depends on the feature-flags service.\n- The billing API depends on the ledger service and feature flag service.\n\nThere is no entry saying the bus depends on some service. So the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1409,
+   "completion_tokens": 181,
+   "total_tokens": 1590,
+   "cost": 0.000143245,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000143245,
+    "upstream_inference_prompt_cost": 9.7995e-05,
+    "upstream_inference_completions_cost": 4.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 175,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.625129374966491,
+ "fetched_at": "2026-09-06T00:12:06Z"
+}

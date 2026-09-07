@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The webhooks service has a deploy window on Thursdays between 07:00 and 09:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- Billing-api depends on the flags service as of 2025-10-21. [valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- The product catalog has a deploy window on Tuesdays and Thursdays between 10:00 and 12:00 UTC as of 2025-11-12. [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The product catalog has a deploy window on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- The job scheduler has a deploy window on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-08-08 to now; recorded by standup/dune/2025-08-08]\n    earlier: The job scheduler can be released on Tuesdays between 13:00 and 15:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-21 to 2025-08-08; recorded by standup/ember/2025-03-21]\n- The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-04-14 to now; recorded by standup/ember/2025-04-14]\n- Team Dune noticed on 2025-09-18 that the flags service's p99 latency doubled following Tuesday's deploy. [valid 2025-09-18 to now; recorded by standup/dune/2025-09-18]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- The reports pipeline depends on Ledger for the nightly balance export, so if Ledger is down the reports pipeline is down. [valid 2025-02-06 to now; recorded by standup/dune/2025-02-06]\n- The notifier is owned by team Boreal as of 2026-04-06, after the Cinder team handed it over. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n    earlier: The notifier is owned by team Cinder as of 2026-03-17. [valid 2026-03-17 to 2026-04-06; recorded by standup/cinder/2026-03-17]\n- Team Atlas observed on 2025-11-11 that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Team Dune observed on 2025-12-08 that Ledger's p99 latency doubled following Tuesday's deploy. [valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n- The flags service is Team Atlas's service as of 2026-04-21, after moving from Team Dune. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n    earlier: The flags service is Team Dune's service as of 2026-01-29, after moving from Cinder. [decision; valid 2026-01-29 to 2026-04-21; recorded by handover/2026-01-29-feature-flags]\n    earlier: The flags service is not Team Dune's service, so Team Dune flagged the issue instead of fixing it. [valid 2025-09-18 to 2026-01-29; recorded by standup/dune/2025-09-18]\n- Team Ember reported at standup on 2026-05-27 that the notifier's CPU sat at 90 percent after the traffic shift. [valid 2026-05-27 to now; recorded by standup/ember/2026-05-27]\n- The reporting service's p99 latency doubled after Tuesday's deploy, as noticed by Cinder on 2025-08-20. [valid 2025-08-20 to now; recorded by standup/cinder/2025-08-20]\n- Billing-api depends on Ledger to work. [constraint; valid 2026-03-05 to now; recorded by standup/boreal/2026-03-05]\n- The product catalog depends on image-resizer for thumbnails. [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\n\nQuestion: What is the deploy window of the service that the notifier depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657445-WDg7e8rswO87xUm0rI1k",
+  "object": "chat.completion",
+  "created": 1788657445,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"What is the deploy window of the service that the notifier depends on?\"\n\nFirst, I need to find what service the notifier depends on. Looking through the memory:\n\n- The notifier entries: Cinder flagged an issue about notifier (2025-09-26), ownership changes (Boreal → Cinder → Boreal), CPU at 90% (2026-05-27).\n- Dependencies listed: Billing-api → flags service; job scheduler → flags service; Ledger → authentication gateway; reports pipeline → Ledger; billing-api → Ledger; product catalog → image-resizer.\n\nThere's no entry saying the notifier depends on anything. So I cannot determine which service the notifier depends on.\n\nTherefore, the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"What is the deploy window of the service that the notifier depends on?\"\n\nFirst, I need to find what service the notifier depends on. Looking through the memory:\n\n- The notifier entries: Cinder flagged an issue about notifier (2025-09-26), ownership changes (Boreal → Cinder → Boreal), CPU at 90% (2026-05-27).\n- Dependencies listed: Billing-api → flags service; job scheduler → flags service; Ledger → authentication gateway; reports pipeline → Ledger; billing-api → Ledger; product catalog → image-resizer.\n\nThere's no entry saying the notifier depends on anything. So I cannot determine which service the notifier depends on.\n\nTherefore, the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1542,
+   "completion_tokens": 157,
+   "total_tokens": 1699,
+   "cost": 0.00014722,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014722,
+    "upstream_inference_prompt_cost": 0.00010797,
+    "upstream_inference_completions_cost": 3.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 151,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.551389125001151,
+ "fetched_at": "2026-09-06T01:17:28Z"
+}

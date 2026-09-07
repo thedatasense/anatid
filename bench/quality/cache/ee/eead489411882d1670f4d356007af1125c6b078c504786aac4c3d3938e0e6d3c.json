@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which team was wrongly recorded as the owner of search-indexer before the record was corrected?\nGold answer: Ember\nAlso accepted: the Ember team; team Ember\nGrading rule: Correct if the answer states the gold fact or an accepted alias; extra correct context is fine. A different value, or 'I don't know', is wrong.\n\nAnswer to grade: Ember"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658938-dit8pbsaGBlPjLj4ogOe",
+  "object": "chat.completion",
+  "created": 1788658938,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'Ember' exactly matches the gold answer.\"}",
+     "refusal": null,
+     "reasoning": "The answer is \"Ember\" which matches the gold answer exactly. So it's correct. Output JSON: {\"correct\": true, \"reason\": \"...\"}. Must be one JSON object and nothing else. Note the system prompt mentions code block ending with ``` but the grading instruction says reply with one JSON object and nothing else. The system prompt says: \"You should always follow the instructions and output a valid JSON object... Make sure to always end the code block with ``` to indicate the end of the JSON object.\" Hmm, conflicting. The task says reply with one JSON object and nothing else. I'll output just the JSON object. Actually the system says end with ``` — ambiguous. Safer: output JSON object only, since \"Reply with one JSON object and nothing else\". I'll do that.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer is \"Ember\" which matches the gold answer exactly. So it's correct. Output JSON: {\"correct\": true, \"reason\": \"...\"}. Must be one JSON object and nothing else. Note the system prompt mentions code block ending with ``` but the grading instruction says reply with one JSON object and nothing else. The system prompt says: \"You should always follow the instructions and output a valid JSON object... Make sure to always end the code block with ``` to indicate the end of the JSON object.\" Hmm, conflicting. The task says reply with one JSON object and nothing else. I'll output just the JSON object. Actually the system says end with ``` — ambiguous. Safer: output JSON object only, since \"Reply with one JSON object and nothing else\". I'll do that.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 233,
+   "completion_tokens": 186,
+   "total_tokens": 419,
+   "cost": 6.0135e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 6.0135e-05,
+    "upstream_inference_prompt_cost": 1.3635e-05,
+    "upstream_inference_completions_cost": 4.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 162,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.6131320419954136,
+ "fetched_at": "2026-09-06T01:42:21Z"
+}

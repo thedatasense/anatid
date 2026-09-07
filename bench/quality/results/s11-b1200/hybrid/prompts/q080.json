@@ -1,0 +1,53 @@
+{
+ "qid": "q080",
+ "system": "hybrid",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+  },
+  {
+   "role": "user",
+   "content": "Memory:\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-11-19] handover/2025-11-19-image-resizer: From today the pager for image-resizer rings the Boreal team, not Cinder. Ownership transferred.\n- [2026-01-20] handover/2026-01-20-image-resizer: From today the pager for the resizer rings team Dune, not team Boreal. Ownership transferred.\n- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.\n- [2025-06-25] handover/2025-06-25-image-resizer: Handover: as of today image-resizer moves from Dune to Cinder. Farah Haddad walked Yuki through the runbook this morning.\n- [2025-03-28] standup/cinder/2025-03-28: The product catalog depends on image-resizer for thumbnails.\n- [2026-03-20] standup/dune/2026-03-20: Decision: image-resizer will keep original uploads for 90 days only, because storage for originals doubled in six months.\n- [2026-03-18] standup/boreal/2026-03-18: Reminder that the product catalog depends on the resizer.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2026-04-29] standup/ember/2026-04-29: Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.\n- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.\n- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-08-29] standup/cinder/2025-08-29: Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-10-02] standup/cinder/2025-10-02: On-call rotation: Yuki is primary for team Cinder starting today; Diego is off rotation.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-04-01] standup/cinder/2025-04-01: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.\n- [2025-07-22] standup/cinder/2025-07-22: Cinder on-call swapped this morning. Yuki Tanaka carries the phone until the next rotation.\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2026-01-02] standup/boreal/2026-01-02: Boreal on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n\nQuestion: Who is on call for the team that owns image-resizer?"
+  }
+ ],
+ "contexts": [
+  "- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.",
+  "- [2025-11-19] handover/2025-11-19-image-resizer: From today the pager for image-resizer rings the Boreal team, not Cinder. Ownership transferred.",
+  "- [2026-01-20] handover/2026-01-20-image-resizer: From today the pager for the resizer rings team Dune, not team Boreal. Ownership transferred.",
+  "- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.",
+  "- [2025-06-25] handover/2025-06-25-image-resizer: Handover: as of today image-resizer moves from Dune to Cinder. Farah Haddad walked Yuki through the runbook this morning.",
+  "- [2025-03-28] standup/cinder/2025-03-28: The product catalog depends on image-resizer for thumbnails.",
+  "- [2026-03-20] standup/dune/2026-03-20: Decision: image-resizer will keep original uploads for 90 days only, because storage for originals doubled in six months.",
+  "- [2026-03-18] standup/boreal/2026-03-18: Reminder that the product catalog depends on the resizer.",
+  "- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.",
+  "- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.",
+  "- [2026-04-29] standup/ember/2026-04-29: Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners.",
+  "- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.",
+  "- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.",
+  "- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.",
+  "- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.",
+  "- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.",
+  "- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.",
+  "- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.",
+  "- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.",
+  "- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.",
+  "- [2025-08-29] standup/cinder/2025-08-29: Cinder on-call swapped this morning. Diego carries the phone until the next rotation.",
+  "- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.",
+  "- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.",
+  "- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.",
+  "- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.",
+  "- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.",
+  "- [2025-10-02] standup/cinder/2025-10-02: On-call rotation: Yuki is primary for team Cinder starting today; Diego is off rotation.",
+  "- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.",
+  "- [2025-04-01] standup/cinder/2025-04-01: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.",
+  "- [2025-07-22] standup/cinder/2025-07-22: Cinder on-call swapped this morning. Yuki Tanaka carries the phone until the next rotation.",
+  "- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.",
+  "- [2026-01-02] standup/boreal/2026-01-02: Boreal on-call swapped this morning. Marcus carries the phone until the next rotation.",
+  "- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.",
+  "- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier."
+ ],
+ "answer": "Tomasz"
+}

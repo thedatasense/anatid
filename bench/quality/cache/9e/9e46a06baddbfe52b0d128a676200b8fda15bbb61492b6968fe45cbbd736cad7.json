@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-03-20, Marcus moved from the Boreal team to the Atlas team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- As of 2026-03-20, the Atlas team consists of Priya Raman and Marcus, after Marcus moved from the Boreal team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: As of 2025-07-30, the Atlas team consists of Priya Raman, after Tomasz left the team to join the Dune team. [valid 2025-07-30 to 2026-03-20; recorded by standup/atlas/2025-07-30]\n    earlier: The Atlas team in 2025 consists of Priya Raman and Tomasz. [valid 2025-01-06 to 2025-07-30; recorded by standup/atlas/2025-01-06]\n- The Boreal team consists of Lena, after Marcus moved to the Atlas team on 2026-03-20. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: The Boreal team consists of Lena and Marcus. [valid 2025-01-07 to 2026-03-20; recorded by standup/boreal/2025-01-07]\n- As of 2026-03-20, Lena has the Boreal team pager this cycle, taking over from Marcus. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: As of 2026-02-10, Marcus has the Boreal team pager this cycle, taking over from Lena. [valid 2026-02-10 to 2026-03-20; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, Lena has the Boreal team pager this cycle, taking over from Marcus. [valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: As of 2025-11-06, Marcus has the Boreal team pager this cycle, taking over from Lena. [valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: Lena has the pager rotation for the Boreal team as of 2025-06-27, taking over from Marcus. [valid 2025-06-27 to 2025-11-06; recorded by standup/boreal/2025-06-27]\n    earlier: Marcus has the pager rotation for the Boreal team as of 2025-05-07, taking over from Lena. [valid 2025-05-07 to 2025-06-27; recorded by standup/boreal/2025-05-07]\n    earlier: Lena has the pager rotation for the Boreal team as of 2025-03-17, taking over from Marcus. [valid 2025-03-17 to 2025-05-07; recorded by standup/boreal/2025-03-17]\n    earlier: Marcus has the pager rotation for the Boreal team as of 2025-02-12. [valid 2025-02-12 to 2025-03-17; recorded by standup/boreal/2025-02-12]\n    earlier: Lena has the first pager rotation for the Boreal team. [valid 2025-01-09 to 2025-02-12; recorded by standup/boreal/2025-01-09-4]\n- As of 2025-09-23, the Boreal team says to page Lena for anything this cycle, not Marcus. [constraint; valid 2025-09-23 to now; recorded by standup/boreal/2025-09-23]\n    earlier: As of 2025-08-15, the Boreal team says to page Marcus for anything this cycle, not Lena Fischer. [constraint; valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n- As of 2026-06-04, Priya Raman has the Atlas team pager this cycle, taking over from Marcus. [valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n- As of 2025-11-27, Diego is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on Cinder. [valid 2025-01-08 to 2025-11-27; recorded by standup/cinder/2025-01-08]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- As of 2025-11-27, Diego Alvarez is on the Ember team, having left Cinder. [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- Yuki Tanaka is on Cinder. [valid 2025-01-08 to now; recorded by standup/cinder/2025-01-08]\n- As of 2026-06-04, for anything Atlas-related, page Priya Raman, not Marcus, since she has the Atlas team pager this cycle. [decision; valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: As of 2026-04-08, for anything Atlas-related, page Marcus, not Priya Raman. [decision; valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: For anything Atlas-related, page Priya Raman. [decision; valid 2026-03-17 to 2026-04-08; recorded by standup/atlas/2026-03-17]\n\nQuestion: Which team is Marcus on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653243-v2wbKe2d1IZp0TJwwaTQ",
+  "object": "chat.completion",
+  "created": 1788653243,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Atlas",
+     "refusal": null,
+     "reasoning": "The memory says: On 2026-03-20, Marcus moved from the Boreal team to the Atlas team. Valid from 2026-03-20 to now. Today is 2026-06-30, so Marcus is on the Atlas team now.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: On 2026-03-20, Marcus moved from the Boreal team to the Atlas team. Valid from 2026-03-20 to now. Today is 2026-06-30, so Marcus is on the Atlas team now.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1855,
+   "completion_tokens": 59,
+   "total_tokens": 1914,
+   "cost": 0.00030775,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00030775,
+    "upstream_inference_prompt_cost": 0.00027825,
+    "upstream_inference_completions_cost": 2.95e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 54,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.389324709016364,
+ "fetched_at": "2026-09-06T00:07:25Z"
+}

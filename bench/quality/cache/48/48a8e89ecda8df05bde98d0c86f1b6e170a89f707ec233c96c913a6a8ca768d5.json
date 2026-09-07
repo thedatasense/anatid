@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Team Ember now does pairing on every production change. [decision; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- The reporting service still relies on the event bus as of 2025-11-13. [valid 2025-11-13 to now; recorded by standup/boreal/2025-11-13]\n- The reporting service must stay on Python 3.11 until the pandas 3 upgrade lands. [constraint; valid 2025-05-15 to now; recorded by standup/dune/2025-05-15]\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- The reporting service's p99 latency doubled after Tuesday's deploy, as noticed by Cinder on 2025-08-20. [valid 2025-08-20 to now; recorded by standup/cinder/2025-08-20]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly. [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- The reporting service was moved off direct Ledger queries because nightly Ledger scans were blocking billing runs. [valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- Billing-api depends on the flags service as of 2025-10-21. [valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- Yuki walked Farah through the flags service runbook on 2026-01-29. [valid 2026-01-29 to now; recorded by handover/2026-01-29-feature-flags]\n- The flags service moved from Cinder to Team Dune on 2026-01-29. [decision; valid 2026-01-29 to now; recorded by handover/2026-01-29-feature-flags]\n- The webhooks service will require an idempotency key on every delivery. [decision; valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The flags service moved from Team Dune to Team Atlas on 2026-04-21. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n- The webhooks service has a deploy window on Thursdays between 07:00 and 09:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- Priya walked Diego through the flags service runbook on 2025-02-13 as part of the handover. [valid 2025-02-13 to now; recorded by handover/2025-02-13-feature-flags]\n- Oskar wrote up the handover doc for Priya for the webhooks service handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- The scheduler is not a Boreal service; Boreal flagged the scheduler at standup on 2026-02-04. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n\nQuestion: Which service does reporting depend on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657189-prKQFCnD2axHGLp0Miby",
+  "object": "chat.completion",
+  "created": 1788657189,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The event bus",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service does reporting depend on now?\"\n\nMemory entries:\n- \"The reporting service still relies on the event bus as of 2025-11-13.\" [valid 2025-11-13 to now]\n- \"As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly.\" [valid 2025-09-19 to now]\n\nSo reporting depends on the event bus now.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service does reporting depend on now?\"\n\nMemory entries:\n- \"The reporting service still relies on the event bus as of 2025-11-13.\" [valid 2025-11-13 to now]\n- \"As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly.\" [valid 2025-09-19 to now]\n\nSo reporting depends on the event bus now.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1410,
+   "completion_tokens": 101,
+   "total_tokens": 1511,
+   "cost": 0.00012332,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012332,
+    "upstream_inference_prompt_cost": 9.807e-05,
+    "upstream_inference_completions_cost": 2.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 96,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.0834908339893445,
+ "fetched_at": "2026-09-06T01:13:14Z"
+}

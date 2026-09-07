@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which team owned image-resizer before Dune took it over?\nGold answer: Boreal\nAlso accepted: the Boreal team; team Boreal\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: Boreal"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658983-KNJcr34BKc6Q3HtO2DFp",
+  "object": "chat.completion",
+  "created": 1788658983,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'Boreal' matches the gold answer exactly.\"}`",
+     "refusal": null,
+     "reasoning": "The answer is \"Boreal\" which matches the gold answer exactly.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer is \"Boreal\" which matches the gold answer exactly.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 248,
+   "completion_tokens": 39,
+   "total_tokens": 287,
+   "cost": 1.683e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 1.683e-05,
+    "upstream_inference_prompt_cost": 7.08e-06,
+    "upstream_inference_completions_cost": 9.75e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 14,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9377898340462707,
+ "fetched_at": "2026-09-06T01:43:05Z"
+}

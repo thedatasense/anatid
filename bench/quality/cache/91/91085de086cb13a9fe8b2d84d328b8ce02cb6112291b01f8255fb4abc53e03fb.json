@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- Tomasz took over the Team Dune on-call shift from Farah on 2025-12-08. [decision; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n    earlier: Farah is primary on call for Team Dune starting 2025-11-03. [decision; valid 2025-11-03 to 2025-12-08; recorded by standup/dune/2025-11-03]\n- Tomasz is back on the Team Dune on-call rotation as of 2025-12-08. [decision; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n    earlier: Tomasz is off the Team Dune on-call rotation as of 2025-11-03. [decision; valid 2025-11-03 to 2025-12-08; recorded by standup/dune/2025-11-03]\n- The first on-call rotation for Team Dune goes to Farah. [decision; valid 2025-01-13 to now; recorded by standup/dune/2025-01-13]\n- Team Dune owns the job scheduler as of 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n    earlier: Ember owns the job scheduler. [valid 2025-01-20 to 2025-04-04; recorded by standup/ember/2025-01-20]\n- Team Dune is a two-person team as of 2025-07-21. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Team Dune is a one-person team as of 2025-01-09. [valid 2025-01-09 to 2025-07-21; recorded by standup/dune/2025-01-09]\n- Farah handed the Team Dune pager to Tomasz on 2025-09-04. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n- The job scheduler remains a Team Dune service as of 2026-01-12. [valid 2026-01-12 to now; recorded by standup/dune/2026-01-12]\n- Team Dune adopted a monthly game day as of 2025-04-23. [decision; valid 2025-04-23 to now; recorded by standup/dune/2025-04-23]\n- Team Dune sits on the fourth floor as of 2026-03-09. [valid 2026-03-09 to now; recorded by standup/dune/2026-03-09]\n- The event bus pager rings the Boreal team, not Team Dune, as of 2025-11-24. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- Boreal handed the event bus to Team Dune on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- Team Dune has a planning meeting every Wednesday. [valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- Team Dune noticed on 2025-09-18 that the flags service's p99 latency doubled following Tuesday's deploy. [valid 2025-09-18 to now; recorded by standup/dune/2025-09-18]\n- Team Dune observed on 2025-12-08 that Ledger's p99 latency doubled following Tuesday's deploy. [valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n- Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-07-09. [decision; valid 2025-07-09 to now; recorded by standup/boreal/2025-07-09]\n- The webhook dispatcher moved from Team Atlas to Team Dune on 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- Team Cinder's on-call swapped on 2025-12-15, with Yuki carrying the Cinder on-call phone. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Team Cinder's on-call swapped on 2025-11-25, with Diego carrying the Cinder on-call phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n- Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-09-24. [decision; valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n- Page Tomasz for anything this cycle for Team Dune, not Farah, as of 2026-06-03. [decision; valid 2026-06-03 to now; recorded by standup/dune/2026-06-03]\n    earlier: Page Farah for anything this cycle for Team Dune, not Tomasz, as of 2026-04-09. [decision; valid 2026-04-09 to 2026-06-03; recorded by standup/dune/2026-04-09]\n    earlier: Page Tomasz for anything this cycle for Team Dune, not Farah, as of 2026-02-24. [decision; valid 2026-02-24 to 2026-04-09; recorded by standup/dune/2026-02-24]\n    earlier: Farah is on call for Team Dune this cycle as of 2026-01-22, not Tomasz. [decision; valid 2026-01-22 to 2026-02-24; recorded by standup/dune/2026-01-22]\n    earlier: Tomasz is on call for Team Dune this cycle as of 2026-01-14. [valid 2026-01-14 to 2026-01-22; recorded by standup/dune/2026-01-14]\n\nQuestion: Who was on call for Dune on 2025-03-28?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788656723-g21CE2rq1xafeBDODU4x",
+  "object": "chat.completion",
+  "created": 1788656723,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Farah",
+     "refusal": null,
+     "reasoning": "The question asks who was on call for Team Dune on 2025-03-28.\n\nLooking at the memory:\n- Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04]\n- The first on-call rotation for Team Dune goes to Farah. [decision; valid 2025-01-13 to now]\n\n2025-03-28 is before 2025-03-31. But the entry \"The first on-call rotation for Team Dune goes to Farah\" is valid from 2025-01-13 to now, which covers 2025-03-28. So Farah was on call.\n\nAlso the 2025-03-31 entry says \"as of 2025-03-31\" implying Farah became on-call on that date. Before that, the \"first on-call rotation goes to Farah\" from 2025-01-13 covers the date. So the answer is Farah.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was on call for Team Dune on 2025-03-28.\n\nLooking at the memory:\n- Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04]\n- The first on-call rotation for Team Dune goes to Farah. [decision; valid 2025-01-13 to now]\n\n2025-03-28 is before 2025-03-31. But the entry \"The first on-call rotation for Team Dune goes to Farah\" is valid from 2025-01-13 to now, which covers 2025-03-28. So Farah was on call.\n\nAlso the 2025-03-31 entry says \"as of 2025-03-31\" implying Farah became on-call on that date. Before that, the \"first on-call rotation goes to Farah\" from 2025-01-13 covers the date. So the answer is Farah.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1822,
+   "completion_tokens": 225,
+   "total_tokens": 2047,
+   "cost": 0.00018522,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00018522,
+    "upstream_inference_prompt_cost": 0.00012897,
+    "upstream_inference_completions_cost": 5.625e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 221,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.751873000001069,
+ "fetched_at": "2026-09-06T01:05:26Z"
+}

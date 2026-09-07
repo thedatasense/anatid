@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-10-02] standup/cinder/2025-10-02: On-call rotation: Yuki is primary for team Cinder starting today; Diego is off rotation.\n- [2025-05-02] standup/cinder/2025-05-02: Yuki picked up the Cinder on-call shift from Diego today.\n- [2026-06-17] standup/ember/2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.\n- [2025-08-29] standup/cinder/2025-08-29: Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki and Diego are on team Cinder.\n- [2025-02-17] standup/cinder/2025-02-17: Reminder from the Cinder team: page Yuki Tanaka for anything this cycle, not Diego.\n- [2025-02-13] handover/2025-02-13-feature-flags: Handover: as of today the flags service moves from team Atlas to the Cinder team. Priya walked Diego through the runbook this morning.\n- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.\n- [2025-01-09] standup/atlas/2025-01-09: First on-call rotation for the Atlas team goes to Tomasz.\n- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.\n- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.\n- [2026-05-13] standup/ember/2026-05-13: Diego has the Ember pager this cycle, taking over from Oskar.\n- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.\n- [2025-07-16] standup/atlas/2025-07-16: On-call rotation: Priya is primary for the Atlas team starting today; Tomasz is off rotation.\n- [2025-06-13] standup/cinder/2025-06-13: Diego Alvarez has the Cinder pager this cycle, taking over from Yuki Tanaka.\n- [2025-03-27] standup/cinder/2025-03-27: Rotation day for Cinder: Yuki hands the pager to Diego Alvarez.\n- [2025-05-28] standup/ember/2025-05-28: Observation from Ember: after the cache change, Ledger's memory use grew steadily for a week. Reminder: Oskar Lind is on call for team Ember this cycle.\n- [2025-12-08] standup/dune/2025-12-08: Tomasz picked up the Dune on-call shift from Farah today. Team Dune saw that the ledger's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-01-13] standup/dune/2025-01-13: First on-call rotation for Dune goes to Farah.\n- [2025-09-24] standup/boreal/2025-09-24: Marcus picked up the Boreal on-call shift from Lena today.\n- [2025-05-21] standup/boreal/2025-05-21: Lena picked up the Boreal on-call shift from Marcus today.\n- [2026-03-16] standup/ember/2026-03-16: Oskar has the Ember pager this cycle, taking over from Diego Alvarez. Ember noticed that search-indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-04-14] standup/atlas/2026-04-14: Marcus Oyelaran picked up the Atlas on-call shift from Priya today.\n- [2026-01-02] standup/boreal/2026-01-02: Boreal on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2025-07-09] standup/boreal/2025-07-09: Marcus picked up the Boreal on-call shift from Lena Fischer today.\n- [2025-07-22] standup/cinder/2025-07-22: Cinder on-call swapped this morning. Yuki Tanaka carries the phone until the next rotation.\n- [2025-11-03] standup/dune/2025-11-03: On-call rotation: Farah Haddad is primary for Dune starting today; Tomasz is off rotation.\n- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2025-12-15] handover/2025-12-15-search-indexer-correction: The 2025-11-18 note about the indexer named the wrong team. The Dune team took it over on that date; the Ember team did not.\n\nQuestion: Who is on call for Diego's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651375-No0FXCtXKnHRsPH9DyMu",
+  "object": "chat.completion",
+  "created": 1788651375,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Oskar",
+     "refusal": null,
+     "reasoning": "Diego left team Cinder and joined team Ember on 2025-12-15. So \"Diego's team\" now (2026-06-30) is team Ember.\n\nWho is on call for Ember right now? The most recent Ember entry: 2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.\n\nSo the answer is Oskar.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Diego left team Cinder and joined team Ember on 2025-12-15. So \"Diego's team\" now (2026-06-30) is team Ember.\n\nWho is on call for Ember right now? The most recent Ember entry: 2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.\n\nSo the answer is Oskar.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1669,
+   "completion_tokens": 89,
+   "total_tokens": 1758,
+   "cost": 0.000139745,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000139745,
+    "upstream_inference_prompt_cost": 0.000117495,
+    "upstream_inference_completions_cost": 2.225e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 84,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.067870083032176,
+ "fetched_at": "2026-09-05T23:36:17Z"
+}

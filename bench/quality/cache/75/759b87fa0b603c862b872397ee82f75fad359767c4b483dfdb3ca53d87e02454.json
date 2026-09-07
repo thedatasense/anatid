@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The reporting service still relies on the event bus as of 2025-11-13. [valid 2025-11-13 to now; recorded by standup/boreal/2025-11-13]\n- The event bus belongs to Boreal as of 2025-11-24, after Team Dune handed it over. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The event bus belongs to Team Dune as of 2025-09-09, after Boreal handed it over. [decision; valid 2025-09-09 to 2025-11-24; recorded by handover/2025-09-09-event-bus]\n    earlier: The event bus is a Boreal service. [valid 2025-01-09 to 2025-09-09; recorded by standup/boreal/2025-01-09]\n- The event bus deploys only on weekdays after 15:00 UTC per the change policy. [constraint; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17-2]\n    earlier: The event bus deploys on weekdays after 15:00 UTC per the change policy. [constraint; valid 2025-04-22 to 2026-03-17; recorded by standup/boreal/2025-04-22]\n- As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly. [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Boreal handed the event bus to Team Dune on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- Team Dune reported on 2025-12-08 that the event bus's request volume halved following the client rollout. [valid 2025-12-08 to now; recorded by standup/dune/2025-12-08-2]\n- The event bus pager rings the Boreal team, not Team Dune, as of 2025-11-24. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- Team Boreal reported at standup on 2025-11-11 that the event bus's CPU sat at 90 percent after the traffic shift. [valid 2025-11-11 to now; recorded by standup/boreal/2025-11-11-2]\n- Boreal decided at standup on 2026-05-05 that the event bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-05 to now; recorded by standup/boreal/2026-05-05]\n- The scheduler is not a Boreal service; Boreal flagged the scheduler at standup on 2026-02-04. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- The reports pipeline is not a Boreal service. [valid 2025-06-06 to now; recorded by standup/boreal/2025-06-06]\n- The webhooks service will require an idempotency key on every delivery. [decision; valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- Marcus Oyelaran wrote up the handover doc for Tomasz for the event bus handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- Boreal reported at standup on 2026-02-04 that the scheduler's error rate crept up to 2 percent following the dependency bump. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- The job scheduler remains a Team Dune service as of 2026-01-12. [valid 2026-01-12 to now; recorded by standup/dune/2026-01-12]\n- The image-resizer is not a Boreal service. [valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- The webhooks service has a deploy window on Thursdays between 07:00 and 09:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- The webhooks service belongs to Team Atlas as of 2025-09-09, after Ember handed it over. [decision; valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n    earlier: The webhooks service belongs to team Ember as of 2025-04-11. [decision; valid 2025-04-11 to 2025-09-09; recorded by handover/2025-04-11-webhooks]\n    earlier: The webhooks service is a Boreal service as of 2025-01-09. [valid 2025-01-09 to 2025-04-11; recorded by standup/boreal/2025-01-09-2]\n\nQuestion: Which service does the event-bus depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657050-e3ZopQ1WfHUWAcNVnJH4",
+  "object": "chat.completion",
+  "created": 1788657050,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Reka",
+  "system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp8-53169669",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service does the event-bus depend on?\"\n\nLooking through the memory:\n- The reporting service reads from the event bus (that's a dependency of reporting on event bus, not event bus's dependency).\n- Ledger depends on the authentication gateway for service tokens — that's Ledger's dependency, not event bus.\n- Nothing in the memory states what the event bus depends on.\n\nSo the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service does the event-bus depend on?\"\n\nLooking through the memory:\n- The reporting service reads from the event bus (that's a dependency of reporting on event bus, not event bus's dependency).\n- Ledger depends on the authentication gateway for service tokens — that's Ledger's dependency, not event bus.\n- Nothing in the memory states what the event bus depends on.\n\nSo the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1477,
+   "completion_tokens": 96,
+   "total_tokens": 1573,
+   "cost": 0.00026955,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00026955,
+    "upstream_inference_prompt_cost": 0.00022155,
+    "upstream_inference_completions_cost": 4.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 110,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.824365000007674,
+ "fetched_at": "2026-09-06T01:10:53Z"
+}

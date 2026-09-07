@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000454\": As of the 2025-06-05 rotation day, Marcus is the primary on-call for Team Boreal, and Lena is off rotation.  (about: Team Boreal, Lena, Marcus)\n- memory_id \"1000450\": On 2025-05-23, the Ember team observed that the webhooks service's request volume halved following the client rollout, and flagged it since the webhooks service is not the Ember team's service.  (about: webhooks service, Ember team)\n- memory_id \"1000433\" [decision]: As of the 2025-05-19 rotation day, the policy is to page Diego for anything Cinder-related.  (about: Team Cinder, Diego)\n- memory_id \"1000427\": As of the 2025-05-19 rotation day, Diego is the primary on-call for Team Cinder, having received the pager from Yuki.  (about: Team Cinder, Yuki, Diego)\n- memory_id \"1000423\": On the 2025-05-19 rotation day, Yuki handed the Team Cinder pager to Diego.  (about: Team Cinder, Yuki, Diego)\n- memory_id \"1000420\" [decision]: Team Dune has switched to a monthly game day.  (about: Team Dune)\n- memory_id \"1000389\": As of 2025-04-29, the Ember team has taken over the resizer from Team Dune.  (about: Team Dune, Ember team, resizer)\n- memory_id \"1000383\": As of 2025-04-29, the Ember team has taken over the resizer from Team Dune.  (about: Team Dune, Ember team, resizer)\n- memory_id \"1000317\": As of 2025-04-04, the notifier lives with Team Cinder.  (about: Team Cinder, notifier)\n- memory_id \"1000302\": As of 2025-04-03, the event bus is a Team Atlas service.  (about: Team Atlas, event bus)\n- memory_id \"1000277\": As of 2025-03-28, the webhooks service lives with Team Atlas.  (about: Team Atlas, webhooks service)\n- memory_id \"1000273\": As of 2025-03-28, the pager for the webhooks service rings Team Atlas instead of Team Boreal.  (about: Team Atlas, Team Boreal, webhooks service)\n- memory_id \"1000268\": As of 2025-03-24, Farah still has the Team Dune pager.  (about: Farah, Team Dune)\n- memory_id \"1000250\" [decision]: For anything Ember-related, page Oskar.  (about: Oskar, Ember team)\n- memory_id \"1000247\" [decision]: The Ember team does pairing on every production change.  (about: Ember team)\n- memory_id \"1000201\": Team Cinder holds planning on Mondays.  (about: Team Cinder)\n- memory_id \"1000174\": On 2025-02-21, Yuki handed the Team Cinder pager to Diego during rotation day.  (about: Team Cinder, Yuki, Diego)\n- memory_id \"1000135\": The scheduler is owned by the Ember team.  (about: Ember team, scheduler)\n- memory_id \"1000094\": Oskar is on call for the Ember team to start the year.  (about: Oskar, Ember team)\n- memory_id \"1000075\": Oskar is the only engineer on the Ember team for now.  (about: Oskar, Ember team)\nExisting entity names: Team Boreal, Lena, Marcus, webhooks service, Ember team, Team Cinder, Diego, Yuki, Team Dune, resizer, notifier, Team Atlas, event bus, Farah, Oskar, scheduler\n\nThe note:\n\n[2025-06-13] standup/ember/2025-06-13-2: Team Ember planning meeting is every Friday."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788650975-cT6Fp7RXHTzQUg3kB3IN",
+  "object": "chat.completion",
+  "created": 1788650975,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"The Ember team holds its planning meeting every Friday.\",\n   \"entities\": [\"Ember team\"],\n   \"kind\": \"fact\",\n   \"confidence\": 0.95,\n   \"evidence\": \"Team Ember planning meeting is every Friday.\"\n  }\n ],\n \"entity_aliases\": [\n  {\n   \"name\": \"Team Ember\",\n   \"canonical\": \"Ember team\",\n   \"evidence\": \"Team Ember planning meeting is every Friday.\"\n  }\n ]\n}\n",
+     "refusal": null,
+     "reasoning": "The note: \"[2025-06-13] standup/ember/2025-06-13-2: Team Ember planning meeting is every Friday.\"\n\nExisting entity \"Ember team\" — the note uses \"Team Ember\", which is a different name for the existing \"Ember team\". So add an alias: name \"Team Ember\" -> canonical \"Ember team\".\n\nFact: \"The Ember team holds a planning meeting every Friday.\" Entities: Ember team. Evidence: \"Team Ember planning meeting is every Friday.\"\n\nThis is durable. Could be kind \"fact\" or \"preference\". Similar existing facts: \"Team Cinder holds planning on Mondays.\" I'll add kind \"fact\".\n\nNote there is no date issue — the fact is recurring.\n\nNo relations? The existing memory 1000201 \"Team Cinder holds planning on Mondays\" — no relation was extracted there. Planning meeting is a fact about the team, not a relation between two entities. So just add fact + alias.\n\nOutput JSON only.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note: \"[2025-06-13] standup/ember/2025-06-13-2: Team Ember planning meeting is every Friday.\"\n\nExisting entity \"Ember team\" — the note uses \"Team Ember\", which is a different name for the existing \"Ember team\". So add an alias: name \"Team Ember\" -> canonical \"Ember team\".\n\nFact: \"The Ember team holds a planning meeting every Friday.\" Entities: Ember team. Evidence: \"Team Ember planning meeting is every Friday.\"\n\nThis is durable. Could be kind \"fact\" or \"preference\". Similar existing facts: \"Team Cinder holds planning on Mondays.\" I'll add kind \"fact\".\n\nNote there is no date issue — the fact is recurring.\n\nNo relations? The existing memory 1000201 \"Team Cinder holds planning on Mondays\" — no relation was extracted there. Planning meeting is a fact about the team, not a relation between two entities. So just add fact + alias.\n\nOutput JSON only.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2260,
+   "completion_tokens": 320,
+   "total_tokens": 2580,
+   "cost": 0.00016886,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 1344,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00016886,
+    "upstream_inference_prompt_cost": 8.886e-05,
+    "upstream_inference_completions_cost": 8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 206,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 8.554914207954425,
+ "fetched_at": "2026-09-05T23:29:43Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- On 2026-03-10, Team Dune observed that after Tuesday's deploy, the reporting service's p99 latency doubled. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- On 2025-04-26, the ledger saw write latency spike tenfold for an hour during INC-2025-011. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- As of 2025-11-20, dashboards and alerts for the event bus are being repointed. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- As of 2026-02-10, the reports pipeline lives with Team Cinder; the Ember team kept it until then. [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- The INC-2026-009 review found that the scheduler ran the nightly jobs twice because two leaders were elected during a network partition. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- On 2025-09-08, Team Boreal observed that the notifier's request volume halved after the client rollout and pinged the owners. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- On the 2025-12-15 rotation day, Tomasz Nowak handed the Team Dune pager to Farah. [valid 2025-12-15 to now; recorded by standup/dune/2025-12-15]\n- On 2025-06-27, Team Boreal observed that the event bus's request volume halved following the client rollout, and flagged it since the event bus is not Team Boreal's service. [valid 2025-06-27 to now; recorded by standup/boreal/2025-06-27]\n- On 2025-07-28, Team Cinder observed that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- The reporting service may be released only on Thursdays between 07:00 and 09:00 UTC, and any other release time requires an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- On 2025-06-12, Team Dune noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-06-12 to now; recorded by standup/dune/2025-06-12]\n\nQuestion: Who was responsible for reporting on 2025-11-26?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654248-PHNNDHxsDJ6fzFTBsMbM",
+  "object": "chat.completion",
+  "created": 1788654248,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The Ember team",
+     "refusal": null,
+     "reasoning": "The question asks who was responsible for the reporting service on 2025-11-26.\n\nTimeline for reporting service ownership:\n- Team Dune owns the reporting service [valid 2025-01-20 to 2025-11-07]\n- As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal [valid 2025-11-07 to 2025-11-17]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction] — this supersedes the Team Boreal version.\n\nSo on 2025-11-26, the reporting service belongs to the Ember team.\n\nWait, but there's also \"On the 2025-12-15 rotation day, Tomasz Nowak handed the Team Dune pager to Farah.\" That's about Team Dune pager, not reporting service specifically. The question asks who was responsible for reporting on 2025-11-26 — the answer should be the Ember team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was responsible for the reporting service on 2025-11-26.\n\nTimeline for reporting service ownership:\n- Team Dune owns the reporting service [valid 2025-01-20 to 2025-11-07]\n- As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal [valid 2025-11-07 to 2025-11-17]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction] — this supersedes the Team Boreal version.\n\nSo on 2025-11-26, the reporting service belongs to the Ember team.\n\nWait, but there's also \"On the 2025-12-15 rotation day, Tomasz Nowak handed the Team Dune pager to Farah.\" That's about Team Dune pager, not reporting service specifically. The question asks who was responsible for reporting on 2025-11-26 — the answer should be the Ember team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1447,
+   "completion_tokens": 249,
+   "total_tokens": 1696,
+   "cost": 0.00034155,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00034155,
+    "upstream_inference_prompt_cost": 0.00021705,
+    "upstream_inference_completions_cost": 0.0001245
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 244,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.9733721249504015,
+ "fetched_at": "2026-09-06T00:24:11Z"
+}

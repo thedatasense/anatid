@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Team Dune owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal still owns the indexer as of 2025-09-15. [valid 2025-09-15 to 2025-11-18; recorded by standup/boreal/2025-09-15-2]\n- The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns the indexer as of 2025-01-17. [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- The indexer must stay on OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-08-13 to now; recorded by standup/boreal/2025-08-13]\n- The indexer depends on the product catalog for product documents. [valid 2025-03-03 to now; recorded by standup/boreal/2025-03-03]\n- Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14. [decision; valid 2026-04-14 to now; recorded by standup/atlas/2026-04-14]\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Marcus Oyelaran holds the Boreal on-call pager as of 2025-09-24, after picking it up from Lena. [valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n    earlier: Lena still holds the Boreal on-call pager as of 2025-09-15. [valid 2025-09-15 to 2025-09-24; recorded by standup/boreal/2025-09-15]\n- Lena carries the Boreal on-call phone as of 2026-02-04, after the on-call swap that morning, until the next rotation. [decision; valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- Lena carries the Boreal on-call phone as of 2026-02-04, after the on-call swap that morning. [decision; valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n    earlier: Marcus Oyelaran carries the Boreal on-call phone as of 2026-01-02, having taken over from Lena after her cycle that began 2025-11-11. [decision; valid 2026-01-02 to 2026-02-04; recorded by standup/boreal/2026-01-02]\n    earlier: Lena is on call for the Boreal team this cycle, taking over from Marcus Oyelaran as of 2025-11-11, and carries the phone until the next rotation. [decision; valid 2025-11-11 to 2026-01-02; recorded by standup/boreal/2025-11-11]\n    earlier: Marcus Oyelaran is on call for the Boreal team this cycle, taking over from Lena as of 2025-09-24. [decision; valid 2025-09-24 to 2025-11-11; recorded by standup/boreal/2025-09-24]\n    earlier: Lena is on call for the Boreal team this cycle, taking over from Marcus Oyelaran as of 2025-08-12. [decision; valid 2025-08-12 to 2025-09-24; recorded by standup/boreal/2025-08-12]\n    earlier: Marcus Oyelaran is on call for the Boreal team this cycle, taking over from Lena as of 2025-07-09. [decision; valid 2025-07-09 to 2025-08-12; recorded by standup/boreal/2025-07-09]\n    earlier: Lena is on call for the Boreal team this cycle, taking over from Marcus Oyelaran as of 2025-05-21. [decision; valid 2025-05-21 to 2025-07-09; recorded by standup/boreal/2025-05-21]\n    earlier: Marcus Oyelaran is on call for the Boreal team this cycle, taking over from Lena as of 2025-03-31. [decision; valid 2025-03-31 to 2025-05-21; recorded by standup/boreal/2025-03-31]\n    earlier: Lena is on call for the Boreal team this cycle, taking over from Marcus Oyelaran as of 2025-02-10. [decision; valid 2025-02-10 to 2025-03-31; recorded by standup/boreal/2025-02-10]\n    earlier: Marcus Oyelaran is on call for the Boreal team to start the year. [decision; valid 2025-01-09 to 2025-02-10; recorded by standup/boreal/2025-01-09-3]\n- The indexer moved from Boreal to Team Dune as of 2025-11-18. [decision; valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: The indexer moved from Boreal to Ember as of 2025-11-18. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n- The indexer will rebuild the index nightly instead of on every catalog write, as agreed on 2025-11-07. [decision; valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- Reindex jobs will page on failure. [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Team Atlas observed on 2025-11-11 that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n\nQuestion: Who is on call for the team that owns the service search-indexer depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788656769-9Shxo44BCK7jaX1HuSRS",
+  "object": "chat.completion",
+  "created": 1788656769,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The search-indexer depends on the product catalog (for product documents). Who owns the product catalog? The memory doesn't say who owns the product catalog. Wait, let me re-check.\n\nMemory entries:\n- Boreal owns the indexer...\n- Various ownership changes of the indexer.\n- The indexer depends on the product catalog for product documents.\n- Marcus Oyelaran picked up Team Atlas on-call shift...\n- INC-2025-023 incident...\n- On-call pager entries...\n- Reindex jobs page on failure...\n- Team Atlas observed p99 latency doubled...\n\nThe question: \"Who is on call for the team that owns the service search-indexer depends on?\" The service the indexer depends on is the product catalog. But the memory never states who owns the product catalog. So we cannot determine the team, thus we cannot determine who's on call for it.\n\nHmm, but maybe the question intends: the indexer is owned by Boreal? No — the dependency is the product catalog. The memory says \"The indexer depends on the product catalog for product documents.\" No ownership given for the product catalog.\n\nAlternatively, could \"the service search-indexer depends on\" be interpreted as... the product catalog. No team ownership mentioned. So answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The search-indexer depends on the product catalog (for product documents). Who owns the product catalog? The memory doesn't say who owns the product catalog. Wait, let me re-check.\n\nMemory entries:\n- Boreal owns the indexer...\n- Various ownership changes of the indexer.\n- The indexer depends on the product catalog for product documents.\n- Marcus Oyelaran picked up Team Atlas on-call shift...\n- INC-2025-023 incident...\n- On-call pager entries...\n- Reindex jobs page on failure...\n- Team Atlas observed p99 latency doubled...\n\nThe question: \"Who is on call for the team that owns the service search-indexer depends on?\" The service the indexer depends on is the product catalog. But the memory never states who owns the product catalog. So we cannot determine the team, thus we cannot determine who's on call for it.\n\nHmm, but maybe the question intends: the indexer is owned by Boreal? No — the dependency is the product catalog. The memory says \"The indexer depends on the product catalog for product documents.\" No ownership given for the product catalog.\n\nAlternatively, could \"the service search-indexer depends on\" be interpreted as... the product catalog. No team ownership mentioned. So answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1789,
+   "completion_tokens": 262,
+   "total_tokens": 2051,
+   "cost": 0.000191995,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000191995,
+    "upstream_inference_prompt_cost": 0.000126495,
+    "upstream_inference_completions_cost": 6.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 256,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.649201875028666,
+ "fetched_at": "2026-09-06T01:06:12Z"
+}

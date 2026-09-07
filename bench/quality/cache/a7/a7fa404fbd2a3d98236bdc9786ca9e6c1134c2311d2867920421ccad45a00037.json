@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14. [decision; valid 2026-04-14 to now; recorded by standup/atlas/2026-04-14]\n- Tomasz is off the Team Atlas on-call rotation as of 2025-07-16. [decision; valid 2025-07-16 to now; recorded by standup/atlas/2025-07-16]\n- Lena picked up the Boreal on-call shift from Marcus Oyelaran on 2025-05-21. [decision; valid 2025-05-21 to now; recorded by standup/boreal/2025-05-21]\n- Lena picked up the Boreal on-call pager from Marcus Oyelaran on 2025-08-12. [decision; valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12]\n- Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-09-24. [decision; valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n- Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-07-09. [decision; valid 2025-07-09 to now; recorded by standup/boreal/2025-07-09]\n- The first on-call rotation for Team Atlas goes to Tomasz. [decision; valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09]\n- Marcus Oyelaran holds the Boreal on-call pager as of 2025-09-24, after picking it up from Lena. [valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n    earlier: Lena still holds the Boreal on-call pager as of 2025-09-15. [valid 2025-09-15 to 2025-09-24; recorded by standup/boreal/2025-09-15]\n- The first on-call rotation for team Ember goes to Oskar. [decision; valid 2025-01-13 to now; recorded by standup/ember/2025-01-13]\n- Yuki is the primary on-call for team Cinder as of 2025-12-15, taking over from Diego. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is the primary on-call for team Cinder as of 2025-11-25, taking over from Yuki. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is the primary on-call for team Cinder as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- Marcus Oyelaran took over the Boreal on-call from Lena as of 2026-01-02. [decision; valid 2026-01-02 to now; recorded by standup/boreal/2026-01-02]\n- Tomasz is back on the Team Dune on-call rotation as of 2025-12-08. [decision; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n    earlier: Tomasz is off the Team Dune on-call rotation as of 2025-11-03. [decision; valid 2025-11-03 to 2025-12-08; recorded by standup/dune/2025-11-03]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- The first on-call rotation for Team Dune goes to Farah. [decision; valid 2025-01-13 to now; recorded by standup/dune/2025-01-13]\n- Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08. [decision; valid 2026-06-08 to now; recorded by standup/atlas/2026-06-08]\n    earlier: Page Marcus Oyelaran for anything this cycle for Team Atlas, not Priya, as of 2026-04-14. [decision; valid 2026-04-14 to 2026-06-08; recorded by standup/atlas/2026-04-14]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-07-16. [decision; valid 2025-07-16 to 2026-04-14; recorded by standup/atlas/2025-07-16]\n    earlier: Page Tomasz for anything this cycle for Team Atlas, not Priya, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-16; recorded by standup/atlas/2025-06-13]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-05-14. [decision; valid 2025-05-14 to 2025-06-13; recorded by standup/atlas/2025-05-14]\n    earlier: Page Tomasz Nowak for anything this cycle for Team Atlas, not Priya, as of 2025-04-04. [decision; valid 2025-04-04 to 2025-05-14; recorded by standup/atlas/2025-04-04]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-02-19. [decision; valid 2025-02-19 to 2025-04-04; recorded by standup/atlas/2025-02-19]\n- The Boreal roster consists of Lena and Marcus Oyelaran as of 2025-01-07. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Team Cinder's on-call swapped on 2025-12-15, with Yuki carrying the Cinder on-call phone. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Team Cinder's on-call swapped on 2025-11-25, with Diego carrying the Cinder on-call phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n\nQuestion: Who is on call for Marcus's team right now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657841-ZGeG9IC1By9dHs9BqLec",
+  "object": "chat.completion",
+  "created": 1788657841,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Priya",
+     "refusal": null,
+     "reasoning": "The question asks: \"Who is on call for Marcus's team right now?\"\n\nMarcus Oyelaran is associated with Team Atlas (he picked up the Team Atlas on-call shift from Priya on 2026-04-14). But there's a later entry: \"Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08.\" That's valid to now. Today is 2026-06-30, so the current Team Atlas on-call is Priya.\n\nWait — but Marcus is also associated with Boreal. Which is \"Marcus's team\"? He's mentioned with both Team Atlas and Boreal. Hmm.\n\nThe question asks \"Marcus's team\" — ambiguous. But the most direct association: \"Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08\" implies Marcus is on Team Atlas. Also the Boreal roster is Lena and Marcus Oyelaran, so Marcus is also on Boreal.\n\nHmm, \"Marcus's team\" — which team does Marcus belong to? Both entries suggest he's part of both rosters? Boreal roster consists of Lena and Marcus. Atlas includes Tomasz, Priya, Marcus.\n\nActually, let me think. The most likely interpretation: Marcus is a member of Team Atlas (the \"not Marcus Oyelaran\" phrasing suggests he's the other candidate on the team). The current on-call for Team Atlas as of 2026-06-08 is Priya.\n\nBut could \"Marcus's team\" mean Boreal? Marcus currently holds Boreal on-call as of 2026-01-02. Then \"who is on call for Marcus's team\" — if Marcus is on-call for Boreal, then the answer would be Marcus himself. That seems like a weird question.\n\nThe question likely intends: Marcus is a member of Team Atlas, and the current on-call for Team Atlas is Priya (as of 2026-06-08, valid to now). Actually, if Marcus were on Team Atlas, the entry \"Page Priya... not Marcus Oyelaran, as of 2026-06-08\" implies Marcus was the previous on-call and is now off. So the current on-call is Priya.\n\nAnswer: Priya.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Who is on call for Marcus's team right now?\"\n\nMarcus Oyelaran is associated with Team Atlas (he picked up the Team Atlas on-call shift from Priya on 2026-04-14). But there's a later entry: \"Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08.\" That's valid to now. Today is 2026-06-30, so the current Team Atlas on-call is Priya.\n\nWait — but Marcus is also associated with Boreal. Which is \"Marcus's team\"? He's mentioned with both Team Atlas and Boreal. Hmm.\n\nThe question asks \"Marcus's team\" — ambiguous. But the most direct association: \"Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08\" implies Marcus is on Team Atlas. Also the Boreal roster is Lena and Marcus Oyelaran, so Marcus is also on Boreal.\n\nHmm, \"Marcus's team\" — which team does Marcus belong to? Both entries suggest he's part of both rosters? Boreal roster consists of Lena and Marcus. Atlas includes Tomasz, Priya, Marcus.\n\nActually, let me think. The most likely interpretation: Marcus is a member of Team Atlas (the \"not Marcus Oyelaran\" phrasing suggests he's the other candidate on the team). The current on-call for Team Atlas as of 2026-06-08 is Priya.\n\nBut could \"Marcus's team\" mean Boreal? Marcus currently holds Boreal on-call as of 2026-01-02. Then \"who is on call for Marcus's team\" — if Marcus is on-call for Boreal, then the answer would be Marcus himself. That seems like a weird question.\n\nThe question likely intends: Marcus is a member of Team Atlas, and the current on-call for Team Atlas is Priya (as of 2026-06-08, valid to now). Actually, if Marcus were on Team Atlas, the entry \"Page Priya... not Marcus Oyelaran, as of 2026-06-08\" implies Marcus was the previous on-call and is now off. So the current on-call is Priya.\n\nAnswer: Priya.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1856,
+   "completion_tokens": 482,
+   "total_tokens": 2338,
+   "cost": 0.00025202,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00025202,
+    "upstream_inference_prompt_cost": 0.00013152,
+    "upstream_inference_completions_cost": 0.0001205
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 478,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.516954499995336,
+ "fetched_at": "2026-09-06T01:24:08Z"
+}

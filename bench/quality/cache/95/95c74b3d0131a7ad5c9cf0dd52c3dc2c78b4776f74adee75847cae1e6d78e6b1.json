@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Changes to auth-gateway need two reviewer approvals and a security sign-off [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- The ledger depends on auth-gateway [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- Atlas owns auth-gateway [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: Boreal owns auth-gateway [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- Ember noticed that auth-gateway's CPU sat at 90 percent after the traffic shift [observation; valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- Ember noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-05-18 to now; recorded by standup/ember/2026-05-18-2]\n- Cinder noticed that auth-gateway's cold start time tripled after the runtime upgrade [observation; valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- Auth-gateway deploys only on weekdays between 08:00 and 10:00 UTC, never on Fridays [constraint; valid 2025-01-29 to now; recorded by standup/ember/2025-01-29]\n- INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-07-27; the root cause was an expired intermediate certificate [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- Changes to billing-api need a rollback plan attached to the pull request [constraint; valid 2025-09-09 to now; recorded by standup/boreal/2025-09-09]\n- Decision: auth-gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens [decision; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Ember adopted pairing on every production change [valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- Atlas noticed that the ledger's memory use grew steadily for a week after the cache change [observation; valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011 [decision; valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- Cinder noticed that the ledger's disk usage jumped 30 percent after the retention change [observation; valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- Billing-api depends on the ledger [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- Billing-api depends on feature-flags [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Atlas noticed that webhooks's memory use grew steadily for a week after the cache change [observation; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017 [decision; valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season [constraint; valid 2025-11-04 to now; recorded by standup/boreal/2025-11-04]\n\nQuestion: What does a change to auth-gateway need before it can merge?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654994-bOGHdRpeyfVVA932pmt9",
+  "object": "chat.completion",
+  "created": 1788654994,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Two reviewer approvals and a security sign-off",
+     "refusal": null,
+     "reasoning": "The memory says: \"Changes to auth-gateway need two reviewer approvals and a security sign-off [constraint; valid 2025-08-14 to now]\". Today is 2026-06-30, so this is valid. Answer: two reviewer approvals and a security sign-off.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"Changes to auth-gateway need two reviewer approvals and a security sign-off [constraint; valid 2025-08-14 to now]\". Today is 2026-06-30, so this is valid. Answer: two reviewer approvals and a security sign-off.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1213,
+   "completion_tokens": 70,
+   "total_tokens": 1283,
+   "cost": 0.000100795,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000100795,
+    "upstream_inference_prompt_cost": 8.3295e-05,
+    "upstream_inference_completions_cost": 1.75e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 60,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8632567090098746,
+ "fetched_at": "2026-09-06T00:36:36Z"
+}

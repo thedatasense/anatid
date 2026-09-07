@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Who was responsible for search-indexer on 2025-12-24?\nGold answer: Dune\nAlso accepted: the Dune team; team Dune\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: The Dune team"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658982-aHvlaVjYrHkz9EzabrF5",
+  "object": "chat.completion",
+  "created": 1788658982,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer 'The Dune team' matches an accepted alternative phrasing of the gold answer 'Dune'.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"Dune\", also accepted \"the Dune team; team Dune\". The answer to grade is \"The Dune team\", which is an accepted alternative. So correct: true.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"Dune\", also accepted \"the Dune team; team Dune\". The answer to grade is \"The Dune team\", which is an accepted alternative. So correct: true.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 245,
+   "completion_tokens": 77,
+   "total_tokens": 322,
+   "cost": 2.9945e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.9945e-05,
+    "upstream_inference_prompt_cost": 1.0695e-05,
+    "upstream_inference_completions_cost": 1.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 42,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.816309124988038,
+ "fetched_at": "2026-09-06T01:43:05Z"
+}

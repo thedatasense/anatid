@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000084\": Oskar is the only engineer on team Ember as of 2025-01-10.  (about: Oskar, Ember)\n- memory_id \"1000079\" [decision]: Marcus Oyelaran is on call for the Boreal team to start the year.  (about: Boreal, Marcus Oyelaran)\n- memory_id \"1000074\" [decision]: The first on-call rotation for Team Atlas goes to Tomasz.  (about: Team Atlas, Tomasz)\n- memory_id \"1000068\": The webhooks service is a Boreal service as of 2025-01-09.  (about: Boreal, webhooks service)\n- memory_id \"1000061\": Boreal owns notifier.  (about: Boreal, notifier)\n- memory_id \"1000057\": The event bus is a Boreal service.  (about: Boreal, event bus)\n- memory_id \"1000051\": Farah is the sole member of Team Dune as of 2025-01-09.  (about: Team Dune, Farah)\n- memory_id \"1000048\": Team Dune is a one-person team as of 2025-01-09.  (about: Team Dune)\n- memory_id \"1000041\": Team Atlas looks after the flags service as of 2025-01-08.  (about: Team Atlas, flags service)\n- memory_id \"1000037\": Team Atlas owns billing-api as of 2025-01-08.  (about: Team Atlas, billing-api)\n- memory_id \"1000031\": Ledger is owned by Team Atlas as of 2025-01-08.  (about: Team Atlas, Ledger)\n- memory_id \"1000021\": Yuki and Diego are on team Cinder as of 2025-01-08.  (about: Yuki, Diego, Cinder)\n- memory_id \"1000011\": The Boreal roster consists of Lena and Marcus Oyelaran as of 2025-01-07.  (about: Boreal, Lena, Marcus Oyelaran)\n- memory_id \"1000001\": Team Atlas consists of Priya and Tomasz as of 2025.  (about: Team Atlas, Priya, Tomasz)\nExisting entity names: Oskar, Ember, Boreal, Marcus Oyelaran, Team Atlas, Tomasz, webhooks service, notifier, event bus, Team Dune, Farah, flags service, billing-api, Ledger, Yuki, Diego, Cinder, Lena, Priya\n\nThe note:\n\n[2025-01-13] standup/dune/2025-01-13: First on-call rotation for Dune goes to Farah."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788649618-24V0C12765OF0yy6TxlE",
+  "object": "chat.completion",
+  "created": 1788649618,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "CoreWeave",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"The first on-call rotation for Team Dune goes to Farah.\",\n   \"entities\": [\n    \"Team Dune\",\n    \"Farah\"\n   ],\n   \"kind\": \"decision\",\n   \"confidence\": 0.95,\n   \"evidence\": \"First on-call rotation for Dune goes to Farah.\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [],\n \"remove_relations\": [],\n \"entity_aliases\": [\n  {\n   \"name\": \"Dune\",\n   \"canonical\": \"Team Dune\",\n   \"evidence\": \"First on-call rotation for Dune goes to Farah.\"\n  }\n ]\n}",
+     "refusal": null,
+     "reasoning": "The note: \"[2025-01-13] standup/dune/2025-01-13: First on-call rotation for Dune goes to Farah.\"\n\nThis is a decision: The first on-call rotation for Team Dune goes to Farah.\n\nExisting facts: Team Dune, Farah is sole member. This is a new decision fact, similar to \"The first on-call rotation for Team Atlas goes to Tomasz.\"\n\nEntities: Team Dune, Farah. The note says \"Dune\" — existing entity name is \"Team Dune\". Should I add an alias? The note uses \"Dune\" for \"Team Dune\". The instructions say: \"When the note uses a different name for an existing entity, add an entity_aliases entry mapping the note's name to the existing name.\" Hmm, \"Dune\" vs \"Team Dune\" — arguably the same entity. But in similar prior examples, \"Team Atlas\" was used. The note says \"for Dune\" — it's shorthand. I could add an alias \"Dune\" -> \"Team Dune\". That seems reasonable per instructions. But it might be over-eager; \"Dune\" is clearly shorthand for Team Dune. I'll add the alias to be safe? Actually, adding aliases for trivial shorthand might create noise. The instruction explicitly says to add alias when the note uses a different name. \"Dune\" is a different name for \"Team Dune\". I'll include it.\n\nFact: \"The first on-call rotation for Team Dune goes to Farah.\" kind: decision. Evidence: \"First on-call rotation for Dune goes to Farah.\"\n\nEntities: Team Dune, Farah.\n\nNo relations needed? On-call rotation — could be a relation \"on_call_for\"? The rel_kind examples: leads, maintains, owns, depends_on, member_of. On-call is a temporary assignment; the existing memory for Marcus on call was stored as a decision fact, not a relation. I'll keep it as a fact only.\n\nNo corrections. Output JSON only.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note: \"[2025-01-13] standup/dune/2025-01-13: First on-call rotation for Dune goes to Farah.\"\n\nThis is a decision: The first on-call rotation for Team Dune goes to Farah.\n\nExisting facts: Team Dune, Farah is sole member. This is a new decision fact, similar to \"The first on-call rotation for Team Atlas goes to Tomasz.\"\n\nEntities: Team Dune, Farah. The note says \"Dune\" — existing entity name is \"Team Dune\". Should I add an alias? The note uses \"Dune\" for \"Team Dune\". The instructions say: \"When the note uses a different name for an existing entity, add an entity_aliases entry mapping the note's name to the existing name.\" Hmm, \"Dune\" vs \"Team Dune\" — arguably the same entity. But in similar prior examples, \"Team Atlas\" was used. The note says \"for Dune\" — it's shorthand. I could add an alias \"Dune\" -> \"Team Dune\". That seems reasonable per instructions. But it might be over-eager; \"Dune\" is clearly shorthand for Team Dune. I'll add the alias to be safe? Actually, adding aliases for trivial shorthand might create noise. The instruction explicitly says to add alias when the note uses a different name. \"Dune\" is a different name for \"Team Dune\". I'll include it.\n\nFact: \"The first on-call rotation for Team Dune goes to Farah.\" kind: decision. Evidence: \"First on-call rotation for Dune goes to Farah.\"\n\nEntities: Team Dune, Farah.\n\nNo relations needed? On-call rotation — could be a relation \"on_call_for\"? The rel_kind examples: leads, maintains, owns, depends_on, member_of. On-call is a temporary assignment; the existing memory for Marcus on call was stored as a decision fact, not a relation. I'll keep it as a fact only.\n\nNo corrections. Output JSON only.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1904,
+   "completion_tokens": 572,
+   "total_tokens": 2476,
+   "cost": 0.0005716,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0005716,
+    "upstream_inference_prompt_cost": 0.0002856,
+    "upstream_inference_completions_cost": 0.000286
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 427,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.677717166021466,
+ "fetched_at": "2026-09-05T23:07:06Z"
+}

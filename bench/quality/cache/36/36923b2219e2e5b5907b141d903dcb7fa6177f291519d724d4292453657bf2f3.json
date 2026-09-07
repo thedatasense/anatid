@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2025-03-17, Team Atlas handed the billing service to Team Boreal. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas; Team Boreal kept it until then. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- As of 2026-02-19, Marcus is on Team Atlas. [valid 2026-02-19 to now; recorded by standup/boreal/2026-02-19]\n- On 2025-08-29, Team Atlas observed that the catalog service's request volume halved after the client rollout. [valid 2025-08-29 to now; recorded by standup/atlas/2025-08-29]\n- As of 2025-10-15, the scheduler is owned by Team Dune; Team Atlas kept it until then. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler went to Team Atlas, not Team Cinder; Team Cinder never owned it, and the Ember team no longer owns it. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder; the Ember team no longer owns it. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- Team Atlas sits on the second floor. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10-2]\n- On 2025-04-18, Team Atlas reported that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2025-04-18 to now; recorded by standup/atlas/2025-04-18-2]\n- As of 2025-07-02, Team Atlas continues without Tomasz Nowak. [valid 2025-07-02 to now; recorded by standup/atlas/2025-07-02]\n- On 2025-12-23, Team Atlas noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2025-12-23 to now; recorded by standup/atlas/2025-12-23]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- Team Atlas runs its planning meeting on Tuesdays. [valid 2025-10-31 to now; recorded by standup/atlas/2025-10-31]\n- As of 2025-12-23, the pager for the auth gateway rings Team Atlas instead of Team Boreal. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n- On 2026-01-13, Team Atlas noticed that the ledger's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- As of 2026-05-04, Team Boreal still owns the catalog service. [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- In 2025, Team Atlas consists of Priya; Tomasz Nowak transferred to Team Dune on 2025-07-02. [valid 2025-07-02 to now; recorded by standup/atlas/2025-07-02]\n    earlier: In 2025, Team Atlas consists of Priya and Tomasz Nowak. [valid 2025-01-06 to 2025-07-02; recorded by standup/atlas/2025-01-06]\n- As of 2025-03-28, the pager for the webhooks service rings Team Atlas instead of Team Boreal. [valid 2025-03-28 to now; recorded by handover/2025-03-28-webhooks]\n- As of 2025-11-13, the ledger lives with the Ember team; Team Atlas kept it until then. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- As of 2025-06-20, the webhooks service lives with Team Dune; Team Atlas kept it until then, and the Ember team never held it. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n    earlier: As of 2025-06-20, the webhooks service lives with the Ember team; Team Atlas kept it until then. [valid 2025-06-20 to 2025-07-04; recorded by handover/2025-06-20-webhooks]\n    earlier: As of 2025-03-28, the webhooks service lives with Team Atlas. [valid 2025-03-28 to 2025-06-20; recorded by handover/2025-03-28-webhooks]\n    earlier: The webhooks service lives with Team Boreal. [valid 2025-01-09 to 2025-03-28; recorded by standup/boreal/2025-01-09-2]\n\nQuestion: Which services does Atlas own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654328-5wUP5HMiNkkjFe17RqzB",
+  "object": "chat.completion",
+  "created": 1788654328,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Auth gateway",
+     "refusal": null,
+     "reasoning": "The question asks which services Team Atlas owns now (today is 2026-06-30).\n\nLet me go through each service's current ownership:\n\n1. Billing service: On 2025-03-17, Team Atlas handed the billing service to Team Boreal. [valid 2025-03-17 to now] — so Team Boreal owns billing now.\n\n2. Auth gateway: As of 2025-12-23, the auth gateway is owned by Team Atlas. [valid 2025-12-23 to now] — Atlas owns auth gateway now.\n\n3. Scheduler: As of 2025-10-15, the scheduler is owned by Team Dune. [valid 2025-10-15 to now] — Team Dune owns scheduler.\n\n4. Catalog service: As of 2026-05-04, Team Boreal still owns the catalog service. — Team Boreal.\n\n5. Ledger: As of 2025-11-13, the ledger lives with the Ember team. — Ember team.\n\n6. Webhooks service: As of 2025-06-20, the webhooks service lives with Team Dune. — Team Dune.\n\nSo now, Atlas owns: auth gateway only.\n\nThe answer should be one short line with just the value: \"auth gateway\" or \"the auth gateway\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Team Atlas owns now (today is 2026-06-30).\n\nLet me go through each service's current ownership:\n\n1. Billing service: On 2025-03-17, Team Atlas handed the billing service to Team Boreal. [valid 2025-03-17 to now] — so Team Boreal owns billing now.\n\n2. Auth gateway: As of 2025-12-23, the auth gateway is owned by Team Atlas. [valid 2025-12-23 to now] — Atlas owns auth gateway now.\n\n3. Scheduler: As of 2025-10-15, the scheduler is owned by Team Dune. [valid 2025-10-15 to now] — Team Dune owns scheduler.\n\n4. Catalog service: As of 2026-05-04, Team Boreal still owns the catalog service. — Team Boreal.\n\n5. Ledger: As of 2025-11-13, the ledger lives with the Ember team. — Ember team.\n\n6. Webhooks service: As of 2025-06-20, the webhooks service lives with Team Dune. — Team Dune.\n\nSo now, Atlas owns: auth gateway only.\n\nThe answer should be one short line with just the value: \"auth gateway\" or \"the auth gateway\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1654,
+   "completion_tokens": 283,
+   "total_tokens": 1937,
+   "cost": 0.00018712,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00018712,
+    "upstream_inference_prompt_cost": 0.00011637,
+    "upstream_inference_completions_cost": 7.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 279,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.9368428339948878,
+ "fetched_at": "2026-09-06T00:25:31Z"
+}

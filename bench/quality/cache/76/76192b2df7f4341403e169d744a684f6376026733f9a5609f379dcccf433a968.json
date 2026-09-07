@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Yuki runs the monthly cost review. [valid 2025-10-13 to now; recorded by standup/cinder/2025-10-13]\n- Priya runs the quarterly capacity review. [valid 2025-06-23 to now; recorded by standup/atlas/2025-06-23]\n- Oskar runs the weekly architecture review. [valid 2026-06-16 to now; recorded by standup/ember/2026-06-16]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- As of 2026-05-26, the billing service sits with Team Dune; Team Boreal no longer owns it. [valid 2026-05-26 to now; recorded by handover/2026-05-26-billing-api]\n    earlier: The billing service lives with Team Boreal as of the 2025-03-17 handover. [valid 2025-03-17 to 2026-05-26; recorded by handover/2025-03-17-billing-api]\n    earlier: The billing service lives with Team Atlas. [valid 2025-01-08 to 2025-03-17; recorded by standup/atlas/2025-01-08]\n- As of 2025-09-09, changes to the billing service need a rollback plan attached to the pull request. [constraint; valid 2025-09-09 to now; recorded by standup/boreal/2025-09-09]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- On 2025-03-17, Tomasz Nowak wrote the handover document for the billing service handover for Marcus. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- On 2025-03-17, Team Atlas handed the billing service to Team Boreal. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- On 2025-09-08, Team Boreal decided the billing service will gate the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- On 2025-07-28, Team Cinder observed that the billing API's error rate crept up to 2 percent after the dependency bump. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- Team Atlas runs its planning meeting on Tuesdays. [valid 2025-10-31 to now; recorded by standup/atlas/2025-10-31]\n- As of 2025-08-14, changes to the auth gateway require two reviewer approvals and a security sign-off. [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- Team Dune has switched to a monthly game day. [decision; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09-2]\n- On 2025-12-23, Team Atlas noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2025-12-23 to now; recorded by standup/atlas/2025-12-23]\n- The INC-2026-009 review found that the scheduler ran the nightly jobs twice because two leaders were elected during a network partition. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- As of 2025-10-15, the scheduler is owned by Team Dune; Team Atlas kept it until then. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler went to Team Atlas, not Team Cinder; Team Cinder never owned it, and the Ember team no longer owns it. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder; the Ember team no longer owns it. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- On 2025-08-29, Team Atlas observed that the catalog service's request volume halved after the client rollout. [valid 2025-08-29 to now; recorded by standup/atlas/2025-08-29]\n- The billing service ships only on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-05-05 to now; recorded by standup/boreal/2025-05-05]\n- Team Boreal holds its planning meeting on Thursdays. [valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n\nQuestion: Who runs the monthly cost review?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654108-IF65PvObhg9CH1mp8BNQ",
+  "object": "chat.completion",
+  "created": 1788654108,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Yuki",
+     "refusal": null,
+     "reasoning": "The memory says: Yuki runs the monthly cost review. Answer: Yuki.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: Yuki runs the monthly cost review. Answer: Yuki.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1465,
+   "completion_tokens": 21,
+   "total_tokens": 1486,
+   "cost": 0.000107445,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000107445,
+    "upstream_inference_prompt_cost": 0.000102195,
+    "upstream_inference_completions_cost": 5.25e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 17,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8398151660221629,
+ "fetched_at": "2026-09-06T00:21:50Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Ember owns reporting [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: Dune owns reporting [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- Reporting depends on the event-bus [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: Reporting depends on the ledger [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- Reporting must stay on Python 3.11 until the pandas 3 upgrade lands [constraint; valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- Reporting deploys only on Tuesdays and Thursdays between 10:00 and 12:00 UTC [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- Dune noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- Atlas noticed that reporting's disk usage jumped 30 percent after the retention change [observation; valid 2025-12-25 to now; recorded by standup/atlas/2025-12-25]\n- The handover note of 2025-06-09 wrongly recorded Boreal as the owner of billing-api [valid 2025-07-03 to now; recorded by handover/2025-07-03-billing-api-correction]\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-01; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- Priya is on call for Atlas [valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: Marcus is on call for Atlas [valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: Priya is on call for Atlas [valid 2025-07-30 to 2026-04-08; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is on call for Atlas [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya is on call for Atlas [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is on call for Atlas [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya is on call for Atlas [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz is on call for Atlas [valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n- The handover note of 2025-06-11 wrongly recorded Cinder as the owner of the notifier [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n- Boreal noticed that the notifier's CPU sat at 90 percent after the traffic shift [observation; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n- Boreal owns webhooks [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: Ember owns webhooks [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: Boreal owns webhooks [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- Boreal noticed that billing-api's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Oskar is on call for Ember [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: Diego is on call for Ember [valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n    earlier: Oskar is on call for Ember [valid 2026-03-02 to 2026-04-13; recorded by standup/ember/2026-03-02]\n    earlier: Diego is on call for Ember [valid 2026-01-15 to 2026-03-02; recorded by standup/ember/2026-01-15]\n    earlier: Oskar is on call for Ember [valid 2025-01-14 to 2026-01-15; recorded by standup/ember/2025-01-14]\n- Atlas noticed that webhooks's request volume halved after the client rollout [observation; valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- Decision: the event-bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Ember noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n\nQuestion: As of now, which team is responsible for reporting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654420-SvFnXnrSzdW5ryLPnB9B",
+  "object": "chat.completion",
+  "created": 1788654420,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember",
+     "refusal": null,
+     "reasoning": "The memory says \"Ember owns reporting [valid 2025-12-05 to now]\". Today is 2026-06-30, so as of now, Ember owns reporting.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says \"Ember owns reporting [valid 2025-12-05 to now]\". Today is 2026-06-30, so as of now, Ember owns reporting.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1739,
+   "completion_tokens": 44,
+   "total_tokens": 1783,
+   "cost": 0.00026749,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00026749,
+    "upstream_inference_prompt_cost": 0.00024549,
+    "upstream_inference_completions_cost": 2.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 40,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9988505409564823,
+ "fetched_at": "2026-09-06T00:27:02Z"
+}

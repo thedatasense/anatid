@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-11] handover/2025-04-11-webhooks: Quick one: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2026-04-22] handover/2026-04-22-webhooks: The webhook dispatcher has a new home: Dune. Team Atlas kept it until today.\n- [2025-09-09] handover/2025-09-09-webhooks: The Ember team handed the webhook dispatcher to team Atlas today; Oskar wrote up the handover doc for Priya.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-03-11] standup/ember/2025-03-11-2: Observation from team Ember: after the cache change, the webhooks service's memory use grew steadily for a week. Team Ember now does pairing on every production change.\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2026-02-11] incident-review/INC-2026-003: Incident review INC-2026-003. The webhook dispatcher delivered some events twice on 2026-02-08. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-09-16] standup/atlas/2025-09-16: Decision: webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.\n- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.\n- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.\n- [2025-08-12] standup/boreal/2025-08-12: Rotation day for the Boreal team: Marcus hands the pager to Lena Fischer.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-11-11] standup/boreal/2025-11-11-2: Heads-up from team Boreal: the event bus' CPU sat at 90 percent after the traffic shift.\n- [2025-08-12] standup/boreal/2025-08-12-2: Observation from team Boreal: after the cache change, the catalog service's memory use grew steadily for a week.\n\nQuestion: Which team owned webhooks before Boreal?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651596-jRzSzkyZEynqlcSZNoix",
+  "object": "chat.completion",
+  "created": 1788651596,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question: \"Which team owned webhooks before Boreal?\"\n\nLooking at memory:\n- [2025-01-09] webhooks is a Boreal service.\n- [2025-04-11] handover: webhooks belongs to team Ember starting today. \"Thanks to Boreal for running it until now.\"\n\nSo before Boreal... wait, that says Boreal ran it until 2025-04-11, then Ember. Then [2025-09-09] Ember handed webhook dispatcher to Atlas. Then [2026-04-22] webhook dispatcher moved to Dune; \"Team Atlas kept it until today.\"\n\nThe question asks: which team owned webhooks before Boreal? The memory doesn't say who owned webhooks before Boreal. The first entry about ownership is [2025-01-09] Boreal owns webhooks. The handover on 2025-04-11 says \"Thanks to Boreal for running it until now\" — meaning Boreal owned it before Ember took over. So Boreal was before Ember, not the other way.\n\nThere's no entry stating who owned webhooks before Boreal. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Which team owned webhooks before Boreal?\"\n\nLooking at memory:\n- [2025-01-09] webhooks is a Boreal service.\n- [2025-04-11] handover: webhooks belongs to team Ember starting today. \"Thanks to Boreal for running it until now.\"\n\nSo before Boreal... wait, that says Boreal ran it until 2025-04-11, then Ember. Then [2025-09-09] Ember handed webhook dispatcher to Atlas. Then [2026-04-22] webhook dispatcher moved to Dune; \"Team Atlas kept it until today.\"\n\nThe question asks: which team owned webhooks before Boreal? The memory doesn't say who owned webhooks before Boreal. The first entry about ownership is [2025-01-09] Boreal owns webhooks. The handover on 2025-04-11 says \"Thanks to Boreal for running it until now\" — meaning Boreal owned it before Ember took over. So Boreal was before Ember, not the other way.\n\nThere's no entry stating who owned webhooks before Boreal. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1628,
+   "completion_tokens": 252,
+   "total_tokens": 1880,
+   "cost": 0.00017742,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00017742,
+    "upstream_inference_prompt_cost": 0.00011442,
+    "upstream_inference_completions_cost": 6.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 246,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.4934021669905633,
+ "fetched_at": "2026-09-05T23:40:00Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Team Ember now does pairing on every production change. [decision; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- The scheduler is not a Boreal service; Boreal flagged the scheduler at standup on 2026-02-04. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- Boreal holds its planning meeting every Thursday. [valid 2025-07-29 to now; recorded by standup/boreal/2025-07-29]\n- Cinder took over Ledger from Boreal on 2026-04-29. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n- The reports pipeline is not a Boreal service. [valid 2025-06-06 to now; recorded by standup/boreal/2025-06-06]\n- The image-resizer is not a Boreal service. [valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- Boreal handed billing-api to Team Dune on 2026-03-25. [decision; valid 2026-03-25 to now; recorded by handover/2026-03-25-billing-api]\n- The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns the indexer as of 2025-01-17. [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- Boreal handed the event bus to Team Dune on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-event-bus]\n- Team Dune took over image-resizer from Boreal on 2026-01-20. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n- Marcus Oyelaran left Boreal and joined Team Atlas on 2026-03-17. [decision; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- Boreal has a weekly dependency update day as of 2026-05-04. [decision; valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- The indexer moved from Boreal to Team Dune as of 2025-11-18. [decision; valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: The indexer moved from Boreal to Ember as of 2025-11-18. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n- The indexer moved from Team Dune to Boreal as of 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n- The Boreal roster consists of Lena and Marcus Oyelaran as of 2025-01-07. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- The image-resizer pager rings Team Dune, not Boreal, as of 2026-01-20. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: The image-resizer pager rings the Boreal team, not Cinder, as of 2025-11-19. [decision; valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n- Lena picked up the Boreal on-call shift from Marcus Oyelaran on 2025-05-21. [decision; valid 2025-05-21 to now; recorded by standup/boreal/2025-05-21]\n- Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-07-09. [decision; valid 2025-07-09 to now; recorded by standup/boreal/2025-07-09]\n- Lena picked up the Boreal on-call pager from Marcus Oyelaran on 2025-08-12. [decision; valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12]\n\nQuestion: Which services does Boreal own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657414-1kZF2rdVpicLFXIEyrx1",
+  "object": "chat.completion",
+  "created": 1788657414,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The indexer",
+     "refusal": null,
+     "reasoning": "I need to figure out which services Boreal owns now (as of 2026-06-30).\n\nLet me go through the memory entries:\n\n1. Scheduler - not a Boreal service (valid 2026-02-04 to now). So NOT Boreal.\n\n2. Reports pipeline - not a Boreal service (valid 2025-06-06 to now). NOT Boreal.\n\n3. Image-resizer - not a Boreal service (valid 2026-03-17 to now). Also, Team Dune took over image-resizer from Boreal on 2026-01-20. NOT Boreal.\n\n4. Billing-api - Boreal handed it to Team Dune on 2026-03-25. NOT Boreal.\n\n5. Indexer - belongs to Boreal as of 2025-02-28. Then moved from Boreal to Ember as of 2025-11-18 (valid until 2025-12-15), corrected: moved from Boreal to Team Dune as of 2025-11-18 (valid 2025-12-15 to now... but wait, that entry says \"valid 2025-12-15 to now\" but then a later entry supersedes it). Then: The indexer moved from Team Dune to Boreal as of 2026-04-22 (valid 2026-04-22 to now). So the indexer is Boreal's now.\n\n6. Event bus - Boreal handed it to Team Dune on 2025-09-09. NOT Boreal.\n\n7. Ledger - Cinder took over Ledger from Boreal on 2026-04-29. NOT Boreal.\n\nSo the only service Boreal owns now is the indexer.\n\nWait, should I also consider whether the memory says anything about Boreal owning anything else? The Boreal roster is Lena and Marcus Oyelaran, but Marcus left to Team Atlas on 2026-03-17. That doesn't affect services.\n\nSo the answer: the indexer.\n\nThe question asks \"which services\" — plural, but the answer is just the indexer.\n\nOne short line: \"The indexer\" or \"the indexer\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "I need to figure out which services Boreal owns now (as of 2026-06-30).\n\nLet me go through the memory entries:\n\n1. Scheduler - not a Boreal service (valid 2026-02-04 to now). So NOT Boreal.\n\n2. Reports pipeline - not a Boreal service (valid 2025-06-06 to now). NOT Boreal.\n\n3. Image-resizer - not a Boreal service (valid 2026-03-17 to now). Also, Team Dune took over image-resizer from Boreal on 2026-01-20. NOT Boreal.\n\n4. Billing-api - Boreal handed it to Team Dune on 2026-03-25. NOT Boreal.\n\n5. Indexer - belongs to Boreal as of 2025-02-28. Then moved from Boreal to Ember as of 2025-11-18 (valid until 2025-12-15), corrected: moved from Boreal to Team Dune as of 2025-11-18 (valid 2025-12-15 to now... but wait, that entry says \"valid 2025-12-15 to now\" but then a later entry supersedes it). Then: The indexer moved from Team Dune to Boreal as of 2026-04-22 (valid 2026-04-22 to now). So the indexer is Boreal's now.\n\n6. Event bus - Boreal handed it to Team Dune on 2025-09-09. NOT Boreal.\n\n7. Ledger - Cinder took over Ledger from Boreal on 2026-04-29. NOT Boreal.\n\nSo the only service Boreal owns now is the indexer.\n\nWait, should I also consider whether the memory says anything about Boreal owning anything else? The Boreal roster is Lena and Marcus Oyelaran, but Marcus left to Team Atlas on 2026-03-17. That doesn't affect services.\n\nSo the answer: the indexer.\n\nThe question asks \"which services\" — plural, but the answer is just the indexer.\n\nOne short line: \"The indexer\" or \"the indexer\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1554,
+   "completion_tokens": 459,
+   "total_tokens": 2013,
+   "cost": 0.0004626,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0004626,
+    "upstream_inference_prompt_cost": 0.0002331,
+    "upstream_inference_completions_cost": 0.0002295
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 455,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.949933374999091,
+ "fetched_at": "2026-09-06T01:17:02Z"
+}

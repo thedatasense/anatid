@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Boreal own now?\nGold answer: notifier, search-indexer, auth-gateway, catalog, event-bus and reporting\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: Boreal owns: event bus, webhooks, search-indexer, catalog, reporting, auth-gateway."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659020-5ScvM1NAhnsXvkwOxlmS",
+  "object": "chat.completion",
+  "created": 1788659020,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer omits 'notifier' and includes an extra item 'webhooks', violating the rule that every gold item must be named and no extra items may appear.\"}\n",
+     "refusal": null,
+     "reasoning": "I need to check whether the answer names all 6 gold services and no extra items.\n\nGold services (6): notifier, search-indexer, auth-gateway, catalog, event-bus, reporting\n\nAnswer: event bus, webhooks, search-indexer, catalog, reporting, auth-gateway\n\nChecking:\n- notifier: NOT mentioned\n- search-indexer: yes\n- auth-gateway: yes\n- catalog: yes\n- event-bus: yes (\"event bus\")\n- reporting: yes\n\nExtra item: webhooks — that's an extra item not in gold.\n\nSo the answer includes 5 of 6 gold services, misses \"notifier\", and includes an extra \"webhooks\". According to the rule: every item must be named and no extra item. So it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "I need to check whether the answer names all 6 gold services and no extra items.\n\nGold services (6): notifier, search-indexer, auth-gateway, catalog, event-bus, reporting\n\nAnswer: event bus, webhooks, search-indexer, catalog, reporting, auth-gateway\n\nChecking:\n- notifier: NOT mentioned\n- search-indexer: yes\n- auth-gateway: yes\n- catalog: yes\n- event-bus: yes (\"event bus\")\n- reporting: yes\n\nExtra item: webhooks — that's an extra item not in gold.\n\nSo the answer includes 5 of 6 gold services, misses \"notifier\", and includes an extra \"webhooks\". According to the rule: every item must be named and no extra item. So it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 281,
+   "completion_tokens": 213,
+   "total_tokens": 494,
+   "cost": 5.8965e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.8965e-05,
+    "upstream_inference_prompt_cost": 5.715e-06,
+    "upstream_inference_completions_cost": 5.325e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 163,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.9821587500046007,
+ "fetched_at": "2026-09-06T01:43:43Z"
+}

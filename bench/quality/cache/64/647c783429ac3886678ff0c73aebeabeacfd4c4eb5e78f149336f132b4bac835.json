@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-05-22, the Dune team observed that auth-gateway's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-2]\n- The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date. [decision; valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: The Ember team owns the authentication gateway. [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- The Dune team owns the reports pipeline as of 2025-03-20. [valid 2025-03-20 to now; recorded by standup/dune/2025-03-20]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- The Cinder team owns the job scheduler as of 2025-09-23, when ownership transferred from the Dune team. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The Dune team owns the job scheduler as of 2025-09-05. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- The Atlas team owns the image resizer as of 2025-11-26, when ownership transferred from the Ember team. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The Ember team owns the image resizer as of 2025-03-20. [decision; valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: The Dune team owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- The ledger service relies on the authentication gateway for service tokens. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- As of 2025-12-19, the Atlas team owns the product catalog, having taken it over from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- Per the change policy, the authentication gateway deploys on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-02-18 to now; recorded by standup/ember/2025-02-18]\n- Every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-07-29 to now; recorded by standup/ember/2025-07-29]\n- On 2025-09-16, Oskar wrote the handover doc for Diego for the authentication gateway handover to Cinder. [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n- Authentication gateway token expiry was shortened to 15 minutes because the security audit flagged long-lived tokens. [valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- The Cinder team observed on 2025-09-03 that the authentication gateway's cold start time tripled after the runtime upgrade. [valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03-2]\n- At the Cinder standup on 2026-01-30, it was decided that authentication gateway tokens will expire after 15 minutes instead of an hour. [decision; valid 2026-01-30 to now; recorded by standup/cinder/2026-01-30]\n- The Boreal team noticed on 2025-05-07 that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07-2]\n\nQuestion: Who owns auth-gateway today?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653227-S2fmkJlDI1REPRVEwOdP",
+  "object": "chat.completion",
+  "created": 1788653227,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Cinder",
+     "refusal": null,
+     "reasoning": "The question asks who owns auth-gateway today (2026-06-30). The memory says: \"The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date. [valid 2025-09-16 to now]\". So today, Cinder owns it.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who owns auth-gateway today (2026-06-30). The memory says: \"The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date. [valid 2025-09-16 to now]\". So today, Cinder owns it.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1385,
+   "completion_tokens": 72,
+   "total_tokens": 1457,
+   "cost": 0.00024375,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00024375,
+    "upstream_inference_prompt_cost": 0.00020775,
+    "upstream_inference_completions_cost": 3.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 68,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8219538329867646,
+ "fetched_at": "2026-09-06T00:07:09Z"
+}

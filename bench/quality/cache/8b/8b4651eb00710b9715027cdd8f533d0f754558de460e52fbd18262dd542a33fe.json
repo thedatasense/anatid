@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The product catalog depends on image-resizer for thumbnails. [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\n- Storage for the image-resizer's originals doubled in six months as of 2026-03-20. [valid 2026-03-20 to now; recorded by standup/dune/2026-03-20]\n- As of 2026-03-20, the image-resizer will keep original uploads for 90 days only. [decision; valid 2026-03-20 to now; recorded by standup/dune/2026-03-20]\n- The image-resizer pager rings Team Dune, not Boreal, as of 2026-01-20. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: The image-resizer pager rings the Boreal team, not Cinder, as of 2025-11-19. [decision; valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n- Boreal reported at standup on 2026-03-17 that the image-resizer's cold start time tripled following the runtime upgrade. [valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- The image-resizer is not a Boreal service. [valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- Team Dune took over image-resizer from Boreal on 2026-01-20. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n- Team Dune owns image-resizer as of 2026-01-20, after Boreal handed it over. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: Boreal owns image-resizer as of 2025-11-19, after Cinder handed it over. [decision; valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n    earlier: Cinder owns image-resizer as of 2025-06-25. [decision; valid 2025-06-25 to 2025-11-19; recorded by handover/2025-06-25-image-resizer]\n    earlier: Team Dune owns image-resizer. [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20]\n- Farah Haddad walked Yuki through the image-resizer runbook on 2025-06-25. [valid 2025-06-25 to now; recorded by handover/2025-06-25-image-resizer]\n- The product catalog will keep image metadata in a separate table. [decision; valid 2025-04-01 to now; recorded by standup/cinder/2025-04-01]\n- The product catalog's disk usage jumped 30 percent after the retention change, as observed by the Cinder team on 2025-12-15. [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15-2]\n- The indexer depends on the product catalog for product documents. [valid 2025-03-03 to now; recorded by standup/boreal/2025-03-03]\n- The indexer will rebuild the index nightly instead of on every catalog write, as agreed on 2025-11-07. [decision; valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- After the cache change, the product catalog's memory use grew steadily for a week. [valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12-2]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- The product catalog's request volume halved following the client rollout. [valid 2025-04-10 to now; recorded by standup/boreal/2025-04-10]\n- The indexer's disk usage jumped 30 percent after the retention change, as noticed by Cinder on 2025-08-29. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29-2]\n- Team Atlas saw on 2026-04-16 that billing-api's error rate crept up to 2 percent following the dependency bump. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- The product catalog has a deploy window on Tuesdays and Thursdays between 10:00 and 12:00 UTC as of 2025-11-12. [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The product catalog has a deploy window on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- The product catalog belongs to the Boreal team as of 2025-10-20, after being run by the Cinder team until then. [decision; valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n\nQuestion: Which note first recorded that the catalog depends on image-resizer, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788656960-xYzA9u6UXIV7D7mOcVYx",
+  "object": "chat.completion",
+  "created": 1788656960,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Reka",
+  "system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp8-53169669",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/cinder/2025-03-28, on 2025-03-28",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded that the catalog depends on image-resizer, and when?\n\nLooking at memory: \"The product catalog depends on image-resizer for thumbnails. [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\"\n\nThat's the only entry about the catalog depending on image-resizer. So the note is standup/cinder/2025-03-28, recorded 2025-03-28.\n\nAnswer in one short line with just the value asked for: the note name and date.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded that the catalog depends on image-resizer, and when?\n\nLooking at memory: \"The product catalog depends on image-resizer for thumbnails. [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\"\n\nThat's the only entry about the catalog depending on image-resizer. So the note is standup/cinder/2025-03-28, recorded 2025-03-28.\n\nAnswer in one short line with just the value asked for: the note name and date.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1549,
+   "completion_tokens": 142,
+   "total_tokens": 1691,
+   "cost": 0.00030335,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00030335,
+    "upstream_inference_prompt_cost": 0.00023235,
+    "upstream_inference_completions_cost": 7.1e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 116,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.138069458014797,
+ "fetched_at": "2026-09-06T01:09:25Z"
+}

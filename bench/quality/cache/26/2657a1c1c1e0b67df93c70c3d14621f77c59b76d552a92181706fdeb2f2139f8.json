@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-08, the Atlas team observed that webhooks' request volume halved following the client rollout, and since it was not their service, they flagged it. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- The webhook dispatcher depends on the bus for outbound events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- The webhook dispatcher is owned by the Boreal team as of 2025-05-15, when ownership moved from the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team, which took over ownership from the Boreal team on 2025-03-03. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. [constraint; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- A partner asked for webhook key rotation in their security review. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- Priya Raman is the primary on-call for the Atlas team as of 2025-07-30, when on-call passed from Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-06-19, until the next rotation. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya Raman is the primary on-call for the Atlas team as of 2025-05-13, until the next rotation. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-04-03, replacing Priya Raman. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team, not the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- At the Boreal standup on 2025-11-03, it was decided that the webhook dispatcher will sign payloads with rotating keys. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- As of 2026-01-12, the billing API is owned by the Ember team, having been run by the Atlas team until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: The Atlas team owns the billing API as of 2025-06-09, when ownership passed from the Ember team; the Boreal team was recorded by mistake and never held it. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: The Boreal team owns the billing API as of 2025-06-09, when ownership passed from the Ember team. [decision; valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: The Ember team owns the billing API as of 2025-03-07, when ownership passed from the Atlas team. [decision; valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n\nQuestion: Who is on call for the team that owns the service webhooks depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652850-R58x4HRvfoR0WzuVqjri",
+  "object": "chat.completion",
+  "created": 1788652850,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The webhooks dispatcher depends on the bus. The webhook dispatcher is owned by Boreal team as of 2025-05-15. Wait, the question: \"Who is on call for the team that owns the service webhooks depends on?\" — webhooks depends on the bus. Who owns the bus? Hmm, memory doesn't say who owns the bus. Let me re-read.\n\n\"The webhook dispatcher depends on the bus for outbound events\" — but the owner of the bus isn't stated. Hmm. Alternatively, \"the service webhooks depends on\" could be interpreted as the webhook dispatcher's team? No — the question asks for the team that owns the service webhooks depends on, i.e., the bus. The memory doesn't state who owns the bus.\n\nBut maybe the intended reading: webhooks = webhook dispatcher, which is owned by Boreal, and it depends on bus. The team that owns the bus is not given. So answer: I don't know.\n\nWait — but maybe the question means the team that owns the webhooks dispatcher (the service \"webhooks\" depends on bus... no). The question: \"Who is on call for the team that owns the service webhooks depends on?\" The service webhooks depends on = the bus. Owner of bus unknown. So I don't know.\n\nAlternatively, some might interpret \"the service webhooks depends on\" as the webhook dispatcher... but webhooks IS the webhook dispatcher. The dependency is the bus. Owner of bus not in memory.\n\nSo answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The webhooks dispatcher depends on the bus. The webhook dispatcher is owned by Boreal team as of 2025-05-15. Wait, the question: \"Who is on call for the team that owns the service webhooks depends on?\" — webhooks depends on the bus. Who owns the bus? Hmm, memory doesn't say who owns the bus. Let me re-read.\n\n\"The webhook dispatcher depends on the bus for outbound events\" — but the owner of the bus isn't stated. Hmm. Alternatively, \"the service webhooks depends on\" could be interpreted as the webhook dispatcher's team? No — the question asks for the team that owns the service webhooks depends on, i.e., the bus. The memory doesn't state who owns the bus.\n\nBut maybe the intended reading: webhooks = webhook dispatcher, which is owned by Boreal, and it depends on bus. The team that owns the bus is not given. So answer: I don't know.\n\nWait — but maybe the question means the team that owns the webhooks dispatcher (the service \"webhooks\" depends on bus... no). The question: \"Who is on call for the team that owns the service webhooks depends on?\" The service webhooks depends on = the bus. Owner of bus unknown. So I don't know.\n\nAlternatively, some might interpret \"the service webhooks depends on\" as the webhook dispatcher... but webhooks IS the webhook dispatcher. The dependency is the bus. Owner of bus not in memory.\n\nSo answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1724,
+   "completion_tokens": 321,
+   "total_tokens": 2045,
+   "cost": 0.00020187,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00020187,
+    "upstream_inference_prompt_cost": 0.00012162,
+    "upstream_inference_completions_cost": 8.025e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 315,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.003707500000019,
+ "fetched_at": "2026-09-06T00:00:54Z"
+}

@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What is the deploy window of the service that the ledger depends on?\nGold answer: on Mondays to Thursdays between 09:00 and 17:00 UTC\nAlso accepted: Mon-Thu 09:00-17:00 UTC\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong.\n\nAnswer to grade: Mondays to Thursdays between 09:00 and 17:00 UTC (the authentication gateway)."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659082-fOuF6IymCIxnUv6MFSgV",
+  "object": "chat.completion",
+  "created": 1788659082,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names the gold deploy window 'Mondays to Thursdays between 09:00 and 17:00 UTC', matching the required answer with an acceptable additional identification of the service.\"}",
+     "refusal": null,
+     "reasoning": "The question asks for the deploy window of the service that the ledger depends on. The gold answer is \"on Mondays to Thursdays between 09:00 and 17:00 UTC\". The answer to grade says \"Mondays to Thursdays between 09:00 and 17:00 UTC (the authentication gateway).\" This matches the gold answer, with an additional parenthetical identifying the service (authentication gateway). The grading rule says correct if the final answer names the gold; intermediate hops need not be stated. The extra parenthetical just names the dependent service, which doesn't introduce an incorrect extra item. So it should be correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks for the deploy window of the service that the ledger depends on. The gold answer is \"on Mondays to Thursdays between 09:00 and 17:00 UTC\". The answer to grade says \"Mondays to Thursdays between 09:00 and 17:00 UTC (the authentication gateway).\" This matches the gold answer, with an additional parenthetical identifying the service (authentication gateway). The grading rule says correct if the final answer names the gold; intermediate hops need not be stated. The extra parenthetical just names the dependent service, which doesn't introduce an incorrect extra item. So it should be correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 287,
+   "completion_tokens": 182,
+   "total_tokens": 469,
+   "cost": 5.1665e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.1665e-05,
+    "upstream_inference_prompt_cost": 6.165e-06,
+    "upstream_inference_completions_cost": 4.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 131,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.3926207500044256,
+ "fetched_at": "2026-09-06T01:44:45Z"
+}

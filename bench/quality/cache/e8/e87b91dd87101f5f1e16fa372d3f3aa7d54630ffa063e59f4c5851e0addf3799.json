@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Atlas own now?\nGold answer: catalog, image-resizer, event-bus and feature-flags\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 4 services.\n\nAnswer to grade: Product catalog, image resizer, bus, and feature-flags."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655017-ja7RrkFTqq1IvfWznch5",
+  "object": "chat.completion",
+  "created": 1788655017,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer says 'bus' instead of 'event-bus', and since no alternative phrasings are accepted, it fails to name one of the four gold services.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is: catalog, image-resizer, event-bus and feature-flags (4 services).\n\nThe answer to grade: \"Product catalog, image resizer, bus, and feature-flags.\"\n\nLet me check each item:\n1. \"Product catalog\" vs \"catalog\" - this is likely the same service, just phrased differently. \"Product catalog\" could be considered an alternative phrasing for \"catalog\". This seems acceptable.\n2. \"image resizer\" vs \"image-resizer\" - same, just hyphenation. Acceptable.\n3. \"bus\" vs \"event-bus\" - this is questionable. \"bus\" is a shortened form of \"event-bus\". Is it the same? It could be ambiguous - \"bus\" might refer to event-bus or message-bus. But in context, it likely refers to event-bus. However, the grading rule says to apply the rule literally: \"every item must be named\". Is \"bus\" naming \"event-bus\"? It's a partial name. This is borderline.\n4. \"feature-flags\" vs \"feature-flags\" - same.\n\nThe rule says: \"Where the gold is a list, every item must be named and no extra item.\"\n\nThe question is whether \"bus\" names \"event-bus\". Strictly, \"event-bus\" is the full name, and \"bus\" is a shorthand. In casual conversation, \"bus\" could refer to event-bus. But strictly applying the rule, \"bus\" doesn't fully name \"event-bus\" - it's missing \"event-\".\n\nAlso \"Product catalog\" vs \"catalog\" - \"catalog\" is the gold. \"Product catalog\" adds \"Product\" which could be extra, but it's likely the same service. Similarly \"image resizer\" without hyphen is clearly the same.\n\nHmm, this is tricky. The strictest interpretation: \"bus\" is not \"event-bus\". The name of the service is \"event-bus\", and \"bus\" alone doesn't name it precisely. Similarly \"Product catalog\" adds a word but the core name \"catalog\" is present.\n\nI think the intended grading here is that \"bus\" fails to name \"event-bus\" because it drops the distinguishing word \"event\". A service could be named \"bus\" or \"message-bus\" etc. So \"bus\" is ambiguous/incomplete.\n\nBut wait - should I be lenient? The rule says \"the final answer names the gold\" and \"every item must be named\". \"bus\" doesn't name \"event-bus\" - it's a substring but not the name. I'd say this is incorrect because \"bus\" is not the same as \"event-bus\".\n\nActually, let me reconsider. In many grading setups, minor phrasing variations are accepted. \"bus\" for \"event-bus\" is a truncation. Is it a \"minor phrasing variation\"? The gold answer explicitly lists alternatives as \"(none)\", meaning no alternative phrasings are accepted. But obviously hyphenation differences and case differences would still be fine (image resizer vs image-resizer).\n\n\"Product catalog\" - the service is \"catalog\". \"Product catalog\" contains \"catalog\" and is a natural expansion. I'd accept it.\n\n\"bus\" - the service is \"event-bus\". \"bus\" drops \"event-\". This is a truncation that loses specificity. Given the gold has no accepted alternatives, I'd lean toward marking this incorrect because \"bus\" ≠ \"event-bus\".\n\nHmm, but one could argue \"bus\" clearly refers to event-bus in context. However, the grading rule says to apply the rule literally. The rule: \"every item must be named\". Is \"event-bus\" named by \"bus\"? Strictly, no - \"bus\" is a generic term and the service name is \"event-bus\". Without \"event\", it's not the name.\n\nI'll mark it incorrect: \"bus\" does not name \"event-bus\".\n\nActually, let me think about this more carefully. Graders often accept obvious shorthands. But the rule emphasizes literal application: \"every item must be named and no extra item.\" The gold is \"event-bus\". The answer says \"bus\". Is \"bus\" naming \"event-bus\"? It's referring to it, arguably, but not naming it by its name. In strict matching, \"bus\" ≠ \"event-bus\".\n\nGiven the strictness of the rule and that no alternative phrasings are accepted, I'll say incorrect.\n\nReason: The answer says \"bus\" which does not name the gold service \"event-bus\" (no alternative phrasings accepted).\n\nHmm, but is that too harsh? Consider: if someone said \"the event bus\" that would be fine. \"Bus\" alone... In a context where the only bus is event-bus, \"bus\" refers to it. But grading is against gold names. The gold is a specific list with 4 items, no alternatives accepted. The item \"bus\" is a truncation that could match other services (e.g., \"message-bus\"). I'll go with incorrect.\n\nFinal: {\"correct\": false, \"reason\": \"...\"}\n\nReason: \"'bus' does not name the gold item 'event-bus' since no alternative phrasings are accepted, so not all four gold services are named.\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is: catalog, image-resizer, event-bus and feature-flags (4 services).\n\nThe answer to grade: \"Product catalog, image resizer, bus, and feature-flags.\"\n\nLet me check each item:\n1. \"Product catalog\" vs \"catalog\" - this is likely the same service, just phrased differently. \"Product catalog\" could be considered an alternative phrasing for \"catalog\". This seems acceptable.\n2. \"image resizer\" vs \"image-resizer\" - same, just hyphenation. Acceptable.\n3. \"bus\" vs \"event-bus\" - this is questionable. \"bus\" is a shortened form of \"event-bus\". Is it the same? It could be ambiguous - \"bus\" might refer to event-bus or message-bus. But in context, it likely refers to event-bus. However, the grading rule says to apply the rule literally: \"every item must be named\". Is \"bus\" naming \"event-bus\"? It's a partial name. This is borderline.\n4. \"feature-flags\" vs \"feature-flags\" - same.\n\nThe rule says: \"Where the gold is a list, every item must be named and no extra item.\"\n\nThe question is whether \"bus\" names \"event-bus\". Strictly, \"event-bus\" is the full name, and \"bus\" is a shorthand. In casual conversation, \"bus\" could refer to event-bus. But strictly applying the rule, \"bus\" doesn't fully name \"event-bus\" - it's missing \"event-\".\n\nAlso \"Product catalog\" vs \"catalog\" - \"catalog\" is the gold. \"Product catalog\" adds \"Product\" which could be extra, but it's likely the same service. Similarly \"image resizer\" without hyphen is clearly the same.\n\nHmm, this is tricky. The strictest interpretation: \"bus\" is not \"event-bus\". The name of the service is \"event-bus\", and \"bus\" alone doesn't name it precisely. Similarly \"Product catalog\" adds a word but the core name \"catalog\" is present.\n\nI think the intended grading here is that \"bus\" fails to name \"event-bus\" because it drops the distinguishing word \"event\". A service could be named \"bus\" or \"message-bus\" etc. So \"bus\" is ambiguous/incomplete.\n\nBut wait - should I be lenient? The rule says \"the final answer names the gold\" and \"every item must be named\". \"bus\" doesn't name \"event-bus\" - it's a substring but not the name. I'd say this is incorrect because \"bus\" is not the same as \"event-bus\".\n\nActually, let me reconsider. In many grading setups, minor phrasing variations are accepted. \"bus\" for \"event-bus\" is a truncation. Is it a \"minor phrasing variation\"? The gold answer explicitly lists alternatives as \"(none)\", meaning no alternative phrasings are accepted. But obviously hyphenation differences and case differences would still be fine (image resizer vs image-resizer).\n\n\"Product catalog\" - the service is \"catalog\". \"Product catalog\" contains \"catalog\" and is a natural expansion. I'd accept it.\n\n\"bus\" - the service is \"event-bus\". \"bus\" drops \"event-\". This is a truncation that loses specificity. Given the gold has no accepted alternatives, I'd lean toward marking this incorrect because \"bus\" ≠ \"event-bus\".\n\nHmm, but one could argue \"bus\" clearly refers to event-bus in context. However, the grading rule says to apply the rule literally. The rule: \"every item must be named\". Is \"event-bus\" named by \"bus\"? Strictly, no - \"bus\" is a generic term and the service name is \"event-bus\". Without \"event\", it's not the name.\n\nI'll mark it incorrect: \"bus\" does not name \"event-bus\".\n\nActually, let me think about this more carefully. Graders often accept obvious shorthands. But the rule emphasizes literal application: \"every item must be named and no extra item.\" The gold is \"event-bus\". The answer says \"bus\". Is \"bus\" naming \"event-bus\"? It's referring to it, arguably, but not naming it by its name. In strict matching, \"bus\" ≠ \"event-bus\".\n\nGiven the strictness of the rule and that no alternative phrasings are accepted, I'll say incorrect.\n\nReason: The answer says \"bus\" which does not name the gold service \"event-bus\" (no alternative phrasings accepted).\n\nHmm, but is that too harsh? Consider: if someone said \"the event bus\" that would be fine. \"Bus\" alone... In a context where the only bus is event-bus, \"bus\" refers to it. But grading is against gold names. The gold is a specific list with 4 items, no alternatives accepted. The item \"bus\" is a truncation that could match other services (e.g., \"message-bus\"). I'll go with incorrect.\n\nFinal: {\"correct\": false, \"reason\": \"...\"}\n\nReason: \"'bus' does not name the gold item 'event-bus' since no alternative phrasings are accepted, so not all four gold services are named.\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 260,
+   "completion_tokens": 1163,
+   "total_tokens": 1423,
+   "cost": 0.00031025,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00031025,
+    "upstream_inference_prompt_cost": 1.95e-05,
+    "upstream_inference_completions_cost": 0.00029075
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1117,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 30.92702616599854,
+ "fetched_at": "2026-09-06T00:37:28Z"
+}

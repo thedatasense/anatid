@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The billing API only ships on weekdays after 15:00 UTC. [constraint; valid 2025-02-11 to now; recorded by standup/atlas/2025-02-11]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- As of 2025-09-30, the billing API depends on the feature flag service. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- On 2025-06-09, Oskar wrote the handover doc for the billing API for Lena. [valid 2025-06-09 to now; recorded by handover/2025-06-09-billing-api]\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- The billing API has a deploy freeze from 2025-11-24 to 2025-12-02, during the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- Changes to the billing API need a rollback plan attached to the pull request. [constraint; valid 2025-04-02 to now; recorded by standup/ember/2025-04-02]\n- The Boreal team observed on 2025-12-01 that the billing API's error rate crept up to 2 percent after the dependency bump. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- On 2026-03-11, the Cinder team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners. [valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- As of 2026-01-12, the billing API is owned by the Ember team, having been run by the Atlas team until then. [decision; valid 2026-01-12 to now; recorded by handover/2026-01-12-billing-api]\n    earlier: The Atlas team owns the billing API as of 2025-06-09, when ownership passed from the Ember team; the Boreal team was recorded by mistake and never held it. [decision; valid 2025-07-03 to 2026-01-12; recorded by handover/2025-07-03-billing-api-correction]\n    earlier: The Boreal team owns the billing API as of 2025-06-09, when ownership passed from the Ember team. [decision; valid 2025-06-09 to 2025-07-03; recorded by handover/2025-06-09-billing-api]\n    earlier: The Ember team owns the billing API as of 2025-03-07, when ownership passed from the Atlas team. [decision; valid 2025-03-07 to 2025-06-09; recorded by handover/2025-03-07-billing-api]\n    earlier: The billing API is owned by the Atlas team. [valid 2025-01-08 to 2025-03-07; recorded by standup/atlas/2025-01-08-2]\n- On 2025-11-04, the Ember team observed that the billing API's queue depth hit 50,000 following the marketing send, and since it was not their service, they flagged it. [valid 2025-11-04 to now; recorded by standup/ember/2025-11-04]\n- As of 2025-09-30, the billing API will gate the new invoice flow behind feature-flags because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The reporting service stopped using the ledger service because the nightly ledger scans were blocking billing runs. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- On 2025-07-17, Yuki Tanaka handed the Cinder pager to Diego on rotation day. [valid 2025-07-17 to now; recorded by standup/cinder/2025-07-17]\n- Tomasz picked up the Dune team on-call shift from Farah on 2025-09-04. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- On 2026-04-14, Tomasz handed the Dune team pager to Farah on rotation day. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n- On 2026-05-22, Tomasz picked up the Dune team on-call shift from Farah. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22]\n- On 2025-06-19, Priya Raman handed the Atlas team pager to Tomasz on rotation day. [valid 2025-06-19 to now; recorded by standup/atlas/2025-06-19]\n- Tomasz was on the Atlas team on-call rotation as of 2025-04-03, but left it on 2025-07-30 when he moved to the Dune team. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is back on the Atlas team on-call rotation as of 2025-04-03. [valid 2025-04-03 to 2025-07-30; recorded by standup/atlas/2025-04-03]\n    earlier: Tomasz had the first on-call rotation for the Atlas team but is off rotation as of 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n    earlier: Tomasz has the first on-call rotation for the Atlas team. [valid 2025-01-09 to 2025-02-12; recorded by standup/atlas/2025-01-09]\n\nQuestion: Which services does billing-api depend on now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653196-istO0FG7FXSpdmpYj9zn",
+  "object": "chat.completion",
+  "created": 1788653196,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The ledger service and the feature flag service.",
+     "refusal": null,
+     "reasoning": "The question asks which services billing-api depends on now.\n\nFrom memory:\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now]\n- As of 2025-09-30, the billing API depends on the feature flag service. [valid 2025-09-30 to now]\n\nBoth are valid now. So the answer: ledger service and feature flag service.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services billing-api depends on now.\n\nFrom memory:\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now]\n- As of 2025-09-30, the billing API depends on the feature flag service. [valid 2025-09-30 to now]\n\nBoth are valid now. So the answer: ledger service and feature flag service.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1665,
+   "completion_tokens": 99,
+   "total_tokens": 1764,
+   "cost": 0.000141945,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000141945,
+    "upstream_inference_prompt_cost": 0.000117195,
+    "upstream_inference_completions_cost": 2.475e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 88,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0554387909942307,
+ "fetched_at": "2026-09-06T00:06:38Z"
+}

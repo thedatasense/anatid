@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1001116\": On 2026-03-11, the Cinder team noticed that the billing API's cold start time tripled after the runtime upgrade and pinged the owners.  (about: billing API, runtime upgrade, Cinder team)\n- memory_id \"1001027\" [decision]: At the Cinder standup on 2026-01-30, it was decided that authentication gateway tokens will expire after 15 minutes instead of an hour.  (about: Cinder, authentication gateway)\n- memory_id \"1000908\" [constraint]: As of 2025-11-27, the Cinder pager pages Yuki Tanaka, not Diego.  (about: Yuki Tanaka, Cinder, Diego)\n- memory_id \"1000902\": As of 2025-11-27, Diego is on the Ember team, having left Cinder.  (about: Cinder, Diego, Ember team)\n- memory_id \"1000898\": As of 2025-11-27, Yuki Tanaka takes the Cinder pager from Diego.  (about: Yuki Tanaka, Cinder, Diego)\n- memory_id \"1000894\": As of 2025-11-27, Diego Alvarez is on the Ember team, having left Cinder.  (about: Cinder, Diego, Ember team)\n- memory_id \"1000820\": As of 2025-10-24, Diego has the Cinder pager this cycle, taking over from Yuki Tanaka.  (about: Yuki Tanaka, Cinder, Diego)\n- memory_id \"1000797\" [decision]: As of 2025-10-13, the ledger service is owned by Cinder; ownership transferred from the Atlas team on that date.  (about: Atlas team, Cinder, ledger service)\n- memory_id \"1000793\" [constraint]: As of 2025-10-13, the pager for the ledger service rings Cinder, not the Atlas team.  (about: Atlas team, Cinder, ledger service)\n- memory_id \"1000702\" [decision]: The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date.  (about: Cinder, Ember team, authentication gateway)\n- memory_id \"1000697\": On 2025-09-16, Oskar wrote the handover doc for Diego for the authentication gateway handover to Cinder.  (about: Cinder, Diego, Oskar, authentication gateway)\n- memory_id \"1000673\": The Cinder team observed on 2025-09-03 that the authentication gateway's cold start time tripled after the runtime upgrade.  (about: authentication gateway, runtime upgrade, Cinder team)\n- memory_id \"1000653\" [constraint]: As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC.  (about: ledger service)\n- memory_id \"1000581\": The Ember team runs its planning on Fridays.  (about: Ember team)\n- memory_id \"1000563\": On 2025-07-17, Yuki Tanaka handed the Cinder pager to Diego on rotation day.  (about: Yuki Tanaka, Cinder, Diego)\n- memory_id \"1000417\" [decision]: Cinder adopted trunk-based development as of 2025-05-14.  (about: Cinder)\n- memory_id \"1000412\": The Cinder team observed on 2025-05-14 that the webhook dispatcher's memory use grew steadily for a week after the cache change.  (about: Cinder, webhook dispatcher, cache change)\n- memory_id \"1000378\": The Cinder team reported on 2025-04-24 that feature-flags' p99 latency doubled after Tuesday's deploy.  (about: Cinder, feature-flags, Tuesday's deploy)\n- memory_id \"1000331\" [constraint]: Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC.  (about: webhook dispatcher, change policy)\n- memory_id \"1000085\": Diego is on call for Cinder to start the year.  (about: Cinder, Diego)\n- memory_id \"1000021\": Yuki Tanaka is on Cinder.  (about: Yuki Tanaka, Cinder)\nExisting entity names: billing API, runtime upgrade, Cinder team, Cinder, authentication gateway, Yuki Tanaka, Diego, Ember team, Atlas team, ledger service, Oskar, webhook dispatcher, cache change, feature-flags, Tuesday's deploy, change policy\n\nThe note:\n\n[2026-04-03] standup/cinder/2026-04-03: Cinder runs its planning on Mondays."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788652209-mS4Euok8pgm33KyC85fw",
+  "object": "chat.completion",
+  "created": 1788652209,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Novita",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\":[{\"content\":\"Cinder runs its planning on Mondays.\",\"entities\":[\"Cinder\"],\"kind\":\"fact\",\"confidence\":1,\"evidence\":\"Cinder runs its planning on Mondays.\"}],\"corrections\":[],\"add_relations\":[],\"remove_relations\":[],\"entity_aliases\":[]}",
+     "refusal": null,
+     "reasoning": "The note says: \"Cinder runs its planning on Mondays.\"\n\nThis is a durable fact about Cinder. Add a fact: \"Cinder runs its planning on Mondays.\" Entities: [\"Cinder\"]. Kind: \"fact\". Evidence: \"Cinder runs its planning on Mondays.\"\n\nNo relations needed — planning schedule isn't a relation between two entities. No aliases. No corrections (existing facts don't contradict; the Ember team planning fact is about Ember, not Cinder).",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: \"Cinder runs its planning on Mondays.\"\n\nThis is a durable fact about Cinder. Add a fact: \"Cinder runs its planning on Mondays.\" Entities: [\"Cinder\"]. Kind: \"fact\". Evidence: \"Cinder runs its planning on Mondays.\"\n\nNo relations needed — planning schedule isn't a relation between two entities. No aliases. No corrections (existing facts don't contradict; the Ember team planning fact is about Ember, not Cinder).",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2391,
+   "completion_tokens": 153,
+   "total_tokens": 2544,
+   "cost": 0.000217575,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000217575,
+    "upstream_inference_prompt_cost": 0.000179325,
+    "upstream_inference_completions_cost": 3.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 94,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2916417910018936,
+ "fetched_at": "2026-09-05T23:50:11Z"
+}

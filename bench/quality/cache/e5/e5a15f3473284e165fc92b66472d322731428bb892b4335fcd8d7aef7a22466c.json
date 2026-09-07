@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The webhooks service ships only on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-17 to now; recorded by standup/boreal/2025-03-17]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- As of 2025-06-20, the webhooks service lives with Team Dune; Team Atlas kept it until then, and the Ember team never held it. [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n    earlier: As of 2025-06-20, the webhooks service lives with the Ember team; Team Atlas kept it until then. [valid 2025-06-20 to 2025-07-04; recorded by handover/2025-06-20-webhooks]\n    earlier: As of 2025-03-28, the webhooks service lives with Team Atlas. [valid 2025-03-28 to 2025-06-20; recorded by handover/2025-03-28-webhooks]\n    earlier: The webhooks service lives with Team Boreal. [valid 2025-01-09 to 2025-03-28; recorded by standup/boreal/2025-01-09-2]\n- As of 2025-03-28, the pager for the webhooks service rings Team Atlas instead of Team Boreal. [valid 2025-03-28 to now; recorded by handover/2025-03-28-webhooks]\n- As of 2026-03-04, the webhook dispatcher remains a Team Dune service. [valid 2026-03-04 to now; recorded by standup/dune/2026-03-04]\n- On 2025-05-23, the Ember team observed that the webhooks service's request volume halved following the client rollout, and flagged it since the webhooks service is not the Ember team's service. [valid 2025-05-23 to now; recorded by standup/ember/2025-05-23]\n- The webhook dispatcher's deploy window is on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- On 2026-06-18, the Ember team on-call swapped and Diego carries the phone until the next rotation. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n- On 2025-10-22, Team Dune agreed that the webhooks service will sign payloads with rotating keys because a partner asked for key rotation in their security review. [decision; valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n- On the 2026-02-12 rotation day, the Ember team on-call swapped and Oskar carries the phone until the next rotation. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n    earlier: As of the 2025-12-29 rotation day, Diego is on call for the Ember team, having received the pager from Oskar. [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n- On 2025-09-08, the Team Boreal on-call swapped and Marcus carries the phone until the next rotation. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08]\n- On the 2026-02-04 rotation day, Team Dune's on-call swapped and Tomasz Nowak carries the phone until the next rotation. [valid 2026-02-04 to now; recorded by standup/dune/2026-02-04]\n- The INC-2026-003 review on 2026-01-22 decided that the webhooks service will require an idempotency key on every delivery because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- On 2025-07-10, the Team Cinder on-call swapped and Yuki carries the phone until the next rotation. [valid 2025-07-10 to now; recorded by standup/cinder/2025-07-10]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- On 2026-05-18, Oskar picked up the Ember team on-call shift from Diego. [valid 2026-05-18 to now; recorded by standup/ember/2026-05-18]\n- The webhook dispatcher needs the event bus to work. [valid 2026-02-04 to now; recorded by standup/dune/2026-02-04-2]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas; Team Boreal kept it until then. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- On 2026-05-25, Team Atlas observed that the webhook dispatcher's memory use grew steadily for a week after the cache change. [valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n\nQuestion: Who is on call for the team that owns the service webhooks depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654298-Ttwv40NM6fTqC82xtx8s",
+  "object": "chat.completion",
+  "created": 1788654298,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The webhooks service depends on the event bus (valid 2025-01-17 to now). Who owns the event bus? Let me check the memory for event bus ownership.\n\nLooking through the memory:\n- \"The webhooks service depends on the event bus for outbound events.\" — dependency, not ownership.\n- \"The webhook dispatcher needs the event bus to work.\" — dependency, not ownership.\n\nI don't see any entry stating who owns the event bus. So I can't determine the team that owns it, and therefore can't determine who is on call for that team.\n\nWait — maybe the question intends \"the service webhooks depends on\" = event bus, and the owner... no entry says who owns the event bus. The memory says the webhook dispatcher is a Team Dune service, but that's the dispatcher, not the event bus.\n\nSo the answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The webhooks service depends on the event bus (valid 2025-01-17 to now). Who owns the event bus? Let me check the memory for event bus ownership.\n\nLooking through the memory:\n- \"The webhooks service depends on the event bus for outbound events.\" — dependency, not ownership.\n- \"The webhook dispatcher needs the event bus to work.\" — dependency, not ownership.\n\nI don't see any entry stating who owns the event bus. So I can't determine the team that owns it, and therefore can't determine who is on call for that team.\n\nWait — maybe the question intends \"the service webhooks depends on\" = event bus, and the owner... no entry says who owns the event bus. The memory says the webhook dispatcher is a Team Dune service, but that's the dispatcher, not the event bus.\n\nSo the answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1583,
+   "completion_tokens": 188,
+   "total_tokens": 1771,
+   "cost": 0.00033145,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00033145,
+    "upstream_inference_prompt_cost": 0.00023745,
+    "upstream_inference_completions_cost": 9.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 182,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.9999448750168085,
+ "fetched_at": "2026-09-06T00:25:02Z"
+}

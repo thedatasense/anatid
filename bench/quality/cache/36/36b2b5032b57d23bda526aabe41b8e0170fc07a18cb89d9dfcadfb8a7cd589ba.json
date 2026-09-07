@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000797\" [decision]: As of 2025-10-13, the ledger service is owned by Cinder; ownership transferred from the Atlas team on that date.  (about: Atlas team, Cinder, ledger service)\n- memory_id \"1000793\" [constraint]: As of 2025-10-13, the pager for the ledger service rings Cinder, not the Atlas team.  (about: Atlas team, Cinder, ledger service)\n- memory_id \"1000779\": The indexer served stale results for two days on 2025-10-03 during incident INC-2025-023.  (about: indexer, INC-2025-023)\n- memory_id \"1000775\": The Atlas team planning meeting is every Tuesday.  (about: Atlas team)\n- memory_id \"1000760\": The Dune team observed on 2025-09-23 that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners.  (about: Dune team, the bus, traffic shift)\n- memory_id \"1000645\": The Dune team observed on 2025-08-19 that the resizer's cold start time tripled after the runtime upgrade.  (about: Dune team, resizer, runtime upgrade)\n- memory_id \"1000563\": On 2025-07-17, Yuki Tanaka handed the Cinder pager to Diego on rotation day.  (about: Yuki Tanaka, Cinder, Diego)\n- memory_id \"1000554\" [decision]: The Atlas team owns the billing API as of 2025-06-09, when ownership passed from the Ember team; the Boreal team was recorded by mistake and never held it.  (about: Atlas team, Boreal team, billing API, Ember team)\n- memory_id \"1000525\" [decision]: The job scheduler is owned by the Dune team as of 2025-06-25, when ownership moved from the Ember team.  (about: Dune team, Ember team, job scheduler)\n- memory_id \"1000480\": On 2025-06-09, Oskar wrote the handover doc for the billing API for Lena.  (about: Lena, billing API, Oskar)\n- memory_id \"1000438\" [decision]: The indexer is owned by the Atlas team as of 2025-05-20, when ownership passed from Cinder.  (about: Atlas team, Cinder, indexer)\n- memory_id \"1000430\": As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team.  (about: Boreal team, webhook dispatcher, Ember team)\n- memory_id \"1000420\": On 2025-05-15, Oskar walked Lena through the webhook dispatcher runbook.  (about: Lena, webhook dispatcher, Oskar)\n- memory_id \"1000412\": The Cinder team observed on 2025-05-14 that the webhook dispatcher's memory use grew steadily for a week after the cache change.  (about: Cinder, webhook dispatcher, cache change)\n- memory_id \"1000395\": The Boreal team noticed on 2025-05-07 that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners.  (about: Boreal team, authentication gateway, dependency bump)\n- memory_id \"1000378\": The Cinder team reported on 2025-04-24 that feature-flags' p99 latency doubled after Tuesday's deploy.  (about: Cinder, feature-flags, Tuesday's deploy)\n- memory_id \"1000351\" [decision]: The product catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time.  (about: product catalog)\n- memory_id \"1000339\": The product catalog calls the image resizer for thumbnails, so the image resizer is a hard dependency of the product catalog.  (about: product catalog, image resizer)\n- memory_id \"1000281\" [decision]: The Ember team owns the image resizer as of 2025-03-20.  (about: Ember team, image resizer)\n- memory_id \"1000236\": Boreal noticed the ledger service's memory growth and pinged the owners on 2025-02-21.  (about: Boreal team, ledger service)\nExisting entity names: Atlas team, Cinder, ledger service, indexer, INC-2025-023, Dune team, the bus, traffic shift, resizer, runtime upgrade, Yuki Tanaka, Diego, Boreal team, billing API, Ember team, job scheduler, Lena, Oskar, webhook dispatcher, cache change, authentication gateway, dependency bump, feature-flags, Tuesday's deploy, product catalog, image resizer\n\nThe note:\n\n[2025-10-15] standup/atlas/2025-10-15: Team Atlas noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788651528-8c4SmbVPvdTijjxRinVN",
+  "object": "chat.completion",
+  "created": 1788651528,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"add_facts\":[{\"content\":\"On 2025-10-15, the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\",\"entities\":[\"Atlas team\",\"image resizer\",\"marketing send\"],\"kind\":\"fact\",\"confidence\":0.95,\"evidence\":\"Team Atlas noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\"}],\"corrections\":[],\"add_relations\":[],\"remove_relations\":[],\"entity_aliases\":[{\"name\":\"Team Atlas\",\"canonical\":\"Atlas team\",\"evidence\":\"standup/atlas/2025-10-15: Team Atlas noticed\"}]}",
+     "refusal": null,
+     "reasoning": "The note says: \"[2025-10-15] standup/atlas/2025-10-15: Team Atlas noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\"\n\nNew durable facts:\n- On 2025-10-15, the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n\nEntities: Atlas team, image resizer, marketing send. \"Team Atlas\" is an alias for \"Atlas team\". \"marketing send\" is a new entity.\n\nRelations? The note mentions \"pinged the owners\" but doesn't name owners. Existing memory 1000281 says Ember team owns image resizer. But the note doesn't state ownership; it just says pinged the owners. I shouldn't invent. There could be a relation \"observed\"? The existing pattern doesn't add relations for observations. Keep it simple: just add the fact.\n\nAlias: \"Team Atlas\" → \"Atlas team\".\n\nEvidence: \"Team Atlas noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\"\n\nOutput JSON with add_facts and entity_aliases.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note says: \"[2025-10-15] standup/atlas/2025-10-15: Team Atlas noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\"\n\nNew durable facts:\n- On 2025-10-15, the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n\nEntities: Atlas team, image resizer, marketing send. \"Team Atlas\" is an alias for \"Atlas team\". \"marketing send\" is a new entity.\n\nRelations? The note mentions \"pinged the owners\" but doesn't name owners. Existing memory 1000281 says Ember team owns image resizer. But the note doesn't state ownership; it just says pinged the owners. I shouldn't invent. There could be a relation \"observed\"? The existing pattern doesn't add relations for observations. Keep it simple: just add the fact.\n\nAlias: \"Team Atlas\" → \"Atlas team\".\n\nEvidence: \"Team Atlas noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\"\n\nOutput JSON with add_facts and entity_aliases.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2468,
+   "completion_tokens": 398,
+   "total_tokens": 2866,
+   "cost": 0.00028076,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00028076,
+    "upstream_inference_prompt_cost": 0.00018126,
+    "upstream_inference_completions_cost": 9.95e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 255,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.242258417012636,
+ "fetched_at": "2026-09-05T23:38:52Z"
+}

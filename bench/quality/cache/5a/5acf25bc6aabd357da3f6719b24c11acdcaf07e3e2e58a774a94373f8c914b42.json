@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: What was the deploy window for the catalog before it changed?\nGold answer: on Mondays between 10:00 and 12:00 UTC\nAlso accepted: Mondays 10:00-12:00 UTC\nGrading rule: Correct only if the answer gives the value that held at the date or moment the question names (the gold). The current value, if different, is wrong. 'I don't know' is wrong.\n\nAnswer to grade: Mondays between 10:00 and 12:00 UTC."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658954-M6W8LcHNSqR8YN19ASmy",
+  "object": "chat.completion",
+  "created": 1788658954,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states the deploy window was Mondays between 10:00 and 12:00 UTC, which matches the gold answer.\"}",
+     "refusal": null,
+     "reasoning": "The question asks what the deploy window was for the catalog before it changed. Gold answer: \"on Mondays between 10:00 and 12:00 UTC\". Accepted: \"Mondays 10:00-12:00 UTC\".\n\nThe answer to grade: \"Mondays between 10:00 and 12:00 UTC.\" This matches the gold answer essentially — it gives Mondays, between 10:00 and 12:00, UTC. Missing \"on\" but that's trivial. Correct.\n\nOutput JSON with correct: true and reason.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks what the deploy window was for the catalog before it changed. Gold answer: \"on Mondays between 10:00 and 12:00 UTC\". Accepted: \"Mondays 10:00-12:00 UTC\".\n\nThe answer to grade: \"Mondays between 10:00 and 12:00 UTC.\" This matches the gold answer essentially — it gives Mondays, between 10:00 and 12:00, UTC. Missing \"on\" but that's trivial. Correct.\n\nOutput JSON with correct: true and reason.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 271,
+   "completion_tokens": 152,
+   "total_tokens": 423,
+   "cost": 4.2965e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.2965e-05,
+    "upstream_inference_prompt_cost": 4.965e-06,
+    "upstream_inference_completions_cost": 3.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 114,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.636139957990963,
+ "fetched_at": "2026-09-06T01:42:37Z"
+}

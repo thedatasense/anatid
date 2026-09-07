@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The job scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- During INC-2026-009, the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n\nQuestion: On what date was the review of INC-2026-009 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654294-n4DsDiqd2DfoVLKIFliV",
+  "object": "chat.completion",
+  "created": 1788654294,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2026-05-19",
+     "refusal": null,
+     "reasoning": "The user asks: \"On what date was the review of INC-2026-009 written?\"\n\nLooking at the memory entries:\n- Entries are \"valid 2026-05-19 to now; recorded by incident-review/INC-2026-009\"\n\nThe entries are valid from 2026-05-19, which suggests the review was recorded on 2026-05-19. The memory entries carry the date they were recorded — \"valid 2026-05-19 to now\" suggests the recording date is 2026-05-19.\n\nSo the answer is 2026-05-19.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks: \"On what date was the review of INC-2026-009 written?\"\n\nLooking at the memory entries:\n- Entries are \"valid 2026-05-19 to now; recorded by incident-review/INC-2026-009\"\n\nThe entries are valid from 2026-05-19, which suggests the review was recorded on 2026-05-19. The memory entries carry the date they were recorded — \"valid 2026-05-19 to now\" suggests the recording date is 2026-05-19.\n\nSo the answer is 2026-05-19.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 356,
+   "completion_tokens": 138,
+   "total_tokens": 494,
+   "cost": 5.352e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.352e-05,
+    "upstream_inference_prompt_cost": 1.902e-05,
+    "upstream_inference_completions_cost": 3.45e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 130,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1841643750085495,
+ "fetched_at": "2026-09-06T00:24:56Z"
+}

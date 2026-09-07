@@ -8,9 +8,11 @@
   },
   {
    "role": "user",
-   "content": "Memory:\n(the memory is empty)\n\nQuestion: Which note records the decision that certificate expiry will alert 30 days ahead, and when was it written?"
+   "content": "Memory:\n- As of 2025-08-07, certificate expiry will alert 30 days ahead. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n\nQuestion: Which note records the decision that certificate expiry will alert 30 days ahead, and when was it written?"
   }
  ],
- "contexts": [],
- "answer": "I don't know"
+ "contexts": [
+  "- As of 2025-08-07, certificate expiry will alert 30 days ahead. [decision; valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]"
+ ],
+ "answer": "incident-review/INC-2025-017, 2025-08-07"
 }

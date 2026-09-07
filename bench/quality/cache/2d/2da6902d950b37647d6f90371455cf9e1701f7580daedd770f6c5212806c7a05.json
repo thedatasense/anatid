@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Cinder took over Ledger from Boreal on 2026-04-29. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n- The Postgres 14 pin on Ledger lifts when the partitioning work finishes. [valid 2025-05-30 to now; recorded by standup/atlas/2025-05-30]\n- Ledger is owned by Cinder as of 2026-04-29, after Boreal handed it over. [decision; valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n    earlier: Ledger is owned by the Boreal team as of 2025-12-10, after Team Atlas handed it over. [decision; valid 2025-12-10 to 2026-04-29; recorded by handover/2025-12-10-ledger]\n    earlier: Ledger is owned by Team Atlas as of 2025-01-08. [valid 2025-01-08 to 2025-12-10; recorded by standup/atlas/2025-01-08]\n- Diego carried the Cinder on-call phone from 2025-11-25 until 2025-12-15, when Yuki took over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is back on the Cinder on-call rotation as of 2025-11-25, carrying the phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Diego is off the Cinder on-call rotation as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- Team Dune took over image-resizer from Boreal on 2026-01-20. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n- Marcus Oyelaran took over the Boreal on-call from Lena as of 2026-01-02. [decision; valid 2026-01-02 to now; recorded by standup/boreal/2026-01-02]\n- Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Team Dune owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal still owns the indexer as of 2025-09-15. [valid 2025-09-15 to 2025-11-18; recorded by standup/boreal/2025-09-15-2]\n- Team Dune owns image-resizer as of 2026-01-20, after Boreal handed it over. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: Boreal owns image-resizer as of 2025-11-19, after Cinder handed it over. [decision; valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n    earlier: Cinder owns image-resizer as of 2025-06-25. [decision; valid 2025-06-25 to 2025-11-19; recorded by handover/2025-06-25-image-resizer]\n    earlier: Team Dune owns image-resizer. [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20]\n- The event bus belongs to Boreal as of 2025-11-24, after Team Dune handed it over. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The event bus belongs to Team Dune as of 2025-09-09, after Boreal handed it over. [decision; valid 2025-09-09 to 2025-11-24; recorded by handover/2025-09-09-event-bus]\n    earlier: The event bus is a Boreal service. [valid 2025-01-09 to 2025-09-09; recorded by standup/boreal/2025-01-09]\n- The notifier is owned by team Boreal as of 2026-04-06, after the Cinder team handed it over. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n    earlier: The notifier is owned by team Cinder as of 2026-03-17. [valid 2026-03-17 to 2026-04-06; recorded by standup/cinder/2026-03-17]\n\nQuestion: When did Boreal take over the ledger?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657256-vMS0HzmR7ypduufwVQjW",
+  "object": "chat.completion",
+  "created": 1788657256,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-12-10",
+     "refusal": null,
+     "reasoning": "The question asks when Boreal took over Ledger. Looking at the memory, ownership of Ledger: Team Atlas as of 2025-01-08, then Boreal team as of 2025-12-10 (after Team Atlas handed it over), then Cinder took over from Boreal on 2026-04-29.\n\nSo Boreal took over Ledger on 2025-12-10.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Boreal took over Ledger. Looking at the memory, ownership of Ledger: Team Atlas as of 2025-01-08, then Boreal team as of 2025-12-10 (after Team Atlas handed it over), then Cinder took over from Boreal on 2026-04-29.\n\nSo Boreal took over Ledger on 2025-12-10.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1726,
+   "completion_tokens": 91,
+   "total_tokens": 1817,
+   "cost": 0.00014452,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014452,
+    "upstream_inference_prompt_cost": 0.00012177,
+    "upstream_inference_completions_cost": 2.275e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 83,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.3730529579916038,
+ "fetched_at": "2026-09-06T01:14:19Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-02-28] handover/2025-02-28-search-indexer: Quick one: the indexer belongs to the Boreal team starting today. Thanks to Cinder for running it until now.\n- [2025-11-18] handover/2025-11-18-search-indexer: Handover: as of today the indexer moves from Boreal to Ember. Marcus walked Oskar through the runbook this morning.\n- [2025-11-07] standup/boreal/2025-11-07: We agreed today that search-indexer will rebuild the index nightly instead of on every catalog write. The reason is that incremental updates left stale entries behind after failed writes.\n- [2025-12-15] handover/2025-12-15-search-indexer-correction: The 2025-11-18 note about the indexer named the wrong team. The Dune team took it over on that date; the Ember team did not.\n- [2025-03-03] standup/boreal/2025-03-03: Dependency map update: the search indexer needs the product catalog (product documents).\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2025-08-13] standup/boreal/2025-08-13: The search indexer must stay on OpenSearch 2.11 until the full reindex completes. Reminder that reporting depends on the ledger.\n- [2025-08-29] standup/cinder/2025-08-29-2: The Cinder team noticed that search-indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2026-03-16] standup/ember/2026-03-16: Oskar has the Ember pager this cycle, taking over from Diego Alvarez. Ember noticed that search-indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-11-11] standup/atlas/2025-11-11: Deploy freeze for billing-api: 2025-11-24 to 2025-12-02 (the peak season). Observation from the Atlas team: after Tuesday's deploy, search-indexer's p99 latency doubled.\n- [2025-10-27] incident-review/INC-2025-023: Review of INC-2025-023 (the search indexer, 2025-10-24). The root cause was a reindex job that failed silently on a full disk. We decided that reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-04-18] incident-review/INC-2025-011: Incident review INC-2025-011. Ledger saw write latency spike tenfold for an hour on 2025-04-13. Root cause: an index missing after the schema migration. Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.\n- [2025-11-19] handover/2025-11-19-notifier: Notifier has a new home: the Cinder team. Boreal kept it until today.\n- [2026-04-22] handover/2026-04-22-webhooks: The webhook dispatcher has a new home: Dune. Team Atlas kept it until today.\n- [2025-09-24] standup/boreal/2025-09-24: Marcus picked up the Boreal on-call shift from Lena today.\n- [2025-07-21] standup/atlas/2025-07-21: As of today Tomasz is on Dune; Atlas loses a pair of hands.\n- [2025-05-21] standup/boreal/2025-05-21: Lena picked up the Boreal on-call shift from Marcus today.\n\nQuestion: Who owns search-indexer today?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651179-RYXn6GoyTPclaWZijQkq",
+  "object": "chat.completion",
+  "created": 1788651179,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Boreal",
+     "refusal": null,
+     "reasoning": "The question asks who owns search-indexer today (2026-06-30).\n\nTimeline of search-indexer ownership:\n- 2025-01-17: Cinder owns the indexer\n- 2025-02-28: Boreal team starting today\n- 2025-09-15: Boreal still owns\n- 2025-11-18: handover from Boreal to Ember — but corrected on 2025-12-15: the Dune team took it over, not Ember\n- 2026-04-22: search indexer now sits with the Boreal team; Dune no longer owns it\n\nSo today (2026-06-30), the latest entry is 2026-04-22: Boreal team owns search-indexer.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who owns search-indexer today (2026-06-30).\n\nTimeline of search-indexer ownership:\n- 2025-01-17: Cinder owns the indexer\n- 2025-02-28: Boreal team starting today\n- 2025-09-15: Boreal still owns\n- 2025-11-18: handover from Boreal to Ember — but corrected on 2025-12-15: the Dune team took it over, not Ember\n- 2026-04-22: search indexer now sits with the Boreal team; Dune no longer owns it\n\nSo today (2026-06-30), the latest entry is 2026-04-22: Boreal team owns search-indexer.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1658,
+   "completion_tokens": 166,
+   "total_tokens": 1824,
+   "cost": 0.00015817,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015817,
+    "upstream_inference_prompt_cost": 0.00011667,
+    "upstream_inference_completions_cost": 4.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 162,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1263777089770883,
+ "fetched_at": "2026-09-05T23:33:01Z"
+}

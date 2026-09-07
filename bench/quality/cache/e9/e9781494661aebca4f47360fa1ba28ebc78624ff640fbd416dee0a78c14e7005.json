@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-04-14] standup/ember/2025-04-14: Auth-gateway deploy window: on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2026-02-10] standup/boreal/2026-02-10: Reminder: the authentication gateway deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-09-26] standup/atlas/2025-09-26: For newcomers: the deploy window for the ledger service is still on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-01-27] standup/boreal/2026-01-27: Auth-gateway tokens will expire after 15 minutes instead of an hour. Rationale: the security audit flagged long-lived tokens.\n- [2025-07-09] incident-review/INC-2025-017: Incident review INC-2025-017. Auth-gateway rejected every login for 12 minutes on 2025-07-06. Root cause: an expired intermediate certificate. Decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\n- [2025-03-14] standup/atlas/2025-03-14: Dependency map update: the ledger needs the auth gateway (service tokens).\n- [2025-08-08] standup/dune/2025-08-08: New deploy window for the job scheduler: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Tuesdays 13:00-15:00 UTC slot. Observation from the Dune team: after the marketing send, billing-api's queue depth hit 50,000.\n- [2025-01-20] standup/ember/2025-01-20-2: The authentication gateway lives with team Ember.\n- [2025-02-21] standup/boreal/2025-02-21: Webhooks deploy window: on Thursdays between 07:00 and 09:00 UTC.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-07-01] handover/2025-07-01-auth-gateway: Quick one: the auth gateway belongs to team Cinder starting today. Thanks to the Ember team for running it until now.\n- [2025-11-12] standup/boreal/2025-11-12: The catalog service's deploy window changes today: it is now on Tuesdays and Thursdays between 10:00 and 12:00 UTC. The old slot (Mondays 10:00-12:00 UTC) is retired.\n- [2025-03-11] standup/ember/2025-03-11: Policy: every the auth gateway change requires two reviewer approvals and a security sign-off.\n- [2025-11-03] standup/dune/2025-11-03-2: For newcomers: the deploy window for the job scheduler is still on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2025-11-17] standup/ember/2025-11-17: Team Ember saw that the authentication gateway's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it. The weekly architecture review is run by Oskar.\n- [2025-11-10] standup/ember/2025-11-10: Heads-up from team Ember: the authentication gateway's CPU sat at 90 percent after the traffic shift.\n- [2026-05-01] standup/cinder/2026-05-01: From today the ledger service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-11-11] standup/atlas/2025-11-11: Deploy freeze for billing-api: 2025-11-24 to 2025-12-02 (the peak season). Observation from the Atlas team: after Tuesday's deploy, search-indexer's p99 latency doubled.\n- [2025-05-02] standup/cinder/2025-05-02-2: The catalog deploy window: on Mondays between 10:00 and 12:00 UTC. Team Cinder holds planning on Mondays.\n- [2026-04-17] standup/cinder/2026-04-17: Observation from the Cinder team: after the runtime upgrade, the authentication gateway's cold start time tripled.\n- [2025-10-21] standup/atlas/2025-10-21: New dependency for the billing service: the feature flag service. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch.\n- [2025-09-16] standup/atlas/2025-09-16: Decision: webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review.\n- [2025-03-24] standup/atlas/2025-03-24: The billing API can be released on weekday mornings before 11:00 UTC; anything else needs an exception.\n- [2025-01-31] standup/atlas/2025-01-31: Atlas adopted a no-deploy Friday.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-05-28] standup/dune/2025-05-28: Reminder: the scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n\nQuestion: Which note first recorded the deploy window for auth-gateway, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652087-ly88Vmp3INafPJU10Dw3",
+  "object": "chat.completion",
+  "created": 1788652087,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/ember/2025-04-14, on 2025-04-14",
+     "refusal": null,
+     "reasoning": "The question asks: which note first recorded the deploy window for auth-gateway, and when?\n\nLooking at memory entries with auth-gateway deploy window:\n- [2025-04-14] standup/ember/2025-04-14: Auth-gateway deploy window: on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2026-02-10] standup/boreal/2026-02-10: Reminder: the authentication gateway deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC.\n\nThe first (earliest) recorded one is standup/ember/2025-04-14, on 2025-04-14.\n\nAnswer: standup/ember/2025-04-14, 2025-04-14.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note first recorded the deploy window for auth-gateway, and when?\n\nLooking at memory entries with auth-gateway deploy window:\n- [2025-04-14] standup/ember/2025-04-14: Auth-gateway deploy window: on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2026-02-10] standup/boreal/2026-02-10: Reminder: the authentication gateway deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC.\n\nThe first (earliest) recorded one is standup/ember/2025-04-14, on 2025-04-14.\n\nAnswer: standup/ember/2025-04-14, 2025-04-14.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1617,
+   "completion_tokens": 194,
+   "total_tokens": 1811,
+   "cost": 0.000162095,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000162095,
+    "upstream_inference_prompt_cost": 0.000113595,
+    "upstream_inference_completions_cost": 4.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 172,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.5223890829947777,
+ "fetched_at": "2026-09-05T23:48:09Z"
+}

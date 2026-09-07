@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-11-19] handover/2025-11-19-image-resizer: From today the pager for image-resizer rings the Boreal team, not Cinder. Ownership transferred.\n- [2026-01-20] handover/2026-01-20-image-resizer: From today the pager for the resizer rings team Dune, not team Boreal. Ownership transferred.\n- [2025-06-25] handover/2025-06-25-image-resizer: Handover: as of today image-resizer moves from Dune to Cinder. Farah Haddad walked Yuki through the runbook this morning.\n- [2025-09-15] standup/cinder/2025-09-15: Reminder that the catalog service depends on image-resizer.\n- [2025-03-28] standup/cinder/2025-03-28: The product catalog depends on image-resizer for thumbnails.\n- [2026-03-20] standup/dune/2026-03-20: Decision: image-resizer will keep original uploads for 90 days only, because storage for originals doubled in six months.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2026-03-18] standup/boreal/2026-03-18: Reminder that the product catalog depends on the resizer.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2026-04-29] standup/ember/2026-04-29: Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-07-01] handover/2025-07-01-auth-gateway: Quick one: the auth gateway belongs to team Cinder starting today. Thanks to the Ember team for running it until now.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-04-01] standup/cinder/2025-04-01: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.\n- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.\n- [2025-05-02] standup/cinder/2025-05-02-2: The catalog deploy window: on Mondays between 10:00 and 12:00 UTC. Team Cinder holds planning on Mondays.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2026-05-27] standup/ember/2026-05-27: Heads-up from team Ember: notifier's CPU sat at 90 percent after the traffic shift.\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-12-15] handover/2025-12-15-search-indexer-correction: The 2025-11-18 note about the indexer named the wrong team. The Dune team took it over on that date; the Ember team did not.\n- [2025-05-14] standup/atlas/2025-05-14: Reminder from team Atlas: page Priya for anything this cycle, not Tomasz.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-07-21] standup/atlas/2025-07-21-2: Team Atlas has moved to the second floor.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-08-29] standup/cinder/2025-08-29-2: The Cinder team noticed that search-indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2025-07-03] standup/atlas/2025-07-03: Changes to the billing API need a rollback plan attached to the pull request.\n- [2025-11-24] handover/2025-11-24-event-bus: From today the pager for the event-bus rings the Boreal team, not team Dune. Ownership transferred.\n\nQuestion: Which team owned image-resizer on 2025-05-07?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652405-QoMFAVhLZwe9EnStcgOz",
+  "object": "chat.completion",
+  "created": 1788652405,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Dune",
+     "refusal": null,
+     "reasoning": "The question asks about image-resizer ownership on 2025-05-07.\n\nTimeline of image-resizer ownership:\n- 2025-01-20: Dune owns image-resizer\n- 2025-05-07: No change yet. Next handover is 2025-06-25 (moves from Dune to Cinder). So on 2025-05-07, it was Dune.\n\nAnswer: Dune.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about image-resizer ownership on 2025-05-07.\n\nTimeline of image-resizer ownership:\n- 2025-01-20: Dune owns image-resizer\n- 2025-05-07: No change yet. Next handover is 2025-06-25 (moves from Dune to Cinder). So on 2025-05-07, it was Dune.\n\nAnswer: Dune.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1664,
+   "completion_tokens": 96,
+   "total_tokens": 1760,
+   "cost": 0.0001488,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001488,
+    "upstream_inference_prompt_cost": 0.0001248,
+    "upstream_inference_completions_cost": 2.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 92,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0349030420184135,
+ "fetched_at": "2026-09-05T23:53:28Z"
+}

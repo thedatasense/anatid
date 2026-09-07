@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-04-29] handover/2026-04-29-ledger: Cinder is taking over the ledger from team Boreal, effective today. Dashboards and alerts are being repointed.\n- [2025-12-10] handover/2025-12-10-ledger: Atlas handed the ledger to the Boreal team today; Priya wrote up the handover doc for Lena.\n- [2025-02-10] standup/boreal/2025-02-10: Lena has the Boreal pager this cycle, taking over from Marcus.\n- [2026-03-13] standup/boreal/2026-03-13: Deploy freeze for the ledger: 2026-03-30 to 2026-04-03 (the fiscal year close).\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-09-15] standup/boreal/2025-09-15: Lena still has the Boreal pager.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-09-15] standup/boreal/2025-09-15-2: Team Boreal still owns search-indexer, in case anyone asks.\n- [2025-09-24] standup/boreal/2025-09-24: Marcus picked up the Boreal on-call shift from Lena today.\n- [2026-03-05] standup/boreal/2026-03-05: As before, billing-api needs Ledger to work.\n- [2025-01-07] standup/boreal/2025-01-07: Boreal roster: Lena and Marcus Oyelaran.\n- [2025-05-21] standup/boreal/2025-05-21: Lena picked up the Boreal on-call shift from Marcus today.\n- [2026-01-02] standup/boreal/2026-01-02: Boreal on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-07-09] standup/boreal/2025-07-09: Marcus picked up the Boreal on-call shift from Lena Fischer today.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-08-13] standup/boreal/2025-08-13: The search indexer must stay on OpenSearch 2.11 until the full reindex completes. Reminder that reporting depends on the ledger.\n- [2025-03-31] standup/boreal/2025-03-31: Reminder from Boreal: page Marcus for anything this cycle, not Lena.\n- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.\n- [2025-07-29] standup/boreal/2025-07-29: Boreal planning meeting is every Thursday. Lena Fischer is the release captain for Q1 2026.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-11-11] standup/boreal/2025-11-11: Team Boreal on-call swapped this morning. Lena carries the phone until the next rotation.\n- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n- [2025-05-30] standup/atlas/2025-05-30: The ledger is pinned to Postgres 14; the pin lifts when the partitioning work finishes.\n- [2025-01-09] standup/boreal/2025-01-09-3: Marcus is on call for the Boreal team to start the year.\n- [2026-05-13] standup/ember/2026-05-13: Diego has the Ember pager this cycle, taking over from Oskar.\n- [2025-01-09] standup/boreal/2025-01-09-2: The webhooks service is a Boreal service.\n- [2025-04-18] incident-review/INC-2025-011: Incident review INC-2025-011. Ledger saw write latency spike tenfold for an hour on 2025-04-13. Root cause: an index missing after the schema migration. Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-08-12] standup/boreal/2025-08-12: Rotation day for the Boreal team: Marcus hands the pager to Lena Fischer.\n- [2026-04-16] standup/atlas/2026-04-16-2: Atlas saw that Ledger's disk usage jumped 30 percent following the retention change; not their service, so they flagged it. Atlas planning meeting is every Tuesday.\n- [2025-04-24] standup/boreal/2025-04-24: Observation from Boreal: after the runtime upgrade, the scheduler's cold start time tripled.\n\nQuestion: When did Boreal take over the ledger?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652369-fOK85drcuoek94TiRX4A",
+  "object": "chat.completion",
+  "created": 1788652369,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-12-10",
+     "refusal": null,
+     "reasoning": "The question asks when Boreal took over the ledger. Looking at the memory:\n\n- [2025-12-10] handover/2025-12-10-ledger: Atlas handed the ledger to the Boreal team today; Priya wrote up the handover doc for Lena.\n- [2026-04-29] handover/2026-04-29-ledger: Cinder is taking over the ledger from team Boreal, effective today.\n\nBoreal took over the ledger on 2025-12-10.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Boreal took over the ledger. Looking at the memory:\n\n- [2025-12-10] handover/2025-12-10-ledger: Atlas handed the ledger to the Boreal team today; Priya wrote up the handover doc for Lena.\n- [2026-04-29] handover/2026-04-29-ledger: Cinder is taking over the ledger from team Boreal, effective today.\n\nBoreal took over the ledger on 2025-12-10.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1604,
+   "completion_tokens": 117,
+   "total_tokens": 1721,
+   "cost": 0.00014187,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014187,
+    "upstream_inference_prompt_cost": 0.00011262,
+    "upstream_inference_completions_cost": 2.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 109,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.095930999959819,
+ "fetched_at": "2026-09-05T23:52:51Z"
+}

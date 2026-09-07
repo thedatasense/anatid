@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The notifier depends on the event bus for delivery events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- On 2025-07-03, Team Atlas observed that the notifier's memory use grew steadily for a week following the cache change, and flagged it since the notifier is not Team Atlas's service. [valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03-2]\n- The notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-02-20 to now; recorded by standup/boreal/2025-02-20]\n- Team Boreal kept the notifier until 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-notifier]\n- On 2025-09-08, Team Boreal observed that the notifier's request volume halved after the client rollout and pinged the owners. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- As of 2025-06-19, the notifier lives with Team Dune; Team Cinder kept it until then. [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: As of 2025-04-04, the notifier lives with Team Cinder. [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: The notifier lives with Team Boreal. [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- The billing service depends on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- On 2025-06-12, Team Dune noticed that the notifier's CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-06-12 to now; recorded by standup/dune/2025-06-12]\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- The reporting service may be released only on Thursdays between 07:00 and 09:00 UTC, and any other release time requires an exception. [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- The indexer depends on the catalog service for product documents. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- The webhooks service depends on the event bus for outbound events. [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- The ledger depends on the auth gateway for service tokens. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- As of 2026-03-04, the webhook dispatcher remains a Team Dune service. [valid 2026-03-04 to now; recorded by standup/dune/2026-03-04]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy, and flagged it since the feature-flags service is not the Ember team's service. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- On 2025-09-08, Team Boreal decided the billing service will gate the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- As of 2025-11-20, the event bus is a Team Boreal service; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is a Team Cinder service; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is a Team Atlas service. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: As of 2025-03-31, the event bus remains a Team Boreal service. [valid 2025-03-31 to 2025-04-03; recorded by standup/boreal/2025-03-31]\n- On 2025-05-08, Team Boreal observed that the catalog service's memory use grew steadily for a week following the cache change, and flagged it since the catalog service is not Team Boreal's service. [valid 2025-05-08 to now; recorded by standup/boreal/2025-05-08]\n\nQuestion: Which service depends on the notifier?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654549-HQMzaa6oV1rtHNk45M7v",
+  "object": "chat.completion",
+  "created": 1788654549,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Which service depends on the notifier?\n\nLooking through the memory:\n- \"The notifier depends on the event bus for delivery events.\" — notifier depends on event bus, not the other way.\n- Other dependencies listed: reporting service → ledger/event bus, billing → feature-flags, billing → ledger, indexer → catalog, webhooks → event bus, ledger → auth gateway.\n\nI don't see any entry stating that some service depends on the notifier. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which service depends on the notifier?\n\nLooking through the memory:\n- \"The notifier depends on the event bus for delivery events.\" — notifier depends on event bus, not the other way.\n- Other dependencies listed: reporting service → ledger/event bus, billing → feature-flags, billing → ledger, indexer → catalog, webhooks → event bus, ledger → auth gateway.\n\nI don't see any entry stating that some service depends on the notifier. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1542,
+   "completion_tokens": 109,
+   "total_tokens": 1651,
+   "cost": 0.00013522,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013522,
+    "upstream_inference_prompt_cost": 0.00010797,
+    "upstream_inference_completions_cost": 2.725e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 103,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.343294291989878,
+ "fetched_at": "2026-09-06T00:29:11Z"
+}

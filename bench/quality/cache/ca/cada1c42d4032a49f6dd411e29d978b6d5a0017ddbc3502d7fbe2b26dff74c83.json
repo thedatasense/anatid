@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The notifier is owned by the Dune team as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- The notifier depends on the bus for delivery events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- The notifier missed alerts for 40 minutes on 2025-02-01 during incident INC-2025-004. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The notifier consumers will commit offsets every five seconds. [decision; valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The notifier's previous flat one-second retry was hammering the push provider during its outages. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- The notifier's request volume halved after the client rollout. [valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [constraint; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- As of 2025-02-21, the notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- The Boreal team observed on 2025-11-03 that the notification service's CPU sat at 90 percent after the traffic shift. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n- The webhook dispatcher is owned by the Boreal team as of 2025-05-15, when ownership moved from the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team, which took over ownership from the Boreal team on 2025-03-03. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team, not the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- As of 2025-12-05, the reporting service is owned by the Ember team, having transferred from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is a Dune team service. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, when ownership passed from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- The Boreal team noticed on 2025-05-07 that the authentication gateway's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07-2]\n- As of 2025-09-23, the pager for the job scheduler rings the Cinder team, not the Dune team. [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n- As of 2025-10-13, the pager for the ledger service rings Cinder, not the Atlas team. [constraint; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- On 2026-04-14, the Dune team observed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- The Dune team observed that the notification service's memory use grew steadily for a week after the cache change. [valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n\nQuestion: As of now, which team is responsible for the notifier?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653675-TfuTvq2An5QGikM6Kvgk",
+  "object": "chat.completion",
+  "created": 1788653675,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Dune team",
+     "refusal": null,
+     "reasoning": "The memory says: \"The notifier is owned by the Dune team as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-27 to now...]\"\n\nSo as of now (2026-06-30), the notifier is owned by the Dune team.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"The notifier is owned by the Dune team as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-27 to now...]\"\n\nSo as of now (2026-06-30), the notifier is owned by the Dune team.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1685,
+   "completion_tokens": 75,
+   "total_tokens": 1760,
+   "cost": 0.000125925,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000125925,
+    "upstream_inference_prompt_cost": 0.000107175,
+    "upstream_inference_completions_cost": 1.875e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 70,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1125897499732673,
+ "fetched_at": "2026-09-06T00:14:37Z"
+}

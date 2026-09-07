@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The handover note of 2025-11-07 wrongly recorded Boreal as the owner of reporting [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n- Cinder owns reporting [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n    earlier: Ember owns reporting [valid 2025-11-17 to 2026-02-10; recorded by handover/2025-11-17-reporting-correction]\n    earlier: Boreal owns reporting [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Dune owns reporting [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- Dune noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- Reporting depends on the event-bus [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: Reporting depends on the ledger [valid 2025-03-10 to 2025-09-15; recorded by standup/dune/2025-03-10]\n- Reporting deploys only on Thursdays between 07:00 and 09:00 UTC [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- Cinder noticed that reporting's disk usage jumped 30 percent after the retention change [observation; valid 2025-06-23 to now; recorded by standup/cinder/2025-06-23]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-06; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- The handover note of 2025-06-20 wrongly recorded Ember as the owner of webhooks [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n- The handover note of 2025-08-29 wrongly recorded Cinder as the owner of the scheduler [valid 2025-09-05 to now; recorded by handover/2025-09-05-scheduler-correction]\n- Reporting must stay on Python 3.11 until the pandas 3 upgrade lands [constraint; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09]\n- Boreal owns the event-bus [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: Cinder owns the event-bus [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: Atlas owns the event-bus [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: Boreal owns the event-bus [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n- INC-2026-003: webhooks delivered some events twice on 2026-01-17; the root cause was a retry loop that ignored idempotency keys [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- Dune owns the notifier [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: Cinder owns the notifier [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: Boreal owns the notifier [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- Cinder noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- Dune owns webhooks [valid 2025-07-04 to now; recorded by handover/2025-07-04-webhooks-correction]\n    earlier: Ember owns webhooks [valid 2025-06-20 to 2025-07-04; recorded by handover/2025-06-20-webhooks]\n    earlier: Atlas owns webhooks [valid 2025-03-28 to 2025-06-20; recorded by handover/2025-03-28-webhooks]\n    earlier: Boreal owns webhooks [valid 2025-01-09 to 2025-03-28; recorded by standup/boreal/2025-01-09-2]\n- Boreal holds its planning meeting on Thursdays [valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n- Cinder holds its planning meeting on Mondays [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- Boreal owns the catalog [valid 2025-06-16 to now; recorded by handover/2025-06-16-catalog]\n    earlier: Dune owns the catalog [valid 2025-03-20 to 2025-06-16; recorded by handover/2025-03-20-catalog]\n    earlier: Cinder owns the catalog [valid 2025-01-17 to 2025-03-20; recorded by standup/cinder/2025-01-17]\n\nQuestion: Which team owned reporting on 2025-06-25?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788655147-S1wOydmGLE5g6vITPcsH",
+  "object": "chat.completion",
+  "created": 1788655147,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Dune",
+     "refusal": null,
+     "reasoning": "The question asks which team owned reporting on 2025-06-25.\n\nLooking at the memory:\n- Boreal owns reporting [valid 2025-11-07 to 2025-11-17] — later correction says this was wrongly recorded... Actually, the first entry says the handover note of 2025-11-07 wrongly recorded Boreal as owner of reporting. But that correction is valid 2025-11-17 to now, which covers the correction of the 2025-11-07 record.\n- Dune owns reporting [valid 2025-01-20 to 2025-11-07]\n\nOn 2025-06-25, reporting ownership: Dune's ownership is valid 2025-01-20 to 2025-11-07. So Dune owned reporting on 2025-06-25.\n\nThe Boreal entry valid 2025-11-07 to 2025-11-17 doesn't cover 2025-06-25 anyway. And it was later marked as wrongly recorded, but that correction applies to the 2025-11-07 record; regardless, 2025-06-25 falls under Dune's tenure.\n\nAnswer: Dune",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owned reporting on 2025-06-25.\n\nLooking at the memory:\n- Boreal owns reporting [valid 2025-11-07 to 2025-11-17] — later correction says this was wrongly recorded... Actually, the first entry says the handover note of 2025-11-07 wrongly recorded Boreal as owner of reporting. But that correction is valid 2025-11-17 to now, which covers the correction of the 2025-11-07 record.\n- Dune owns reporting [valid 2025-01-20 to 2025-11-07]\n\nOn 2025-06-25, reporting ownership: Dune's ownership is valid 2025-01-20 to 2025-11-07. So Dune owned reporting on 2025-06-25.\n\nThe Boreal entry valid 2025-11-07 to 2025-11-17 doesn't cover 2025-06-25 anyway. And it was later marked as wrongly recorded, but that correction applies to the 2025-11-07 record; regardless, 2025-06-25 falls under Dune's tenure.\n\nAnswer: Dune",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1645,
+   "completion_tokens": 261,
+   "total_tokens": 1906,
+   "cost": 0.000188625,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000188625,
+    "upstream_inference_prompt_cost": 0.000123375,
+    "upstream_inference_completions_cost": 6.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 257,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.5632292500231415,
+ "fetched_at": "2026-09-06T00:39:14Z"
+}

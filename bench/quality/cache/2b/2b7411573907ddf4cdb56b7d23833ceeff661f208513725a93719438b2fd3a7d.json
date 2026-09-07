@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000178\": Team Cinder observed that the auth gateway's cold start time tripled following the runtime upgrade, and flagged it since it is not their service.  (about: Team Cinder, auth gateway)\n- memory_id \"1000174\": On 2025-02-21, Yuki handed the Team Cinder pager to Diego during rotation day.  (about: Team Cinder, Yuki, Diego)\n- memory_id \"1000168\" [decision]: The notifier will retry failed pushes three times with exponential backoff.  (about: notifier, push provider)\n- memory_id \"1000163\" [constraint]: Priya is not the Atlas pager contact for the cycle starting 2025-02-19.  (about: Team Atlas, Priya)\n- memory_id \"1000160\" [decision]: Tomasz Nowak takes the Atlas pager for the cycle starting 2025-02-19.  (about: Team Atlas, Tomasz Nowak)\n- memory_id \"1000150\": INC-2025-004 was an incident affecting the notifier on 2025-02-06.  (about: notifier, INC-2025-004)\n- memory_id \"1000147\" [constraint]: Per the change policy, the auth gateway deploys on weekdays between 08:00 and 10:00 UTC, never on Fridays.  (about: auth gateway)\n- memory_id \"1000135\": The scheduler is owned by the Ember team.  (about: Ember team, scheduler)\n- memory_id \"1000117\": The webhooks service depends on the event bus for outbound events.  (about: event bus, webhooks service)\n- memory_id \"1000114\": The notifier depends on the event bus for delivery events.  (about: event bus, notifier)\n- memory_id \"1000098\": Farah takes the first on-call rotation for Team Dune.  (about: Farah, Team Dune)\n- memory_id \"1000094\": Oskar is on call for the Ember team to start the year.  (about: Oskar, Ember team)\n- memory_id \"1000090\": Yuki takes the first Team Cinder on-call shift of the year.  (about: Team Cinder, Yuki)\n- memory_id \"1000086\": Priya takes the first Atlas pager shift.  (about: Team Atlas, Priya)\n- memory_id \"1000082\": Lena takes the first Boreal on-call shift of the year.  (about: Team Boreal, Lena)\n- memory_id \"1000068\": The webhooks service lives with Team Boreal.  (about: Team Boreal, webhooks service)\n- memory_id \"1000064\": The notifier lives with Team Boreal.  (about: Team Boreal, notifier)\n- memory_id \"1000058\": The event bus is owned by Team Boreal.  (about: Team Boreal, event bus)\n- memory_id \"1000042\": The feature-flags service lives with Team Atlas.  (about: Team Atlas, feature-flags service)\n- memory_id \"1000011\": As of January 2025, the Boreal team consists of Lena and Marcus.  (about: Team Boreal, Lena, Marcus)\nExisting entity names: Team Cinder, auth gateway, Yuki, Diego, notifier, push provider, Team Atlas, Priya, Tomasz Nowak, INC-2025-004, Ember team, scheduler, event bus, webhooks service, Farah, Team Dune, Oskar, Team Boreal, Lena, feature-flags service, Marcus\n\nThe note:\n\n[2025-02-21] standup/boreal/2025-02-21: The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788650172-qmRjP3PHOkxnhuzIUIdU",
+  "object": "chat.completion",
+  "created": 1788650172,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n  \"add_facts\": [\n    {\n      \"content\": \"The event bus deploys on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\",\n      \"entities\": [\"event bus\"],\n      \"kind\": \"constraint\",\n      \"confidence\": 0.9,\n      \"evidence\": \"The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"\n    }\n  ],\n  \"entity_aliases\": [\n    {\n      \"name\": \"bus\",\n      \"canonical\": \"event bus\",\n      \"evidence\": \"The bus deploy window\"\n    }\n  ]\n}\n",
+     "refusal": null,
+     "reasoning": "The note is a standup note from Team Boreal dated 2025-02-21, saying: \"The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"\n\n\"The bus\" — likely refers to \"event bus\". Existing entity name: event bus. So \"bus\" is an alias for \"event bus\"? The note says \"The bus deploy window\" — this is likely the event bus since Team Boreal owns the event bus. I could add an entity alias for \"bus\" → \"event bus\".\n\nNew fact: \"The event bus deploys on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\" This is a constraint (deploy window). Kind: constraint.\n\nEntities: event bus, Team Boreal? The fact is about the event bus primarily. The note is from Team Boreal's standup, so Team Boreal states it. I'll include event bus; possibly Team Boreal too since it's their standup. But the fact is about the event bus. I'll list \"event bus\" and maybe \"Team Boreal\". I'll keep it to event bus only — safer.\n\nEvidence: \"The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"\n\nAlias: \"bus\" → \"event bus\", evidence \"The bus deploy window\".\n\nRelations: Team Boreal maintains/owns the event bus already exists (1000058). The note doesn't state ownership. Could add relation event bus depends_on deploy window? Not an entity. Skip relations.\n\nShould the deploy window be a relation? No.\n\nOutput:\n\n{\n \"add_facts\": [\n  {\n   \"content\": \"The event bus deploys on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\",\n   \"entities\": [\"event bus\"],\n   \"kind\": \"constraint\",\n   \"confidence\": 0.9,\n   \"evidence\": \"The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"\n  }\n ],\n \"entity_aliases\": [\n  {\n   \"name\": \"bus\",\n   \"canonical\": \"event bus\",\n   \"evidence\": \"The bus deploy window\"\n  }\n ]\n}",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The note is a standup note from Team Boreal dated 2025-02-21, saying: \"The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"\n\n\"The bus\" — likely refers to \"event bus\". Existing entity name: event bus. So \"bus\" is an alias for \"event bus\"? The note says \"The bus deploy window\" — this is likely the event bus since Team Boreal owns the event bus. I could add an entity alias for \"bus\" → \"event bus\".\n\nNew fact: \"The event bus deploys on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\" This is a constraint (deploy window). Kind: constraint.\n\nEntities: event bus, Team Boreal? The fact is about the event bus primarily. The note is from Team Boreal's standup, so Team Boreal states it. I'll include event bus; possibly Team Boreal too since it's their standup. But the fact is about the event bus. I'll list \"event bus\" and maybe \"Team Boreal\". I'll keep it to event bus only — safer.\n\nEvidence: \"The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"\n\nAlias: \"bus\" → \"event bus\", evidence \"The bus deploy window\".\n\nRelations: Team Boreal maintains/owns the event bus already exists (1000058). The note doesn't state ownership. Could add relation event bus depends_on deploy window? Not an entity. Skip relations.\n\nShould the deploy window be a relation? No.\n\nOutput:\n\n{\n \"add_facts\": [\n  {\n   \"content\": \"The event bus deploys on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\",\n   \"entities\": [\"event bus\"],\n   \"kind\": \"constraint\",\n   \"confidence\": 0.9,\n   \"evidence\": \"The bus deploy window: on Tuesdays and Thursdays between 10:00 and 12:00 UTC.\"\n  }\n ],\n \"entity_aliases\": [\n  {\n   \"name\": \"bus\",\n   \"canonical\": \"event bus\",\n   \"evidence\": \"The bus deploy window\"\n  }\n ]\n}",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2192,
+   "completion_tokens": 611,
+   "total_tokens": 2803,
+   "cost": 0.00062662,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00062662,
+    "upstream_inference_prompt_cost": 0.00032112,
+    "upstream_inference_completions_cost": 0.0003055
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 471,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.5278778340434656,
+ "fetched_at": "2026-09-05T23:16:17Z"
+}

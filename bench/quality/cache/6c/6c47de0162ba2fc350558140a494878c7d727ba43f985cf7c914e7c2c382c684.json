@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The job scheduler has a deploy window on weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2025-08-08 to now; recorded by standup/dune/2025-08-08]\n    earlier: The job scheduler can be released on Tuesdays between 13:00 and 15:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-21 to 2025-08-08; recorded by standup/ember/2025-03-21]\n- The webhooks service has a deploy window on Thursdays between 07:00 and 09:00 UTC. [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-04-14 to now; recorded by standup/ember/2025-04-14]\n- The product catalog has a deploy window on Tuesdays and Thursdays between 10:00 and 12:00 UTC as of 2025-11-12. [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The product catalog has a deploy window on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- Oskar wrote up the handover doc for Farah for the job scheduler handover on 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n- Boreal announced at standup on 2026-03-13 a deploy freeze for Ledger from 2026-03-30 to 2026-04-03 for the fiscal year close. [constraint; valid 2026-03-13 to now; recorded by standup/boreal/2026-03-13]\n- The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- billing-api can be released on weekday mornings before 11:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-24 to now; recorded by standup/atlas/2025-03-24]\n- The scheduler is not a Boreal service; Boreal flagged the scheduler at standup on 2026-02-04. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- Team Dune owns the job scheduler as of 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n    earlier: Ember owns the job scheduler. [valid 2025-01-20 to 2025-04-04; recorded by standup/ember/2025-01-20]\n- INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n- The scheduler ran the nightly jobs twice on 2026-05-16 during INC-2026-009. [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- INC-2025-011 was caused by an index missing after the schema migration. [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- The job scheduler remains a Team Dune service as of 2026-01-12. [valid 2026-01-12 to now; recorded by standup/dune/2026-01-12]\n- After the runtime upgrade, the job scheduler's cold start time tripled. [valid 2025-04-24 to now; recorded by standup/boreal/2025-04-24]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The root cause of INC-2026-009 was two leaders elected during a network partition. [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n\nQuestion: What was the deploy window for the scheduler before it changed?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657323-UuBSgy3BtMQt9Wnujd4r",
+  "object": "chat.completion",
+  "created": 1788657323,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tuesdays between 13:00 and 15:00 UTC.",
+     "refusal": null,
+     "reasoning": "The question asks: \"What was the deploy window for the scheduler before it changed?\"\n\nLooking at memory: the job scheduler has entries:\n- Current (valid 2025-08-08 to now): deploy window on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- Earlier (valid 2025-03-21 to 2025-08-08): released on Tuesdays between 13:00 and 15:00 UTC; any other release time requires an exception.\n\nThe question asks for the previous window before it changed. So the answer: Tuesdays between 13:00 and 15:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"What was the deploy window for the scheduler before it changed?\"\n\nLooking at memory: the job scheduler has entries:\n- Current (valid 2025-08-08 to now): deploy window on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- Earlier (valid 2025-03-21 to 2025-08-08): released on Tuesdays between 13:00 and 15:00 UTC; any other release time requires an exception.\n\nThe question asks for the previous window before it changed. So the answer: Tuesdays between 13:00 and 15:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1511,
+   "completion_tokens": 151,
+   "total_tokens": 1662,
+   "cost": 0.000143395,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000143395,
+    "upstream_inference_prompt_cost": 0.000105645,
+    "upstream_inference_completions_cost": 3.775e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 134,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.3919589170254767,
+ "fetched_at": "2026-09-06T01:15:25Z"
+}

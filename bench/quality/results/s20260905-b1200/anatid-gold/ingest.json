@@ -1,5 +1,5 @@
 {
- "seconds": 8.897771582996938,
+ "seconds": 9.262016082997434,
  "llm": {
   "calls": 365,
   "cache_hits": 365,
@@ -12,9 +12,10 @@
   "embed_tokens": 10035,
   "cost_usd": 0.008017979999997316,
   "cost_usd_charged": 0.0,
-  "cost_known": false,
+  "cost_known": true,
   "wall_s": 0.0,
   "recorded_wall_s": 64.66890628975307,
+  "provider_failures": 0,
   "hit_rate": 1.0
  },
  "report": {

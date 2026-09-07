@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Ember team does pairing on every production change. [decision; valid 2025-03-19 to now; recorded by standup/ember/2025-03-19-2]\n- Oskar is the only engineer on the Ember team for now. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- Team Cinder holds planning on Mondays. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- Effective 2025-12-05, Diego Alvarez left Team Cinder. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n- Team Cinder sits on the third floor. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- As of 2025-09-23, Team Cinder uses trunk-based development. [valid 2025-09-23 to now; recorded by standup/cinder/2025-09-23]\n- On 2025-08-29, Diego took over the Team Cinder pager from Yuki. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29]\n- On 2025-11-20, Team Boreal took over the event bus from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- Team Cinder consists of Yuki; Diego Alvarez left the team on 2025-12-05. [valid 2025-12-05 to now; recorded by standup/cinder/2025-12-05]\n    earlier: Team Cinder consists of Yuki and Diego. [valid 2025-01-08 to 2025-12-05; recorded by standup/cinder/2025-01-08]\n- Yuki takes the first Team Cinder on-call shift of the year. [valid 2025-01-14 to now; recorded by standup/cinder/2025-01-14]\n- On 2025-02-21, Yuki handed the Team Cinder pager to Diego during rotation day. [valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- On the 2025-05-19 rotation day, Yuki handed the Team Cinder pager to Diego. [valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19]\n- On 2025-10-27, Diego handed the Team Cinder pager to Yuki during rotation day. [valid 2025-10-27 to now; recorded by standup/cinder/2025-10-27]\n- On 2025-07-03, Team Cinder observed that the event bus's CPU sat at 90 percent following the traffic shift, and flagged it since the event bus is not Team Cinder's service. [valid 2025-07-03 to now; recorded by standup/cinder/2025-07-03]\n- As of 2025-06-19, the notifier lives with Team Dune; Team Cinder kept it until then. [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: As of 2025-04-04, the notifier lives with Team Cinder. [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: The notifier lives with Team Boreal. [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- As of 2025-12-08, the pager for the indexer rings Team Dune instead of Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n- As of 2025-12-08, the indexer lives with Team Dune; Team Cinder kept it until then. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- As of 2025-03-20, the pager for the catalog service rings Team Dune instead of Team Cinder. [valid 2025-03-20 to now; recorded by handover/2025-03-20-catalog]\n\nQuestion: Which services does Cinder own now?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653872-46Xmef9ynDyRnAcCpq5T",
+  "object": "chat.completion",
+  "created": 1788653872,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which services Cinder owns now (2026-06-30).\n\nLet me go through the memory entries about services and team ownership:\n\n- Notifier: As of 2025-06-19, the notifier lives with Team Dune; Team Cinder kept it until then. So Cinder no longer owns notifier.\n- Indexer: As of 2025-12-08, the indexer lives with Team Dune; Team Cinder kept it until then. So Cinder no longer owns indexer.\n- Catalog service: pager rings Team Dune instead of Team Cinder (as of 2025-03-20). Doesn't explicitly say ownership, but pager moved away.\n- Event bus: On 2025-11-20, Team Boreal took over the event bus from Team Cinder. So Cinder no longer owns event bus.\n\nSo currently, no services are recorded as owned by Team Cinder. The memory shows all services moved away from Cinder: event bus (to Boreal), notifier (to Dune), indexer (to Dune), catalog pager (to Dune).\n\nIs there any service that Cinder currently owns? Looking through entries... The 2025-07-03 entry says \"the event bus is not Team Cinder's service\" — confirming that. So nothing.\n\nSo the answer should be: I don't know? Or should I answer \"none\"? The memory doesn't list any services Cinder currently owns. The rule says if memory does not contain the answer, reply \"I don't know\". But the memory does imply that Cinder doesn't own any services — all their services were handed over. Hmm.\n\nThe question \"Which services does Cinder own now?\" — the memory contains information about which services Cinder used to own and transferred away. There's no positive statement that Cinder owns any service now. The best answer could be \"none\" based on inference, but the rules say answer only from memory, don't guess.\n\nStrictly, the memory doesn't state any service currently owned by Cinder. All known Cinder services have been handed away. So one could answer \"none\" — but is that using outside knowledge? It's inference from memory. The safest per the rules: the memory does not contain a list of services Cinder owns now, so \"I don't know\".\n\nHowever, one could argue the memory does contain the answer implicitly: every service mentioned with Cinder ownership has been transferred away. But \"none\" requires assuming the list of services is complete. The memory doesn't guarantee completeness.\n\nGiven the strict rule, I'll answer \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which services Cinder owns now (2026-06-30).\n\nLet me go through the memory entries about services and team ownership:\n\n- Notifier: As of 2025-06-19, the notifier lives with Team Dune; Team Cinder kept it until then. So Cinder no longer owns notifier.\n- Indexer: As of 2025-12-08, the indexer lives with Team Dune; Team Cinder kept it until then. So Cinder no longer owns indexer.\n- Catalog service: pager rings Team Dune instead of Team Cinder (as of 2025-03-20). Doesn't explicitly say ownership, but pager moved away.\n- Event bus: On 2025-11-20, Team Boreal took over the event bus from Team Cinder. So Cinder no longer owns event bus.\n\nSo currently, no services are recorded as owned by Team Cinder. The memory shows all services moved away from Cinder: event bus (to Boreal), notifier (to Dune), indexer (to Dune), catalog pager (to Dune).\n\nIs there any service that Cinder currently owns? Looking through entries... The 2025-07-03 entry says \"the event bus is not Team Cinder's service\" — confirming that. So nothing.\n\nSo the answer should be: I don't know? Or should I answer \"none\"? The memory doesn't list any services Cinder currently owns. The rule says if memory does not contain the answer, reply \"I don't know\". But the memory does imply that Cinder doesn't own any services — all their services were handed over. Hmm.\n\nThe question \"Which services does Cinder own now?\" — the memory contains information about which services Cinder used to own and transferred away. There's no positive statement that Cinder owns any service now. The best answer could be \"none\" based on inference, but the rules say answer only from memory, don't guess.\n\nStrictly, the memory doesn't state any service currently owned by Cinder. All known Cinder services have been handed away. So one could answer \"none\" — but is that using outside knowledge? It's inference from memory. The safest per the rules: the memory does not contain a list of services Cinder owns now, so \"I don't know\".\n\nHowever, one could argue the memory does contain the answer implicitly: every service mentioned with Cinder ownership has been transferred away. But \"none\" requires assuming the list of services is complete. The memory doesn't guarantee completeness.\n\nGiven the strict rule, I'll answer \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1333,
+   "completion_tokens": 526,
+   "total_tokens": 1859,
+   "cost": 0.000231475,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000231475,
+    "upstream_inference_prompt_cost": 9.9975e-05,
+    "upstream_inference_completions_cost": 0.0001315
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 520,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 6.682706292020157,
+ "fetched_at": "2026-09-06T00:17:58Z"
+}

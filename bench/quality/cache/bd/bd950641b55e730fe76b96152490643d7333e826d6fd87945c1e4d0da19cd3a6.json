@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The handover note of 2025-11-18 wrongly recorded Ember as the owner of search-indexer [valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n- Diego is a member of Ember [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is a member of Cinder [valid 2025-01-08 to 2025-12-15; recorded by standup/cinder/2025-01-08]\n- Oskar is on call for Ember [valid 2026-06-17 to now; recorded by standup/ember/2026-06-17]\n    earlier: Diego is on call for Ember [valid 2026-05-13 to 2026-06-17; recorded by standup/ember/2026-05-13]\n    earlier: Oskar is on call for Ember [valid 2026-03-16 to 2026-05-13; recorded by standup/ember/2026-03-16]\n    earlier: Diego is on call for Ember [valid 2026-01-23 to 2026-03-16; recorded by standup/ember/2026-01-23]\n    earlier: Oskar is on call for Ember [valid 2025-01-13 to 2026-01-23; recorded by standup/ember/2025-01-13]\n- The handover note of 2025-06-25 wrongly recorded Ember as the owner of reporting [valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n- Ember holds its planning meeting on Fridays [valid 2025-04-23 to now; recorded by standup/ember/2025-04-23]\n- Oskar is a member of Ember [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- Ember adopted pairing on every production change [valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Ember noticed that webhooks's memory use grew steadily for a week after the cache change [observation; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Ember noticed that the ledger's memory use grew steadily for a week after the cache change [observation; valid 2025-05-28 to now; recorded by standup/ember/2025-05-28]\n- Ember noticed that search-indexer's queue depth hit 50,000 after the marketing send [observation; valid 2026-03-16 to now; recorded by standup/ember/2026-03-16]\n- Ember noticed that the notifier's memory use grew steadily for a week after the cache change [observation; valid 2025-11-05 to now; recorded by standup/ember/2025-11-05]\n- Ember noticed that the notifier's CPU sat at 90 percent after the traffic shift [observation; valid 2026-05-27 to now; recorded by standup/ember/2026-05-27]\n- Ember noticed that image-resizer's queue depth hit 50,000 after the marketing send [observation; valid 2026-04-29 to now; recorded by standup/ember/2026-04-29]\n- Ember noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- Ember noticed that auth-gateway's CPU sat at 90 percent after the traffic shift [observation; valid 2025-11-10 to now; recorded by standup/ember/2025-11-10]\n- Oskar runs the weekly architecture review [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- Cinder owns the ledger [valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n    earlier: Boreal owns the ledger [valid 2025-12-10 to 2026-04-29; recorded by handover/2025-12-10-ledger]\n    earlier: Atlas owns the ledger [valid 2025-01-08 to 2025-12-10; recorded by standup/atlas/2025-01-08]\n- Dune owns the scheduler [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n    earlier: Ember owns the scheduler [valid 2025-01-20 to 2025-04-04; recorded by standup/ember/2025-01-20]\n- Cinder holds its planning meeting on Mondays [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-2]\n- The handover note of 2025-07-01 wrongly recorded Cinder as the owner of auth-gateway [valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n\nQuestion: Who currently holds the Ember pager?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658521-qYPYgK7eBPZrjBAS3R7w",
+  "object": "chat.completion",
+  "created": 1788658521,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Oskar",
+     "refusal": null,
+     "reasoning": "The question asks who currently holds the Ember pager (on call). Looking at memory: \"Oskar is on call for Ember [valid 2026-06-17 to now; recorded by standup/ember/2026-06-17]\". Today is 2026-06-30, so the current on-call is Oskar.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who currently holds the Ember pager (on call). Looking at memory: \"Oskar is on call for Ember [valid 2026-06-17 to now; recorded by standup/ember/2026-06-17]\". Today is 2026-06-30, so the current on-call is Oskar.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1353,
+   "completion_tokens": 78,
+   "total_tokens": 1431,
+   "cost": 0.00024195,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00024195,
+    "upstream_inference_prompt_cost": 0.00020295,
+    "upstream_inference_completions_cost": 3.9e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 73,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4286902919993736,
+ "fetched_at": "2026-09-06T01:35:23Z"
+}

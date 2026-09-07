@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Boreal own now?\nGold answer: search-indexer and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 2 services.\n\nAnswer to grade: indexer, webhook dispatcher"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655018-VRAC99N0wDu1RswdyT5s",
+  "object": "chat.completion",
+  "created": 1788655018,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Novita",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names 'indexer' and 'webhook dispatcher' rather than the exact gold services 'search-indexer' and 'webhooks', and no alternative phrasings are accepted.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer: \"search-indexer and webhooks\". The answer to grade: \"indexer, webhook dispatcher\".\n\nThe rule: Where the gold is a list, every item must be named and no extra item. The answer names \"indexer\" instead of \"search-indexer\" and \"webhook dispatcher\" instead of \"webhooks\". Are these acceptable? The gold is \"search-indexer\" — \"indexer\" is a shortened name. \"webhooks\" vs \"webhook dispatcher\" — different naming. Since the accepted alternative phrasings is \"(none)\", we should apply literally. The item names don't match exactly. Hmm, grading strictly: the answer must name the gold items. \"indexer\" vs \"search-indexer\" — arguably refers to the same service, but strict matching... The rule says \"every item must be named and no extra item.\" The names given are not the gold names. With no accepted alternatives, I'd say incorrect.\n\nBut is \"indexer\" naming the search-indexer? It's a partial name. Typically in these grading tasks, names must match. Given \"(none)\" accepted alternatives, I'd grade false.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer: \"search-indexer and webhooks\". The answer to grade: \"indexer, webhook dispatcher\".\n\nThe rule: Where the gold is a list, every item must be named and no extra item. The answer names \"indexer\" instead of \"search-indexer\" and \"webhook dispatcher\" instead of \"webhooks\". Are these acceptable? The gold is \"search-indexer\" — \"indexer\" is a shortened name. \"webhooks\" vs \"webhook dispatcher\" — different naming. Since the accepted alternative phrasings is \"(none)\", we should apply literally. The item names don't match exactly. Hmm, grading strictly: the answer must name the gold items. \"indexer\" vs \"search-indexer\" — arguably refers to the same service, but strict matching... The rule says \"every item must be named and no extra item.\" The names given are not the gold names. With no accepted alternatives, I'd say incorrect.\n\nBut is \"indexer\" naming the search-indexer? It's a partial name. Typically in these grading tasks, names must match. Given \"(none)\" accepted alternatives, I'd grade false.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 244,
+   "completion_tokens": 288,
+   "total_tokens": 532,
+   "cost": 9.03e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.03e-05,
+    "upstream_inference_prompt_cost": 1.83e-05,
+    "upstream_inference_completions_cost": 7.2e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 238,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 8.151590708002914,
+ "fetched_at": "2026-09-06T00:37:06Z"
+}

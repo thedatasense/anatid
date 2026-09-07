@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- The Atlas team planning meeting is every Tuesday. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- Cinder runs its planning on Mondays. [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- The Ember team runs its planning on Fridays. [valid 2025-07-21 to now; recorded by standup/ember/2025-07-21]\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- As of 2025-12-18, the Boreal team adopted a weekly dependency update day. [decision; valid 2025-12-18 to now; recorded by standup/boreal/2025-12-18]\n- On 2025-07-17, Yuki Tanaka handed the Cinder pager to Diego on rotation day. [valid 2025-07-17 to now; recorded by standup/cinder/2025-07-17]\n- On 2026-04-14, Tomasz handed the Dune team pager to Farah on rotation day. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n- On 2025-06-19, Priya Raman handed the Atlas team pager to Tomasz on rotation day. [valid 2025-06-19 to now; recorded by standup/atlas/2025-06-19]\n- The Dune team adopted a monthly game day as of 2025-04-21. [decision; valid 2025-04-21 to now; recorded by standup/dune/2025-04-21]\n- As of 2025-09-23, the reporting service no longer relies on the ledger service; it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to 2025-09-23; recorded by standup/dune/2025-06-24]\n- The notifier's previous flat one-second retry was hammering the push provider during its outages. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- The reporting service no longer depends on the ledger service for the nightly balance export; as of 2025-09-23 it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- On 2026-03-20, Marcus moved from the Boreal team to the Atlas team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- Boreal noticed the ledger service's memory growth and pinged the owners on 2025-02-21. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- For anything Boreal-related, page Lena. [constraint; valid 2025-09-23 to now; recorded by standup/boreal/2025-09-23]\n    earlier: For anything Boreal-related, page Marcus. [constraint; valid 2025-05-29 to 2025-09-23; recorded by standup/boreal/2025-05-29]\n- The Boreal team consists of Lena, after Marcus moved to the Atlas team on 2026-03-20. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: The Boreal team consists of Lena and Marcus. [valid 2025-01-07 to 2026-03-20; recorded by standup/boreal/2025-01-07]\n\nQuestion: On which day does Boreal hold its planning meeting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653133-gZFlGCR3jAOr4n2nO5il",
+  "object": "chat.completion",
+  "created": 1788653133,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Thursdays",
+     "refusal": null,
+     "reasoning": "The memory says: \"The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now]\". So answer: Thursday (Thursdays). One short line with just the value.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now]\". So answer: Thursday (Thursdays). One short line with just the value.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1322,
+   "completion_tokens": 51,
+   "total_tokens": 1373,
+   "cost": 0.00010422,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00010422,
+    "upstream_inference_prompt_cost": 9.147e-05,
+    "upstream_inference_completions_cost": 1.275e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 46,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2296786250080913,
+ "fetched_at": "2026-09-06T00:05:35Z"
+}

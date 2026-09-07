@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1000719\" [decision]: The Cinder team owns the job scheduler as of 2025-09-23, when ownership transferred from the Dune team.  (about: Dune team, job scheduler, Cinder team)\n- memory_id \"1000715\" [decision]: Ownership of the job scheduler transferred from the Dune team to the Cinder team on 2025-09-23.  (about: Dune team, job scheduler, Cinder team)\n- memory_id \"1000711\": As of 2025-09-23, the pager for the job scheduler rings the Cinder team, not the Dune team.  (about: Dune team, job scheduler, Cinder team)\n- memory_id \"1000679\": Tomasz picked up the Dune team on-call shift from Farah on 2025-09-04.  (about: Tomasz, Farah, Dune team)\n- memory_id \"1000645\": The Dune team observed on 2025-08-19 that the resizer's cold start time tripled after the runtime upgrade.  (about: Dune team, resizer, runtime upgrade)\n- memory_id \"1000615\": Tomasz was on the Atlas team on-call rotation as of 2025-04-03, but left it on 2025-07-30 when he moved to the Dune team.  (about: Atlas team, Tomasz)\n- memory_id \"1000604\": Priya Raman is the primary on-call for the Atlas team as of 2025-07-30, when on-call passed from Tomasz.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000598\": As of 2025-07-30, the Atlas team consists of Priya Raman, after Tomasz left the team to join the Dune team.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000594\": On 2025-07-30, on-call for the Atlas team passed from Tomasz to Priya Raman when Tomasz moved to the Dune team.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000590\": Tomasz left the Atlas team and joined the Dune team on 2025-07-30.  (about: Atlas team, Tomasz, Dune team)\n- memory_id \"1000584\": The Dune team sits on the fourth floor.  (about: Dune team)\n- memory_id \"1000533\" [decision]: The notifier is owned by the Dune team as of 2025-06-11, when ownership passed from the Boreal team.  (about: Boreal team, Dune team, notifier)\n- memory_id \"1000525\" [decision]: The job scheduler is owned by the Dune team as of 2025-06-25, when ownership moved from the Ember team.  (about: Dune team, Ember team, job scheduler)\n- memory_id \"1000521\": On 2025-06-25, Oskar walked Farah through the job scheduler runbook.  (about: Farah, Oskar, job scheduler)\n- memory_id \"1000501\": On 2025-06-19, Priya Raman handed the Atlas team pager to Tomasz on rotation day.  (about: Atlas team, Priya Raman, Tomasz)\n- memory_id \"1000357\" [decision]: The Dune team adopted a monthly game day as of 2025-04-21.  (about: Dune team, monthly game day)\n- memory_id \"1000288\": The Dune team owns the reports pipeline as of 2025-03-20.  (about: Dune team, reports pipeline)\n- memory_id \"1000130\": The reporting service is a Dune team service.  (about: Dune team, reporting service)\n- memory_id \"1000101\": Farah has the first on-call rotation for the Dune team.  (about: Farah, Dune team)\n- memory_id \"1000050\": Farah runs the Dune team solo until the next hire lands.  (about: Farah, Dune team)\nExisting entity names: Dune team, job scheduler, Cinder team, Tomasz, Farah, resizer, runtime upgrade, Atlas team, Priya Raman, Boreal team, notifier, Ember team, Oskar, monthly game day, reports pipeline, reporting service\n\nThe note:\n\n[2025-10-15] standup/dune/2025-10-15: Farah has the Dune pager this cycle, taking over from Tomasz Nowak."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788651524-ci7D98YGv2TVhqNTJIrV",
+  "object": "chat.completion",
+  "created": 1788651524,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "DeepInfra",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"Farah has the Dune team pager this cycle as of 2025-10-15, taking over from Tomasz Nowak.\",\n   \"entities\": [\"Farah\", \"Dune team\", \"Tomasz\"],\n   \"kind\": \"fact\",\n   \"confidence\": 0.9,\n   \"evidence\": \"Farah has the Dune pager this cycle, taking over from Tomasz Nowak.\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [\n  {\n   \"src\": \"Tomasz\",\n   \"dst\": \"Farah\",\n   \"rel_kind\": \"leads\",\n   \"evidence\": \"taking over from Tomasz Nowak\"\n  }\n ],\n \"remove_relations\": [],\n \"entity_aliases\": [\n  {\n   \"name\": \"Tomasz Nowak\",\n   \"canonical\": \"Tomasz\",\n   \"evidence\": \"taking over from Tomasz Nowak\"\n  }\n ]\n}",
+     "refusal": null,
+     "reasoning": "Alias Tomasz Nowak → Tomasz. New fact: Farah has Dune pager this cycle, taking over from Tomasz. Correction to 1000101? That says Farah has first rotation — not contradiction. Add fact + relation? Pager handover: Tomasz → Farah.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Alias Tomasz Nowak → Tomasz. New fact: Farah has Dune pager this cycle, taking over from Tomasz. Correction to 1000101? That says Farah has first rotation — not contradiction. Add fact + relation? Pager handover: Tomasz → Farah.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2337,
+   "completion_tokens": 269,
+   "total_tokens": 2606,
+   "cost": 0.000242525,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000242525,
+    "upstream_inference_prompt_cost": 0.000175275,
+    "upstream_inference_completions_cost": 6.725e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 60,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.6561985419830307,
+ "fetched_at": "2026-09-05T23:38:47Z"
+}

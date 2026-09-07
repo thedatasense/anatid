@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2025-06-19, the notifier lives with Team Dune; Team Cinder kept it until then. [valid 2025-06-19 to now; recorded by handover/2025-06-19-notifier]\n    earlier: As of 2025-04-04, the notifier lives with Team Cinder. [valid 2025-04-04 to 2025-06-19; recorded by handover/2025-04-04-notifier]\n    earlier: The notifier lives with Team Boreal. [valid 2025-01-09 to 2025-04-04; recorded by standup/boreal/2025-01-09-2]\n- On 2025-11-20, Team Boreal took over the event bus from Team Cinder. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n- Team Cinder sits on the third floor. [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- Team Cinder holds planning on Mondays. [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- On 2025-08-29, Diego took over the Team Cinder pager from Yuki. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29]\n- On 2025-07-10, the Team Cinder on-call swapped and Yuki carries the phone until the next rotation. [valid 2025-07-10 to now; recorded by standup/cinder/2025-07-10]\n- On 2025-05-19, Team Cinder noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19-2]\n- As of 2026-02-10, the reports pipeline lives with Team Cinder; the Ember team kept it until then. [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- On 2025-07-03, Team Atlas observed that the notifier's memory use grew steadily for a week following the cache change, and flagged it since the notifier is not Team Atlas's service. [valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03-2]\n- As of 2025-11-20, the event bus is owned by Team Boreal; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is owned by Team Cinder; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: The event bus is owned by Team Atlas. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: The event bus is owned by Team Boreal. [valid 2025-01-09 to 2025-04-03; recorded by standup/boreal/2025-01-09]\n- As of 2025-11-20, the event bus is a Team Boreal service; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is a Team Cinder service; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is a Team Atlas service. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: As of 2025-03-31, the event bus remains a Team Boreal service. [valid 2025-03-31 to 2025-04-03; recorded by standup/boreal/2025-03-31]\n- As of the 2025-05-19 rotation day, the policy is to page Diego for anything Cinder-related. [decision; valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19]\n    earlier: As of 2025-04-29, the policy is to page Yuki for anything Cinder-related. [decision; valid 2025-04-29 to 2025-05-19; recorded by standup/cinder/2025-04-29]\n- On 2025-07-28, Team Cinder observed that the ledger's p99 latency doubled after Tuesday's deploy. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- Team Cinder observed that the auth gateway's cold start time tripled following the runtime upgrade, and flagged it since it is not their service. [valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- As of 2025-12-08, the indexer lives with Team Dune; Team Cinder kept it until then. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- Team Boreal kept the notifier until 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-notifier]\n\nQuestion: When did Cinder take over the notifier?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653237-z4dHOoQGWTsnBrn4NckE",
+  "object": "chat.completion",
+  "created": 1788653237,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-04-04",
+     "refusal": null,
+     "reasoning": "The question: \"When did Cinder take over the notifier?\"\n\nLooking at the memory:\n- As of 2025-04-04, the notifier lives with Team Cinder. [valid 2025-04-04 to 2025-06-19]\n- Team Boreal kept the notifier until 2025-04-04. [recorded by handover/2025-04-04-notifier]\n\nSo Cinder took over the notifier on 2025-04-04.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"When did Cinder take over the notifier?\"\n\nLooking at the memory:\n- As of 2025-04-04, the notifier lives with Team Cinder. [valid 2025-04-04 to 2025-06-19]\n- Team Boreal kept the notifier until 2025-04-04. [recorded by handover/2025-04-04-notifier]\n\nSo Cinder took over the notifier on 2025-04-04.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1540,
+   "completion_tokens": 108,
+   "total_tokens": 1648,
+   "cost": 0.000285,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000285,
+    "upstream_inference_prompt_cost": 0.000231,
+    "upstream_inference_completions_cost": 5.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 100,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.518774458032567,
+ "fetched_at": "2026-09-06T00:07:21Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-02-24, the feature-flags service lives with Team Cinder; Team Boreal kept it until then. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: The feature-flags service lives with Team Boreal as of 2025-09-29. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: The feature-flags service lives with Team Atlas. [valid 2025-01-08 to 2025-09-29; recorded by standup/atlas/2025-01-08-2]\n- As of 2026-02-24, the flags service belongs to Team Cinder; Team Boreal kept it until then. [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: As of 2025-09-29, the flags service belongs to Team Boreal; Team Cinder kept it until then. [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: As of 2025-07-09, the flags service belongs to Team Cinder; Team Atlas ran it until then. [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n- On 2025-07-28, Team Cinder's standup decided that clients will cache feature-flags service evaluations for 30 seconds. [decision; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28]\n- On 2026-03-31, the Ember team observed that the feature-flags service's p99 latency doubled after Tuesday's deploy, and flagged it since the feature-flags service is not the Ember team's service. [valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- As of 2025-07-28, the feature-flags service saw 40,000 requests per second at peak, and most of its requests were identical. [valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28]\n- As of 2025-09-23, Team Cinder uses trunk-based development. [valid 2025-09-23 to now; recorded by standup/cinder/2025-09-23]\n- As of 2026-02-10, the reports pipeline lives with Team Cinder; the Ember team kept it until then. [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n- On 2025-02-27, Team Boreal noticed that the feature-flags service's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-02-27 to now; recorded by standup/boreal/2025-02-27]\n- As of 2025-12-08, the indexer lives with Team Dune; Team Cinder kept it until then. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n    earlier: The indexer lives with Team Cinder. [valid 2025-01-17 to 2025-12-08; recorded by standup/cinder/2025-01-17-2]\n- The billing service depends on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Team Cinder observed that the auth gateway's cold start time tripled following the runtime upgrade, and flagged it since it is not their service. [valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n- On 2025-07-03, Team Cinder observed that the event bus's CPU sat at 90 percent following the traffic shift, and flagged it since the event bus is not Team Cinder's service. [valid 2025-07-03 to now; recorded by standup/cinder/2025-07-03]\n- As of 2026-05-25, Team Atlas has switched to a no-deploy Friday. [decision; valid 2026-05-25 to now; recorded by standup/atlas/2026-05-25-2]\n- On 2025-07-03, Team Atlas observed that the notifier's memory use grew steadily for a week following the cache change, and flagged it since the notifier is not Team Atlas's service. [valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03-2]\n- The scheduler pulls per-job kill switches from the feature-flags service on every run. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- On 2025-09-08, Team Boreal decided the billing service will gate the new invoice flow behind the feature-flags service because the rollout needs a per-tenant kill switch. [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- As of 2025-11-20, the event bus is a Team Boreal service; Team Cinder kept it until then. [valid 2025-11-20 to now; recorded by handover/2025-11-20-event-bus]\n    earlier: As of 2025-08-26, the event bus is a Team Cinder service; Team Atlas kept it until then. [valid 2025-08-26 to 2025-11-20; recorded by handover/2025-08-26-event-bus]\n    earlier: As of 2025-04-03, the event bus is a Team Atlas service. [valid 2025-04-03 to 2025-08-26; recorded by handover/2025-04-03-event-bus]\n    earlier: As of 2025-03-31, the event bus remains a Team Boreal service. [valid 2025-03-31 to 2025-04-03; recorded by standup/boreal/2025-03-31]\n- As of 2025-12-08, the pager for the indexer rings Team Dune instead of Team Cinder. [valid 2025-12-08 to now; recorded by handover/2025-12-08-search-indexer]\n\nQuestion: Why was feature-flags moved from Atlas to Cinder?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654570-S1GInvCo0sYfgrVLHrAB",
+  "object": "chat.completion",
+  "created": 1788654570,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: Why was feature-flags moved from Atlas to Cinder?\n\nLooking at the memory:\n- The feature-flags service lived with Team Atlas (2025-01-08 to 2025-09-29 per one entry), then with Team Boreal (2025-07-09? no...). Let me trace.\n\nEntry 1: feature-flags service lives with Team Boreal as of 2025-09-29, earlier Team Atlas (valid 2025-01-08 to 2025-09-29).\n\nEntry 2: flags service belongs to Team Cinder as of 2025-07-09; Team Atlas ran it until then. Then Team Boreal as of 2025-09-29.\n\nSo per entry 2, Atlas to Cinder on 2025-07-09; per entry 1, Atlas to Boreal. There's a conflict, but the question asks why it was moved from Atlas to Cinder. The memory doesn't contain any reason for the move — no reason recorded. So the answer: \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Why was feature-flags moved from Atlas to Cinder?\n\nLooking at the memory:\n- The feature-flags service lived with Team Atlas (2025-01-08 to 2025-09-29 per one entry), then with Team Boreal (2025-07-09? no...). Let me trace.\n\nEntry 1: feature-flags service lives with Team Boreal as of 2025-09-29, earlier Team Atlas (valid 2025-01-08 to 2025-09-29).\n\nEntry 2: flags service belongs to Team Cinder as of 2025-07-09; Team Atlas ran it until then. Then Team Boreal as of 2025-09-29.\n\nSo per entry 2, Atlas to Cinder on 2025-07-09; per entry 1, Atlas to Boreal. There's a conflict, but the question asks why it was moved from Atlas to Cinder. The memory doesn't contain any reason for the move — no reason recorded. So the answer: \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1661,
+   "completion_tokens": 231,
+   "total_tokens": 1892,
+   "cost": 0.000174645,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000174645,
+    "upstream_inference_prompt_cost": 0.000116895,
+    "upstream_inference_completions_cost": 5.775e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 225,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.218728541978635,
+ "fetched_at": "2026-09-06T00:29:33Z"
+}

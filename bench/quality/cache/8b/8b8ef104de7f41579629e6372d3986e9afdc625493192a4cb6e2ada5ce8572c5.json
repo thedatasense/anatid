@@ -1,0 +1,76 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You maintain a graph memory for an assistant. You read one note and answer with a memory patch:\none JSON object and nothing else, no prose, no code fence, matching this JSON schema:\n\n{\n \"type\": \"object\",\n \"additionalProperties\": false,\n \"properties\": {\n  \"add_facts\": {\n   \"type\": \"array\",\n   \"description\": \"New durable facts the note states, one standalone sentence each.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"content\",\n     \"entities\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"content\": {\n      \"type\": \"string\",\n      \"description\": \"The fact as a declarative sentence that names its subjects.\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Every entity the fact is about, by name.\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short category: \\\"fact\\\", \\\"constraint\\\", \\\"decision\\\", \\\"preference\\\".\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\",\n      \"description\": \"The shortest quote from the note that states this.\"\n     }\n    }\n   }\n  },\n  \"corrections\": {\n   \"type\": \"array\",\n   \"description\": \"Existing facts the note changes. Use these instead of adding a contradicting fact.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"new_content\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"old_memory_id\": {\n      \"type\": \"string\",\n      \"description\": \"The id of the existing memory as given, a decimal string such as \\\"883768514279557120\\\". Ids are strings because JSON numbers lose precision above 2**53.\"\n     },\n     \"old_text\": {\n      \"type\": \"string\",\n      \"description\": \"The existing fact's content, when its id is not known.\"\n     },\n     \"new_content\": {\n      \"type\": \"string\"\n     },\n     \"entities\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"description\": \"Entities of the corrected fact; omit to keep the old ones.\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"confidence\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 1\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"add_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships between two entities the note establishes.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\",\n     \"rel_kind\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\",\n      \"description\": \"A short verb: leads, maintains, owns, depends_on, member_of.\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"remove_relations\": {\n   \"type\": \"array\",\n   \"description\": \"Relationships the note says no longer hold.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"src\",\n     \"dst\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"src\": {\n      \"type\": \"string\"\n     },\n     \"dst\": {\n      \"type\": \"string\"\n     },\n     \"rel_kind\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  },\n  \"entity_aliases\": {\n   \"type\": \"array\",\n   \"description\": \"A name the note uses for an entity that already exists under another name.\",\n   \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"name\",\n     \"canonical\"\n    ],\n    \"additionalProperties\": false,\n    \"properties\": {\n     \"name\": {\n      \"type\": \"string\"\n     },\n     \"canonical\": {\n      \"type\": \"string\"\n     },\n     \"evidence\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}\n\nHow to fill it in:\n- A fact is one durable statement the note makes, written as a standalone declarative sentence\n  that names its subjects, so it can be read on its own later. List every entity the fact is\n  about (people, teams, systems, places, things) by name.\n- Use the existing entity names given with the note whenever the note refers to the same\n  thing. When the note uses a different name for an existing entity, add an entity_aliases\n  entry mapping the note's name to the existing name.\n- When the note changes something an existing fact states, do not add a contradicting fact.\n  Add a correction that copies the existing fact's id into old_memory_id exactly as given (it\n  is a string), gives the new content, and lists the entities of the corrected fact. Move the\n  relationships that change: put the old one in remove_relations and the new one in\n  add_relations.\n- A relation joins two entities with a short rel_kind such as leads, maintains, owns,\n  depends_on, member_of, reports_to. Add one for each relationship the note states.\n- Quote the shortest span of the note that supports each entry in its evidence field.\n- Do not invent anything the note does not say. Skip greetings, questions and speculation.\n- If the note contains nothing durable, return an object whose arrays are empty.\n"
+   },
+   {
+    "role": "user",
+    "content": "Existing current facts about entities this note mentions:\n- memory_id \"1001323\" [decision]: Ledger is owned by Cinder as of 2026-04-29, after Boreal handed it over.  (about: Boreal, Cinder, Ledger)\n- memory_id \"1001319\" [decision]: Cinder took over Ledger from Boreal on 2026-04-29.  (about: Boreal, Cinder, Ledger)\n- memory_id \"1001301\" [decision]: Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over.  (about: Boreal, Team Dune, indexer)\n- memory_id \"1001297\" [decision]: The indexer moved from Team Dune to Boreal as of 2026-04-22.  (about: Boreal, Team Dune, indexer)\n- memory_id \"1001235\" [decision]: The notifier is owned by team Boreal as of 2026-04-06, after the Cinder team handed it over.  (about: Boreal, Cinder, notifier)\n- memory_id \"1001227\" [decision]: The notifier moved from the Cinder team to team Boreal as of 2026-04-06.  (about: Boreal, Cinder, notifier)\n- memory_id \"1001219\" [decision]: Billing-api is owned by Team Dune as of 2026-03-25, after Boreal handed it over.  (about: Boreal, billing-api, Team Dune)\n- memory_id \"1001215\" [decision]: Boreal handed billing-api to Team Dune on 2026-03-25.  (about: Boreal, billing-api, Team Dune)\n- memory_id \"1001191\": The image-resizer is not a Boreal service.  (about: Boreal, image-resizer)\n- memory_id \"1001187\": Boreal reported at standup on 2026-03-17 that the image-resizer's cold start time tripled following the runtime upgrade.  (about: Boreal, image-resizer, runtime upgrade)\n- memory_id \"1001183\" [decision]: Marcus Oyelaran left Boreal and joined Team Atlas on 2026-03-17.  (about: Team Atlas, Boreal, Marcus Oyelaran)\n- memory_id \"1001168\" [constraint]: Boreal announced at standup on 2026-03-13 a deploy freeze for Ledger from 2026-03-30 to 2026-04-03 for the fiscal year close.  (about: Boreal, Ledger)\n- memory_id \"1001133\" [decision]: Lena carries the Boreal on-call phone as of 2026-02-04, after the on-call swap that morning.  (about: Boreal, Lena)\n- memory_id \"1001130\": The scheduler is not a Boreal service; Boreal flagged the scheduler at standup on 2026-02-04.  (about: Boreal, scheduler)\n- memory_id \"1001125\": Boreal reported at standup on 2026-02-04 that the scheduler's error rate crept up to 2 percent following the dependency bump.  (about: Boreal, dependency bump, scheduler)\n- memory_id \"1001122\" [decision]: Lena carries the Boreal on-call phone as of 2026-02-04, after the on-call swap that morning, until the next rotation.  (about: Boreal, Lena)\n- memory_id \"1001077\" [decision]: The image-resizer pager rings Team Dune, not Boreal, as of 2026-01-20.  (about: Boreal, Team Dune, image-resizer)\n- memory_id \"1001071\" [decision]: Team Dune owns image-resizer as of 2026-01-20, after Boreal handed it over.  (about: Boreal, Team Dune, image-resizer)\n- memory_id \"1001067\" [decision]: Team Dune took over image-resizer from Boreal on 2026-01-20.  (about: Boreal, Team Dune, image-resizer)\n- memory_id \"1001047\" [decision]: Marcus Oyelaran took over the Boreal on-call from Lena as of 2026-01-02.  (about: Boreal, Lena, Marcus Oyelaran)\n- memory_id \"1001014\" [decision]: The indexer moved from Boreal to Team Dune as of 2025-11-18.  (about: Boreal, Team Dune, indexer)\n- memory_id \"1000896\" [decision]: The event bus belongs to Boreal as of 2025-11-24, after Team Dune handed it over.  (about: Boreal, Team Dune, event bus)\n- memory_id \"1000892\" [decision]: The event bus pager rings the Boreal team, not Team Dune, as of 2025-11-24.  (about: Boreal, Team Dune, event bus)\n- memory_id \"1000884\" [decision]: Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date.  (about: Boreal, Cinder, notifier)\n- memory_id \"1000880\" [decision]: The notifier moved from the Boreal team to the Cinder team as of 2025-11-19.  (about: Boreal, Cinder, notifier)\n- memory_id \"1000824\": Team Boreal reported at standup on 2025-11-11 that the event bus's CPU sat at 90 percent after the traffic shift.  (about: Boreal, event bus, traffic shift)\n- memory_id \"1000746\": The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team.  (about: Boreal, Cinder, product catalog)\n- memory_id \"1000742\" [decision]: The product catalog belongs to the Boreal team as of 2025-10-20, after being run by the Cinder team until then.  (about: Boreal, Cinder, product catalog)\n- memory_id \"1000701\": Marcus Oyelaran holds the Boreal on-call pager as of 2025-09-24, after picking it up from Lena.  (about: Boreal, Lena, Marcus Oyelaran)\n- memory_id \"1000697\" [decision]: Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-09-24.  (about: Boreal, Lena, Marcus Oyelaran)\n- memory_id \"1000631\": Boreal handed the event bus to Team Dune on 2025-09-09.  (about: Boreal, Team Dune, event bus)\n- memory_id \"1000570\" [decision]: Lena picked up the Boreal on-call pager from Marcus Oyelaran on 2025-08-12.  (about: Boreal, Lena, Marcus Oyelaran)\n- memory_id \"1000556\": Boreal holds its planning meeting every Thursday.  (about: Boreal)\n- memory_id \"1000516\" [decision]: The authentication gateway went to team Boreal as of 2025-07-01, not the Cinder team; Cinder never owned it.  (about: Boreal, Cinder, authentication gateway)\n- memory_id \"1000485\" [decision]: Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-07-09.  (about: Boreal, Lena, Marcus Oyelaran)\n- memory_id \"1000473\" [decision]: The reports pipeline went to Boreal as of 2025-06-25, not Ember; Team Ember never owned it, and Team Dune no longer owns it.  (about: Boreal, Team Dune, Ember, reports pipeline)\n- memory_id \"1000422\": The reports pipeline is not a Boreal service.  (about: Boreal, reports pipeline)\n- memory_id \"1000382\" [decision]: Lena picked up the Boreal on-call shift from Marcus Oyelaran on 2025-05-21.  (about: Boreal, Lena, Marcus Oyelaran)\n- memory_id \"1000196\" [decision]: The indexer belongs to the Boreal team as of 2025-02-28.  (about: Boreal, indexer)\n- memory_id \"1000011\": The Boreal roster consists of Lena and Marcus Oyelaran as of 2025-01-07.  (about: Boreal, Lena, Marcus Oyelaran)\nExisting entity names: Boreal, Cinder, Ledger, Team Dune, indexer, notifier, billing-api, image-resizer, runtime upgrade, Team Atlas, Marcus Oyelaran, Lena, scheduler, dependency bump, event bus, traffic shift, product catalog, authentication gateway, Ember, reports pipeline\n\nThe note:\n\n[2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  }
+ },
+ "response": {
+  "id": "gen-1788656384-cllfLsAWhOW6mzNg3ZHU",
+  "object": "chat.completion",
+  "created": 1788656384,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Wafer",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\n \"add_facts\": [\n  {\n   \"content\": \"Boreal has a weekly dependency update day as of 2026-05-04.\",\n   \"entities\": [\"Boreal\"],\n   \"kind\": \"decision\",\n   \"confidence\": 0.9,\n   \"evidence\": \"Team Boreal has switched to a weekly dependency update day.\"\n  }\n ],\n \"corrections\": [],\n \"add_relations\": [],\n \"remove_relations\": [],\n \"entity_aliases\": []\n}",
+     "refusal": null,
+     "reasoning": "New durable fact: Boreal has a weekly dependency update day.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "New durable fact: Boreal has a weekly dependency update day.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 3276,
+   "completion_tokens": 113,
+   "total_tokens": 3389,
+   "cost": 0.00036715,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00036715,
+    "upstream_inference_prompt_cost": 0.0003276,
+    "upstream_inference_completions_cost": 3.955e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 14,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.512036415981129,
+ "fetched_at": "2026-09-06T00:59:50Z"
+}

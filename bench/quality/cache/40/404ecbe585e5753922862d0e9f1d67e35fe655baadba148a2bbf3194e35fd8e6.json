@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- Billing-api depends on the flags service as of 2025-10-21. [valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- Team Ember reported at standup on 2026-05-27 that the notifier's CPU sat at 90 percent after the traffic shift. [valid 2026-05-27 to now; recorded by standup/ember/2026-05-27]\n- Team Dune owns the job scheduler as of 2025-04-04. [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n    earlier: Ember owns the job scheduler. [valid 2025-01-20 to 2025-04-04; recorded by standup/ember/2025-01-20]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- Team Dune noticed on 2025-09-18 that the flags service's p99 latency doubled following Tuesday's deploy. [valid 2025-09-18 to now; recorded by standup/dune/2025-09-18]\n- On 2026-05-01, the Cinder team observed that the flags service's queue depth hit 50,000 after the marketing send. [valid 2026-05-01 to now; recorded by standup/cinder/2026-05-01-2]\n- The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- Boreal owns the indexer as of 2026-04-22, after Team Dune handed it over. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Team Dune owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns the indexer as of 2025-11-18, after Boreal handed it over. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal still owns the indexer as of 2025-09-15. [valid 2025-09-15 to 2025-11-18; recorded by standup/boreal/2025-09-15-2]\n- Billing-api depends on Ledger to work. [constraint; valid 2026-03-05 to now; recorded by standup/boreal/2026-03-05]\n- The product catalog depends on image-resizer for thumbnails. [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\n- Team Dune owns image-resizer as of 2026-01-20, after Boreal handed it over. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: Boreal owns image-resizer as of 2025-11-19, after Cinder handed it over. [decision; valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n    earlier: Cinder owns image-resizer as of 2025-06-25. [decision; valid 2025-06-25 to 2025-11-19; recorded by handover/2025-06-25-image-resizer]\n    earlier: Team Dune owns image-resizer. [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20]\n- The indexer depends on the product catalog for product documents. [valid 2025-03-03 to now; recorded by standup/boreal/2025-03-03]\n- The notifier moved from the Cinder team to team Boreal as of 2026-04-06. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- The notifier moved from the Boreal team to the Cinder team as of 2025-11-19. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n- The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- Yuki walked Lena through the notifier runbook on 2026-04-06. [valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- The flags service moved from Team Dune to Team Atlas on 2026-04-21. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n\nQuestion: Which team owns the service that the notifier depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657390-7v1D7HU16iYC8CPeBSoB",
+  "object": "chat.completion",
+  "created": 1788657390,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which team owns the service that the notifier depends on?\"\n\nFirst, I need to find what the notifier depends on. Looking through the memory:\n\n- Cinder owns the notifier (as of 2025-11-19), then notifier moved from Cinder to Boreal as of 2026-04-06.\n- Team Ember reported that the notifier's CPU sat at 90 percent after the traffic shift.\n- \"The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it.\"\n- Yuki walked Lena through the notifier runbook.\n\nI don't see any memory entry stating what the notifier depends on. There's no dependency listed for the notifier. So the answer would be \"I don't know\".\n\nWait, let me double-check all entries:\n1. Notifier ownership\n2. Ledger depends on authentication gateway\n3. Billing-api depends on flags service\n4. Ember reported notifier CPU\n5. Dune owns job scheduler\n6. Cinder on-call phone\n7. Dune noticed flags service p99 latency\n8. Flags service queue depth\n9. Job scheduler depends on flags service\n10. Boreal owns indexer\n11. Billing-api depends on Ledger\n12. Product catalog depends on image-resizer\n13. Dune owns image-resizer\n14. Indexer depends on product catalog\n15. Notifier moved Cinder to Boreal\n16. Notifier moved Boreal to Cinder\n17. Notifier is not Cinder's service\n18. Yuki walked Lena through notifier runbook\n19. Flags service moved from Dune to Atlas\n\nNo dependency of the notifier is mentioned. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which team owns the service that the notifier depends on?\"\n\nFirst, I need to find what the notifier depends on. Looking through the memory:\n\n- Cinder owns the notifier (as of 2025-11-19), then notifier moved from Cinder to Boreal as of 2026-04-06.\n- Team Ember reported that the notifier's CPU sat at 90 percent after the traffic shift.\n- \"The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it.\"\n- Yuki walked Lena through the notifier runbook.\n\nI don't see any memory entry stating what the notifier depends on. There's no dependency listed for the notifier. So the answer would be \"I don't know\".\n\nWait, let me double-check all entries:\n1. Notifier ownership\n2. Ledger depends on authentication gateway\n3. Billing-api depends on flags service\n4. Ember reported notifier CPU\n5. Dune owns job scheduler\n6. Cinder on-call phone\n7. Dune noticed flags service p99 latency\n8. Flags service queue depth\n9. Job scheduler depends on flags service\n10. Boreal owns indexer\n11. Billing-api depends on Ledger\n12. Product catalog depends on image-resizer\n13. Dune owns image-resizer\n14. Indexer depends on product catalog\n15. Notifier moved Cinder to Boreal\n16. Notifier moved Boreal to Cinder\n17. Notifier is not Cinder's service\n18. Yuki walked Lena through notifier runbook\n19. Flags service moved from Dune to Atlas\n\nNo dependency of the notifier is mentioned. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1761,
+   "completion_tokens": 351,
+   "total_tokens": 2112,
+   "cost": 0.00043965,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00043965,
+    "upstream_inference_prompt_cost": 0.00026415,
+    "upstream_inference_completions_cost": 0.0001755
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 345,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 7.76495087496005,
+ "fetched_at": "2026-09-06T01:16:37Z"
+}

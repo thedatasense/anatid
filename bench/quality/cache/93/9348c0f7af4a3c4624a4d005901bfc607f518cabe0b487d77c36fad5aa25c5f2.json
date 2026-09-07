@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Marcus Oyelaran holds the Boreal on-call pager as of 2025-09-24, after picking it up from Lena. [valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n    earlier: Lena still holds the Boreal on-call pager as of 2025-09-15. [valid 2025-09-15 to 2025-09-24; recorded by standup/boreal/2025-09-15]\n- Cinder holds team planning on Mondays. [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-2]\n- Boreal holds its planning meeting every Thursday. [valid 2025-07-29 to now; recorded by standup/boreal/2025-07-29]\n- Farah handed the Team Dune pager to Tomasz on 2025-09-04. [valid 2025-09-04 to now; recorded by standup/dune/2025-09-04]\n- As of 2026-05-28, Yuki Tanaka still has the Cinder pager. [valid 2026-05-28 to now; recorded by standup/cinder/2026-05-28]\n- The image-resizer pager rings Team Dune, not Boreal, as of 2026-01-20. [decision; valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: The image-resizer pager rings the Boreal team, not Cinder, as of 2025-11-19. [decision; valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n- Diego takes over the Cinder on-call pager from Yuki as of 2025-03-27. [decision; valid 2025-03-27 to now; recorded by standup/cinder/2025-03-27]\n- Lena picked up the Boreal on-call pager from Marcus Oyelaran on 2025-08-12. [decision; valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12]\n- The event bus pager rings the Boreal team, not Team Dune, as of 2025-11-24. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n- Diego has the Ember pager as of the 2026-05-13 cycle, taking over from Oskar. [decision; valid 2026-05-13 to now; recorded by standup/ember/2026-05-13]\n    earlier: Oskar has the Ember pager as of the 2026-03-16 cycle, taking over from Diego. [decision; valid 2026-03-16 to 2026-05-13; recorded by standup/ember/2026-03-16]\n    earlier: Diego carries the Team Ember on-call phone as of the 2026-01-23 on-call swap, until the next rotation. [decision; valid 2026-01-23 to 2026-03-16; recorded by standup/ember/2026-01-23]\n    earlier: Oskar is on call for team Ember this cycle. [valid 2025-05-28 to 2026-01-23; recorded by standup/ember/2025-05-28]\n- Team Atlas has moved to the second floor. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21-2]\n- billing-api is not Team Atlas's service, so Team Atlas flagged the error rate instead of fixing it. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Ledger is not Team Atlas's service, so Team Atlas flagged the disk usage jump instead of fixing it. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- Team Atlas pinged the owners of billing-api on 2025-12-31. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- Team Atlas's planning meeting is every Tuesday. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- The first on-call rotation for Team Atlas goes to Tomasz. [decision; valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09]\n- Tomasz is off the Team Atlas on-call rotation as of 2025-07-16. [decision; valid 2025-07-16 to now; recorded by standup/atlas/2025-07-16]\n- The flags service moved from Team Dune to Team Atlas on 2026-04-21. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n- The webhook dispatcher moved from Team Atlas to Team Dune on 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n\nQuestion: Who currently holds the Atlas pager?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657196-DcLnBrU1PiG8F5ovPAYI",
+  "object": "chat.completion",
+  "created": 1788657196,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Reka",
+  "system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp8-53169669",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks who currently holds the Atlas pager. Let me look through the memory.\n\nRelevant entries:\n- \"The first on-call rotation for Team Atlas goes to Tomasz.\" [decision; valid 2025-01-09 to now]\n- \"Tomasz is off the Team Atlas on-call rotation as of 2025-07-16.\" [decision; valid 2025-07-16 to now]\n\nSo Tomasz was the first on-call rotation, but he's off the rotation as of 2025-07-16. There's no entry saying who took over the Atlas pager after Tomasz. So the memory doesn't contain who currently holds the Atlas pager.\n\nThe answer should be \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who currently holds the Atlas pager. Let me look through the memory.\n\nRelevant entries:\n- \"The first on-call rotation for Team Atlas goes to Tomasz.\" [decision; valid 2025-01-09 to now]\n- \"Tomasz is off the Team Atlas on-call rotation as of 2025-07-16.\" [decision; valid 2025-07-16 to now]\n\nSo Tomasz was the first on-call rotation, but he's off the rotation as of 2025-07-16. There's no entry saying who took over the Atlas pager after Tomasz. So the memory doesn't contain who currently holds the Atlas pager.\n\nThe answer should be \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1419,
+   "completion_tokens": 157,
+   "total_tokens": 1576,
+   "cost": 0.00029135,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00029135,
+    "upstream_inference_prompt_cost": 0.00021285,
+    "upstream_inference_completions_cost": 7.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 144,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.997528209001757,
+ "fetched_at": "2026-09-06T01:13:20Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-10] standup/ember/2025-01-10: Oskar is the only engineer on team Ember for now.\n- [2025-04-23] standup/ember/2025-04-23: The Ember team runs its planning on Fridays.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.\n- [2025-05-28] standup/ember/2025-05-28: Observation from Ember: after the cache change, Ledger's memory use grew steadily for a week. Reminder: Oskar Lind is on call for team Ember this cycle.\n- [2026-05-13] standup/ember/2026-05-13: Diego has the Ember pager this cycle, taking over from Oskar.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-01-20] standup/ember/2025-01-20-2: The authentication gateway lives with team Ember.\n- [2025-03-11] standup/ember/2025-03-11-2: Observation from team Ember: after the cache change, the webhooks service's memory use grew steadily for a week. Team Ember now does pairing on every production change.\n- [2026-06-17] standup/ember/2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.\n- [2026-03-16] standup/ember/2026-03-16: Oskar has the Ember pager this cycle, taking over from Diego Alvarez. Ember noticed that search-indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-11-05] standup/ember/2025-11-05: Heads-up from Ember: notifier's memory use grew steadily for a week after the cache change.\n- [2026-05-27] standup/ember/2026-05-27: Heads-up from team Ember: notifier's CPU sat at 90 percent after the traffic shift.\n- [2025-11-10] standup/ember/2025-11-10: Heads-up from team Ember: the authentication gateway's CPU sat at 90 percent after the traffic shift.\n- [2026-04-29] standup/ember/2026-04-29: Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2025-11-17] standup/ember/2025-11-17: Team Ember saw that the authentication gateway's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it. The weekly architecture review is run by Oskar.\n- [2025-03-28] standup/ember/2025-03-28: If feature-flags is down, the job scheduler is down: it relies on it for per-job kill switches.\n- [2025-04-11] handover/2025-04-11-webhooks: Quick one: webhooks belongs to team Ember starting today. Thanks to Boreal for running it until now.\n- [2025-03-11] standup/ember/2025-03-11: Policy: every the auth gateway change requires two reviewer approvals and a security sign-off.\n- [2025-03-21] standup/ember/2025-03-21: The job scheduler can be released on Tuesdays between 13:00 and 15:00 UTC; anything else needs an exception.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-04-14] standup/ember/2025-04-14: Auth-gateway deploy window: on Mondays to Thursdays between 09:00 and 17:00 UTC.\n- [2025-11-18] handover/2025-11-18-search-indexer: Handover: as of today the indexer moves from Boreal to Ember. Marcus walked Oskar through the runbook this morning.\n- [2025-07-01] handover/2025-07-01-auth-gateway: Quick one: the auth gateway belongs to team Cinder starting today. Thanks to the Ember team for running it until now.\n- [2025-04-04] handover/2025-04-04-scheduler: The Ember team handed scheduler to Dune today; Oskar Lind wrote up the handover doc for Farah.\n- [2025-09-09] handover/2025-09-09-webhooks: The Ember team handed the webhook dispatcher to team Atlas today; Oskar wrote up the handover doc for Priya.\n- [2025-12-15] handover/2025-12-15-search-indexer-correction: The 2025-11-18 note about the indexer named the wrong team. The Dune team took it over on that date; the Ember team did not.\n- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.\n\nQuestion: Who is the manager of Ember?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651549-rY17YKA3KyBqdoSAgNcR",
+  "object": "chat.completion",
+  "created": 1788651549,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The user asks who the manager of Ember is. Looking through the memory, I see entries about on-call rotations, team members (Oskar, Diego), ownership of services, etc. There's no mention of a manager for team Ember anywhere in the memory.\n\nSo the answer is: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The user asks who the manager of Ember is. Looking through the memory, I see entries about on-call rotations, team members (Oskar, Diego), ownership of services, etc. There's no mention of a manager for team Ember anywhere in the memory.\n\nSo the answer is: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1513,
+   "completion_tokens": 68,
+   "total_tokens": 1581,
+   "cost": 0.000122795,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000122795,
+    "upstream_inference_prompt_cost": 0.000105795,
+    "upstream_inference_completions_cost": 1.7e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 62,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.325854916998651,
+ "fetched_at": "2026-09-05T23:39:11Z"
+}

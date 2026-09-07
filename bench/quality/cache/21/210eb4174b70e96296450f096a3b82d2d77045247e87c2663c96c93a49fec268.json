@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded that reporting depends on the ledger, and when?\nGold answer: standup/dune/2025-03-10 (2025-03-10)\nAlso accepted: standup/dune/2025-03-10; 2025-03-10; 10 March 2025; March 10, 2025; the standup note of 2025-03-10; the standup note of 10 March 2025; the standup note of March 10, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/dune/2025-04-08, on 2025-04-08."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655606-BVWRvYITwL6ewXdvjeaW",
+  "object": "chat.completion",
+  "created": 1788655606,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer cites standup/dune/2025-04-08 on 2025-04-08, but the gold note is standup/dune/2025-03-10 (2025-03-10), so the date and note are wrong.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is standup/dune/2025-03-10. The answer to grade says standup/dune/2025-04-08, on 2025-04-08. That's a different date, so it's wrong per the rule: \"a different note or date is wrong.\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is standup/dune/2025-03-10. The answer to grade says standup/dune/2025-04-08, on 2025-04-08. That's a different date, so it's wrong per the rule: \"a different note or date is wrong.\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 349,
+   "completion_tokens": 132,
+   "total_tokens": 481,
+   "cost": 3.9975e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.9975e-05,
+    "upstream_inference_prompt_cost": 6.975e-06,
+    "upstream_inference_completions_cost": 3.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 65,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.2633937500067987,
+ "fetched_at": "2026-09-06T00:46:48Z"
+}

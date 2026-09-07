@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The product catalog calls the image resizer for thumbnails, so the image resizer is a hard dependency of the product catalog. [valid 2025-04-14 to now; recorded by standup/cinder/2025-04-14]\n- The catalog service still relies on the resizer. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of the 2025-11-26 handover, the image resizer's dashboards and alerts are being repointed. [valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n- The Ember team does pairing on every production change. [decision; valid 2025-02-06 to now; recorded by standup/ember/2025-02-06-2]\n- As of 2026-03-17, storage for the image resizer's original uploads has doubled in six months. [valid 2026-03-17 to now; recorded by standup/atlas/2026-03-17]\n- The Atlas team owns the image resizer as of 2025-11-26, when ownership transferred from the Ember team. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The Ember team owns the image resizer as of 2025-03-20. [decision; valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: The Dune team owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- On 2025-10-15, the Atlas team noticed that the image resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-10-15 to now; recorded by standup/atlas/2025-10-15]\n- On 2026-03-17, the Atlas team decided that the image resizer will keep original uploads for 90 days only, because storage for originals doubled in six months. [decision; valid 2026-03-17 to now; recorded by standup/atlas/2026-03-17]\n- The Dune team observed on 2025-08-19 that the resizer's cold start time tripled after the runtime upgrade. [valid 2025-08-19 to now; recorded by standup/dune/2025-08-19-2]\n- The ledger service relies on the authentication gateway for service tokens. [valid 2025-03-04 to now; recorded by standup/atlas/2025-03-04]\n- The job scheduler depends on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- As of 2025-09-23, the reporting service no longer relies on the ledger service; it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to 2025-09-23; recorded by standup/dune/2025-06-24]\n- The product catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time. [decision; valid 2025-04-17 to now; recorded by standup/cinder/2025-04-17]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- As of 2025-08-25, the ledger service deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger service only ships on weekday mornings before 11:00 UTC. [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n- As of 2025-09-30, the billing API depends on the feature flag service. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The ledger service must stay on Postgres 14 until the partitioning work finishes. [constraint; valid 2025-01-31 to now; recorded by standup/atlas/2025-01-31]\n- The reporting service only ships on Tuesdays and Thursdays between 10:00 and 12:00 UTC. [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- The reporting service no longer depends on the ledger service for the nightly balance export; as of 2025-09-23 it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- Boreal noticed the ledger service's memory growth and pinged the owners on 2025-02-21. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n\nQuestion: Which service does image-resizer depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653519-7JvO8UoFw5ZR8xUMQnYL",
+  "object": "chat.completion",
+  "created": 1788653519,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service does image-resizer depend on?\"\n\nLooking at the memory entries about the image resizer:\n- The product catalog calls the image resizer for thumbnails (that's a dependency of product catalog on image-resizer, not image-resizer depending on something).\n- The catalog service still relies on the resizer (again, catalog depends on resizer).\n- Image resizer's dashboards and alerts being repointed.\n- Storage for image resizer's original uploads doubled.\n- Atlas team owns image resizer.\n- Queue depth.\n- Keep original uploads for 90 days.\n- Cold start time tripled after runtime upgrade.\n\nNone of these entries say that the image resizer depends on another service. The dependencies listed are: ledger relies on authentication gateway, job scheduler depends on feature-flags, reporting service uses bus, billing API depends on ledger and feature flag service, product catalog calls image resizer.\n\nThere's no entry stating that image-resizer depends on any service. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service does image-resizer depend on?\"\n\nLooking at the memory entries about the image resizer:\n- The product catalog calls the image resizer for thumbnails (that's a dependency of product catalog on image-resizer, not image-resizer depending on something).\n- The catalog service still relies on the resizer (again, catalog depends on resizer).\n- Image resizer's dashboards and alerts being repointed.\n- Storage for image resizer's original uploads doubled.\n- Atlas team owns image resizer.\n- Queue depth.\n- Keep original uploads for 90 days.\n- Cold start time tripled after runtime upgrade.\n\nNone of these entries say that the image resizer depends on another service. The dependencies listed are: ledger relies on authentication gateway, job scheduler depends on feature-flags, reporting service uses bus, billing API depends on ledger and feature flag service, product catalog calls image resizer.\n\nThere's no entry stating that image-resizer depends on any service. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1476,
+   "completion_tokens": 217,
+   "total_tokens": 1693,
+   "cost": 0.0003299,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0003299,
+    "upstream_inference_prompt_cost": 0.0002214,
+    "upstream_inference_completions_cost": 0.0001085
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 211,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.6054339580005035,
+ "fetched_at": "2026-09-06T00:12:03Z"
+}

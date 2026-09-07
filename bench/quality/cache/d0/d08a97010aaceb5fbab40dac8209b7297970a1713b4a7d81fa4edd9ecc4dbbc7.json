@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- The reporting service still relies on the event bus as of 2025-11-13. [valid 2025-11-13 to now; recorded by standup/boreal/2025-11-13]\n- As of 2026-05-01, Ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC. [decision; valid 2026-05-01 to now; recorded by standup/cinder/2026-05-01]\n- As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly. [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- The Boreal roster consists of Lena and Marcus Oyelaran as of 2025-01-07. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Farah and Tomasz are the members of Team Dune as of 2025-07-21. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Farah is the sole member of Team Dune as of 2025-01-09. [valid 2025-01-09 to 2025-07-21; recorded by standup/dune/2025-01-09]\n- The product catalog has a deploy window on Tuesdays and Thursdays between 10:00 and 12:00 UTC as of 2025-11-12. [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The product catalog has a deploy window on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- The Postgres 14 pin on Ledger lifts when the partitioning work finishes. [valid 2025-05-30 to now; recorded by standup/atlas/2025-05-30]\n- Diego carried the Cinder on-call phone from 2025-11-25 until 2025-12-15, when Yuki took over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is back on the Cinder on-call rotation as of 2025-11-25, carrying the phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Diego is off the Cinder on-call rotation as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- The reporting service must stay on Python 3.11 until the pandas 3 upgrade lands. [constraint; valid 2025-05-15 to now; recorded by standup/dune/2025-05-15]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- The flags service saw 40,000 requests per second at peak, and most of the requests were identical. [valid 2025-08-20 to now; recorded by standup/cinder/2025-08-20]\n- The reporting service's p99 latency doubled after Tuesday's deploy, as noticed by Cinder on 2025-08-20. [valid 2025-08-20 to now; recorded by standup/cinder/2025-08-20]\n- The reporting service was moved off direct Ledger queries because nightly Ledger scans were blocking billing runs. [valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Ledger only ships on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-02-28 to now; recorded by standup/atlas/2025-02-28]\n\nQuestion: Which note corrected the recorded owner of reporting, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657455-6UTtjUGhZfa73r1SCJO5",
+  "object": "chat.completion",
+  "created": 1788657455,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which note corrected the recorded owner of reporting, and when?\"\n\nLet me look through the memory for anything about the owner of the reporting service being corrected.\n\nLooking at the memory entries:\n1. Reporting service deploy window\n2. Reporting service relies on event bus\n3. Ledger deploy schedule\n4. Reporting service reads from event bus instead of Ledger\n5. Cinder on-call phone history\n6. Boreal roster\n7. Team Dune members\n8. Product catalog deploy window\n9. Postgres 14 pin\n10. Diego/Yuki on-call\n11. Python 3.11 constraint\n12. Product catalog team ownership (Cinder → Boreal)\n13. Team Dune on-call history\n14. Flags service requests\n15. Reporting p99 latency\n16. Reporting moved off Ledger queries reason\n17. Ledger ships on Wednesdays\n\nThere's nothing about the \"owner\" of the reporting service being corrected. The product catalog's ownership changed from Cinder to Boreal, but that's the product catalog, not the reporting service. And that was a handover, not a \"correction.\"\n\nSo the answer is \"I don't know.\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which note corrected the recorded owner of reporting, and when?\"\n\nLet me look through the memory for anything about the owner of the reporting service being corrected.\n\nLooking at the memory entries:\n1. Reporting service deploy window\n2. Reporting service relies on event bus\n3. Ledger deploy schedule\n4. Reporting service reads from event bus instead of Ledger\n5. Cinder on-call phone history\n6. Boreal roster\n7. Team Dune members\n8. Product catalog deploy window\n9. Postgres 14 pin\n10. Diego/Yuki on-call\n11. Python 3.11 constraint\n12. Product catalog team ownership (Cinder → Boreal)\n13. Team Dune on-call history\n14. Flags service requests\n15. Reporting p99 latency\n16. Reporting moved off Ledger queries reason\n17. Ledger ships on Wednesdays\n\nThere's nothing about the \"owner\" of the reporting service being corrected. The product catalog's ownership changed from Cinder to Boreal, but that's the product catalog, not the reporting service. And that was a handover, not a \"correction.\"\n\nSo the answer is \"I don't know.\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1753,
+   "completion_tokens": 249,
+   "total_tokens": 2002,
+   "cost": 0.000186045,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000186045,
+    "upstream_inference_prompt_cost": 0.000123795,
+    "upstream_inference_completions_cost": 6.225e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 243,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0001879169722088,
+ "fetched_at": "2026-09-06T01:17:38Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-03-31] standup/boreal/2025-03-31-2: We agreed today that the notifier will retry failed pushes three times with exponential backoff. The reason is that the flat one-second retry was hammering the push provider during its outages.\n- [2026-02-11] incident-review/INC-2026-003: Incident review INC-2026-003. The webhook dispatcher delivered some events twice on 2026-02-08. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-02-13] standup/boreal/2025-02-13: The notifier calls the event-bus for delivery events, so treat the event-bus as a hard dependency of the notifier. Dependency map update: webhooks needs the event-bus (outbound events).\n- [2025-03-06] incident-review/INC-2025-004: INC-2025-004 review. What happened: notifier missed alerts for 40 minutes on 2025-03-04. Why: a consumer offset stuck after a broker restart. Follow-up decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004.\n- [2025-04-24] standup/boreal/2025-04-24: Observation from Boreal: after the runtime upgrade, the scheduler's cold start time tripled.\n- [2026-05-27] standup/ember/2026-05-27: Heads-up from team Ember: notifier's CPU sat at 90 percent after the traffic shift.\n- [2025-11-05] standup/ember/2025-11-05: Heads-up from Ember: notifier's memory use grew steadily for a week after the cache change.\n- [2026-04-17] standup/cinder/2026-04-17: Observation from the Cinder team: after the runtime upgrade, the authentication gateway's cold start time tripled.\n- [2025-09-26] standup/cinder/2025-09-26: The Cinder team saw that the notifier's request volume halved following the client rollout; not their service, so they flagged it.\n- [2025-11-19] handover/2025-11-19-notifier: Notifier has a new home: the Cinder team. Boreal kept it until today.\n- [2025-12-31] standup/atlas/2025-12-31: The Atlas team noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-11-07] standup/boreal/2025-11-07: We agreed today that search-indexer will rebuild the index nightly instead of on every catalog write. The reason is that incremental updates left stale entries behind after failed writes.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2026-04-06] handover/2026-04-06-notifier: Handover: as of today the notifier moves from the Cinder team to team Boreal. Yuki walked Lena through the runbook this morning.\n- [2025-10-27] incident-review/INC-2025-023: Review of INC-2025-023 (the search indexer, 2025-10-24). The root cause was a reindex job that failed silently on a full disk. We decided that reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2026-03-17] standup/boreal/2026-03-17: Team change: Marcus leaves Boreal and joins the Atlas team, effective today. Boreal saw that the resizer's cold start time tripled following the runtime upgrade; not their service, so they flagged it.\n- [2025-04-01] standup/cinder/2025-04-01: We agreed today that the catalog will keep image metadata in a separate table. The reason is that the joined writes were locking product updates for seconds at a time.\n- [2025-04-22] standup/boreal/2025-04-22-2: Observation from team Boreal: after the client rollout, the webhook dispatcher's request volume halved.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2026-04-29] standup/ember/2026-04-29: Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-01-27] standup/boreal/2026-01-27: Auth-gateway tokens will expire after 15 minutes instead of an hour. Rationale: the security audit flagged long-lived tokens.\n- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-11-11] standup/boreal/2025-11-11-2: Heads-up from team Boreal: the event bus' CPU sat at 90 percent after the traffic shift.\n\nQuestion: Why does the notifier retry failed pushes three times with exponential backoff?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652196-h1uUaU43VnBfL7AR5PZe",
+  "object": "chat.completion",
+  "created": 1788652196,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "The flat one-second retry was hammering the push provider during its outages.",
+     "refusal": null,
+     "reasoning": "The question asks why the notifier retries failed pushes three times with exponential backoff. From the memory entry [2025-03-31]: \"The reason is that the flat one-second retry was hammering the push provider during its outages.\"\n\nAnswer in one short line with just the reason.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks why the notifier retries failed pushes three times with exponential backoff. From the memory entry [2025-03-31]: \"The reason is that the flat one-second retry was hammering the push provider during its outages.\"\n\nAnswer in one short line with just the reason.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1502,
+   "completion_tokens": 77,
+   "total_tokens": 1579,
+   "cost": 0.0001319,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001319,
+    "upstream_inference_prompt_cost": 0.00011265,
+    "upstream_inference_completions_cost": 1.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 59,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.178230208985042,
+ "fetched_at": "2026-09-05T23:49:58Z"
+}

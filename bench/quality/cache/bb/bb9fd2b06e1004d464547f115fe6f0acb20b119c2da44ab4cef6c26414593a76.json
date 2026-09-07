@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The notifier depends on the event-bus [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- Reporting depends on the event-bus [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: Reporting depends on the ledger [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- Webhooks depends on the event-bus [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- The event-bus deploys only on Thursdays between 07:00 and 09:00 UTC [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- Atlas owns the event-bus [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: Boreal owns the event-bus [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- Dune noticed that the event-bus's request volume halved after the client rollout [observation; valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- Dune noticed that the event-bus's CPU sat at 90 percent after the traffic shift [observation; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- Decision: the event-bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- Billing-api depends on feature-flags [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The scheduler depends on feature-flags [valid 2025-02-07 to now; recorded by standup/ember/2025-02-07]\n- Boreal noticed that billing-api's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- Dune noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- Boreal noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-05-07 to now; recorded by standup/boreal/2025-05-07-2]\n- INC-2026-003: webhooks delivered some events twice on 2026-02-20; the root cause was a retry loop that ignored idempotency keys [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- Search-indexer depends on the catalog [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- Boreal owns webhooks [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: Ember owns webhooks [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: Boreal owns webhooks [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- Boreal adopted a weekly dependency update day [valid 2025-12-18 to now; recorded by standup/boreal/2025-12-18]\n- Webhooks deploys only on Mondays and Wednesdays between 14:00 and 16:00 UTC [constraint; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n\nQuestion: Which service does the event-bus depend on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654856-QIT298BdALCIyfNlvVeb",
+  "object": "chat.completion",
+  "created": 1788654856,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Novita",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: which service does the event-bus depend on? Looking at the memory, we have dependencies listed: notifier depends on event-bus, reporting depends on event-bus, webhooks depends on event-bus, billing-api depends on feature-flags, scheduler depends on feature-flags, search-indexer depends on catalog. There is no entry saying event-bus depends on anything. So answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which service does the event-bus depend on? Looking at the memory, we have dependencies listed: notifier depends on event-bus, reporting depends on event-bus, webhooks depends on event-bus, billing-api depends on feature-flags, scheduler depends on feature-flags, search-indexer depends on catalog. There is no entry saying event-bus depends on anything. So answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1249,
+   "completion_tokens": 94,
+   "total_tokens": 1343,
+   "cost": 0.000117175,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000117175,
+    "upstream_inference_prompt_cost": 9.3675e-05,
+    "upstream_inference_completions_cost": 2.35e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 88,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 25.155611750029493,
+ "fetched_at": "2026-09-06T00:34:42Z"
+}

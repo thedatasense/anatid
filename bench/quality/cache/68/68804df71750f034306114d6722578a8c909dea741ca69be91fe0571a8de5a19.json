@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The authentication gateway has a deploy window on Mondays to Thursdays between 09:00 and 17:00 UTC. [constraint; valid 2025-04-14 to now; recorded by standup/ember/2025-04-14]\n- Every authentication gateway change requires two reviewer approvals and a security sign-off. [constraint; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11]\n- As of 2026-05-01, Ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC. [decision; valid 2026-05-01 to now; recorded by standup/cinder/2026-05-01]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- The Boreal roster consists of Lena and Marcus Oyelaran as of 2025-01-07. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Farah and Tomasz are the members of Team Dune as of 2025-07-21. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Farah is the sole member of Team Dune as of 2025-01-09. [valid 2025-01-09 to 2025-07-21; recorded by standup/dune/2025-01-09]\n- The product catalog has a deploy window on Tuesdays and Thursdays between 10:00 and 12:00 UTC as of 2025-11-12. [constraint; valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n    earlier: The product catalog has a deploy window on Mondays between 10:00 and 12:00 UTC. [constraint; valid 2025-05-02 to 2025-11-12; recorded by standup/cinder/2025-05-02-2]\n- The Postgres 14 pin on Ledger lifts when the partitioning work finishes. [valid 2025-05-30 to now; recorded by standup/atlas/2025-05-30]\n- Authentication gateway tokens will expire after 15 minutes instead of an hour as of 2026-01-27. [decision; valid 2026-01-27 to now; recorded by standup/boreal/2026-01-27]\n- Diego carried the Cinder on-call phone from 2025-11-25 until 2025-12-15, when Yuki took over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is back on the Cinder on-call rotation as of 2025-11-25, carrying the phone until the next rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Diego is off the Cinder on-call rotation as of 2025-10-02. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n- The authentication gateway went to team Boreal as of 2025-07-01, not the Cinder team; Cinder never owned it. [decision; valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n    earlier: The authentication gateway lives with team Cinder as of 2025-07-01. [decision; valid 2025-07-01 to 2025-07-18; recorded by handover/2025-07-01-auth-gateway]\n    earlier: The authentication gateway lives with team Ember. [valid 2025-01-20 to 2025-07-01; recorded by standup/ember/2025-01-20-2]\n- The product catalog lived with the Cinder team from 2025-01-17 until 2025-10-20, when it moved to the Boreal team. [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: The product catalog lives with the Cinder team as of 2025-01-17. [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- Tomasz was on call for Team Dune from 2025-09-04 until 2025-11-03, when Farah took over as primary. [decision; valid 2025-11-03 to now; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Team Dune as of 2025-09-04, after Farah handed him the pager. [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Team Dune as of 2025-03-31. [valid 2025-03-31 to 2025-09-04; recorded by standup/dune/2025-03-31]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- The authentication gateway is not Team Ember's service. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n\nQuestion: Which note corrected the recorded owner of auth-gateway, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657451-IhucFXisja3mNZwVEzNz",
+  "object": "chat.completion",
+  "created": 1788657451,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "handover/2025-07-18-auth-gateway-correction, recorded 2025-07-18 (correcting the owner to Boreal, not Cinder).",
+     "refusal": null,
+     "reasoning": "The question asks: which note corrected the recorded owner of auth-gateway, and when?\n\nLooking at memory: \"The authentication gateway went to team Boreal as of 2025-07-01, not the Cinder team; Cinder never owned it. [decision; valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\"\n\nSo the note is handover/2025-07-18-auth-gateway-correction, recorded 2025-07-18 (correcting the 2025-07-01 note that said Cinder).\n\nAnswer should be one short line: handover/2025-07-18-auth-gateway-correction, on 2025-07-18.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note corrected the recorded owner of auth-gateway, and when?\n\nLooking at memory: \"The authentication gateway went to team Boreal as of 2025-07-01, not the Cinder team; Cinder never owned it. [decision; valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\"\n\nSo the note is handover/2025-07-18-auth-gateway-correction, recorded 2025-07-18 (correcting the 2025-07-01 note that said Cinder).\n\nAnswer should be one short line: handover/2025-07-18-auth-gateway-correction, on 2025-07-18.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1795,
+   "completion_tokens": 194,
+   "total_tokens": 1989,
+   "cost": 0.000175445,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000175445,
+    "upstream_inference_prompt_cost": 0.000126945,
+    "upstream_inference_completions_cost": 4.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 157,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.32733737496892,
+ "fetched_at": "2026-09-06T01:17:35Z"
+}

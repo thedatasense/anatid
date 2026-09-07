@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-10-27] incident-review/INC-2025-023: Review of INC-2025-023 (the search indexer, 2025-10-24). The root cause was a reindex job that failed silently on a full disk. We decided that reindex jobs will page on failure, because a silent reindex failure left stale results for two days in INC-2025-023.\n- [2025-08-13] standup/boreal/2025-08-13: The search indexer must stay on OpenSearch 2.11 until the full reindex completes. Reminder that reporting depends on the ledger.\n- [2026-05-22] incident-review/INC-2026-009: Incident review INC-2026-009. The scheduler ran the nightly jobs twice on 2026-05-16. Root cause: two leaders elected during a network partition. Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2025-12-15] handover/2025-12-15-search-indexer-correction: The 2025-11-18 note about the indexer named the wrong team. The Dune team took it over on that date; the Ember team did not.\n- [2025-03-28] standup/ember/2025-03-28: If feature-flags is down, the job scheduler is down: it relies on it for per-job kill switches.\n- [2025-04-18] incident-review/INC-2025-011: Incident review INC-2025-011. Ledger saw write latency spike tenfold for an hour on 2025-04-13. Root cause: an index missing after the schema migration. Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-03-06] incident-review/INC-2025-004: INC-2025-004 review. What happened: notifier missed alerts for 40 minutes on 2025-03-04. Why: a consumer offset stuck after a broker restart. Follow-up decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004.\n- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-03-21] standup/ember/2025-03-21: The job scheduler can be released on Tuesdays between 13:00 and 15:00 UTC; anything else needs an exception.\n- [2025-08-08] standup/dune/2025-08-08: New deploy window for the job scheduler: on weekdays between 08:00 and 10:00 UTC, never on Fridays. Forget the previous Tuesdays 13:00-15:00 UTC slot. Observation from the Dune team: after the marketing send, billing-api's queue depth hit 50,000.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2026-06-08] standup/atlas/2026-06-08: Reminder from team Atlas: page Priya for anything this cycle, not Marcus.\n- [2025-07-09] incident-review/INC-2025-017: Incident review INC-2025-017. Auth-gateway rejected every login for 12 minutes on 2025-07-06. Root cause: an expired intermediate certificate. Decision: certificate expiry will alert 30 days ahead, because an expired intermediate certificate took logins down in INC-2025-017.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2026-02-11] incident-review/INC-2026-003: Incident review INC-2026-003. The webhook dispatcher delivered some events twice on 2026-02-08. Root cause: a retry loop that ignored idempotency keys. Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one.\n- [2025-02-19] standup/atlas/2025-02-19: Reminder from the Atlas team: page Priya Raman for anything this cycle, not Tomasz. Priya Raman runs the quarterly capacity review.\n- [2026-03-20] standup/dune/2026-03-20: Decision: image-resizer will keep original uploads for 90 days only, because storage for originals doubled in six months.\n- [2025-11-03] standup/dune/2025-11-03-2: For newcomers: the deploy window for the job scheduler is still on weekdays between 08:00 and 10:00 UTC, never on Fridays.\n- [2025-05-14] standup/atlas/2025-05-14: Reminder from team Atlas: page Priya for anything this cycle, not Tomasz.\n- [2025-03-31] standup/boreal/2025-03-31: Reminder from Boreal: page Marcus for anything this cycle, not Lena.\n\nQuestion: Which note records the decision that reindex jobs will page on failure, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652615-7vsPoTmrekzZrH8dcUSG",
+  "object": "chat.completion",
+  "created": 1788652615,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "incident-review/INC-2025-023, 2025-10-27",
+     "refusal": null,
+     "reasoning": "The question asks: which note records the decision that reindex jobs will page on failure, and when was it written?\n\nFrom memory: [2025-10-27] incident-review/INC-2025-023: Review of INC-2025-023... Decision: reindex jobs will page on failure.\n\nSo the note is incident-review/INC-2025-023, written 2025-10-27.\n\nThe instruction says reply in one short line with just the value asked for. The question asks for the note and the date. So: \"incident-review/INC-2025-023, 2025-10-27\"",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: which note records the decision that reindex jobs will page on failure, and when was it written?\n\nFrom memory: [2025-10-27] incident-review/INC-2025-023: Review of INC-2025-023... Decision: reindex jobs will page on failure.\n\nSo the note is incident-review/INC-2025-023, written 2025-10-27.\n\nThe instruction says reply in one short line with just the value asked for. The question asks for the note and the date. So: \"incident-review/INC-2025-023, 2025-10-27\"",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1584,
+   "completion_tokens": 157,
+   "total_tokens": 1741,
+   "cost": 0.00015037,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015037,
+    "upstream_inference_prompt_cost": 0.00011112,
+    "upstream_inference_completions_cost": 3.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 137,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.5639100420521572,
+ "fetched_at": "2026-09-05T23:56:58Z"
+}

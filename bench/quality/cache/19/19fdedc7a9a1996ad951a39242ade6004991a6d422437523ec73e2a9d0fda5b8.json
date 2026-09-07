@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-04-08, the Atlas team observed that webhooks' request volume halved following the client rollout, and since it was not their service, they flagged it. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- The job scheduler depends on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- As of 2025-09-30, the billing API depends on the feature flag service. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The Ember team handed the authentication gateway to Cinder on 2025-09-16; Cinder owns it as of that date. [decision; valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: The Ember team owns the authentication gateway. [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n- The reporting service no longer depends on the ledger service for the nightly balance export; as of 2025-09-23 it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- The Dune team owns the reports pipeline as of 2025-03-20. [valid 2025-03-20 to now; recorded by standup/dune/2025-03-20]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The Boreal team observed on 2025-11-03 that the notification service's CPU sat at 90 percent after the traffic shift. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n- On 2026-03-20, the Boreal team observed that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- As of 2025-10-13, the ledger service is owned by Cinder; ownership transferred from the Atlas team on that date. [decision; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n    earlier: As of 2025-07-17, the ledger service is owned by the Atlas team. [valid 2025-07-17 to 2025-10-13; recorded by standup/atlas/2025-07-17]\n    earlier: The ledger service is owned by the Atlas team. [valid 2025-01-08 to 2025-07-17; recorded by standup/atlas/2025-01-08]\n- The Cinder team owns the job scheduler as of 2025-09-23, when ownership transferred from the Dune team. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The Dune team owns the job scheduler as of 2025-09-05. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2025-11-24, the Atlas team owns the bus, having taken it over from the Boreal team. [decision; valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: The Boreal team looks after the bus. [valid 2025-01-09 to 2025-11-24; recorded by standup/boreal/2025-01-09]\n- The Atlas team owns the image resizer as of 2025-11-26, when ownership transferred from the Ember team. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The Ember team owns the image resizer as of 2025-03-20. [decision; valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: The Dune team owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- As of 2025-12-19, the Atlas team owns the product catalog, having taken it over from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- On 2025-12-31, the Atlas team observed that the feature-flags service's queue depth hit 50,000 following the marketing send, and since it was not their service, they flagged it. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- On 2026-04-16, the Atlas team observed that the ledger service's disk usage jumped 30 percent following the retention change, and since it was not their service, they flagged it. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n\nQuestion: Which team owns the service that webhooks depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653393-UdLSuSdwO8XFUco9edWK",
+  "object": "chat.completion",
+  "created": 1788653393,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question: Which team owns the service that webhooks depends on?\n\nHmm, do I have any memory about webhooks' dependencies? Let me scan the memory entries.\n\nMemory entries:\n1. Atlas team observed webhooks' request volume halved — flagged, not their service. Doesn't say dependency.\n2. Job scheduler depends on feature-flags service.\n3. Ember team owns reporting service.\n4. Billing API depends on ledger service.\n5. Billing API depends on feature flag service.\n6. Auth gateway handover to Cinder.\n7. Pager for webhooks rings Boreal team.\n8. Reporting service uses bus as source.\n9. Dune team owns reports pipeline.\n10. Indexer depends on product catalog.\n11. Notification service CPU.\n12. Catalog disk usage.\n13. Ledger ownership Cinder.\n14. Job scheduler ownership Cinder.\n15. Bus ownership Atlas.\n16. Image resizer ownership Atlas.\n17. Product catalog ownership Atlas.\n18. Feature-flags queue depth.\n19. Ledger disk usage.\n\nNothing says webhooks depends on any service. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: Which team owns the service that webhooks depends on?\n\nHmm, do I have any memory about webhooks' dependencies? Let me scan the memory entries.\n\nMemory entries:\n1. Atlas team observed webhooks' request volume halved — flagged, not their service. Doesn't say dependency.\n2. Job scheduler depends on feature-flags service.\n3. Ember team owns reporting service.\n4. Billing API depends on ledger service.\n5. Billing API depends on feature flag service.\n6. Auth gateway handover to Cinder.\n7. Pager for webhooks rings Boreal team.\n8. Reporting service uses bus as source.\n9. Dune team owns reports pipeline.\n10. Indexer depends on product catalog.\n11. Notification service CPU.\n12. Catalog disk usage.\n13. Ledger ownership Cinder.\n14. Job scheduler ownership Cinder.\n15. Bus ownership Atlas.\n16. Image resizer ownership Atlas.\n17. Product catalog ownership Atlas.\n18. Feature-flags queue depth.\n19. Ledger disk usage.\n\nNothing says webhooks depends on any service. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1716,
+   "completion_tokens": 231,
+   "total_tokens": 1947,
+   "cost": 0.00035754,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00035754,
+    "upstream_inference_prompt_cost": 0.00024204,
+    "upstream_inference_completions_cost": 0.0001155
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 225,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0768524590530433,
+ "fetched_at": "2026-09-06T00:09:56Z"
+}

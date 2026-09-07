@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note first recorded that webhooks depends on the event-bus, and when?\nGold answer: standup/boreal/2025-02-13 (2025-02-13)\nAlso accepted: standup/boreal/2025-02-13; 2025-02-13; 13 February 2025; February 13, 2025; the standup note of 2025-02-13; the standup note of 13 February 2025; the standup note of February 13, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: standup/boreal/2025-02-13, recorded 2025-02-13."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659029-c8gOcPiHkRWj4Li0Ea5U",
+  "object": "chat.completion",
+  "created": 1788659029,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer identifies the exact source label of the gold note, standup/boreal/2025-02-13, along with the matching date 2025-02-13.\"}",
+     "refusal": null,
+     "reasoning": "The answer to grade is \"standup/boreal/2025-02-13, recorded 2025-02-13.\"\n\nThe gold answer is \"standup/boreal/2025-02-13 (2025-02-13)\".\n\nThe grading rule says: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date.\n\nThe answer identifies the source label \"standup/boreal/2025-02-13\" which matches the gold label exactly. So this is correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer to grade is \"standup/boreal/2025-02-13, recorded 2025-02-13.\"\n\nThe gold answer is \"standup/boreal/2025-02-13 (2025-02-13)\".\n\nThe grading rule says: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date.\n\nThe answer identifies the source label \"standup/boreal/2025-02-13\" which matches the gold label exactly. So this is correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 352,
+   "completion_tokens": 159,
+   "total_tokens": 511,
+   "cost": 4.695e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 4.695e-05,
+    "upstream_inference_prompt_cost": 7.2e-06,
+    "upstream_inference_completions_cost": 3.975e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 110,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.4730623330106027,
+ "fetched_at": "2026-09-06T01:43:51Z"
+}

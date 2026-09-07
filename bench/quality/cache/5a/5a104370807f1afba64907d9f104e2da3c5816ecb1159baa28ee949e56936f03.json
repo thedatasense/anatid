@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2026-06-09, the Dune team observed that the indexer's disk usage jumped 30 percent after the retention change. [valid 2026-06-09 to now; recorded by standup/dune/2026-06-09]\n- On 2026-06-04, the Boreal team observed that the catalog service's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-06-04 to now; recorded by standup/boreal/2026-06-04]\n- As of 2026-06-04, for anything Atlas-related, page Priya Raman, not Marcus, since she has the Atlas team pager this cycle. [decision; valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n    earlier: As of 2026-04-08, for anything Atlas-related, page Marcus, not Priya Raman. [decision; valid 2026-04-08 to 2026-06-04; recorded by standup/atlas/2026-04-08]\n    earlier: For anything Atlas-related, page Priya Raman. [decision; valid 2026-03-17 to 2026-04-08; recorded by standup/atlas/2026-03-17]\n- As of 2026-06-04, Priya Raman has the Atlas team pager this cycle, taking over from Marcus. [valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n- On 2026-05-27, the Atlas team observed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-05-27, the Atlas team decided that the bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far. [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- On 2026-05-22, the Dune team observed that the job scheduler's error rate crept up to 2 percent after the dependency bump. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-3]\n- The job scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009. [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- During INC-2026-009, the job scheduler ran the nightly jobs twice on 2026-05-16. [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, when ownership passed from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- As of 2026-04-01, the pager for the indexer rings the Boreal team, not the Atlas team. [constraint; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n- The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- On 2026-03-20, the Boreal team observed that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- As of 2026-03-20, the Atlas team consists of Priya Raman and Marcus, after Marcus moved from the Boreal team. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: As of 2025-07-30, the Atlas team consists of Priya Raman, after Tomasz left the team to join the Dune team. [valid 2025-07-30 to 2026-03-20; recorded by standup/atlas/2025-07-30]\n    earlier: The Atlas team in 2025 consists of Priya Raman and Tomasz. [valid 2025-01-06 to 2025-07-30; recorded by standup/atlas/2025-01-06]\n\nQuestion: Which team was Lena on before joining Boreal?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654309-TSts10p8XxaJzq7P6q3Z",
+  "object": "chat.completion",
+  "created": 1788654309,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which team Lena was on before joining Boreal. Looking through the memory, I don't see any mention of Lena at all. There's mention of Priya Raman, Marcus, Tomasz, teams like Atlas, Boreal, Dune, Cinder. But no Lena.\n\nSo the answer is: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Lena was on before joining Boreal. Looking through the memory, I don't see any mention of Lena at all. There's mention of Priya Raman, Marcus, Tomasz, teams like Atlas, Boreal, Dune, Cinder. But no Lena.\n\nSo the answer is: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1332,
+   "completion_tokens": 74,
+   "total_tokens": 1406,
+   "cost": 0.00010304,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 256,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00010304,
+    "upstream_inference_prompt_cost": 8.454e-05,
+    "upstream_inference_completions_cost": 1.85e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 68,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.6369924169848673,
+ "fetched_at": "2026-09-06T00:25:10Z"
+}

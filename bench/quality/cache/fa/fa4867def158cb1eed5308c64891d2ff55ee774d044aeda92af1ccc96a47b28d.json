@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The root cause of INC-2025-017 was an expired intermediate certificate. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n- During INC-2025-017, the authentication gateway rejected every login for 12 minutes on 2025-08-02. [valid 2025-08-07 to now; recorded by incident-review/INC-2025-017]\n\nQuestion: On what date was the review of INC-2025-017 written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654289-XEwLfRyuLbcQQhTbY5Em",
+  "object": "chat.completion",
+  "created": 1788654289,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-08-07",
+     "refusal": null,
+     "reasoning": "The memory says entries are recorded by incident-review/INC-2025-017, and they are valid from 2025-08-07. The question asks: On what date was the review of INC-2025-017 written?\n\nThe memory entries were recorded 2025-08-07 (valid from that date, recorded by incident-review/INC-2025-017). The review date can be inferred as 2025-08-07, since that's when the entries were recorded.\n\nThe instruction says \"Answer only from the memory provided. Do not use outside knowledge and do not guess.\" Is the recording date part of the memory? Yes — \"valid 2025-08-07 to now; recorded by incident-review/INC-2025-017\" indicates the record was recorded on 2025-08-07.\n\nSo the answer: 2025-08-07.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says entries are recorded by incident-review/INC-2025-017, and they are valid from 2025-08-07. The question asks: On what date was the review of INC-2025-017 written?\n\nThe memory entries were recorded 2025-08-07 (valid from that date, recorded by incident-review/INC-2025-017). The review date can be inferred as 2025-08-07, since that's when the entries were recorded.\n\nThe instruction says \"Answer only from the memory provided. Do not use outside knowledge and do not guess.\" Is the recording date part of the memory? Yes — \"valid 2025-08-07 to now; recorded by incident-review/INC-2025-017\" indicates the record was recorded on 2025-08-07.\n\nSo the answer: 2025-08-07.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 298,
+   "completion_tokens": 197,
+   "total_tokens": 495,
+   "cost": 6.392e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 6.392e-05,
+    "upstream_inference_prompt_cost": 1.467e-05,
+    "upstream_inference_completions_cost": 4.925e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 189,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.0810020419885404,
+ "fetched_at": "2026-09-06T00:24:52Z"
+}

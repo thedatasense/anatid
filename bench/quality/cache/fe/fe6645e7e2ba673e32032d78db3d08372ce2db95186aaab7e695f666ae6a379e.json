@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Yuki is on call for Cinder [valid 2025-11-27 to now; recorded by standup/cinder/2025-11-27]\n    earlier: Diego is on call for Cinder [valid 2025-10-24 to 2025-11-27; recorded by standup/cinder/2025-10-24]\n    earlier: Yuki is on call for Cinder [valid 2025-09-05 to 2025-10-24; recorded by standup/cinder/2025-09-05]\n    earlier: Diego is on call for Cinder [valid 2025-07-17 to 2025-09-05; recorded by standup/cinder/2025-07-17]\n    earlier: Yuki is on call for Cinder [valid 2025-06-06 to 2025-07-17; recorded by standup/cinder/2025-06-06]\n    earlier: Diego is on call for Cinder [valid 2025-04-24 to 2025-06-06; recorded by standup/cinder/2025-04-24]\n    earlier: Yuki is on call for Cinder [valid 2025-02-27 to 2025-04-24; recorded by standup/cinder/2025-02-27]\n    earlier: Diego is on call for Cinder [valid 2025-01-09 to 2025-02-27; recorded by standup/cinder/2025-01-09]\n- Cinder owns the scheduler [valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: Dune owns the scheduler [valid 2025-06-25 to 2025-09-23; recorded by handover/2025-06-25-scheduler]\n    earlier: Ember owns the scheduler [valid 2025-01-20 to 2025-06-25; recorded by standup/ember/2025-01-20]\n- Cinder holds its planning meeting on Mondays [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- Cinder sits on the third floor [valid 2025-10-16 to now; recorded by standup/cinder/2025-10-16]\n- The handover note of 2025-06-11 wrongly recorded Cinder as the owner of the notifier [valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n- Cinder owns the ledger [valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n    earlier: Atlas owns the ledger [valid 2025-01-08 to 2025-10-13; recorded by standup/atlas/2025-01-08]\n- Cinder owns auth-gateway [valid 2025-09-16 to now; recorded by handover/2025-09-16-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-09-16; recorded by standup/ember/2025-01-20]\n- Yuki is a member of Cinder [valid 2025-01-08 to now; recorded by standup/cinder/2025-01-08]\n- Cinder noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- Cinder noticed that billing-api's cold start time tripled after the runtime upgrade [observation; valid 2026-03-11 to now; recorded by standup/cinder/2026-03-11-2]\n- Cinder noticed that auth-gateway's cold start time tripled after the runtime upgrade [observation; valid 2025-09-03 to now; recorded by standup/cinder/2025-09-03-2]\n- Cinder adopted trunk-based development [valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14-2]\n- INC-2026-009: the scheduler ran the nightly jobs twice on 2026-05-16; the root cause was two leaders elected during a network partition [valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- Cinder noticed that webhooks's memory use grew steadily for a week after the cache change [observation; valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n- INC-2025-011: the ledger saw write latency spike tenfold for an hour on 2025-05-24; the root cause was an index missing after the schema migration [valid 2025-05-30 to now; recorded by incident-review/INC-2025-011]\n- The scheduler deploys only on Tuesdays and Fridays between 09:00 and 10:30 UTC [constraint; valid 2025-08-19 to now; recorded by standup/dune/2025-08-19]\n    earlier: The scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC [constraint; valid 2025-02-06 to 2025-08-19; recorded by standup/ember/2025-02-06]\n- Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009 [decision; valid 2026-05-19 to now; recorded by incident-review/INC-2026-009]\n- No deploys to billing-api from 2025-11-24 to 2025-12-02 because of the peak season [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC [constraint; valid 2025-08-25 to now; recorded by standup/atlas/2025-08-25]\n    earlier: The ledger deploys only on weekday mornings before 11:00 UTC [constraint; valid 2025-01-14 to 2025-08-25; recorded by standup/atlas/2025-01-14]\n\nQuestion: Who was on call for Cinder on 2025-02-10?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654475-sfwKRMJ2AZzb1RitoRHU",
+  "object": "chat.completion",
+  "created": 1788654475,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Diego",
+     "refusal": null,
+     "reasoning": "The question asks who was on call for Cinder on 2025-02-10. Looking at the memory entries:\n\n- Diego is on call for Cinder [valid 2025-01-09 to 2025-02-27]\n- Yuki is on call for Cinder [valid 2025-02-27 to 2025-04-24]\n\n2025-02-10 falls within 2025-01-09 to 2025-02-27, so Diego was on call.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was on call for Cinder on 2025-02-10. Looking at the memory entries:\n\n- Diego is on call for Cinder [valid 2025-01-09 to 2025-02-27]\n- Yuki is on call for Cinder [valid 2025-02-27 to 2025-04-24]\n\n2025-02-10 falls within 2025-01-09 to 2025-02-27, so Diego was on call.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1592,
+   "completion_tokens": 109,
+   "total_tokens": 1701,
+   "cost": 0.00013897,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013897,
+    "upstream_inference_prompt_cost": 0.00011172,
+    "upstream_inference_completions_cost": 2.725e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 105,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8175555419875309,
+ "fetched_at": "2026-09-06T00:27:57Z"
+}

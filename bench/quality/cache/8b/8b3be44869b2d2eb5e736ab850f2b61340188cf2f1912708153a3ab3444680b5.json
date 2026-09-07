@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The billing service depends on the ledger for invoice postings. [valid 2025-03-10 to now; recorded by standup/atlas/2025-03-10]\n- The ledger depends on the auth gateway for service tokens. [valid 2025-03-17 to now; recorded by standup/atlas/2025-03-17]\n- As of 2025-12-29, the ledger remains an Ember team service. [valid 2025-12-29 to now; recorded by standup/ember/2025-12-29-2]\n- As of 2025-11-13, the ledger lives with the Ember team; Team Atlas kept it until then. [valid 2025-11-13 to now; recorded by handover/2025-11-13-ledger]\n    earlier: The ledger lives with Team Atlas. [valid 2025-01-08 to 2025-11-13; recorded by standup/atlas/2025-01-08]\n- On 2025-09-08, the Team Boreal on-call swapped and Marcus carries the phone until the next rotation. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08]\n- As of 2026-04-16, the ledger deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC; the old Wednesday 09:00-11:00 UTC slot is retired. [constraint; valid 2026-04-16 to now; recorded by standup/ember/2026-04-16]\n    earlier: Per the change policy, the ledger deploys on Wednesdays between 09:00 and 11:00 UTC. [constraint; valid 2025-04-18 to 2026-04-16; recorded by standup/atlas/2025-04-18]\n- On 2026-01-13, Team Atlas noticed that the ledger's memory use grew steadily for a week after the cache change and pinged the owners. [valid 2026-01-13 to now; recorded by standup/atlas/2026-01-13]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- As of 2025-12-23, the auth gateway is owned by Team Atlas; Team Boreal kept it until then. [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: As of 2025-03-31, the auth gateway is a Team Boreal service. [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: The auth gateway is an Ember team service. [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- As of the 2025-06-05 rotation day, Marcus is the primary on-call for Team Boreal, and Lena is off rotation. [valid 2025-06-05 to now; recorded by standup/boreal/2025-06-05]\n    earlier: As of the 2025-04-16 rotation day, Lena carries the Team Boreal on-call phone, having received the pager from Marcus. [valid 2025-04-16 to 2025-06-05; recorded by standup/boreal/2025-04-16]\n    earlier: Marcus carries the Team Boreal on-call phone from the 2025-02-27 rotation swap until the next rotation. [valid 2025-02-27 to 2025-04-16; recorded by standup/boreal/2025-02-27]\n- On 2026-06-18, the Ember team on-call swapped and Diego carries the phone until the next rotation. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n- On the 2026-02-12 rotation day, the Ember team on-call swapped and Oskar carries the phone until the next rotation. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n    earlier: As of the 2025-12-29 rotation day, Diego is on call for the Ember team, having received the pager from Oskar. [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n- On 2025-03-17, Team Atlas handed the billing service to Team Boreal. [valid 2025-03-17 to now; recorded by handover/2025-03-17-billing-api]\n- On 2025-04-26, the ledger saw write latency spike tenfold for an hour during INC-2025-011. [valid 2025-04-28 to now; recorded by incident-review/INC-2025-011]\n- On the 2026-02-04 rotation day, Team Dune's on-call swapped and Tomasz Nowak carries the phone until the next rotation. [valid 2026-02-04 to now; recorded by standup/dune/2026-02-04]\n- On 2025-07-10, the Team Cinder on-call swapped and Yuki carries the phone until the next rotation. [valid 2025-07-10 to now; recorded by standup/cinder/2025-07-10]\n- On 2026-01-05, Team Cinder observed that the ledger's disk usage jumped 30 percent after the retention change. [valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- The ledger has no deploys from 2026-03-30 to 2026-04-03 because of the fiscal year close. [constraint; valid 2026-03-19 to now; recorded by standup/ember/2026-03-19]\n\nQuestion: Who is on call for the team that owns the service the ledger depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654292-9x9YiwO9ANUpossWkvMx",
+  "object": "chat.completion",
+  "created": 1788654292,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "StreamLake",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The ledger depends on the auth gateway (recorded 2025-03-17, still valid). The auth gateway is owned by Team Atlas as of 2025-12-23 to now. Team Atlas on-call — do I have any info on Team Atlas on-call? Let me check.\n\nOn-call entries:\n- Team Boreal: Marcus (2025-09-08 swap, carries phone until next rotation) — but earlier entry says as of 2025-06-05 rotation, Marcus is primary, Lena off rotation. The 2025-09-08 entry is later, Marcus carries phone until next rotation. No later rotation for Boreal recorded, so Marcus carries.\n- Ember: Diego (2026-06-18).\n- Dune: Tomasz Nowak (2026-02-04).\n- Cinder: Yuki (2025-07-10).\n\nTeam Atlas on-call — no entries. So the answer: I don't know.\n\nWait, does the ledger depend on the auth gateway? Yes: \"The ledger depends on the auth gateway for service tokens. [valid 2025-03-17 to now]\". Auth gateway owner: Team Atlas (as of 2025-12-23 to now). No Team Atlas on-call info in memory. Answer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The ledger depends on the auth gateway (recorded 2025-03-17, still valid). The auth gateway is owned by Team Atlas as of 2025-12-23 to now. Team Atlas on-call — do I have any info on Team Atlas on-call? Let me check.\n\nOn-call entries:\n- Team Boreal: Marcus (2025-09-08 swap, carries phone until next rotation) — but earlier entry says as of 2025-06-05 rotation, Marcus is primary, Lena off rotation. The 2025-09-08 entry is later, Marcus carries phone until next rotation. No later rotation for Boreal recorded, so Marcus carries.\n- Ember: Diego (2026-06-18).\n- Dune: Tomasz Nowak (2026-02-04).\n- Cinder: Yuki (2025-07-10).\n\nTeam Atlas on-call — no entries. So the answer: I don't know.\n\nWait, does the ledger depend on the auth gateway? Yes: \"The ledger depends on the auth gateway for service tokens. [valid 2025-03-17 to now]\". Auth gateway owner: Team Atlas (as of 2025-12-23 to now). No Team Atlas on-call info in memory. Answer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1717,
+   "completion_tokens": 278,
+   "total_tokens": 1995,
+   "cost": 0.00039655,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00039655,
+    "upstream_inference_prompt_cost": 0.00025755,
+    "upstream_inference_completions_cost": 0.000139
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 272,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.648003583017271,
+ "fetched_at": "2026-09-06T00:24:56Z"
+}

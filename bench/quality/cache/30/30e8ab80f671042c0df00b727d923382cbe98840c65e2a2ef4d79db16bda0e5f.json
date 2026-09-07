@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-01-22, the product catalog deploy window remains weekdays between 08:00 and 10:00 UTC, never on Fridays. [constraint; valid 2026-01-22 to now; recorded by standup/atlas/2026-01-22]\n- The notifier depends on the bus for delivery events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- As of 2025-09-30, the billing API depends on the feature flag service. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The job scheduler depends on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- As of 2025-10-13, the ledger service is owned by Cinder; ownership transferred from the Atlas team on that date. [decision; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n    earlier: As of 2025-07-17, the ledger service is owned by the Atlas team. [valid 2025-07-17 to 2025-10-13; recorded by standup/atlas/2025-07-17]\n    earlier: The ledger service is owned by the Atlas team. [valid 2025-01-08 to 2025-07-17; recorded by standup/atlas/2025-01-08]\n- On 2026-04-14, the Dune team observed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- On 2026-05-28, the Ember team observed that the ledger service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-28 to now; recorded by standup/ember/2026-05-28]\n- The webhook dispatcher depends on the bus for outbound events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- The notifier is owned by the Dune team as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-27 to now; recorded by handover/2025-06-27-notifier-correction]\n    earlier: The notifier is owned by Cinder as of 2025-06-11, when ownership passed from the Boreal team. [decision; valid 2025-06-11 to 2025-06-27; recorded by handover/2025-06-11-notifier]\n    earlier: The Boreal team owns the notifier. [valid 2025-01-09 to 2025-06-11; recorded by standup/boreal/2025-01-09-2]\n- The reporting service no longer depends on the ledger service for the nightly balance export; as of 2025-09-23 it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- The Cinder team reported on 2025-04-24 that feature-flags' p99 latency doubled after Tuesday's deploy. [valid 2025-04-24 to now; recorded by standup/cinder/2025-04-24-2]\n- As of 2026-02-11, the feature-flags service is owned by the Atlas team; ownership transferred from the Ember team on that date, and the Dune team never owned it. [decision; valid 2026-03-09 to now; recorded by handover/2026-03-09-feature-flags-correction]\n    earlier: As of 2026-02-11, the feature-flags service is owned by the Dune team; ownership transferred from the Ember team on that date. [decision; valid 2026-02-11 to 2026-03-09; recorded by handover/2026-02-11-feature-flags]\n    earlier: As of 2025-11-06, the feature-flags service is owned by the Ember team; ownership transferred from the Atlas team on that date. [decision; valid 2025-11-06 to 2026-02-11; recorded by handover/2025-11-06-feature-flags]\n    earlier: The feature-flags service is owned by the Atlas team. [valid 2025-01-08 to 2025-11-06; recorded by standup/atlas/2025-01-08-2]\n- On 2026-05-27, the Atlas team observed that the indexer's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- As of 2026-02-03, the Atlas team observes a no-deploy Friday, with no deployments on Fridays. [decision; valid 2026-02-03 to now; recorded by standup/atlas/2026-02-03]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- The notifier missed alerts for 40 minutes on 2025-02-01 during incident INC-2025-004. [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- As of 2025-02-21, the notifier will retry failed pushes three times with exponential backoff. [decision; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n\nQuestion: What is the deploy window of the service that the notifier depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653440-rSZB5vqTFkiNxsE0n5Yu",
+  "object": "chat.completion",
+  "created": 1788653440,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The notifier depends on the bus for delivery events. What is the deploy window of the bus? Memory doesn't mention a deploy window for the bus. The only deploy window mentioned is for the product catalog (weekdays 08:00-10:00 UTC). The notifier depends on the bus, not the product catalog. So the answer is not in memory.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The notifier depends on the bus for delivery events. What is the deploy window of the bus? Memory doesn't mention a deploy window for the bus. The only deploy window mentioned is for the product catalog (weekdays 08:00-10:00 UTC). The notifier depends on the bus, not the product catalog. So the answer is not in memory.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1610,
+   "completion_tokens": 79,
+   "total_tokens": 1689,
+   "cost": 0.00012898,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012898,
+    "upstream_inference_prompt_cost": 0.00010923,
+    "upstream_inference_completions_cost": 1.975e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 73,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8866860829875804,
+ "fetched_at": "2026-09-06T00:10:42Z"
+}

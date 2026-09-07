@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- As of 2026-04-13, the Ember team still owns the reporting service. [valid 2026-04-13 to now; recorded by standup/ember/2026-04-13-2]\n- The reporting service no longer depends on the ledger service for the nightly balance export; as of 2025-09-23 it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- As of 2026-05-29, Oskar is the primary on-call for the Ember team. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Diego is the primary on-call for the Ember team. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- The billing API depends on the ledger service for invoice postings. [valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09-2]\n- Priya Raman is the primary on-call for the Atlas team as of 2025-07-30, when on-call passed from Tomasz. [valid 2025-07-30 to now; recorded by standup/atlas/2025-07-30]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-06-19, until the next rotation. [valid 2025-06-19 to 2025-07-30; recorded by standup/atlas/2025-06-19]\n    earlier: Priya Raman is the primary on-call for the Atlas team as of 2025-05-13, until the next rotation. [valid 2025-05-13 to 2025-06-19; recorded by standup/atlas/2025-05-13]\n    earlier: Tomasz is the primary on-call for the Atlas team as of 2025-04-03, replacing Priya Raman. [valid 2025-04-03 to 2025-05-13; recorded by standup/atlas/2025-04-03]\n    earlier: Priya Raman is the primary on-call for the Atlas team starting 2025-02-12. [valid 2025-02-12 to 2025-04-03; recorded by standup/atlas/2025-02-12]\n- Diego is on call for Cinder to start the year. [valid 2025-01-09 to now; recorded by standup/cinder/2025-01-09]\n- The notifier depends on the bus for delivery events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- The webhook dispatcher depends on the bus for outbound events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- As of 2025-12-05, the reporting service is owned by the Ember team, having transferred from the Dune team. [decision; valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n    earlier: The reporting service is a Dune team service. [valid 2025-01-20 to 2025-12-05; recorded by standup/dune/2025-01-20-2]\n- As of 2026-04-14, Farah is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14]\n    earlier: As of 2026-03-11, Tomasz is primary on-call for the Dune team, having taken over from Farah. [valid 2026-03-11 to 2026-04-14; recorded by standup/dune/2026-03-11]\n    earlier: As of 2026-01-16, Farah Haddad is primary on-call for the Dune team, having taken over from Tomasz. [valid 2026-01-16 to 2026-03-11; recorded by standup/dune/2026-01-16]\n    earlier: As of 2025-12-10, Tomasz Nowak has the Dune team pager, having taken over from Farah. [valid 2025-12-10 to 2026-01-16; recorded by standup/dune/2025-12-10]\n    earlier: As of 2025-11-17, Farah still has the Dune team pager. [valid 2025-11-17 to 2025-12-10; recorded by standup/dune/2025-11-17]\n- As of 2025-12-05, the pager for the reporting service rings the Ember team, not the Dune team. [valid 2025-12-05 to now; recorded by handover/2025-12-05-reporting]\n- The job scheduler depends on the feature-flags service. [valid 2025-04-29 to now; recorded by standup/ember/2025-04-29]\n- As of 2026-01-16, Tomasz is off the Dune team on-call rotation. [valid 2026-01-16 to now; recorded by standup/dune/2026-01-16]\n- As of 2026-05-29, Diego is off the Ember team on-call rotation. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of 2026-01-15, Oskar is off the Ember team on-call rotation. [valid 2026-01-15 to 2026-05-29; recorded by standup/ember/2026-01-15]\n- On 2026-04-14, the Dune team observed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners. [valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- As of 2025-09-30, the billing API depends on the feature flag service. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The indexer depends on the product catalog for product documents. [valid 2025-01-30 to now; recorded by standup/cinder/2025-01-30]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n\nQuestion: Who is on call for the team that owns the service reporting depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653335-n8r4BlFNuw43joDWYU2R",
+  "object": "chat.completion",
+  "created": 1788653335,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "SiliconFlow",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The reporting service depends on... As of 2025-09-23, the reporting service uses the bus as its source for the nightly balance export (no longer ledger service). So the reporting service depends on the bus.\n\nThe bus is a service. Which team owns the bus? The memory doesn't explicitly say which team owns the bus. Let me check: entries mention notifier depends on bus, webhook dispatcher depends on bus. Ownership of the bus is not stated.\n\nHmm, wait. \"the team that owns the service reporting depends on\" — reporting depends on the bus (currently). Who owns the bus? Not stated in memory.\n\nAlternatively, maybe the question intends the ledger service (if considered at a past time)? But \"now\" — reporting depends on the bus, not ledger.\n\nThe memory doesn't state the owner of the bus. So the answer would be \"I don't know\".\n\nWait — but maybe consider dependencies: billing API depends on ledger, notifier depends on bus... No ownership of bus.\n\nActually, let's double-check: reporting service owner is Ember team. The question asks about the team that owns the service that reporting depends on. Reporting depends on the bus (currently). Owner of the bus: unknown. So \"I don't know\".\n\nUnless the question intends \"reporting depends on ledger\" historically, and ledger's owner... also not stated. So I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The reporting service depends on... As of 2025-09-23, the reporting service uses the bus as its source for the nightly balance export (no longer ledger service). So the reporting service depends on the bus.\n\nThe bus is a service. Which team owns the bus? The memory doesn't explicitly say which team owns the bus. Let me check: entries mention notifier depends on bus, webhook dispatcher depends on bus. Ownership of the bus is not stated.\n\nHmm, wait. \"the team that owns the service reporting depends on\" — reporting depends on the bus (currently). Who owns the bus? Not stated in memory.\n\nAlternatively, maybe the question intends the ledger service (if considered at a past time)? But \"now\" — reporting depends on the bus, not ledger.\n\nThe memory doesn't state the owner of the bus. So the answer would be \"I don't know\".\n\nWait — but maybe consider dependencies: billing API depends on ledger, notifier depends on bus... No ownership of bus.\n\nActually, let's double-check: reporting service owner is Ember team. The question asks about the team that owns the service that reporting depends on. Reporting depends on the bus (currently). Owner of the bus: unknown. So \"I don't know\".\n\nUnless the question intends \"reporting depends on ledger\" historically, and ledger's owner... also not stated. So I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1790,
+   "completion_tokens": 289,
+   "total_tokens": 2079,
+   "cost": 0.000413,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000413,
+    "upstream_inference_prompt_cost": 0.0002685,
+    "upstream_inference_completions_cost": 0.0001445
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 283,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 8.898616457998287,
+ "fetched_at": "2026-09-06T00:09:04Z"
+}

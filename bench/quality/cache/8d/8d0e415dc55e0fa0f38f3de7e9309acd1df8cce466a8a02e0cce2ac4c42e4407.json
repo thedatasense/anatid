@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which note recorded Marcus's move to Atlas, and when?\nGold answer: standup/boreal/2026-03-17 (2026-03-17)\nAlso accepted: standup/boreal/2026-03-17; 2026-03-17; 17 March 2026; March 17, 2026; the standup note of 2026-03-17; the standup note of 17 March 2026; the standup note of March 17, 2026\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: I don't know"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659093-TxTt4FifCQTkItIVe2FR",
+  "object": "chat.completion",
+  "created": 1788659093,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer 'I don't know' fails to identify the gold note (standup/boreal/2026-03-17) or its kind together with the date 2026-03-17.\"}\n",
+     "refusal": null,
+     "reasoning": "The question asks which note recorded Marcus's move to Atlas and when. The gold answer is standup/boreal/2026-03-17. The answer to grade is \"I don't know\" which doesn't identify the source label or the date. So it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which note recorded Marcus's move to Atlas and when. The gold answer is standup/boreal/2026-03-17. The answer to grade is \"I don't know\" which doesn't identify the source label or the date. So it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 330,
+   "completion_tokens": 115,
+   "total_tokens": 445,
+   "cost": 3.43e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 320,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.43e-05,
+    "upstream_inference_prompt_cost": 5.55e-06,
+    "upstream_inference_completions_cost": 2.875e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 57,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8724400830105878,
+ "fetched_at": "2026-09-06T01:44:55Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Yuki runs the monthly cost review. [valid 2025-10-13 to now; recorded by standup/cinder/2025-10-13]\n- Priya runs the quarterly capacity review. [valid 2025-06-23 to now; recorded by standup/atlas/2025-06-23]\n- Oskar runs the weekly architecture review. [valid 2026-06-16 to now; recorded by standup/ember/2026-06-16]\n- Team Dune has switched to a monthly game day. [decision; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09-2]\n- Team Atlas runs its planning meeting on Tuesdays. [valid 2025-10-31 to now; recorded by standup/atlas/2025-10-31]\n- Farah runs Team Dune solo until the next hire lands. [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- The INC-2025-023 review on 2025-10-16 decided that reindex jobs will page on failure. [decision; valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- The INC-2026-009 review found that the scheduler ran the nightly jobs twice because two leaders were elected during a network partition. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- On 2025-10-22, Team Dune agreed that the webhooks service will sign payloads with rotating keys because a partner asked for key rotation in their security review. [decision; valid 2025-10-22 to now; recorded by standup/dune/2025-10-22]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- The INC-2026-003 review on 2026-01-22 decided that the webhooks service will require an idempotency key on every delivery because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- The reports pipeline depends on the ledger for the nightly balance export. [valid 2025-03-10 to now; recorded by standup/dune/2025-03-10]\n- On the 2026-02-12 rotation day, the Ember team on-call swapped and Oskar carries the phone until the next rotation. [valid 2026-02-12 to now; recorded by standup/ember/2026-02-12]\n    earlier: As of the 2025-12-29 rotation day, Diego is on call for the Ember team, having received the pager from Oskar. [valid 2025-12-29 to 2026-02-12; recorded by standup/ember/2025-12-29]\n- The catalog service depends on the resizer for thumbnails. [valid 2025-04-15 to now; recorded by standup/dune/2025-04-15]\n- The billing service depends on the feature-flags service. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- The webhook dispatcher needs the event bus to work. [valid 2026-02-04 to now; recorded by standup/dune/2026-02-04-2]\n- On 2025-07-10, the Team Cinder on-call swapped and Yuki carries the phone until the next rotation. [valid 2025-07-10 to now; recorded by standup/cinder/2025-07-10]\n- On 2025-09-08, the Team Boreal on-call swapped and Marcus carries the phone until the next rotation. [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08]\n- On 2026-06-18, the Ember team on-call swapped and Diego carries the phone until the next rotation. [valid 2026-06-18 to now; recorded by standup/ember/2026-06-18]\n- On 2026-03-19, the Ember team observed that the scheduler's error rate crept up to 2 percent after the dependency bump and pinged the owners. [valid 2026-03-19 to now; recorded by standup/ember/2026-03-19-2]\n\nQuestion: Who runs the monthly cost review?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653590-tl3ECHWOP1M0cmK0PZLO",
+  "object": "chat.completion",
+  "created": 1788653590,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Yuki",
+     "refusal": null,
+     "reasoning": "The memory says: \"Yuki runs the monthly cost review. [valid 2025-10-13 to now]\". Question asks who runs monthly cost review. Answer: Yuki.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"Yuki runs the monthly cost review. [valid 2025-10-13 to now]\". Question asks who runs monthly cost review. Answer: Yuki.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1241,
+   "completion_tokens": 43,
+   "total_tokens": 1284,
+   "cost": 9.6145e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 9.6145e-05,
+    "upstream_inference_prompt_cost": 8.5395e-05,
+    "upstream_inference_completions_cost": 1.075e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 38,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.3303322500432841,
+ "fetched_at": "2026-09-06T00:13:11Z"
+}

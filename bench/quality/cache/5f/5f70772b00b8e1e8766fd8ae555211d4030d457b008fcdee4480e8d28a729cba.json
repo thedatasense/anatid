@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Dune own now?\nGold answer: billing-api, image-resizer, scheduler and webhooks\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 4 services.\n\nAnswer to grade: image-resizer, the job scheduler, billing-api, and webhooks."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658960-VxaN7T8deaxnuKAeO1uC",
+  "object": "chat.completion",
+  "created": 1788658960,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer names all four gold services (image-resizer, scheduler as 'the job scheduler', billing-api, webhooks) with no extra items.\"}",
+     "refusal": null,
+     "reasoning": "The answer names: image-resizer, job scheduler (i.e., scheduler), billing-api, webhooks. That matches all 4 items: billing-api, image-resizer, scheduler, webhooks. \"The job scheduler\" is a phrasing variant of scheduler. No extra items. Correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer names: image-resizer, job scheduler (i.e., scheduler), billing-api, webhooks. That matches all 4 items: billing-api, image-resizer, scheduler, webhooks. \"The job scheduler\" is a phrasing variant of scheduler. No extra items. Correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 268,
+   "completion_tokens": 102,
+   "total_tokens": 370,
+   "cost": 3.792e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 3.792e-05,
+    "upstream_inference_prompt_cost": 1.242e-05,
+    "upstream_inference_completions_cost": 2.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 60,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9268950000405312,
+ "fetched_at": "2026-09-06T01:42:42Z"
+}

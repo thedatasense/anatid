@@ -1,0 +1,66 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Cinder owns the ledger [valid 2026-04-29 to now; recorded by handover/2026-04-29-ledger]\n    earlier: Boreal owns the ledger [valid 2025-12-10 to 2026-04-29; recorded by handover/2025-12-10-ledger]\n    earlier: Atlas owns the ledger [valid 2025-01-08 to 2025-12-10; recorded by standup/atlas/2025-01-08]\n- The handover note of 2025-07-01 wrongly recorded Cinder as the owner of auth-gateway [valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n- Cinder holds its planning meeting on Mondays [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-2]\n- Ember noticed that the ledger's memory use grew steadily for a week after the cache change [observation; valid 2025-05-28 to now; recorded by standup/ember/2025-05-28]\n- No deploys to the ledger from 2026-03-30 to 2026-04-03 because of the fiscal year close [constraint; valid 2026-03-13 to now; recorded by standup/boreal/2026-03-13]\n- Atlas noticed that the ledger's disk usage jumped 30 percent after the retention change [observation; valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16-2]\n- Cinder noticed that the notifier's request volume halved after the client rollout [observation; valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- INC-2025-011: the ledger saw write latency spike tenfold for an hour on 2025-04-13; the root cause was an index missing after the schema migration [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- The ledger deploys only on Mondays and Wednesdays between 14:00 and 16:00 UTC [constraint; valid 2026-05-01 to now; recorded by standup/cinder/2026-05-01]\n    earlier: The ledger deploys only on Wednesdays between 09:00 and 11:00 UTC [constraint; valid 2025-02-28 to 2026-05-01; recorded by standup/atlas/2025-02-28]\n- The ledger must stay on Postgres 14 until the partitioning work finishes [constraint; valid 2025-05-30 to now; recorded by standup/atlas/2025-05-30]\n- Cinder noticed that the catalog's disk usage jumped 30 percent after the retention change [observation; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15-2]\n- The ledger depends on auth-gateway [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- Cinder sits on the third floor [valid 2025-05-02 to now; recorded by standup/cinder/2025-05-02-3]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Billing-api depends on the ledger [valid 2025-02-06 to now; recorded by standup/atlas/2025-02-06]\n- Dune noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n- Yuki is on call for Cinder [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is on call for Cinder [valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki is on call for Cinder [valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego is on call for Cinder [valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki is on call for Cinder [valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n    earlier: Diego is on call for Cinder [valid 2025-06-13 to 2025-07-22; recorded by standup/cinder/2025-06-13]\n    earlier: Yuki is on call for Cinder [valid 2025-05-02 to 2025-06-13; recorded by standup/cinder/2025-05-02]\n    earlier: Diego is on call for Cinder [valid 2025-03-27 to 2025-05-02; recorded by standup/cinder/2025-03-27]\n    earlier: Yuki is on call for Cinder [valid 2025-02-17 to 2025-03-27; recorded by standup/cinder/2025-02-17]\n    earlier: Diego is on call for Cinder [valid 2025-01-16 to 2025-02-17; recorded by standup/cinder/2025-01-16]\n- Cinder noticed that search-indexer's disk usage jumped 30 percent after the retention change [observation; valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29-2]\n- Cinder noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2025-08-20 to now; recorded by standup/cinder/2025-08-20]\n- Cinder noticed that auth-gateway's cold start time tripled after the runtime upgrade [observation; valid 2026-04-17 to now; recorded by standup/cinder/2026-04-17]\n\nQuestion: Which note recorded the handover of the ledger to Cinder, and on what date?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658730-voBAKnbMctdj5EGRPkQc",
+  "object": "chat.completion",
+  "created": 1788658730,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "DeepInfra",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "handover/2026-04-29-ledger, on 2026-04-29",
+     "refusal": null,
+     "reasoning": null
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1600,
+   "completion_tokens": 22,
+   "total_tokens": 1622,
+   "cost": 0.0001255,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0001255,
+    "upstream_inference_prompt_cost": 0.00012,
+    "upstream_inference_completions_cost": 5.5e-06
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 0,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 0.7200970419798978,
+ "fetched_at": "2026-09-06T01:38:50Z"
+}

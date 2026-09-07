@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal handed billing-api to Team Dune on 2026-03-25. [decision; valid 2026-03-25 to now; recorded by handover/2026-03-25-billing-api]\n- Team Atlas pinged the owners of billing-api on 2025-12-31. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- Priya walked Lena through the billing-api runbook on 2025-12-24. [valid 2025-12-24 to now; recorded by handover/2025-12-24-billing-api]\n- Team Atlas noticed on 2025-12-31 that billing-api's cold start time tripled after the runtime upgrade. [valid 2025-12-31 to now; recorded by standup/atlas/2025-12-31]\n- Changes to billing-api need a rollback plan attached to the pull request. [constraint; valid 2025-07-03 to now; recorded by standup/atlas/2025-07-03]\n- Billing-api is owned by Team Dune as of 2026-03-25, after Boreal handed it over. [decision; valid 2026-03-25 to now; recorded by handover/2026-03-25-billing-api]\n    earlier: Billing-api is owned by Boreal as of 2025-12-24, after Team Atlas handed it over. [decision; valid 2025-12-24 to 2026-03-25; recorded by handover/2025-12-24-billing-api]\n    earlier: Team Atlas owns billing-api as of 2025-01-08. [valid 2025-01-08 to 2025-12-24; recorded by standup/atlas/2025-01-08-2]\n- Team Atlas saw on 2026-04-16 that billing-api's error rate crept up to 2 percent following the dependency bump. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Billing-api depends on the flags service as of 2025-10-21. [valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- After the marketing send, billing-api's queue depth hit 50,000. [valid 2025-08-08 to now; recorded by standup/dune/2025-08-08]\n- Billing-api has a deploy freeze from 2025-11-24 to 2025-12-02 during the peak season. [constraint; valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- billing-api can be released on weekday mornings before 11:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-24 to now; recorded by standup/atlas/2025-03-24]\n- Billing-api will gate the new invoice flow behind the flags service so the rollout has a per-tenant kill switch. [decision; valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- billing-api is not Team Atlas's service, so Team Atlas flagged the error rate instead of fixing it. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- The reporting service was moved off direct Ledger queries because nightly Ledger scans were blocking billing runs. [valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- Billing-api depends on Ledger to work. [constraint; valid 2026-03-05 to now; recorded by standup/boreal/2026-03-05]\n- Oskar wrote up the handover doc for Priya for the webhooks service handover on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- The scheduler is not a Boreal service; Boreal flagged the scheduler at standup on 2026-02-04. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- The notifier's request volume halved following the client rollout, as noticed by Cinder on 2025-09-26. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- Team Ember reported at standup on 2025-11-10 that the authentication gateway's CPU sat at 90 percent after the traffic shift. [valid 2025-11-10 to now; recorded by standup/ember/2025-11-10]\n\nQuestion: Who was responsible for billing-api on 2025-07-23?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657736-0pLEzu7DOYLLCpykHck7",
+  "object": "chat.completion",
+  "created": 1788657736,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Atlas",
+     "refusal": null,
+     "reasoning": "The question asks who was responsible for billing-api on 2025-07-23.\n\nLooking at the ownership timeline:\n- Team Atlas owns billing-api as of 2025-01-08. [valid 2025-01-08 to 2025-12-24]\n- Billing-api is owned by Boreal as of 2025-12-24. [valid 2025-12-24 to 2026-03-25]\n- Billing-api is owned by Team Dune as of 2026-03-25. [valid 2026-03-25 to now]\n\nOn 2025-07-23, the valid entry is \"Team Atlas owns billing-api as of 2025-01-08\" (valid 2025-01-08 to 2025-12-24).\n\nSo the answer is Team Atlas.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was responsible for billing-api on 2025-07-23.\n\nLooking at the ownership timeline:\n- Team Atlas owns billing-api as of 2025-01-08. [valid 2025-01-08 to 2025-12-24]\n- Billing-api is owned by Boreal as of 2025-12-24. [valid 2025-12-24 to 2026-03-25]\n- Billing-api is owned by Team Dune as of 2026-03-25. [valid 2026-03-25 to now]\n\nOn 2025-07-23, the valid entry is \"Team Atlas owns billing-api as of 2025-01-08\" (valid 2025-01-08 to 2025-12-24).\n\nSo the answer is Team Atlas.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1299,
+   "completion_tokens": 183,
+   "total_tokens": 1482,
+   "cost": 0.000135495,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000135495,
+    "upstream_inference_prompt_cost": 8.9745e-05,
+    "upstream_inference_completions_cost": 4.575e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 179,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.1997551250387914,
+ "fetched_at": "2026-09-06T01:22:18Z"
+}

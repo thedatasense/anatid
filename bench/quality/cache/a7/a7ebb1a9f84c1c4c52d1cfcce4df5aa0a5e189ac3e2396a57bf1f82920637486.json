@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Priya runs the quarterly capacity review. [valid 2025-06-23 to now; recorded by standup/atlas/2025-06-23]\n- Yuki runs the monthly cost review. [valid 2025-10-13 to now; recorded by standup/cinder/2025-10-13]\n- Oskar runs the weekly architecture review. [valid 2026-06-16 to now; recorded by standup/ember/2026-06-16]\n- The INC-2026-009 review found that the scheduler ran the nightly jobs twice because two leaders were elected during a network partition. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- Lena is the release captain for Q1 2026. [decision; valid 2025-06-05 to now; recorded by standup/boreal/2025-06-05-2]\n- On 2025-08-29, Team Atlas observed that the catalog service's request volume halved after the client rollout. [valid 2025-08-29 to now; recorded by standup/atlas/2025-08-29]\n- The INC-2026-009 follow-up decision on 2026-05-08 decided that the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009. [decision; valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- The INC-2025-023 review on 2025-10-16 decided that reindex jobs will page on failure. [decision; valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- The Ember team holds its planning meeting every Friday. [valid 2025-06-13 to now; recorded by standup/ember/2025-06-13-2]\n- As of 2025-10-15, the scheduler is owned by Team Dune; Team Atlas kept it until then. [valid 2025-10-15 to now; recorded by handover/2025-10-15-scheduler]\n    earlier: As of 2025-08-29, the scheduler went to Team Atlas, not Team Cinder; Team Cinder never owned it, and the Ember team no longer owns it. [valid 2025-09-05 to 2025-10-15; recorded by handover/2025-09-05-scheduler-correction]\n    earlier: As of 2025-08-29, the scheduler is owned by Team Cinder; the Ember team no longer owns it. [valid 2025-08-29 to 2025-09-05; recorded by handover/2025-08-29-scheduler]\n    earlier: The scheduler is owned by the Ember team. [valid 2025-01-20 to 2025-08-29; recorded by standup/ember/2025-01-20]\n- Team Atlas runs its planning meeting on Tuesdays. [valid 2025-10-31 to now; recorded by standup/atlas/2025-10-31]\n- On 2025-06-23, Team Cinder observed that the reports pipeline's disk usage jumped 30 percent after the retention change. [valid 2025-06-23 to now; recorded by standup/cinder/2025-06-23]\n- Team Boreal holds its planning meeting on Thursdays. [valid 2025-11-12 to now; recorded by standup/boreal/2025-11-12]\n- On 2025-04-18, Team Atlas reported that the catalog service's disk usage jumped 30 percent after the retention change. [valid 2025-04-18 to now; recorded by standup/atlas/2025-04-18-2]\n- Farah is the release captain for Team Dune for Q3 2025. [valid 2025-10-22 to now; recorded by standup/dune/2025-10-22-2]\n- Team Dune holds its planning meeting every Wednesday. [valid 2025-11-06 to now; recorded by standup/dune/2025-11-06-2]\n- On 2025-06-27, Team Boreal observed that the event bus's request volume halved following the client rollout, and flagged it since the event bus is not Team Boreal's service. [valid 2025-06-27 to now; recorded by standup/boreal/2025-06-27]\n- On 2025-05-19, Team Cinder noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2025-05-19 to now; recorded by standup/cinder/2025-05-19-2]\n- As of 2025-08-14, changes to the auth gateway require two reviewer approvals and a security sign-off. [constraint; valid 2025-08-14 to now; recorded by standup/boreal/2025-08-14]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n\nQuestion: Who runs the quarterly capacity review?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654110-cP7Oxznjh0RXu8kyLlfk",
+  "object": "chat.completion",
+  "created": 1788654110,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Priya",
+     "refusal": null,
+     "reasoning": "The memory says: \"Priya runs the quarterly capacity review. [valid 2025-06-23 to now; recorded by standup/atlas/2025-06-23]\"\n\nToday is 2026-06-30, so it's still valid. Answer: Priya.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"Priya runs the quarterly capacity review. [valid 2025-06-23 to now; recorded by standup/atlas/2025-06-23]\"\n\nToday is 2026-06-30, so it's still valid. Answer: Priya.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1376,
+   "completion_tokens": 65,
+   "total_tokens": 1441,
+   "cost": 0.00011945,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00011945,
+    "upstream_inference_prompt_cost": 0.0001032,
+    "upstream_inference_completions_cost": 1.625e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 62,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.3215499999932945,
+ "fetched_at": "2026-09-06T00:21:55Z"
+}

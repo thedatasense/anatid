@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The authentication gateway is not Team Ember's service. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- The authentication gateway went to team Boreal as of 2025-07-01, not the Cinder team; Cinder never owned it. [decision; valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n    earlier: The authentication gateway lives with team Cinder as of 2025-07-01. [decision; valid 2025-07-01 to 2025-07-18; recorded by handover/2025-07-01-auth-gateway]\n    earlier: The authentication gateway lives with team Ember. [valid 2025-01-20 to 2025-07-01; recorded by standup/ember/2025-01-20-2]\n- The reports pipeline went to Boreal as of 2025-06-25, not Ember; Team Ember never owned it, and Team Dune no longer owns it. [decision; valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n    earlier: Team Ember owns the reports pipeline as of 2025-06-25, and Team Dune no longer owns it. [decision; valid 2025-06-25 to 2025-07-03; recorded by handover/2025-06-25-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20-2]\n- Team Ember reported at standup on 2025-11-10 that the authentication gateway's CPU sat at 90 percent after the traffic shift. [valid 2025-11-10 to now; recorded by standup/ember/2025-11-10]\n- Team Ember reported at standup on 2025-11-17 that the authentication gateway's error rate crept up to 2 percent following the dependency bump. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- billing-api can be released on weekday mornings before 11:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-24 to now; recorded by standup/atlas/2025-03-24]\n- Diego left team Cinder and joined team Ember effective 2025-12-15. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n- The notifier is owned by team Boreal as of 2026-04-06, after the Cinder team handed it over. [decision; valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n    earlier: The notifier is owned by team Cinder as of 2026-03-17. [valid 2026-03-17 to 2026-04-06; recorded by standup/cinder/2026-03-17]\n- The webhook dispatcher is owned by Team Dune as of 2026-04-22, after Team Atlas kept it until then. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- Billing-api is owned by Team Dune as of 2026-03-25, after Boreal handed it over. [decision; valid 2026-03-25 to now; recorded by handover/2026-03-25-billing-api]\n    earlier: Billing-api is owned by Boreal as of 2025-12-24, after Team Atlas handed it over. [decision; valid 2025-12-24 to 2026-03-25; recorded by handover/2025-12-24-billing-api]\n    earlier: Team Atlas owns billing-api as of 2025-01-08. [valid 2025-01-08 to 2025-12-24; recorded by standup/atlas/2025-01-08-2]\n- Team Ember now does pairing on every production change. [decision; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- Yuki is on team Cinder as of 2025-01-08; Diego left team Cinder for team Ember on 2025-12-15. [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Yuki and Diego are on team Cinder as of 2025-01-08. [valid 2025-01-08 to 2025-12-15; recorded by standup/cinder/2025-01-08]\n- Oskar is the only engineer on team Ember as of 2025-01-10. [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- The first on-call rotation for team Ember goes to Oskar. [decision; valid 2025-01-13 to now; recorded by standup/ember/2025-01-13]\n- Cinder owns the notifier as of 2025-11-19; Boreal owned it until that date. [decision; valid 2025-11-19 to now; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns notifier. [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n\nQuestion: Which team owned auth-gateway before Ember?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657575-K3MSJO6eQhbKfE9mYpLR",
+  "object": "chat.completion",
+  "created": 1788657575,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which team owned auth-gateway before Ember?\"\n\nLooking at the memory:\n- The authentication gateway went to team Boreal as of 2025-07-01 (current)\n- Earlier: The authentication gateway lives with team Cinder as of 2025-07-01 to 2025-07-18 (this was a correction; the correction says Cinder never owned it, and it went to Boreal as of 2025-07-01)\n- Earlier: The authentication gateway lives with team Ember [valid 2025-01-20 to 2025-07-01]\n\nSo the sequence of owners per the current (superseding) state:\n- Ember owned it from 2025-01-20 to 2025-07-01\n- Then Boreal from 2025-07-01 onward (Cinder never owned it, per the correction)\n\nThe question: before Ember, who owned it? The memory chain shows Ember as the earliest owner recorded (2025-01-20). Before Ember, there's no record of any owner. The correction says Boreal took over as of 2025-07-01, and \"Cinder never owned it.\" So before Ember, no owner is recorded.\n\nSo the answer would be: I don't know — the memory doesn't contain an owner before Ember.\n\nWait, but could the question be interpreted as \"who owned auth-gateway before [it went to] Ember?\" — no team recorded before Ember. Or could it be a trick where someone might mistakenly say Boreal (the current owner)? The chronology: Ember (2025-01-20 to 2025-07-01), then Boreal (2025-07-01 to now). So before Ember, nothing is recorded.\n\nAnswer: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which team owned auth-gateway before Ember?\"\n\nLooking at the memory:\n- The authentication gateway went to team Boreal as of 2025-07-01 (current)\n- Earlier: The authentication gateway lives with team Cinder as of 2025-07-01 to 2025-07-18 (this was a correction; the correction says Cinder never owned it, and it went to Boreal as of 2025-07-01)\n- Earlier: The authentication gateway lives with team Ember [valid 2025-01-20 to 2025-07-01]\n\nSo the sequence of owners per the current (superseding) state:\n- Ember owned it from 2025-01-20 to 2025-07-01\n- Then Boreal from 2025-07-01 onward (Cinder never owned it, per the correction)\n\nThe question: before Ember, who owned it? The memory chain shows Ember as the earliest owner recorded (2025-01-20). Before Ember, there's no record of any owner. The correction says Boreal took over as of 2025-07-01, and \"Cinder never owned it.\" So before Ember, no owner is recorded.\n\nSo the answer would be: I don't know — the memory doesn't contain an owner before Ember.\n\nWait, but could the question be interpreted as \"who owned auth-gateway before [it went to] Ember?\" — no team recorded before Ember. Or could it be a trick where someone might mistakenly say Boreal (the current owner)? The chronology: Ember (2025-01-20 to 2025-07-01), then Boreal (2025-07-01 to now). So before Ember, nothing is recorded.\n\nAnswer: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1784,
+   "completion_tokens": 382,
+   "total_tokens": 2166,
+   "cost": 0.00022162,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00022162,
+    "upstream_inference_prompt_cost": 0.00012612,
+    "upstream_inference_completions_cost": 9.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 376,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.493647666007746,
+ "fetched_at": "2026-09-06T01:19:40Z"
+}

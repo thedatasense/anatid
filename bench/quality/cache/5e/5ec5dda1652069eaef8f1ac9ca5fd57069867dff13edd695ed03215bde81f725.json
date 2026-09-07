@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2026-05-13] standup/ember/2026-05-13: Diego has the Ember pager this cycle, taking over from Oskar.\n- [2026-05-27] standup/ember/2026-05-27: Heads-up from team Ember: notifier's CPU sat at 90 percent after the traffic shift.\n- [2025-05-30] standup/atlas/2025-05-30: The ledger is pinned to Postgres 14; the pin lifts when the partitioning work finishes.\n- [2025-05-28] standup/ember/2025-05-28: Observation from Ember: after the cache change, Ledger's memory use grew steadily for a week. Reminder: Oskar Lind is on call for team Ember this cycle.\n- [2026-06-17] standup/ember/2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.\n- [2026-01-23] standup/ember/2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-03-05] standup/dune/2025-03-05: Reporting deploy window: on Tuesdays and Fridays between 09:00 and 10:30 UTC. Dune planning meeting is every Wednesday.\n- [2025-11-05] standup/ember/2025-11-05: Heads-up from Ember: notifier's memory use grew steadily for a week after the cache change.\n- [2026-05-28] standup/cinder/2026-05-28: Yuki Tanaka still has the Cinder pager.\n- [2026-03-05] standup/boreal/2026-03-05: As before, billing-api needs Ledger to work.\n- [2026-05-05] standup/boreal/2026-05-05: Decided in today's standup: the event-bus will retain messages for seven days, since replaying a full week has covered every incident recovery so far.\n- [2026-03-13] standup/boreal/2026-03-13: Deploy freeze for the ledger: 2026-03-30 to 2026-04-03 (the fiscal year close).\n- [2025-05-21] standup/boreal/2025-05-21: Lena picked up the Boreal on-call shift from Marcus today.\n- [2025-05-02] standup/cinder/2025-05-02: Yuki picked up the Cinder on-call shift from Diego today.\n- [2026-05-04] standup/boreal/2026-05-04: Team Boreal has switched to a weekly dependency update day.\n- [2025-01-13] standup/ember/2025-01-13: First on-call rotation for the Ember team goes to Oskar.\n- [2026-05-01] standup/cinder/2026-05-01-2: Observation from the Cinder team: after the marketing send, the flags service's queue depth hit 50,000.\n- [2026-05-22] incident-review/INC-2026-009: Incident review INC-2026-009. The scheduler ran the nightly jobs twice on 2026-05-16. Root cause: two leaders elected during a network partition. Decision: the scheduler leader lease will be shortened to ten seconds, because two leaders ran the nightly jobs twice in INC-2026-009.\n- [2026-05-01] standup/cinder/2026-05-01: From today the ledger service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-04-16] standup/atlas/2026-04-16-2: Atlas saw that Ledger's disk usage jumped 30 percent following the retention change; not their service, so they flagged it. Atlas planning meeting is every Tuesday.\n- [2026-04-29] standup/ember/2026-04-29: Ember noticed that the resizer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-03-16] standup/ember/2026-03-16: Oskar has the Ember pager this cycle, taking over from Diego Alvarez. Ember noticed that search-indexer's queue depth hit 50,000 after the marketing send and pinged the owners.\n- [2026-01-14] standup/dune/2026-01-14: Reminder: Tomasz is on call for team Dune this cycle.\n- [2026-04-14] standup/atlas/2026-04-14: Marcus Oyelaran picked up the Atlas on-call shift from Priya today.\n- [2026-01-02] standup/boreal/2026-01-02: Boreal on-call swapped this morning. Marcus carries the phone until the next rotation.\n- [2026-02-04] standup/boreal/2026-02-04: Boreal on-call swapped this morning. Lena carries the phone until the next rotation. Boreal saw that scheduler's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2025-05-02] standup/cinder/2025-05-02-3: Cinder has moved to the third floor.\n- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.\n- [2025-05-15] standup/dune/2025-05-15-2: Reminder: the job scheduler is owned by Dune.\n- [2025-05-14] standup/atlas/2025-05-14: Reminder from team Atlas: page Priya for anything this cycle, not Tomasz.\n- [2025-05-28] standup/dune/2025-05-28: Reminder: the scheduler deploys only on Tuesdays between 13:00 and 15:00 UTC.\n- [2025-05-15] standup/dune/2025-05-15: Reporting must stay on Python 3.11 until the pandas 3 upgrade lands.\n- [2025-06-06] standup/boreal/2025-06-06: Boreal saw that the reports pipeline's disk usage jumped 30 percent following the retention change; not their service, so they flagged it.\n\nQuestion: Who was on call for Ember on 2026-05-30?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788651236-R8fVx1CaiOlXG6Q0muv3",
+  "object": "chat.completion",
+  "created": 1788651236,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Diego Alvarez",
+     "refusal": null,
+     "reasoning": "The question asks who was on call for Ember on 2026-05-30.\n\nLet me trace the Ember on-call entries in chronological order:\n- 2025-01-13: First on-call rotation for Ember goes to Oskar.\n- 2025-05-28: Oskar Lind is on call for team Ember this cycle.\n- 2025-12-15: Diego leaves Cinder and joins Ember (not on-call info for Ember directly).\n- 2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- 2026-03-16: Oskar has the Ember pager this cycle, taking over from Diego Alvarez.\n- 2026-05-13: Diego has the Ember pager this cycle, taking over from Oskar.\n- 2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.\n\nFor 2026-05-30: The most recent entry before that date is 2026-05-13, which says Diego has the Ember pager this cycle. The next change is 2026-06-17 when Oskar picked it up. So on 2026-05-30, Diego was on call for Ember.\n\nThe 2026-05-13 entry just says \"Diego\" — the 2026-06-17 entry says \"Diego Alvarez\", confirming the full name. Answer: Diego Alvarez.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was on call for Ember on 2026-05-30.\n\nLet me trace the Ember on-call entries in chronological order:\n- 2025-01-13: First on-call rotation for Ember goes to Oskar.\n- 2025-05-28: Oskar Lind is on call for team Ember this cycle.\n- 2025-12-15: Diego leaves Cinder and joins Ember (not on-call info for Ember directly).\n- 2026-01-23: Team Ember on-call swapped this morning. Diego carries the phone until the next rotation.\n- 2026-03-16: Oskar has the Ember pager this cycle, taking over from Diego Alvarez.\n- 2026-05-13: Diego has the Ember pager this cycle, taking over from Oskar.\n- 2026-06-17: Oskar picked up the Ember on-call shift from Diego Alvarez today.\n\nFor 2026-05-30: The most recent entry before that date is 2026-05-13, which says Diego has the Ember pager this cycle. The next change is 2026-06-17 when Oskar picked it up. So on 2026-05-30, Diego was on call for Ember.\n\nThe 2026-05-13 entry just says \"Diego\" — the 2026-06-17 entry says \"Diego Alvarez\", confirming the full name. Answer: Diego Alvarez.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1656,
+   "completion_tokens": 313,
+   "total_tokens": 1969,
+   "cost": 0.00019477,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00019477,
+    "upstream_inference_prompt_cost": 0.00011652,
+    "upstream_inference_completions_cost": 7.825e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 308,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.539537166012451,
+ "fetched_at": "2026-09-05T23:34:02Z"
+}

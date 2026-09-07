@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-03-14] standup/atlas/2025-03-14: Dependency map update: the ledger needs the auth gateway (service tokens).\n- [2025-02-06] standup/dune/2025-02-06: If the ledger service is down, the reports pipeline is down: it relies on it for the nightly balance export.\n- [2025-09-19] standup/boreal/2025-09-19: We decided that reporting will read from the event-bus instead of querying the ledger directly. The reason: the nightly ledger scans were blocking billing runs. That removes the dependency on Ledger from the reporting service.\n- [2025-02-06] standup/atlas/2025-02-06: Billing-api calls the ledger service for invoice postings, so treat the ledger service as a hard dependency of billing-api.\n- [2026-04-16] standup/atlas/2026-04-16-2: Atlas saw that Ledger's disk usage jumped 30 percent following the retention change; not their service, so they flagged it. Atlas planning meeting is every Tuesday.\n- [2025-09-26] standup/atlas/2025-09-26: For newcomers: the deploy window for the ledger service is still on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-03-05] standup/boreal/2026-03-05: As before, billing-api needs Ledger to work.\n- [2026-04-29] handover/2026-04-29-ledger: Cinder is taking over the ledger from team Boreal, effective today. Dashboards and alerts are being repointed.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-12-10] handover/2025-12-10-ledger: Atlas handed the ledger to the Boreal team today; Priya wrote up the handover doc for Lena.\n- [2025-05-30] standup/atlas/2025-05-30: The ledger is pinned to Postgres 14; the pin lifts when the partitioning work finishes.\n- [2026-04-16] standup/atlas/2026-04-16: Team Atlas saw that the billing service's error rate crept up to 2 percent following the dependency bump; not their service, so they flagged it.\n- [2026-05-01] standup/cinder/2026-05-01: From today the ledger service deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC instead of on Wednesdays between 09:00 and 11:00 UTC.\n- [2026-03-13] standup/boreal/2026-03-13: Deploy freeze for the ledger: 2026-03-30 to 2026-04-03 (the fiscal year close).\n- [2025-12-31] standup/atlas/2025-12-31: The Atlas team noticed that the billing service's cold start time tripled after the runtime upgrade and pinged the owners.\n- [2025-02-28] standup/atlas/2025-02-28: Reminder that Ledger only ships on Wednesdays between 09:00 and 11:00 UTC.\n- [2025-04-18] incident-review/INC-2025-011: Incident review INC-2025-011. Ledger saw write latency spike tenfold for an hour on 2025-04-13. Root cause: an index missing after the schema migration. Decision: ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011.\n- [2025-12-24] handover/2025-12-24-billing-api: Handover: as of today the billing service moves from the Atlas team to team Boreal. Priya walked Lena through the runbook this morning.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n- [2025-04-10] standup/ember/2025-04-10: Reminder: the authentication gateway is owned by the Ember team.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-01-09] standup/boreal/2025-01-09: The event bus is a the Boreal team service. The Boreal team owns notifier.\n- [2025-01-20] standup/ember/2025-01-20-2: The authentication gateway lives with team Ember.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-04-10] standup/boreal/2025-04-10: Team Boreal saw that the catalog service's request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-03-25] handover/2026-03-25-billing-api: The billing API has a new home: team Dune. Boreal kept it until today.\n- [2025-05-28] standup/ember/2025-05-28: Observation from Ember: after the cache change, Ledger's memory use grew steadily for a week. Reminder: Oskar Lind is on call for team Ember this cycle.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n\nQuestion: Which team owns the service that the ledger depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653109-txDVKVZYoToc2iLHOlUl",
+  "object": "chat.completion",
+  "created": 1788653109,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Boreal",
+     "refusal": null,
+     "reasoning": "The question: Which team owns the service that the ledger depends on?\n\nFrom memory: [2025-03-14] \"Dependency map update: the ledger needs the auth gateway (service tokens).\" So the ledger depends on the auth gateway.\n\nWho owns the auth gateway? Entries:\n- [2025-04-10] ember: authentication gateway owned by Ember team.\n- [2025-07-18] correction: auth-gateway went to team Boreal, not Cinder (correction to 2025-07-01 note).\n- [2025-01-20] ember: authentication gateway lives with team Ember.\n\nLatest entry: 2025-07-18 correction says auth-gateway went to team Boreal. That supersedes earlier entries. So the answer is Boreal.\n\nWait, check the correction: \"Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team.\" This implies at 2025-07-01 auth-gateway moved to Boreal. So as of now (2026-06-30), team Boreal owns auth-gateway.\n\nAnswer: Boreal.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: Which team owns the service that the ledger depends on?\n\nFrom memory: [2025-03-14] \"Dependency map update: the ledger needs the auth gateway (service tokens).\" So the ledger depends on the auth gateway.\n\nWho owns the auth gateway? Entries:\n- [2025-04-10] ember: authentication gateway owned by Ember team.\n- [2025-07-18] correction: auth-gateway went to team Boreal, not Cinder (correction to 2025-07-01 note).\n- [2025-01-20] ember: authentication gateway lives with team Ember.\n\nLatest entry: 2025-07-18 correction says auth-gateway went to team Boreal. That supersedes earlier entries. So the answer is Boreal.\n\nWait, check the correction: \"Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team.\" This implies at 2025-07-01 auth-gateway moved to Boreal. So as of now (2026-06-30), team Boreal owns auth-gateway.\n\nAnswer: Boreal.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1595,
+   "completion_tokens": 246,
+   "total_tokens": 1841,
+   "cost": 0.000173445,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000173445,
+    "upstream_inference_prompt_cost": 0.000111945,
+    "upstream_inference_completions_cost": 6.15e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 242,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.3762977499864064,
+ "fetched_at": "2026-09-06T00:05:13Z"
+}

@@ -1,5 +1,5 @@
 {
- "seconds": 0.00033950002398341894,
+ "seconds": 0.0003215409815311432,
  "llm": {
   "calls": 0,
   "cache_hits": 0,
@@ -15,6 +15,7 @@
   "cost_known": true,
   "wall_s": 0.0,
   "recorded_wall_s": 0.0,
+  "provider_failures": 0,
   "hit_rate": 0.0
  },
  "report": {

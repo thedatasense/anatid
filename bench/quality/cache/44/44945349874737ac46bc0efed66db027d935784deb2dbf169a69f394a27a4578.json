@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\n- As of 2025-12-18, the Boreal team adopted a weekly dependency update day. [decision; valid 2025-12-18 to now; recorded by standup/boreal/2025-12-18]\n- The Ember team runs its planning on Fridays. [valid 2025-07-21 to now; recorded by standup/ember/2025-07-21]\n- For anything Boreal-related, page Lena. [constraint; valid 2025-09-23 to now; recorded by standup/boreal/2025-09-23]\n    earlier: For anything Boreal-related, page Marcus. [constraint; valid 2025-05-29 to 2025-09-23; recorded by standup/boreal/2025-05-29]\n- The Atlas team planning meeting is every Tuesday. [valid 2025-09-30 to now; recorded by standup/atlas/2025-09-30]\n- The Boreal team consists of Lena, after Marcus moved to the Atlas team on 2026-03-20. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: The Boreal team consists of Lena and Marcus. [valid 2025-01-07 to 2026-03-20; recorded by standup/boreal/2025-01-07]\n- On 2026-03-20, on-call for the Boreal team passed from Marcus to Lena. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n- The Dune team planning meeting is every Wednesday. [valid 2026-05-22 to now; recorded by standup/dune/2026-05-22-4]\n- Boreal noticed the ledger service's memory growth and pinged the owners on 2025-02-21. [valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21-2]\n- The Boreal team observed on 2025-11-03 that the notification service's CPU sat at 90 percent after the traffic shift. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03-2]\n- Cinder runs its planning on Mondays. [valid 2026-04-03 to now; recorded by standup/cinder/2026-04-03]\n- As of 2026-04-01, the indexer is owned by the Boreal team, when ownership passed from the Atlas team. [decision; valid 2026-04-01 to now; recorded by handover/2026-04-01-search-indexer]\n    earlier: The indexer is owned by the Atlas team as of 2025-05-20, when ownership passed from Cinder. [decision; valid 2025-05-20 to 2026-04-01; recorded by handover/2025-05-20-search-indexer]\n    earlier: The indexer is owned by Cinder. [valid 2025-01-17 to 2025-05-20; recorded by standup/cinder/2025-01-17-2]\n- As of 2025-09-23, the Boreal team says to page Lena for anything this cycle, not Marcus. [constraint; valid 2025-09-23 to now; recorded by standup/boreal/2025-09-23]\n    earlier: As of 2025-08-15, the Boreal team says to page Marcus for anything this cycle, not Lena Fischer. [constraint; valid 2025-08-15 to 2025-09-23; recorded by standup/boreal/2025-08-15]\n- On 2025-12-01, the Boreal team observed that the job scheduler's cold start time tripled following the runtime upgrade, and since it was not their service, they flagged it. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01-2]\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n- As of 2026-03-20, Lena has the Boreal team pager this cycle, taking over from Marcus. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: As of 2026-02-10, Marcus has the Boreal team pager this cycle, taking over from Lena. [valid 2026-02-10 to 2026-03-20; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, Lena has the Boreal team pager this cycle, taking over from Marcus. [valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: As of 2025-11-06, Marcus has the Boreal team pager this cycle, taking over from Lena. [valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: Lena has the pager rotation for the Boreal team as of 2025-06-27, taking over from Marcus. [valid 2025-06-27 to 2025-11-06; recorded by standup/boreal/2025-06-27]\n    earlier: Marcus has the pager rotation for the Boreal team as of 2025-05-07, taking over from Lena. [valid 2025-05-07 to 2025-06-27; recorded by standup/boreal/2025-05-07]\n    earlier: Lena has the pager rotation for the Boreal team as of 2025-03-17, taking over from Marcus. [valid 2025-03-17 to 2025-05-07; recorded by standup/boreal/2025-03-17]\n    earlier: Marcus has the pager rotation for the Boreal team as of 2025-02-12. [valid 2025-02-12 to 2025-03-17; recorded by standup/boreal/2025-02-12]\n    earlier: Lena has the first pager rotation for the Boreal team. [valid 2025-01-09 to 2025-02-12; recorded by standup/boreal/2025-01-09-4]\n\nQuestion: On which day does Boreal hold its planning meeting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652637-s1Z51M20ehLFlMYH2tQ7",
+  "object": "chat.completion",
+  "created": 1788652637,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Thursday",
+     "refusal": null,
+     "reasoning": "The memory says: \"The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\"\n\nToday is 2026-06-30, so the answer is Thursday.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"The Boreal team runs its planning on Thursdays. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20-2]\"\n\nToday is 2026-06-30, so the answer is Thursday.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1753,
+   "completion_tokens": 64,
+   "total_tokens": 1817,
+   "cost": 0.000139795,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000139795,
+    "upstream_inference_prompt_cost": 0.000123795,
+    "upstream_inference_completions_cost": 1.6e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 59,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.288419332995545,
+ "fetched_at": "2026-09-05T23:57:21Z"
+}

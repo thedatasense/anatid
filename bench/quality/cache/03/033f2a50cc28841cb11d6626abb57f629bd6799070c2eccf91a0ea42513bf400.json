@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Webhooks deploys only on Mondays and Wednesdays between 14:00 and 16:00 UTC [constraint; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- INC-2026-003: webhooks delivered some events twice on 2026-02-20; the root cause was a retry loop that ignored idempotency keys [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- Boreal owns webhooks [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: Ember owns webhooks [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: Boreal owns webhooks [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- Atlas noticed that webhooks's request volume halved after the client rollout [observation; valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- Webhooks depends on the event-bus [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- Cinder noticed that webhooks's memory use grew steadily for a week after the cache change [observation; valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n- Decision: webhooks will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- Decision: webhooks will sign payloads with rotating keys, because a partner asked for key rotation in their security review [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-01; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- The event-bus deploys only on Thursdays between 07:00 and 09:00 UTC [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- Reporting depends on the event-bus [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: Reporting depends on the ledger [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- Reporting deploys only on Tuesdays and Thursdays between 10:00 and 12:00 UTC [constraint; valid 2025-03-26 to now; recorded by standup/dune/2025-03-26]\n- The handover note of 2025-06-09 wrongly recorded Boreal as the owner of billing-api [valid 2025-07-03 to now; recorded by handover/2025-07-03-billing-api-correction]\n- Decision: the event-bus will retain messages for seven days, because replaying a full week has covered every incident recovery so far [decision; valid 2026-05-27 to now; recorded by standup/atlas/2026-05-27]\n- Dune noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2026-04-14 to now; recorded by standup/dune/2026-04-14-2]\n- Dune noticed that the event-bus's request volume halved after the client rollout [observation; valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n- Decision: notifier consumers will commit offsets every five seconds, because a stuck offset went unnoticed for 40 minutes during INC-2025-004 [decision; valid 2025-02-05 to now; recorded by incident-review/INC-2025-004]\n- Decision: the notifier will retry failed pushes three times with exponential backoff, because the flat one-second retry was hammering the push provider during its outages [decision; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- Boreal noticed that billing-api's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- Boreal adopted a weekly dependency update day [valid 2025-12-18 to now; recorded by standup/boreal/2025-12-18]\n\nQuestion: Who was responsible for webhooks on 2025-04-06?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788654492-xMGPgxzsAs4xChCF055r",
+  "object": "chat.completion",
+  "created": 1788654492,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Ember",
+     "refusal": null,
+     "reasoning": "The question asks who was responsible for webhooks on 2025-04-06.\n\nMemory entries about webhooks ownership:\n- Boreal owns webhooks [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n- earlier: Ember owns webhooks [valid 2025-03-03 to 2025-05-15]\n- earlier: Boreal owns webhooks [valid 2025-01-09 to 2025-03-03]\n\n2025-04-06 falls between 2025-03-03 and 2025-05-15, so Ember owned webhooks.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who was responsible for webhooks on 2025-04-06.\n\nMemory entries about webhooks ownership:\n- Boreal owns webhooks [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n- earlier: Ember owns webhooks [valid 2025-03-03 to 2025-05-15]\n- earlier: Boreal owns webhooks [valid 2025-01-09 to 2025-03-03]\n\n2025-04-06 falls between 2025-03-03 and 2025-05-15, so Ember owned webhooks.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1300,
+   "completion_tokens": 142,
+   "total_tokens": 1442,
+   "cost": 0.00012532,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00012532,
+    "upstream_inference_prompt_cost": 8.982e-05,
+    "upstream_inference_completions_cost": 3.55e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 138,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.843417667027097,
+ "fetched_at": "2026-09-06T00:28:15Z"
+}

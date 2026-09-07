@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Reindex jobs will page on failure. [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- A silent reindex failure left stale results for two days in INC-2025-023. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The indexer will rebuild the index nightly instead of on every catalog write, as agreed on 2025-11-07. [decision; valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- The indexer's incremental updates left stale entries behind after failed writes. [valid 2025-11-07 to now; recorded by standup/boreal/2025-11-07]\n- INC-2025-023 was an incident involving the indexer on 2025-10-24. [valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\n- The indexer's disk usage jumped 30 percent after the retention change, as noticed by Cinder on 2025-08-29. [valid 2025-08-29 to now; recorded by standup/cinder/2025-08-29-2]\n- The indexer must stay on OpenSearch 2.11 until the full reindex completes. [constraint; valid 2025-08-13 to now; recorded by standup/boreal/2025-08-13]\n- INC-2025-011 was caused by an index missing after the schema migration. [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- Team Atlas observed on 2025-11-11 that the indexer's p99 latency doubled after Tuesday's deploy. [valid 2025-11-11 to now; recorded by standup/atlas/2025-11-11]\n- The scheduler leader lease will be shortened to ten seconds because two leaders ran the nightly jobs twice in INC-2026-009. [decision; valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- On 2026-03-16, Ember noticed that the indexer's queue depth hit 50,000 after the marketing send and pinged the owners. [valid 2026-03-16 to now; recorded by standup/ember/2026-03-16]\n- The scheduler ran the nightly jobs twice on 2026-05-16 during INC-2026-009. [valid 2026-05-22 to now; recorded by incident-review/INC-2026-009]\n- Ledger migrations will ship with a reviewed query plan, because a missing index after a migration caused INC-2025-011. [decision; valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- Notifier consumers will commit offsets every five seconds as follow-up to INC-2025-004. [decision; valid 2025-03-06 to now; recorded by incident-review/INC-2025-004]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-02-11 to now; recorded by incident-review/INC-2026-003]\n- The indexer belongs to the Boreal team as of 2025-02-28. [decision; valid 2025-02-28 to now; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns the indexer as of 2025-01-17. [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- Boreal reported at standup on 2026-02-04 that the scheduler's error rate crept up to 2 percent following the dependency bump. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- Ledger saw write latency spike tenfold for an hour on 2025-04-13 during incident INC-2025-011. [valid 2025-04-18 to now; recorded by incident-review/INC-2025-011]\n- The indexer moved from Boreal to Team Dune as of 2025-11-18. [decision; valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: The indexer moved from Boreal to Ember as of 2025-11-18. [decision; valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n\nQuestion: Which note records the decision that reindex jobs will page on failure, and when was it written?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657935-MaJmpWnZRZ8APZh3LMAU",
+  "object": "chat.completion",
+  "created": 1788657935,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "SiliconFlow",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Recorded by incident-review/INC-2025-023 on 2025-10-27.",
+     "refusal": null,
+     "reasoning": "The question asks: Which note records the decision that reindex jobs will page on failure, and when was it written?\n\nFrom memory: \"Reindex jobs will page on failure. [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\"\n\nSo the note is incident-review/INC-2025-023, recorded/valid from 2025-10-27. The date it was written — the entry says \"valid 2025-10-27 to now\". Memory entries carry the date they were recorded; here the validity starts 2025-10-27. The recorded-by is incident-review/INC-2025-023.\n\nAnswer: incident-review/INC-2025-023, 2025-10-27.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: Which note records the decision that reindex jobs will page on failure, and when was it written?\n\nFrom memory: \"Reindex jobs will page on failure. [decision; valid 2025-10-27 to now; recorded by incident-review/INC-2025-023]\"\n\nSo the note is incident-review/INC-2025-023, recorded/valid from 2025-10-27. The date it was written — the entry says \"valid 2025-10-27 to now\". Memory entries carry the date they were recorded; here the validity starts 2025-10-27. The recorded-by is incident-review/INC-2025-023.\n\nAnswer: incident-review/INC-2025-023, 2025-10-27.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1311,
+   "completion_tokens": 193,
+   "total_tokens": 1504,
+   "cost": 0.00029315,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00029315,
+    "upstream_inference_prompt_cost": 0.00019665,
+    "upstream_inference_completions_cost": 9.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 169,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7402963750064373,
+ "fetched_at": "2026-09-06T01:25:38Z"
+}

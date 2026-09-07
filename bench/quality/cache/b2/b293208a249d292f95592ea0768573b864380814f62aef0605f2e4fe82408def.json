@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Dune owns image-resizer [valid 2026-01-20 to now; recorded by handover/2026-01-20-image-resizer]\n    earlier: Boreal owns image-resizer [valid 2025-11-19 to 2026-01-20; recorded by handover/2025-11-19-image-resizer]\n    earlier: Cinder owns image-resizer [valid 2025-06-25 to 2025-11-19; recorded by handover/2025-06-25-image-resizer]\n    earlier: Dune owns image-resizer [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20]\n- The catalog depends on image-resizer [valid 2025-03-28 to now; recorded by standup/cinder/2025-03-28]\n- Dune owns the scheduler [valid 2025-04-04 to now; recorded by handover/2025-04-04-scheduler]\n    earlier: Ember owns the scheduler [valid 2025-01-20 to 2025-04-04; recorded by standup/ember/2025-01-20]\n- Decision: image-resizer will keep original uploads for 90 days only, because storage for originals doubled in six months [decision; valid 2026-03-20 to now; recorded by standup/dune/2026-03-20]\n- Boreal noticed that image-resizer's cold start time tripled after the runtime upgrade [observation; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- Ember noticed that image-resizer's queue depth hit 50,000 after the marketing send [observation; valid 2026-04-29 to now; recorded by standup/ember/2026-04-29]\n- Dune adopted a monthly game day [valid 2025-04-23 to now; recorded by standup/dune/2025-04-23]\n- Dune owns billing-api [valid 2026-03-25 to now; recorded by handover/2026-03-25-billing-api]\n    earlier: Boreal owns billing-api [valid 2025-12-24 to 2026-03-25; recorded by handover/2025-12-24-billing-api]\n    earlier: Atlas owns billing-api [valid 2025-01-08 to 2025-12-24; recorded by standup/atlas/2025-01-08-2]\n- Dune noticed that the event-bus's request volume halved after the client rollout [observation; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08-2]\n- Dune owns webhooks [valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n    earlier: Atlas owns webhooks [valid 2025-09-09 to 2026-04-22; recorded by handover/2025-09-09-webhooks]\n    earlier: Ember owns webhooks [valid 2025-04-11 to 2025-09-09; recorded by handover/2025-04-11-webhooks]\n    earlier: Boreal owns webhooks [valid 2025-01-09 to 2025-04-11; recorded by standup/boreal/2025-01-09-2]\n- Dune holds its planning meeting on Wednesdays [valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- Dune noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2025-09-18 to now; recorded by standup/dune/2025-09-18]\n- Dune noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2025-12-08 to now; recorded by standup/dune/2025-12-08]\n- Tomasz is on call for Dune [valid 2026-06-03 to now; recorded by standup/dune/2026-06-03]\n    earlier: Farah is on call for Dune [valid 2026-04-09 to 2026-06-03; recorded by standup/dune/2026-04-09]\n    earlier: Tomasz is on call for Dune [valid 2026-02-24 to 2026-04-09; recorded by standup/dune/2026-02-24]\n    earlier: Farah is on call for Dune [valid 2026-01-22 to 2026-02-24; recorded by standup/dune/2026-01-22]\n    earlier: Tomasz is on call for Dune [valid 2025-12-08 to 2026-01-22; recorded by standup/dune/2025-12-08]\n    earlier: Farah is on call for Dune [valid 2025-11-03 to 2025-12-08; recorded by standup/dune/2025-11-03]\n    earlier: Tomasz is on call for Dune [valid 2025-09-04 to 2025-11-03; recorded by standup/dune/2025-09-04]\n    earlier: Farah is on call for Dune [valid 2025-01-13 to 2025-09-04; recorded by standup/dune/2025-01-13]\n- Dune sits on the fourth floor [valid 2026-03-09 to now; recorded by standup/dune/2026-03-09]\n- Dune noticed that billing-api's queue depth hit 50,000 after the marketing send [observation; valid 2025-08-08 to now; recorded by standup/dune/2025-08-08]\n- Tomasz is a member of Dune [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Tomasz is a member of Atlas [valid 2025-01-06 to 2025-07-21; recorded by standup/atlas/2025-01-06]\n- Farah is a member of Dune [valid 2025-01-09 to now; recorded by standup/dune/2025-01-09]\n- Decision: the catalog will keep image metadata in a separate table, because the joined writes were locking product updates for seconds at a time [decision; valid 2025-04-01 to now; recorded by standup/cinder/2025-04-01]\n- Cinder noticed that the catalog's disk usage jumped 30 percent after the retention change [observation; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15-2]\n\nQuestion: When did Dune take over image-resizer?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658585-BsxccciEU5t0B2NY2Kbt",
+  "object": "chat.completion",
+  "created": 1788658585,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2026-01-20",
+     "refusal": null,
+     "reasoning": "The question asks when Dune took over image-resizer. Looking at the memory:\n\n- Dune owns image-resizer [valid 2026-01-20 to now]\n- earlier: Boreal owns image-resizer [valid 2025-11-19 to 2026-01-20]\n- earlier: Cinder owns image-resizer [valid 2025-06-25 to 2025-11-19]\n- earlier: Dune owns image-resizer [valid 2025-01-20 to 2025-06-25]\n\nThere's ambiguity: Dune owned image-resizer twice — 2025-01-20 to 2025-06-25, and again from 2026-01-20. The question \"When did Dune take over image-resizer?\" without a stated moment. Today is 2026-06-30. The most recent takeover is 2026-01-20. But there was also an earlier one on 2025-01-20.\n\nThe rules say: \"When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now.\" The current ownership entry is valid from 2026-01-20. So the most recent takeover was 2026-01-20.\n\nBut \"take over\" could refer to either. The current state: Dune owns image-resizer since 2026-01-20. Answer: 2026-01-20.\n\nThe instruction says reply in one short line with just the value. So: 2026-01-20.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Dune took over image-resizer. Looking at the memory:\n\n- Dune owns image-resizer [valid 2026-01-20 to now]\n- earlier: Boreal owns image-resizer [valid 2025-11-19 to 2026-01-20]\n- earlier: Cinder owns image-resizer [valid 2025-06-25 to 2025-11-19]\n- earlier: Dune owns image-resizer [valid 2025-01-20 to 2025-06-25]\n\nThere's ambiguity: Dune owned image-resizer twice — 2025-01-20 to 2025-06-25, and again from 2026-01-20. The question \"When did Dune take over image-resizer?\" without a stated moment. Today is 2026-06-30. The most recent takeover is 2026-01-20. But there was also an earlier one on 2025-01-20.\n\nThe rules say: \"When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now.\" The current ownership entry is valid from 2026-01-20. So the most recent takeover was 2026-01-20.\n\nBut \"take over\" could refer to either. The current state: Dune owns image-resizer since 2026-01-20. Answer: 2026-01-20.\n\nThe instruction says reply in one short line with just the value. So: 2026-01-20.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1709,
+   "completion_tokens": 341,
+   "total_tokens": 2050,
+   "cost": 0.000205745,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000205745,
+    "upstream_inference_prompt_cost": 0.000120495,
+    "upstream_inference_completions_cost": 8.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 333,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.5110519159934483,
+ "fetched_at": "2026-09-06T01:36:28Z"
+}

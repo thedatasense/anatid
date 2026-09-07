@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The reporting service still relies on the event bus as of 2025-11-13. [valid 2025-11-13 to now; recorded by standup/boreal/2025-11-13]\n- The reporting service has a deploy window on Tuesdays and Fridays between 09:00 and 10:30 UTC. [constraint; valid 2025-03-05 to now; recorded by standup/dune/2025-03-05]\n- The reporting service was moved off direct Ledger queries because nightly Ledger scans were blocking billing runs. [valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- The reports pipeline is not a Boreal service. [valid 2025-06-06 to now; recorded by standup/boreal/2025-06-06]\n- The reporting service's p99 latency doubled after Tuesday's deploy, as noticed by Cinder on 2025-08-20. [valid 2025-08-20 to now; recorded by standup/cinder/2025-08-20]\n- As of 2025-09-19, the reporting service reads from the event bus instead of querying Ledger directly. [decision; valid 2025-09-19 to now; recorded by standup/boreal/2025-09-19]\n- The reporting service must stay on Python 3.11 until the pandas 3 upgrade lands. [constraint; valid 2025-05-15 to now; recorded by standup/dune/2025-05-15]\n- The reports pipeline depends on Ledger for the nightly balance export, so if Ledger is down the reports pipeline is down. [valid 2025-02-06 to now; recorded by standup/dune/2025-02-06]\n- The reports pipeline's disk usage jumped 30 percent following the retention change. [valid 2025-06-06 to now; recorded by standup/boreal/2025-06-06]\n- Billing-api depends on the flags service as of 2025-10-21. [valid 2025-10-21 to now; recorded by standup/atlas/2025-10-21]\n- Team Ember reported at standup on 2025-11-17 that the authentication gateway's error rate crept up to 2 percent following the dependency bump. [valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- Boreal reported at standup on 2026-02-04 that the scheduler's error rate crept up to 2 percent following the dependency bump. [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- Team Atlas saw on 2026-04-16 that billing-api's error rate crept up to 2 percent following the dependency bump. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n- Ledger depends on the authentication gateway for service tokens. [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- The job scheduler depends on the flags service for per-job kill switches; if the flags service is down, the job scheduler is down. [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- The flags service saw 40,000 requests per second at peak, and most of the requests were identical. [valid 2025-08-20 to now; recorded by standup/cinder/2025-08-20]\n- The notifier is not Cinder's service, so Cinder flagged the issue instead of fixing it. [valid 2025-09-26 to now; recorded by standup/cinder/2025-09-26]\n- Team Ember reported at standup on 2026-05-27 that the notifier's CPU sat at 90 percent after the traffic shift. [valid 2026-05-27 to now; recorded by standup/ember/2026-05-27]\n- Team Ember reported at standup on 2025-11-10 that the authentication gateway's CPU sat at 90 percent after the traffic shift. [valid 2025-11-10 to now; recorded by standup/ember/2025-11-10]\n- Team Dune noticed on 2025-09-18 that the flags service's p99 latency doubled following Tuesday's deploy. [valid 2025-09-18 to now; recorded by standup/dune/2025-09-18]\n\nQuestion: Which service depends on reporting?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658025-odElehIeGY1vMwURjxGW",
+  "object": "chat.completion",
+  "created": 1788658025,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which service depends on reporting?\" Let me look through the memory for dependencies on the reporting service.\n\nLooking through:\n- \"The reporting service still relies on the event bus\" — that's reporting depending on event bus, not the other way.\n- \"The reports pipeline depends on Ledger for the nightly balance export\" — reports pipeline depends on Ledger, not something depending on reports pipeline.\n\nThere's no entry saying some service depends on reporting or the reports pipeline. So the answer is \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which service depends on reporting?\" Let me look through the memory for dependencies on the reporting service.\n\nLooking through:\n- \"The reporting service still relies on the event bus\" — that's reporting depending on event bus, not the other way.\n- \"The reports pipeline depends on Ledger for the nightly balance export\" — reports pipeline depends on Ledger, not something depending on reports pipeline.\n\nThere's no entry saying some service depends on reporting or the reports pipeline. So the answer is \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1188,
+   "completion_tokens": 112,
+   "total_tokens": 1300,
+   "cost": 0.00010558,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00010558,
+    "upstream_inference_prompt_cost": 7.758e-05,
+    "upstream_inference_completions_cost": 2.8e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 106,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.036957332980819,
+ "fetched_at": "2026-09-06T01:27:07Z"
+}

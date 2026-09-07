@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Boreal own now?\nGold answer: notifier, search-indexer, auth-gateway, catalog, event-bus and reporting\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 6 services.\n\nAnswer to grade: webhooks, event bus, search indexer, product catalog, reporting"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659006-SZXbHkqT2IvEalfd9YKd",
+  "object": "chat.completion",
+  "created": 1788659006,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer is missing notifier and auth-gateway and incorrectly includes webhooks, so it does not match the gold list of six services.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer lists 6 services: notifier, search-indexer, auth-gateway, catalog, event-bus and reporting.\n\nThe answer to grade lists: webhooks, event bus, search indexer, product catalog, reporting — that's 5 items.\n\nComparison:\n- notifier — not present (webhooks is not notifier)\n- search-indexer — present (search indexer)\n- auth-gateway — not present\n- catalog — present (product catalog)\n- event-bus — present (event bus)\n- reporting — present\n\nMissing: notifier, auth-gateway. Extra: webhooks. So incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer lists 6 services: notifier, search-indexer, auth-gateway, catalog, event-bus and reporting.\n\nThe answer to grade lists: webhooks, event bus, search indexer, product catalog, reporting — that's 5 items.\n\nComparison:\n- notifier — not present (webhooks is not notifier)\n- search-indexer — present (search indexer)\n- auth-gateway — not present\n- catalog — present (product catalog)\n- event-bus — present (event bus)\n- reporting — present\n\nMissing: notifier, auth-gateway. Extra: webhooks. So incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 264,
+   "completion_tokens": 162,
+   "total_tokens": 426,
+   "cost": 5.262e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.262e-05,
+    "upstream_inference_prompt_cost": 1.212e-05,
+    "upstream_inference_completions_cost": 4.05e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 123,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 3.080227290978655,
+ "fetched_at": "2026-09-06T01:43:29Z"
+}

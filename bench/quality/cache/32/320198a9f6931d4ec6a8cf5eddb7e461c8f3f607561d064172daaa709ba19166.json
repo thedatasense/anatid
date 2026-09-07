@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- [2025-02-13] handover/2025-02-13-feature-flags: Handover: as of today the flags service moves from team Atlas to the Cinder team. Priya walked Diego through the runbook this morning.\n- [2026-01-29] handover/2026-01-29-feature-flags: Handover: as of today the feature flag service moves from Cinder to team Dune. Yuki walked Farah Haddad through the runbook this morning.\n- [2026-04-21] handover/2026-04-21-feature-flags: The feature flag service has a new home: the Atlas team. The Dune team kept it until today.\n- [2025-08-20] standup/cinder/2025-08-20: Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical. Cinder noticed that the reporting service's p99 latency doubled after Tuesday's deploy and pinged the owners.\n- [2026-03-17] standup/cinder/2026-03-17: Reminder: notifier is owned by team Cinder.\n- [2025-01-17] standup/cinder/2025-01-17: The product catalog lives with the Cinder team. Cinder owns the indexer.\n- [2025-09-26] standup/cinder/2025-09-26: The Cinder team saw that the notifier's request volume halved following the client rollout; not their service, so they flagged it.\n- [2026-05-01] standup/cinder/2026-05-01-2: Observation from the Cinder team: after the marketing send, the flags service's queue depth hit 50,000.\n- [2025-07-18] handover/2025-07-18-auth-gateway-correction: Correction to the handover note of 2025-07-01: auth-gateway went to team Boreal, not the Cinder team. Cinder never owned it; the note was written against the wrong team.\n- [2025-10-21] standup/atlas/2025-10-21: New dependency for the billing service: the feature flag service. Billing-api will gate the new invoice flow behind feature-flags; the reasoning is that the rollout needs a per-tenant kill switch.\n- [2025-01-08] standup/atlas/2025-01-08-2: Atlas owns billing-api. Atlas looks after the flags service.\n- [2025-03-28] standup/ember/2025-03-28: If feature-flags is down, the job scheduler is down: it relies on it for per-job kill switches.\n- [2025-09-18] standup/dune/2025-09-18: The Dune team saw that the flags service's p99 latency doubled following Tuesday's deploy; not their service, so they flagged it.\n- [2025-11-19] handover/2025-11-19-notifier: Notifier has a new home: the Cinder team. Boreal kept it until today.\n- [2025-06-25] handover/2025-06-25-reporting: Ownership change: the reports pipeline now sits with team Ember. The Dune team no longer owns it.\n- [2025-01-08] standup/cinder/2025-01-08: For the org chart: Yuki and Diego are on team Cinder.\n- [2025-12-15] standup/cinder/2025-12-15: Team change: Diego leaves team Cinder and joins team Ember, effective today. With Diego moving on, Yuki is on call for the Cinder team from today.\n- [2025-08-29] standup/cinder/2025-08-29-2: The Cinder team noticed that search-indexer's disk usage jumped 30 percent after the retention change and pinged the owners.\n- [2025-01-08] standup/atlas/2025-01-08: For the record, Ledger is owned by team Atlas.\n- [2025-07-01] handover/2025-07-01-auth-gateway: Quick one: the auth gateway belongs to team Cinder starting today. Thanks to the Ember team for running it until now.\n- [2025-07-03] handover/2025-07-03-reporting-correction: Correction to the handover note of 2025-06-25: reporting went to Boreal, not Ember. Team Ember never owned it; the note was written against the wrong team.\n- [2026-04-29] handover/2026-04-29-ledger: Cinder is taking over the ledger from team Boreal, effective today. Dashboards and alerts are being repointed.\n- [2025-01-20] standup/ember/2025-01-20: Team Ember owns the job scheduler.\n- [2025-01-16] standup/cinder/2025-01-16: Diego Alvarez takes the first the Cinder team on-call shift of the year.\n- [2026-04-22] handover/2026-04-22-search-indexer: Ownership change: the search indexer now sits with the Boreal team. The Dune team no longer owns it.\n- [2025-11-19] handover/2025-11-19-image-resizer: From today the pager for image-resizer rings the Boreal team, not Cinder. Ownership transferred.\n- [2025-12-15] standup/cinder/2025-12-15-2: Observation from the Cinder team: after the retention change, the catalog service's disk usage jumped 30 percent.\n- [2025-10-20] handover/2025-10-20-catalog: Quick one: the product catalog belongs to the Boreal team starting today. Thanks to the Cinder team for running it until now.\n- [2025-11-25] standup/cinder/2025-11-25: Team Cinder on-call swapped this morning. Diego carries the phone until the next rotation.\n- [2025-06-02] standup/cinder/2025-06-02: Cinder adopted trunk-based development.\n- [2025-01-20] standup/dune/2025-01-20: For the record, image-resizer is owned by team Dune.\n- [2025-01-20] standup/dune/2025-01-20-2: Team Dune owns the reporting service.\n\nQuestion: Which team owned feature-flags before Cinder took it over?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788652421-7hEImBWbsEZysDKnxAS5",
+  "object": "chat.completion",
+  "created": 1788652421,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Atlas",
+     "refusal": null,
+     "reasoning": "The question: \"Which team owned feature-flags before Cinder took it over?\"\n\nLet me trace feature-flags ownership:\n- 2025-01-08: Atlas looks after the flags service (Atlas owns it).\n- 2025-02-13: flags service moves from team Atlas to the Cinder team.\n- 2026-01-29: feature flag service moves from Cinder to team Dune.\n- 2026-04-21: feature flag service has new home: Atlas team. Dune kept it until today.\n\nSo before Cinder took it over (2025-02-13), the owner was team Atlas.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question: \"Which team owned feature-flags before Cinder took it over?\"\n\nLet me trace feature-flags ownership:\n- 2025-01-08: Atlas looks after the flags service (Atlas owns it).\n- 2025-02-13: flags service moves from team Atlas to the Cinder team.\n- 2026-01-29: feature flag service moves from Cinder to team Dune.\n- 2026-04-21: feature flag service has new home: Atlas team. Dune kept it until today.\n\nSo before Cinder took it over (2025-02-13), the owner was team Atlas.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1612,
+   "completion_tokens": 133,
+   "total_tokens": 1745,
+   "cost": 0.00015415,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015415,
+    "upstream_inference_prompt_cost": 0.0001209,
+    "upstream_inference_completions_cost": 3.325e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 129,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.5855502919876017,
+ "fetched_at": "2026-09-05T23:53:44Z"
+}

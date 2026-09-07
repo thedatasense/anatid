@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- On 2025-12-19, the Atlas team took over the product catalog from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n- As of 2025-10-24, Diego has the Cinder pager this cycle, taking over from Yuki Tanaka. [valid 2025-10-24 to now; recorded by standup/cinder/2025-10-24]\n- The Cinder team owns the job scheduler as of 2025-09-23, when ownership transferred from the Dune team. [decision; valid 2025-09-23 to now; recorded by handover/2025-09-23-scheduler]\n    earlier: The Dune team owns the job scheduler as of 2025-09-05. [valid 2025-09-05 to 2025-09-23; recorded by standup/dune/2025-09-05]\n- As of 2025-12-19, the Atlas team owns the product catalog, having taken it over from the Cinder team. [decision; valid 2025-12-19 to now; recorded by handover/2025-12-19-catalog]\n    earlier: Cinder owns the product catalog. [valid 2025-01-17 to 2025-12-19; recorded by standup/cinder/2025-01-17]\n- As of 2025-10-13, the pager for the ledger service rings Cinder, not the Atlas team. [constraint; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n- As of 2025-10-13, the ledger service is owned by Cinder; ownership transferred from the Atlas team on that date. [decision; valid 2025-10-13 to now; recorded by handover/2025-10-13-ledger]\n    earlier: As of 2025-07-17, the ledger service is owned by the Atlas team. [valid 2025-07-17 to 2025-10-13; recorded by standup/atlas/2025-07-17]\n    earlier: The ledger service is owned by the Atlas team. [valid 2025-01-08 to 2025-07-17; recorded by standup/atlas/2025-01-08]\n- As of 2026-05-29, Oskar has the Ember pager, taking over from Diego. [valid 2026-05-29 to now; recorded by standup/ember/2026-05-29]\n    earlier: As of the 2026-04-13 cycle, Diego has the Ember pager, taking over from Oskar. [valid 2026-04-13 to 2026-05-29; recorded by standup/ember/2026-04-13]\n- The reporting service stopped using the ledger service because the nightly ledger scans were blocking billing runs. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- As of 2026-03-20, Lena has the Boreal team pager this cycle, taking over from Marcus. [valid 2026-03-20 to now; recorded by standup/boreal/2026-03-20]\n    earlier: As of 2026-02-10, Marcus has the Boreal team pager this cycle, taking over from Lena. [valid 2026-02-10 to 2026-03-20; recorded by standup/boreal/2026-02-10]\n    earlier: As of 2025-12-18, Lena has the Boreal team pager this cycle, taking over from Marcus. [valid 2025-12-18 to 2026-02-10; recorded by standup/boreal/2025-12-18]\n    earlier: As of 2025-11-06, Marcus has the Boreal team pager this cycle, taking over from Lena. [valid 2025-11-06 to 2025-12-18; recorded by standup/boreal/2025-11-06]\n    earlier: Lena has the pager rotation for the Boreal team as of 2025-06-27, taking over from Marcus. [valid 2025-06-27 to 2025-11-06; recorded by standup/boreal/2025-06-27]\n    earlier: Marcus has the pager rotation for the Boreal team as of 2025-05-07, taking over from Lena. [valid 2025-05-07 to 2025-06-27; recorded by standup/boreal/2025-05-07]\n    earlier: Lena has the pager rotation for the Boreal team as of 2025-03-17, taking over from Marcus. [valid 2025-03-17 to 2025-05-07; recorded by standup/boreal/2025-03-17]\n    earlier: Marcus has the pager rotation for the Boreal team as of 2025-02-12. [valid 2025-02-12 to 2025-03-17; recorded by standup/boreal/2025-02-12]\n    earlier: Lena has the first pager rotation for the Boreal team. [valid 2025-01-09 to 2025-02-12; recorded by standup/boreal/2025-01-09-4]\n- The Atlas team owns the image resizer as of 2025-11-26, when ownership transferred from the Ember team. [decision; valid 2025-11-26 to now; recorded by handover/2025-11-26-image-resizer]\n    earlier: The Ember team owns the image resizer as of 2025-03-20. [decision; valid 2025-03-20 to 2025-11-26; recorded by handover/2025-03-20-image-resizer]\n    earlier: The Dune team owns the image resizer. [valid 2025-01-20 to 2025-03-20; recorded by standup/dune/2025-01-20]\n- Farah has the Dune team pager this cycle as of 2025-10-15, taking over from Tomasz Nowak. [valid 2025-10-15 to now; recorded by standup/dune/2025-10-15]\n- As of 2026-06-04, Priya Raman has the Atlas team pager this cycle, taking over from Marcus. [valid 2026-06-04 to now; recorded by standup/atlas/2026-06-04]\n\nQuestion: When did Cinder take over the ledger?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653267-APCamD3YEkSUg5bXYfq6",
+  "object": "chat.completion",
+  "created": 1788653267,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "2025-10-13",
+     "refusal": null,
+     "reasoning": "The question asks when Cinder took over the ledger. Memory: \"As of 2025-10-13, the ledger service is owned by Cinder; ownership transferred from the Atlas team on that date.\" So the answer is 2025-10-13.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks when Cinder took over the ledger. Memory: \"As of 2025-10-13, the ledger service is owned by Cinder; ownership transferred from the Atlas team on that date.\" So the answer is 2025-10-13.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1649,
+   "completion_tokens": 61,
+   "total_tokens": 1710,
+   "cost": 0.000131245,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000131245,
+    "upstream_inference_prompt_cost": 0.000115995,
+    "upstream_inference_completions_cost": 1.525e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 53,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.0691485829884186,
+ "fetched_at": "2026-09-06T00:07:49Z"
+}

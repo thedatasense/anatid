@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- INC-2026-009 was an incident in which the scheduler ran the nightly jobs twice on 2026-05-03. [valid 2026-05-08 to now; recorded by incident-review/INC-2026-009]\n- As of 2025-10-27, the scheduler deploys on weekday mornings before 11:00 UTC. [constraint; valid 2025-10-27 to now; recorded by standup/dune/2025-10-27-2]\n    earlier: The scheduler deploys on weekdays after 15:00 UTC and at no other time. [constraint; valid 2025-03-19 to 2025-10-27; recorded by standup/ember/2025-03-19]\n- INC-2026-003 was an incident in which the webhooks service delivered some events twice on 2026-01-17. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- As of 2026-02-23, the scheduler's deploy window remains weekday mornings before 11:00 UTC. [constraint; valid 2026-02-23 to now; recorded by standup/dune/2026-02-23]\n- As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n    earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Team Dune owns the reporting service. [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- As of 2025-05-09, the reporting service must stay on Python 3.11 until the pandas 3 upgrade lands. [constraint; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09]\n- Farah is off the Team Dune on-call rotation as of 2026-04-13; as of 2026-02-04 the Team Dune pager for that cycle was carried by Tomasz Nowak. [valid 2026-04-13 to now; recorded by standup/dune/2026-04-13]\n    earlier: Farah is on the Team Dune on-call rotation; as of 2026-02-04 the pager for this cycle is carried by Tomasz Nowak. [valid 2026-02-04 to 2026-04-13; recorded by standup/dune/2026-02-04]\n    earlier: As of 2025-12-15, Farah is back on the Team Dune on-call rotation, carrying the pager for this cycle. [valid 2025-12-15 to 2026-02-04; recorded by standup/dune/2025-12-15]\n    earlier: As of 2025-10-27, Tomasz Nowak is back on the Team Dune on-call rotation, carrying the pager for this cycle. [valid 2025-10-27 to 2025-12-15; recorded by standup/dune/2025-10-27]\n    earlier: As of 2025-09-22, Tomasz Nowak is off the Team Dune on-call rotation, after holding the pager since 2025-07-30. [valid 2025-09-22 to 2025-10-27; recorded by standup/dune/2025-09-22]\n    earlier: As of 2025-07-30, Tomasz Nowak is on call for Team Dune this cycle, having received the pager from Farah. [valid 2025-07-30 to 2025-09-22; recorded by standup/dune/2025-07-30]\n    earlier: As of 2025-07-17, Farah is on call for Team Dune this cycle. [valid 2025-07-17 to 2025-07-30; recorded by standup/dune/2025-07-17]\n- As of 2025-09-15, the reporting service no longer depends on the ledger; it reads from the event bus instead. [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: The reporting service depends on the ledger. [valid 2025-04-08 to 2025-09-15; recorded by standup/dune/2025-04-08]\n- The root cause of INC-2026-003 was a retry loop that ignored idempotency keys. [valid 2026-01-22 to now; recorded by incident-review/INC-2026-003]\n- On 2025-11-07, Farah walked Marcus through the reporting service runbook. [valid 2025-11-07 to now; recorded by handover/2025-11-07-reporting]\n- The root cause of INC-2025-004 was a consumer offset stuck after a broker restart. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- The root cause of INC-2025-023 was a reindex job that failed silently on a full disk. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- On 2026-03-10, Team Dune observed that after Tuesday's deploy, the reporting service's p99 latency doubled. [valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- INC-2025-004 was an incident affecting the notifier on 2025-02-06. [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- INC-2025-023 was an incident affecting the indexer on 2025-10-13. [valid 2025-10-16 to now; recorded by incident-review/INC-2025-023]\n- INC-2025-017 was an incident affecting the auth gateway on 2025-07-27. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- INC-2025-017 was caused by an expired intermediate certificate. [valid 2025-08-01 to now; recorded by incident-review/INC-2025-017]\n- On 2025-09-15, Team Dune decided that the reporting service will read from the event bus instead of querying the ledger directly because the nightly ledger scans were blocking billing runs. [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n\nQuestion: Which team was wrongly recorded as the owner of reporting before the record was corrected?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653622-7tLCZPkiebuWkmiSpGi1",
+  "object": "chat.completion",
+  "created": 1788653622,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Team Boreal",
+     "refusal": null,
+     "reasoning": "The memory says: \"As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction] earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\"\n\nSo the wrong record said Team Boreal; corrected to Ember.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The memory says: \"As of 2025-11-07, the reporting service moved from Team Dune to the Ember team. [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction] earlier: As of 2025-11-07, the reporting service moved from Team Dune to Team Boreal. [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\"\n\nSo the wrong record said Team Boreal; corrected to Ember.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1759,
+   "completion_tokens": 132,
+   "total_tokens": 1891,
+   "cost": 0.000157245,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000157245,
+    "upstream_inference_prompt_cost": 0.000124245,
+    "upstream_inference_completions_cost": 3.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 127,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8760657500242814,
+ "fetched_at": "2026-09-06T00:13:44Z"
+}

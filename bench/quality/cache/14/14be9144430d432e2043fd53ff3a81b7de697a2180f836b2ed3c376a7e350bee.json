@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The webhook dispatcher depends on the bus for outbound events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\n- The webhook dispatcher is owned by the Boreal team as of 2025-05-15, when ownership moved from the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: The webhook dispatcher is owned by the Ember team, which took over ownership from the Boreal team on 2025-03-03. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n    earlier: The webhook dispatcher is owned by the Boreal team. [valid 2025-01-09 to 2025-03-03; recorded by standup/boreal/2025-01-09-3]\n- At the Boreal standup on 2025-11-03, it was decided that the webhook dispatcher will sign payloads with rotating keys. [decision; valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- On 2026-04-08, the Atlas team observed that webhooks' request volume halved following the client rollout, and since it was not their service, they flagged it. [valid 2026-04-08 to now; recorded by standup/atlas/2026-04-08]\n- As of 2025-05-15, the pager for webhooks rings the Boreal team instead of the Ember team. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n    earlier: As of 2025-03-03, the pager for webhooks rings the Ember team instead of the Boreal team. [valid 2025-03-03 to 2025-05-15; recorded by handover/2025-03-03-webhooks]\n- During INC-2026-003, the webhook dispatcher delivered some events twice on 2026-02-20. [valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- The notifier depends on the bus for delivery events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11]\n- Per the change policy, the webhook dispatcher deploys on Mondays and Wednesdays between 14:00 and 16:00 UTC. [constraint; valid 2025-04-07 to now; recorded by standup/ember/2025-04-07]\n- As of 2025-09-23, the reporting service no longer relies on the ledger service; it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: As of 2025-06-24, the reporting service still relies on the ledger service. [valid 2025-06-24 to 2025-09-23; recorded by standup/dune/2025-06-24]\n- As of 2025-09-23, the reporting service uses the bus as its source instead of the ledger service. [decision; valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n- Follow-up decision from the INC-2026-003 review: the webhook dispatcher will require an idempotency key on every delivery, because duplicate deliveries in INC-2026-003 came from retries without one. [decision; valid 2026-02-26 to now; recorded by incident-review/INC-2026-003]\n- The Cinder team observed on 2025-05-14 that the webhook dispatcher's memory use grew steadily for a week after the cache change. [valid 2025-05-14 to now; recorded by standup/cinder/2025-05-14]\n- On 2025-05-15, Oskar walked Lena through the webhook dispatcher runbook. [valid 2025-05-15 to now; recorded by handover/2025-05-15-webhooks]\n- A partner asked for webhook key rotation in their security review. [valid 2025-11-03 to now; recorded by standup/boreal/2025-11-03]\n- The Boreal team observed on 2025-12-01 that the billing API's error rate crept up to 2 percent after the dependency bump. [valid 2025-12-01 to now; recorded by standup/boreal/2025-12-01]\n- Deploys to the bus happen on Thursdays between 07:00 and 09:00 UTC and at no other time. [constraint; valid 2025-04-18 to now; recorded by standup/boreal/2025-04-18]\n- The reporting service no longer depends on the ledger service for the nightly balance export; as of 2025-09-23 it uses the bus as its source. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23]\n    earlier: The reporting service depends on the ledger service for the nightly balance export. [valid 2025-01-21 to 2025-09-23; recorded by standup/dune/2025-01-21]\n- On 2025-11-04, the Ember team observed that the billing API's queue depth hit 50,000 following the marketing send, and since it was not their service, they flagged it. [valid 2025-11-04 to now; recorded by standup/ember/2025-11-04]\n- The Dune team observed on 2025-09-23 that the bus' CPU sat at 90 percent after the traffic shift and pinged the owners. [valid 2025-09-23 to now; recorded by standup/dune/2025-09-23-2]\n- The Dune team observed on 2025-12-29 that the bus' request volume halved after the client rollout. [valid 2025-12-29 to now; recorded by standup/dune/2025-12-29]\n\nQuestion: Which note first recorded that webhooks depends on the event-bus, and when?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788653953-JoPPbu1c9XlopbQOVNuw",
+  "object": "chat.completion",
+  "created": 1788653953,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "standup/boreal/2025-02-11-2, on 2025-02-11",
+     "refusal": null,
+     "reasoning": "The question asks: \"Which note first recorded that webhooks depends on the event-bus, and when?\"\n\nLooking at the memory, the webhook dispatcher depends on the bus: \"The webhook dispatcher depends on the bus for outbound events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\"\n\nThere's also \"The notifier depends on the bus for delivery events\" — but that's the notifier, not webhooks.\n\nThe question says \"webhooks depends on the event-bus\" — the memory records the webhook dispatcher depends on the bus for outbound events, recorded by standup/boreal/2025-02-11-2, valid 2025-02-11.\n\nSo the answer: standup/boreal/2025-02-11-2, on 2025-02-11.\n\nFormat: one short line with just the value asked for.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks: \"Which note first recorded that webhooks depends on the event-bus, and when?\"\n\nLooking at the memory, the webhook dispatcher depends on the bus: \"The webhook dispatcher depends on the bus for outbound events, so it is down whenever the bus is down. [valid 2025-02-11 to now; recorded by standup/boreal/2025-02-11-2]\"\n\nThere's also \"The notifier depends on the bus for delivery events\" — but that's the notifier, not webhooks.\n\nThe question says \"webhooks depends on the event-bus\" — the memory records the webhook dispatcher depends on the bus for outbound events, recorded by standup/boreal/2025-02-11-2, valid 2025-02-11.\n\nSo the answer: standup/boreal/2025-02-11-2, on 2025-02-11.\n\nFormat: one short line with just the value asked for.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1599,
+   "completion_tokens": 227,
+   "total_tokens": 1826,
+   "cost": 0.000168995,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000168995,
+    "upstream_inference_prompt_cost": 0.000112245,
+    "upstream_inference_completions_cost": 5.675e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 203,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7087394590489566,
+ "fetched_at": "2026-09-06T00:19:16Z"
+}

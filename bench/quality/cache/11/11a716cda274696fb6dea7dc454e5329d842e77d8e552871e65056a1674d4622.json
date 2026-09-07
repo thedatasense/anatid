@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Cinder owns feature-flags [valid 2026-02-24 to now; recorded by handover/2026-02-24-feature-flags]\n    earlier: Boreal owns feature-flags [valid 2025-09-29 to 2026-02-24; recorded by handover/2025-09-29-feature-flags]\n    earlier: Cinder owns feature-flags [valid 2025-07-09 to 2025-09-29; recorded by handover/2025-07-09-feature-flags]\n    earlier: Atlas owns feature-flags [valid 2025-01-08 to 2025-07-09; recorded by standup/atlas/2025-01-08-2]\n- The scheduler depends on feature-flags [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- Cinder adopted trunk-based development [valid 2025-09-23 to now; recorded by standup/cinder/2025-09-23]\n- Ember noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- Decision: clients will cache feature-flags evaluations for 30 seconds, because feature-flags saw 40,000 requests per second at peak and most of them were identical [decision; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28]\n- Billing-api depends on feature-flags [valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Boreal noticed that feature-flags's queue depth hit 50,000 after the marketing send [observation; valid 2025-02-27 to now; recorded by standup/boreal/2025-02-27]\n- Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Cinder noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- Cinder owns reporting [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n    earlier: Ember owns reporting [valid 2025-11-17 to 2026-02-10; recorded by handover/2025-11-17-reporting-correction]\n    earlier: Boreal owns reporting [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Dune owns reporting [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- Cinder noticed that the ledger's disk usage jumped 30 percent after the retention change [observation; valid 2026-01-05 to now; recorded by standup/cinder/2026-01-05]\n- The handover note of 2025-08-29 wrongly recorded Cinder as the owner of the scheduler [valid 2025-09-05 to now; recorded by handover/2025-09-05-scheduler-correction]\n- Cinder noticed that billing-api's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- Cinder holds its planning meeting on Mondays [valid 2025-02-28 to now; recorded by standup/cinder/2025-02-28]\n- Atlas owns auth-gateway [valid 2025-12-23 to now; recorded by handover/2025-12-23-auth-gateway]\n    earlier: Boreal owns auth-gateway [valid 2025-03-31 to 2025-12-23; recorded by handover/2025-03-31-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-03-31; recorded by standup/ember/2025-01-20-2]\n- Cinder noticed that the event-bus's CPU sat at 90 percent after the traffic shift [observation; valid 2025-07-03 to now; recorded by standup/cinder/2025-07-03]\n- Cinder noticed that reporting's disk usage jumped 30 percent after the retention change [observation; valid 2025-06-23 to now; recorded by standup/cinder/2025-06-23]\n- Cinder sits on the third floor [valid 2025-08-27 to now; recorded by standup/cinder/2025-08-27]\n- Atlas noticed that the catalog's request volume halved after the client rollout [observation; valid 2025-08-29 to now; recorded by standup/atlas/2025-08-29]\n- Cinder noticed that auth-gateway's cold start time tripled after the runtime upgrade [observation; valid 2025-02-21 to now; recorded by standup/cinder/2025-02-21]\n\nQuestion: Why was feature-flags moved from Atlas to Cinder?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788655506-APsHWsxvgt2XQIb67qNH",
+  "object": "chat.completion",
+  "created": 1788655506,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks why feature-flags was moved from Atlas to Cinder. Let me look at the memory.\n\nThe memory shows ownership history:\n- Atlas owned feature-flags [2025-01-08 to 2025-07-09]\n- Cinder owned feature-flags [2025-07-09 to 2025-09-29]\n- Boreal owned feature-flags [2025-09-29 to 2026-02-24]\n- Cinder owns feature-flags [2026-02-24 to now]\n\nSo the transfer from Atlas to Cinder happened around 2025-07-09, recorded by handover/2025-07-09-feature-flags. But the memory doesn't contain any reason for the move. There's no record of why it was moved.\n\nThe rules say: if the memory does not contain the answer, reply exactly: I don't know.\n\nThe memory only records the ownership facts, not the reason for the move. So the answer is: I don't know.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks why feature-flags was moved from Atlas to Cinder. Let me look at the memory.\n\nThe memory shows ownership history:\n- Atlas owned feature-flags [2025-01-08 to 2025-07-09]\n- Cinder owned feature-flags [2025-07-09 to 2025-09-29]\n- Boreal owned feature-flags [2025-09-29 to 2026-02-24]\n- Cinder owns feature-flags [2026-02-24 to now]\n\nSo the transfer from Atlas to Cinder happened around 2025-07-09, recorded by handover/2025-07-09-feature-flags. But the memory doesn't contain any reason for the move. There's no record of why it was moved.\n\nThe rules say: if the memory does not contain the answer, reply exactly: I don't know.\n\nThe memory only records the ownership facts, not the reason for the move. So the answer is: I don't know.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1370,
+   "completion_tokens": 216,
+   "total_tokens": 1586,
+   "cost": 0.00015675,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00015675,
+    "upstream_inference_prompt_cost": 0.00010275,
+    "upstream_inference_completions_cost": 5.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 210,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 4.701035500038415,
+ "fetched_at": "2026-09-06T00:45:11Z"
+}

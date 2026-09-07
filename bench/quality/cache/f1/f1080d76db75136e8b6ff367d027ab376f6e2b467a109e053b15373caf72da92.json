@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: On what date was the review of INC-2025-023 written?\nGold answer: 2025-10-27\nAlso accepted: 27 October 2025; October 27, 2025\nGrading rule: Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\n\nAnswer to grade: 2025-10-27"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658974-YZZgFnmPGlTBQ1KRK7a1",
+  "object": "chat.completion",
+  "created": 1788658974,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer gives the gold date 2025-10-27 for the review, matching the gold answer exactly.\"}",
+     "refusal": null,
+     "reasoning": "The answer matches the gold answer exactly: 2025-10-27. The grading rule says correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable. The question asks \"On what date was the review of INC-2025-023 written?\" — the answer is the date 2025-10-27. But wait, the rule says \"The date alone with the right kind of note is acceptable\" — the answer is just the date without mentioning the kind of note. Hmm, the answer is just \"2025-10-27\" — the date alone. The rule says date alone with the right kind of note is acceptable, but a different note or date is wrong. The answer only gives the date, not the kind. Hmm, but the question asks only for the date. Actually the rule likely means: if the answer identifies the source label (e.g., \"Review #X\") or its kind (\"review\") together with the date. The answer here is just the date \"2025-10-27\", which matches the gold date. The question asks specifically for the date, so the date answer implies the review. I'd say correct: the answer matches the gold date.\n\nThe rule: \"Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\" The answer gives the correct date. The question is about the review of INC-2025-023, so the kind (review) is implied by the question context. I'll mark it correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer matches the gold answer exactly: 2025-10-27. The grading rule says correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable. The question asks \"On what date was the review of INC-2025-023 written?\" — the answer is the date 2025-10-27. But wait, the rule says \"The date alone with the right kind of note is acceptable\" — the answer is just the date without mentioning the kind of note. Hmm, the answer is just \"2025-10-27\" — the date alone. The rule says date alone with the right kind of note is acceptable, but a different note or date is wrong. The answer only gives the date, not the kind. Hmm, but the question asks only for the date. Actually the rule likely means: if the answer identifies the source label (e.g., \"Review #X\") or its kind (\"review\") together with the date. The answer here is just the date \"2025-10-27\", which matches the gold date. The question asks specifically for the date, so the date answer implies the review. I'd say correct: the answer matches the gold date.\n\nThe rule: \"Correct if the answer identifies the source label of the gold note, or its kind together with the gold date. The date alone with the right kind of note is acceptable; a different note or date is wrong.\" The answer gives the correct date. The question is about the review of INC-2025-023, so the kind (review) is implied by the question context. I'll mark it correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 268,
+   "completion_tokens": 389,
+   "total_tokens": 657,
+   "cost": 0.00010967,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00010967,
+    "upstream_inference_prompt_cost": 1.242e-05,
+    "upstream_inference_completions_cost": 9.725e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 354,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 5.163219082984142,
+ "fetched_at": "2026-09-06T01:42:59Z"
+}

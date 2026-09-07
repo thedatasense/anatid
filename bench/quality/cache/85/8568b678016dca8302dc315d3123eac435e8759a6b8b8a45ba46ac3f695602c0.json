@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- The flags service is Team Atlas's service as of 2026-04-21, after moving from Team Dune. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n    earlier: The flags service is Team Dune's service as of 2026-01-29, after moving from Cinder. [decision; valid 2026-01-29 to 2026-04-21; recorded by handover/2026-01-29-feature-flags]\n    earlier: The flags service is not Team Dune's service, so Team Dune flagged the issue instead of fixing it. [valid 2025-09-18 to 2026-01-29; recorded by standup/dune/2025-09-18]\n- Marcus Oyelaran left Boreal and joined Team Atlas on 2026-03-17. [decision; valid 2026-03-17 to now; recorded by standup/boreal/2026-03-17]\n- Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14. [decision; valid 2026-04-14 to now; recorded by standup/atlas/2026-04-14]\n- Ember handed the webhooks service to Team Atlas on 2025-09-09. [valid 2025-09-09 to now; recorded by handover/2025-09-09-webhooks]\n- The flags service moved from Team Dune to Team Atlas on 2026-04-21. [decision; valid 2026-04-21 to now; recorded by handover/2026-04-21-feature-flags]\n- The webhook dispatcher moved from Team Atlas to Team Dune on 2026-04-22. [decision; valid 2026-04-22 to now; recorded by handover/2026-04-22-webhooks]\n- The first on-call rotation for Team Atlas goes to Tomasz. [decision; valid 2025-01-09 to now; recorded by standup/atlas/2025-01-09]\n- Team Atlas has moved to the second floor. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21-2]\n- Page Priya for anything this cycle for Team Atlas, not Marcus Oyelaran, as of 2026-06-08. [decision; valid 2026-06-08 to now; recorded by standup/atlas/2026-06-08]\n    earlier: Page Marcus Oyelaran for anything this cycle for Team Atlas, not Priya, as of 2026-04-14. [decision; valid 2026-04-14 to 2026-06-08; recorded by standup/atlas/2026-04-14]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-07-16. [decision; valid 2025-07-16 to 2026-04-14; recorded by standup/atlas/2025-07-16]\n    earlier: Page Tomasz for anything this cycle for Team Atlas, not Priya, as of 2025-06-13. [decision; valid 2025-06-13 to 2025-07-16; recorded by standup/atlas/2025-06-13]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-05-14. [decision; valid 2025-05-14 to 2025-06-13; recorded by standup/atlas/2025-05-14]\n    earlier: Page Tomasz Nowak for anything this cycle for Team Atlas, not Priya, as of 2025-04-04. [decision; valid 2025-04-04 to 2025-05-14; recorded by standup/atlas/2025-04-04]\n    earlier: Page Priya for anything this cycle for Team Atlas, not Tomasz, as of 2025-02-19. [decision; valid 2025-02-19 to 2025-04-04; recorded by standup/atlas/2025-02-19]\n- Diego held the Cinder on-call phone from 2025-11-25 until 2025-12-15, after which Yuki took it over. [decision; valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego took over the Cinder on-call phone as of 2025-11-25, with Yuki off rotation. [decision; valid 2025-11-25 to 2025-12-15; recorded by standup/cinder/2025-11-25]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-10-02, with Diego off rotation. [decision; valid 2025-10-02 to 2025-11-25; recorded by standup/cinder/2025-10-02]\n    earlier: Diego took over the Cinder on-call phone as of 2025-08-29. [decision; valid 2025-08-29 to 2025-10-02; recorded by standup/cinder/2025-08-29]\n    earlier: Yuki took over the Cinder on-call phone as of 2025-07-22. [decision; valid 2025-07-22 to 2025-08-29; recorded by standup/cinder/2025-07-22]\n- The flags service moved from Team Atlas to the Cinder team as of 2025-02-13. [decision; valid 2025-02-13 to now; recorded by handover/2025-02-13-feature-flags]\n    earlier: Team Atlas looks after the flags service as of 2025-01-08. [valid 2025-01-08 to 2025-02-13; recorded by standup/atlas/2025-01-08-2]\n- Team Atlas consists of Priya as of 2025-07-21, after Tomasz moved to Team Dune. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Team Atlas consists of Priya and Tomasz as of 2025. [valid 2025-01-06 to 2025-07-21; recorded by standup/atlas/2025-01-06]\n- billing-api can be released on weekday mornings before 11:00 UTC; any other release time requires an exception. [constraint; valid 2025-03-24 to now; recorded by standup/atlas/2025-03-24]\n- Team Atlas saw on 2026-04-16 that billing-api's error rate crept up to 2 percent following the dependency bump. [valid 2026-04-16 to now; recorded by standup/atlas/2026-04-16]\n\nQuestion: Which team was Marcus on before moving to Atlas?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788657307-gZpx0LQEdUCcMYhC4S39",
+  "object": "chat.completion",
+  "created": 1788657307,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Reka",
+  "system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp8-53169669",
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Boreal",
+     "refusal": null,
+     "reasoning": "The question asks which team Marcus was on before moving to Atlas. Memory says: \"Marcus Oyelaran left Boreal and joined Team Atlas on 2026-03-17.\" So the answer is Boreal.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Marcus was on before moving to Atlas. Memory says: \"Marcus Oyelaran left Boreal and joined Team Atlas on 2026-03-17.\" So the answer is Boreal.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1737,
+   "completion_tokens": 48,
+   "total_tokens": 1785,
+   "cost": 0.00028455,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00028455,
+    "upstream_inference_prompt_cost": 0.00026055,
+    "upstream_inference_completions_cost": 2.4e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 43,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.2156332909944467,
+ "fetched_at": "2026-09-06T01:15:08Z"
+}

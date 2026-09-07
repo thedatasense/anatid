@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Boreal owns auth-gateway [valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n    earlier: Cinder owns auth-gateway [valid 2025-07-01 to 2025-07-18; recorded by handover/2025-07-01-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-07-01; recorded by standup/ember/2025-01-20-2]\n- Ember noticed that auth-gateway's error rate crept up to 2 percent after the dependency bump [observation; valid 2025-11-17 to now; recorded by standup/ember/2025-11-17]\n- Ember noticed that auth-gateway's CPU sat at 90 percent after the traffic shift [observation; valid 2025-11-10 to now; recorded by standup/ember/2025-11-10]\n- The ledger depends on auth-gateway [valid 2025-03-14 to now; recorded by standup/atlas/2025-03-14]\n- The handover note of 2025-11-18 wrongly recorded Ember as the owner of search-indexer [valid 2025-12-15 to now; recorded by handover/2025-12-15-search-indexer-correction]\n- The handover note of 2025-06-25 wrongly recorded Ember as the owner of reporting [valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n- The handover note of 2025-07-01 wrongly recorded Cinder as the owner of auth-gateway [valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n- Ember adopted pairing on every production change [valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Diego is a member of Ember [valid 2025-12-15 to now; recorded by standup/cinder/2025-12-15]\n    earlier: Diego is a member of Cinder [valid 2025-01-08 to 2025-12-15; recorded by standup/cinder/2025-01-08]\n- Changes to auth-gateway need two reviewer approvals and a security sign-off [constraint; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11]\n- Auth-gateway deploys only on Mondays to Thursdays between 09:00 and 17:00 UTC [constraint; valid 2025-04-14 to now; recorded by standup/ember/2025-04-14]\n- Cinder noticed that auth-gateway's cold start time tripled after the runtime upgrade [observation; valid 2026-04-17 to now; recorded by standup/cinder/2026-04-17]\n- Oskar is a member of Ember [valid 2025-01-10 to now; recorded by standup/ember/2025-01-10]\n- Ember noticed that webhooks's memory use grew steadily for a week after the cache change [observation; valid 2025-03-11 to now; recorded by standup/ember/2025-03-11-2]\n- Ember holds its planning meeting on Fridays [valid 2025-04-23 to now; recorded by standup/ember/2025-04-23]\n- Ember noticed that the ledger's memory use grew steadily for a week after the cache change [observation; valid 2025-05-28 to now; recorded by standup/ember/2025-05-28]\n- Decision: auth-gateway tokens will expire after 15 minutes instead of an hour, because the security audit flagged long-lived tokens [decision; valid 2026-01-27 to now; recorded by standup/boreal/2026-01-27]\n- Oskar is on call for Ember [valid 2026-06-17 to now; recorded by standup/ember/2026-06-17]\n    earlier: Diego is on call for Ember [valid 2026-05-13 to 2026-06-17; recorded by standup/ember/2026-05-13]\n    earlier: Oskar is on call for Ember [valid 2026-03-16 to 2026-05-13; recorded by standup/ember/2026-03-16]\n    earlier: Diego is on call for Ember [valid 2026-01-23 to 2026-03-16; recorded by standup/ember/2026-01-23]\n    earlier: Oskar is on call for Ember [valid 2025-01-13 to 2026-01-23; recorded by standup/ember/2025-01-13]\n- Ember noticed that the notifier's memory use grew steadily for a week after the cache change [observation; valid 2025-11-05 to now; recorded by standup/ember/2025-11-05]\n- INC-2025-017: auth-gateway rejected every login for 12 minutes on 2025-07-06; the root cause was an expired intermediate certificate [valid 2025-07-09 to now; recorded by incident-review/INC-2025-017]\n\nQuestion: Which team owned auth-gateway before Ember?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658824-WKHikUAYfLAQf6esxqpm",
+  "object": "chat.completion",
+  "created": 1788658824,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "CoreWeave",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks which team owned auth-gateway before Ember. Looking at the memory:\n\n- Ember owns auth-gateway [valid 2025-01-20 to 2025-07-01]\n- earlier: Cinder owns auth-gateway [valid 2025-07-01 to 2025-07-18]\n- earlier: Boreal owns auth-gateway [valid 2025-07-18 to now]\n\nWait, the ordering here is odd. The entries are listed with \"earlier\" chains. Let me parse:\n\n\"Boreal owns auth-gateway [valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n    earlier: Cinder owns auth-gateway [valid 2025-07-01 to 2025-07-18; recorded by handover/2025-07-01-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-07-01; recorded by standup/ember/2025-01-20-2]\"\n\nSo the chain is: Ember (2025-01-20 to 2025-07-01), then Cinder (2025-07-01 to 2025-07-18), then Boreal (2025-07-18 to now).\n\nThe question: \"Which team owned auth-gateway before Ember?\" — Before Ember's ownership (2025-01-20 to 2025-07-01), the memory doesn't show any earlier owner. The chain starts with Ember as the earliest. So the answer would be \"I don't know\" — the memory doesn't contain who owned it before Ember.\n\nWait, but maybe the question intends \"before Ember\" in the sense of the team that owned it immediately before the current owner? No, the question is literal: which team owned auth-gateway before Ember. Ember owned it from 2025-01-20 to 2025-07-01. Before that, no record exists. So the answer is \"I don't know\".\n\nHmm, but could the question be interpreted as \"before Ember\" meaning the owner prior to Ember in the sequence of owners listed? The sequence: Ember → Cinder → Boreal. Before Ember, nothing is recorded. So I don't know.\n\nAnswer: I don't know",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team owned auth-gateway before Ember. Looking at the memory:\n\n- Ember owns auth-gateway [valid 2025-01-20 to 2025-07-01]\n- earlier: Cinder owns auth-gateway [valid 2025-07-01 to 2025-07-18]\n- earlier: Boreal owns auth-gateway [valid 2025-07-18 to now]\n\nWait, the ordering here is odd. The entries are listed with \"earlier\" chains. Let me parse:\n\n\"Boreal owns auth-gateway [valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n    earlier: Cinder owns auth-gateway [valid 2025-07-01 to 2025-07-18; recorded by handover/2025-07-01-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-07-01; recorded by standup/ember/2025-01-20-2]\"\n\nSo the chain is: Ember (2025-01-20 to 2025-07-01), then Cinder (2025-07-01 to 2025-07-18), then Boreal (2025-07-18 to now).\n\nThe question: \"Which team owned auth-gateway before Ember?\" — Before Ember's ownership (2025-01-20 to 2025-07-01), the memory doesn't show any earlier owner. The chain starts with Ember as the earliest. So the answer would be \"I don't know\" — the memory doesn't contain who owned it before Ember.\n\nWait, but maybe the question intends \"before Ember\" in the sense of the team that owned it immediately before the current owner? No, the question is literal: which team owned auth-gateway before Ember. Ember owned it from 2025-01-20 to 2025-07-01. Before that, no record exists. So the answer is \"I don't know\".\n\nHmm, but could the question be interpreted as \"before Ember\" meaning the owner prior to Ember in the sequence of owners listed? The sequence: Ember → Cinder → Boreal. Before Ember, nothing is recorded. So I don't know.\n\nAnswer: I don't know",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1371,
+   "completion_tokens": 498,
+   "total_tokens": 1869,
+   "cost": 0.00045465,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00045465,
+    "upstream_inference_prompt_cost": 0.00020565,
+    "upstream_inference_completions_cost": 0.000249
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 429,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 19.782018417026848,
+ "fetched_at": "2026-09-06T01:40:44Z"
+}

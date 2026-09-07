@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which services does Cinder own now?\nGold answer: ledger\nAlso accepted: (none)\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong. The gold has 1 services.\n\nAnswer to grade: Notifier, Ledger, and the flags service."
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788659052-Mov8t3Dzw71iDFPncHyc",
+  "object": "chat.completion",
+  "created": 1788659052,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names extra services (Notifier and the flags service) beyond the gold 'ledger', and the rule forbids extra items.\"}",
+     "refusal": null,
+     "reasoning": "The gold answer is \"ledger\". The answer to grade says \"Notifier, Ledger, and the flags service.\" The grading rule says: Where the gold is a list, every item must be named and no extra item. The gold has 1 service (ledger). The answer names Ledger but also names extra items (Notifier and flags service). Extra items are not allowed. So this is incorrect.\n\nWait — but let me think. The rule says \"Correct if the final answer names the gold; ... Where the gold is a list, every item must be named and no extra item.\" So the answer must name ledger and no extra items. The answer names extra items, so it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The gold answer is \"ledger\". The answer to grade says \"Notifier, Ledger, and the flags service.\" The grading rule says: Where the gold is a list, every item must be named and no extra item. The gold has 1 service (ledger). The answer names Ledger but also names extra items (Notifier and flags service). Extra items are not allowed. So this is incorrect.\n\nWait — but let me think. The rule says \"Correct if the final answer names the gold; ... Where the gold is a list, every item must be named and no extra item.\" So the answer must name ledger and no extra items. The answer names extra items, so it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 252,
+   "completion_tokens": 177,
+   "total_tokens": 429,
+   "cost": 5.163e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 192,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 5.163e-05,
+    "upstream_inference_prompt_cost": 7.38e-06,
+    "upstream_inference_completions_cost": 4.425e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 139,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.7137680830201134,
+ "fetched_at": "2026-09-06T01:44:14Z"
+}

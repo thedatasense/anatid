@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Reporting deploys only on Thursdays between 07:00 and 09:00 UTC [constraint; valid 2025-02-25 to now; recorded by standup/dune/2025-02-25]\n- Dune noticed that reporting's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-10 to now; recorded by standup/dune/2026-03-10-2]\n- Reporting depends on the event-bus [valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n    earlier: Reporting depends on the ledger [valid 2025-03-10 to 2025-09-15; recorded by standup/dune/2025-03-10]\n- Webhooks deploys only on Mondays between 10:00 and 12:00 UTC [constraint; valid 2025-03-17 to now; recorded by standup/boreal/2025-03-17]\n- Cinder noticed that the ledger's p99 latency doubled after Tuesday's deploy [observation; valid 2025-07-28 to now; recorded by standup/cinder/2025-07-28-2]\n- The event-bus deploys only on Tuesdays and Thursdays between 10:00 and 12:00 UTC [constraint; valid 2025-02-21 to now; recorded by standup/boreal/2025-02-21]\n- Ember noticed that feature-flags's p99 latency doubled after Tuesday's deploy [observation; valid 2026-03-31 to now; recorded by standup/ember/2026-03-31]\n- The scheduler depends on feature-flags [valid 2025-03-28 to now; recorded by standup/ember/2025-03-28]\n- Cinder noticed that reporting's disk usage jumped 30 percent after the retention change [observation; valid 2025-06-23 to now; recorded by standup/cinder/2025-06-23]\n- Boreal noticed that the notifier's request volume halved after the client rollout [observation; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n- Reporting must stay on Python 3.11 until the pandas 3 upgrade lands [constraint; valid 2025-05-09 to now; recorded by standup/dune/2025-05-09]\n- INC-2025-004: the notifier missed alerts for 40 minutes on 2025-02-06; the root cause was a consumer offset stuck after a broker restart [valid 2025-02-11 to now; recorded by incident-review/INC-2025-004]\n- Boreal adopted a weekly dependency update day [valid 2025-06-27 to now; recorded by standup/boreal/2025-06-27-2]\n- Ember noticed that webhooks's request volume halved after the client rollout [observation; valid 2025-05-23 to now; recorded by standup/ember/2025-05-23]\n- The notifier depends on the event-bus [valid 2025-01-17 to now; recorded by standup/boreal/2025-01-17]\n- Boreal noticed that the event-bus's request volume halved after the client rollout [observation; valid 2025-06-27 to now; recorded by standup/boreal/2025-06-27]\n- Decision: reporting will read from the event-bus instead of querying the ledger directly, because the nightly ledger scans were blocking billing runs [decision; valid 2025-09-15 to now; recorded by standup/dune/2025-09-15]\n- The handover note of 2025-11-07 wrongly recorded Boreal as the owner of reporting [valid 2025-11-17 to now; recorded by handover/2025-11-17-reporting-correction]\n- Cinder owns reporting [valid 2026-02-10 to now; recorded by handover/2026-02-10-reporting]\n    earlier: Ember owns reporting [valid 2025-11-17 to 2026-02-10; recorded by handover/2025-11-17-reporting-correction]\n    earlier: Boreal owns reporting [valid 2025-11-07 to 2025-11-17; recorded by handover/2025-11-07-reporting]\n    earlier: Dune owns reporting [valid 2025-01-20 to 2025-11-07; recorded by standup/dune/2025-01-20-2]\n- Decision: billing-api will gate the new invoice flow behind feature-flags, because the rollout needs a per-tenant kill switch [decision; valid 2025-09-08 to now; recorded by standup/boreal/2025-09-08-2]\n\nQuestion: What is the deploy window of the service that reporting depends on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788655349-04ubSgrEs2HQVbt3XLIk",
+  "object": "chat.completion",
+  "created": 1788655349,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Tuesdays and Thursdays between 10:00 and 12:00 UTC",
+     "refusal": null,
+     "reasoning": "Reporting depends on the event-bus (valid 2025-09-15 to now; earlier it was the ledger). Question asks about now (2026-06-30), so reporting depends on event-bus.\n\nEvent-bus deploy window: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "Reporting depends on the event-bus (valid 2025-09-15 to now; earlier it was the ledger). Question asks about now (2026-06-30), so reporting depends on event-bus.\n\nEvent-bus deploy window: Tuesdays and Thursdays between 10:00 and 12:00 UTC.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1257,
+   "completion_tokens": 87,
+   "total_tokens": 1344,
+   "cost": 0.000108345,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.000108345,
+    "upstream_inference_prompt_cost": 8.6595e-05,
+    "upstream_inference_completions_cost": 2.175e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 68,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9977662499877624,
+ "fetched_at": "2026-09-06T00:42:31Z"
+}

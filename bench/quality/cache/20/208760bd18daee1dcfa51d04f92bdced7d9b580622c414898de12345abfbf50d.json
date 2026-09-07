@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Which service depends on webhooks?\nGold answer: I don't know\nAlso accepted: (none)\nGrading rule: Correct only if the answer says it does not know, or that the memory does not contain the answer. Any specific answer is wrong, however plausible.\n\nAnswer to grade: I don't know"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788658918-PHFN9ke9YehN3ObHbiMF",
+  "object": "chat.completion",
+  "created": 1788658918,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "GMICloud",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": true, \"reason\": \"The answer states it does not know, which matches the gold answer and satisfies the grading rule.\"}",
+     "refusal": null,
+     "reasoning": "The answer is \"I don't know\" which matches the gold answer exactly. The grading rule says correct if the answer says it does not know. So it's correct.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The answer is \"I don't know\" which matches the gold answer exactly. The grading rule says correct if the answer says it does not know. So it's correct.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 221,
+   "completion_tokens": 66,
+   "total_tokens": 287,
+   "cost": 2.9235e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 64,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 2.9235e-05,
+    "upstream_inference_prompt_cost": 1.2735e-05,
+    "upstream_inference_completions_cost": 1.65e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 35,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 2.715380124980584,
+ "fetched_at": "2026-09-06T01:42:00Z"
+}

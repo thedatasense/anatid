@@ -1,0 +1,77 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You grade one answer to one question against a gold answer. You see the question, the gold answer, accepted alternative phrasings, a grading rule and the answer to grade. You do not know where the answer came from and you must not guess. Apply the rule literally. Today is 2026-06-30. Reply with one JSON object and nothing else: {\"correct\": true or false, \"reason\": \"one sentence\"}."
+   },
+   {
+    "role": "user",
+    "content": "Question: Who is on call for the team that owns the service search-indexer depends on?\nGold answer: Lena\nAlso accepted: Lena Fischer\nGrading rule: Correct if the final answer names the gold; the intermediate hops need not be stated. Where the gold is a list, every item must be named and no extra item. 'I don't know' is wrong.\n\nAnswer to grade: Marcus"
+   }
+  ],
+  "temperature": 0.0,
+  "response_format": {
+   "type": "json_object"
+  },
+  "max_tokens": 2000
+ },
+ "response": {
+  "id": "gen-1788655593-tSgDjC3qbw2EV6QW758w",
+  "object": "chat.completion",
+  "created": 1788655593,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Modal",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "{\"correct\": false, \"reason\": \"The answer names Marcus, but the gold answer is Lena (Lena Fischer), so it does not match.\"}",
+     "refusal": null,
+     "reasoning": "The question asks who is on call for the team that owns the service search-indexer depends on. Gold answer is Lena (or Lena Fischer). The answer to grade is Marcus. Marcus is not Lena, so it's incorrect.",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks who is on call for the team that owns the service search-indexer depends on. Gold answer is Lena (or Lena Fischer). The answer to grade is Marcus. Marcus is not Lena, so it's incorrect.",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 185,
+   "completion_tokens": 80,
+   "total_tokens": 265,
+   "cost": 6.7743225e-05,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 6.7743225e-05,
+    "upstream_inference_prompt_cost": 2.7747225e-05,
+    "upstream_inference_completions_cost": 3.9996e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 51,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.8937469579977915,
+ "fetched_at": "2026-09-06T00:46:35Z"
+}

@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Lena is on call for Boreal [valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n    earlier: Marcus is on call for Boreal [valid 2026-01-02 to 2026-02-04; recorded by standup/boreal/2026-01-02]\n    earlier: Lena is on call for Boreal [valid 2025-11-11 to 2026-01-02; recorded by standup/boreal/2025-11-11]\n    earlier: Marcus is on call for Boreal [valid 2025-09-24 to 2025-11-11; recorded by standup/boreal/2025-09-24]\n    earlier: Lena is on call for Boreal [valid 2025-08-12 to 2025-09-24; recorded by standup/boreal/2025-08-12]\n    earlier: Marcus is on call for Boreal [valid 2025-07-09 to 2025-08-12; recorded by standup/boreal/2025-07-09]\n    earlier: Lena is on call for Boreal [valid 2025-05-21 to 2025-07-09; recorded by standup/boreal/2025-05-21]\n    earlier: Marcus is on call for Boreal [valid 2025-03-31 to 2025-05-21; recorded by standup/boreal/2025-03-31]\n    earlier: Lena is on call for Boreal [valid 2025-02-10 to 2025-03-31; recorded by standup/boreal/2025-02-10]\n    earlier: Marcus is on call for Boreal [valid 2025-01-09 to 2025-02-10; recorded by standup/boreal/2025-01-09-3]\n- Boreal owns reporting [valid 2025-07-03 to now; recorded by handover/2025-07-03-reporting-correction]\n    earlier: Ember owns reporting [valid 2025-06-25 to 2025-07-03; recorded by handover/2025-06-25-reporting]\n    earlier: Dune owns reporting [valid 2025-01-20 to 2025-06-25; recorded by standup/dune/2025-01-20-2]\n- Boreal owns the notifier [valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n    earlier: Cinder owns the notifier [valid 2025-11-19 to 2026-04-06; recorded by handover/2025-11-19-notifier]\n    earlier: Boreal owns the notifier [valid 2025-01-09 to 2025-11-19; recorded by standup/boreal/2025-01-09]\n- Boreal owns the event-bus [valid 2025-11-24 to now; recorded by handover/2025-11-24-event-bus]\n    earlier: Dune owns the event-bus [valid 2025-09-09 to 2025-11-24; recorded by handover/2025-09-09-event-bus]\n    earlier: Boreal owns the event-bus [valid 2025-01-09 to 2025-09-09; recorded by standup/boreal/2025-01-09]\n- Boreal owns the catalog [valid 2025-10-20 to now; recorded by handover/2025-10-20-catalog]\n    earlier: Cinder owns the catalog [valid 2025-01-17 to 2025-10-20; recorded by standup/cinder/2025-01-17]\n- Boreal holds its planning meeting on Thursdays [valid 2025-07-29 to now; recorded by standup/boreal/2025-07-29]\n- Lena is a member of Boreal [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Boreal owns auth-gateway [valid 2025-07-18 to now; recorded by handover/2025-07-18-auth-gateway-correction]\n    earlier: Cinder owns auth-gateway [valid 2025-07-01 to 2025-07-18; recorded by handover/2025-07-01-auth-gateway]\n    earlier: Ember owns auth-gateway [valid 2025-01-20 to 2025-07-01; recorded by standup/ember/2025-01-20-2]\n- Boreal owns search-indexer [valid 2026-04-22 to now; recorded by handover/2026-04-22-search-indexer]\n    earlier: Dune owns search-indexer [valid 2025-12-15 to 2026-04-22; recorded by handover/2025-12-15-search-indexer-correction]\n    earlier: Ember owns search-indexer [valid 2025-11-18 to 2025-12-15; recorded by handover/2025-11-18-search-indexer]\n    earlier: Boreal owns search-indexer [valid 2025-02-28 to 2025-11-18; recorded by handover/2025-02-28-search-indexer]\n    earlier: Cinder owns search-indexer [valid 2025-01-17 to 2025-02-28; recorded by standup/cinder/2025-01-17]\n- Boreal adopted a weekly dependency update day [valid 2026-05-04 to now; recorded by standup/boreal/2026-05-04]\n- Boreal noticed that the scheduler's cold start time tripled after the runtime upgrade [observation; valid 2025-04-24 to now; recorded by standup/boreal/2025-04-24]\n- Boreal noticed that the event-bus's CPU sat at 90 percent after the traffic shift [observation; valid 2025-11-11 to now; recorded by standup/boreal/2025-11-11-2]\n- Boreal noticed that the scheduler's error rate crept up to 2 percent after the dependency bump [observation; valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- Boreal noticed that the catalog's memory use grew steadily for a week after the cache change [observation; valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12-2]\n- Boreal noticed that the catalog's request volume halved after the client rollout [observation; valid 2025-04-10 to now; recorded by standup/boreal/2025-04-10]\n- Boreal noticed that reporting's disk usage jumped 30 percent after the retention change [observation; valid 2025-06-06 to now; recorded by standup/boreal/2025-06-06]\n- Boreal noticed that webhooks's request volume halved after the client rollout [observation; valid 2025-04-22 to now; recorded by standup/boreal/2025-04-22-2]\n\nQuestion: Who is the secondary on-call for Boreal?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788658810-KK8DgqXBmXxPrx5hskB9",
+  "object": "chat.completion",
+  "created": 1788658810,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "I don't know",
+     "refusal": null,
+     "reasoning": "The question asks about the secondary on-call for Boreal. The memory only contains \"X is on call for Boreal\" entries — no mention of a primary vs secondary on-call distinction. There's no information about a secondary on-call role.\n\nThe memory entries say \"Lena is on call for Boreal\" etc., but there's nothing about a secondary on-call. So the answer should be \"I don't know\".",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks about the secondary on-call for Boreal. The memory only contains \"X is on call for Boreal\" entries — no mention of a primary vs secondary on-call distinction. There's no information about a secondary on-call role.\n\nThe memory entries say \"Lena is on call for Boreal\" etc., but there's nothing about a secondary on-call. So the answer should be \"I don't know\".",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1776,
+   "completion_tokens": 92,
+   "total_tokens": 1868,
+   "cost": 0.00014852,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00014852,
+    "upstream_inference_prompt_cost": 0.00012552,
+    "upstream_inference_completions_cost": 2.3e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 86,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.9327694160165265,
+ "fetched_at": "2026-09-06T01:40:11Z"
+}

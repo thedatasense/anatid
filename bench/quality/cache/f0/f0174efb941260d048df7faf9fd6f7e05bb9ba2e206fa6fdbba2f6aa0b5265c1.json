@@ -1,0 +1,74 @@
+{
+ "endpoint": "/chat/completions",
+ "body": {
+  "model": "z-ai/glm-5.3-flash",
+  "messages": [
+   {
+    "role": "system",
+    "content": "You answer questions for an engineering team from a memory store. The user message holds the memory you may use, then the question.\nRules:\n- Answer only from the memory provided. Do not use outside knowledge and do not guess.\n- If the memory does not contain the answer, reply exactly: I don't know\n- When the memory does contain it, reply in one short line with just the value asked for (a name, a team, a service, a date, a note label, a reason) and nothing else.\n- When a value changed over time, answer for the moment the question asks about; without a stated moment, answer for now. Today is 2026-06-30.\n- Memory entries carry the date they were recorded. Treat a later entry as superseding an earlier one on the same subject."
+   },
+   {
+    "role": "user",
+    "content": "Memory:\n- Lena is the release captain for Q1 2026. [valid 2025-07-29 to now; recorded by standup/boreal/2025-07-29]\n- Lena picked up the Boreal on-call shift from Marcus Oyelaran on 2025-05-21. [decision; valid 2025-05-21 to now; recorded by standup/boreal/2025-05-21]\n- Lena carries the Boreal on-call phone as of 2026-02-04, after the on-call swap that morning. [decision; valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n    earlier: Marcus Oyelaran carries the Boreal on-call phone as of 2026-01-02, having taken over from Lena after her cycle that began 2025-11-11. [decision; valid 2026-01-02 to 2026-02-04; recorded by standup/boreal/2026-01-02]\n    earlier: Lena is on call for the Boreal team this cycle, taking over from Marcus Oyelaran as of 2025-11-11, and carries the phone until the next rotation. [decision; valid 2025-11-11 to 2026-01-02; recorded by standup/boreal/2025-11-11]\n    earlier: Marcus Oyelaran is on call for the Boreal team this cycle, taking over from Lena as of 2025-09-24. [decision; valid 2025-09-24 to 2025-11-11; recorded by standup/boreal/2025-09-24]\n    earlier: Lena is on call for the Boreal team this cycle, taking over from Marcus Oyelaran as of 2025-08-12. [decision; valid 2025-08-12 to 2025-09-24; recorded by standup/boreal/2025-08-12]\n    earlier: Marcus Oyelaran is on call for the Boreal team this cycle, taking over from Lena as of 2025-07-09. [decision; valid 2025-07-09 to 2025-08-12; recorded by standup/boreal/2025-07-09]\n    earlier: Lena is on call for the Boreal team this cycle, taking over from Marcus Oyelaran as of 2025-05-21. [decision; valid 2025-05-21 to 2025-07-09; recorded by standup/boreal/2025-05-21]\n    earlier: Marcus Oyelaran is on call for the Boreal team this cycle, taking over from Lena as of 2025-03-31. [decision; valid 2025-03-31 to 2025-05-21; recorded by standup/boreal/2025-03-31]\n    earlier: Lena is on call for the Boreal team this cycle, taking over from Marcus Oyelaran as of 2025-02-10. [decision; valid 2025-02-10 to 2025-03-31; recorded by standup/boreal/2025-02-10]\n    earlier: Marcus Oyelaran is on call for the Boreal team to start the year. [decision; valid 2025-01-09 to 2025-02-10; recorded by standup/boreal/2025-01-09-3]\n- Lena picked up the Boreal on-call pager from Marcus Oyelaran on 2025-08-12. [decision; valid 2025-08-12 to now; recorded by standup/boreal/2025-08-12]\n- Lena carries the Boreal on-call phone as of 2026-02-04, after the on-call swap that morning, until the next rotation. [decision; valid 2026-02-04 to now; recorded by standup/boreal/2026-02-04]\n- Priya wrote up the handover doc for Lena for the Ledger handover on 2025-12-10. [valid 2025-12-10 to now; recorded by handover/2025-12-10-ledger]\n- The Boreal roster consists of Lena and Marcus Oyelaran as of 2025-01-07. [valid 2025-01-07 to now; recorded by standup/boreal/2025-01-07]\n- Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-09-24. [decision; valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n- Marcus Oyelaran picked up the Boreal on-call shift from Lena on 2025-07-09. [decision; valid 2025-07-09 to now; recorded by standup/boreal/2025-07-09]\n- Priya walked Lena through the billing-api runbook on 2025-12-24. [valid 2025-12-24 to now; recorded by handover/2025-12-24-billing-api]\n- Marcus Oyelaran took over the Boreal on-call from Lena as of 2026-01-02. [decision; valid 2026-01-02 to now; recorded by standup/boreal/2026-01-02]\n- Yuki walked Lena through the notifier runbook on 2026-04-06. [valid 2026-04-06 to now; recorded by handover/2026-04-06-notifier]\n- Marcus Oyelaran holds the Boreal on-call pager as of 2025-09-24, after picking it up from Lena. [valid 2025-09-24 to now; recorded by standup/boreal/2025-09-24]\n    earlier: Lena still holds the Boreal on-call pager as of 2025-09-15. [valid 2025-09-15 to 2025-09-24; recorded by standup/boreal/2025-09-15]\n- Marcus Oyelaran picked up the Team Atlas on-call shift from Priya on 2026-04-14. [decision; valid 2026-04-14 to now; recorded by standup/atlas/2026-04-14]\n- Team Atlas consists of Priya as of 2025-07-21, after Tomasz moved to Team Dune. [valid 2025-07-21 to now; recorded by standup/atlas/2025-07-21]\n    earlier: Team Atlas consists of Priya and Tomasz as of 2025. [valid 2025-01-06 to 2025-07-21; recorded by standup/atlas/2025-01-06]\n\nQuestion: Which team is Lena on?"
+   }
+  ],
+  "temperature": 0.0,
+  "max_tokens": 4000
+ },
+ "response": {
+  "id": "gen-1788656548-UkrwO7TYJDUZXquvHTXc",
+  "object": "chat.completion",
+  "created": 1788656548,
+  "model": "z-ai/glm-5.3-flash",
+  "provider": "Z.AI",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "content": "Boreal",
+     "refusal": null,
+     "reasoning": "The question asks which team Lena is on. Looking at the memory, Lena is associated with the Boreal team - she's on call for the Boreal team, is the release captain, and the Boreal roster consists of Lena and Marcus Oyelaran.\n\nThe answer should be: Boreal",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "The question asks which team Lena is on. Looking at the memory, Lena is associated with the Boreal team - she's on call for the Boreal team, is the release captain, and the Boreal roster consists of Lena and Marcus Oyelaran.\n\nThe answer should be: Boreal",
+       "format": "unknown",
+       "index": 0
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 1664,
+   "completion_tokens": 63,
+   "total_tokens": 1727,
+   "cost": 0.00013287,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 128,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.00013287,
+    "upstream_inference_prompt_cost": 0.00011712,
+    "upstream_inference_completions_cost": 1.575e-05
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 59,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ },
+ "latency_s": 1.483911707997322,
+ "fetched_at": "2026-09-06T01:02:29Z"
+}
