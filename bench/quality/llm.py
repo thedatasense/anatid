@@ -163,6 +163,34 @@ class TokenCounter:
 # --------------------------------------------------------------------------- the cache
 
 
+def provider_failure(endpoint: str, response: Mapping[str, Any]) -> str | None:
+    """Why a reply is the provider reporting a failure rather than the model answering, or None.
+
+    OpenRouter (and the OpenAI-compatible providers behind it) can return HTTP 200 with a
+    ``choices`` entry whose ``finish_reason`` is ``"error"`` and whose content is empty, or with
+    an ``error`` object beside the choices, when the upstream model failed mid-request.  Such a
+    reply must never be cached or scored as the model's answer: the 0.4.0 build of the committed
+    corpus lost one note that way (``standup/boreal/2026-03-20``, six questions rest on it),
+    and every offline replay reproduced the loss.  Embedding replies are validated by their
+    caller; this covers chat completions.
+    """
+    if endpoint != "/chat/completions":
+        return None
+    err = response.get("error")
+    if isinstance(err, Mapping) and err:
+        return f"error: {err.get('message') or err.get('code') or 'unspecified'}"
+    choices = response.get("choices")
+    if not isinstance(choices, list) or not choices:
+        return "no choices"
+    first = choices[0] if isinstance(choices[0], Mapping) else {}
+    err = first.get("error")
+    if isinstance(err, Mapping) and err:
+        return f"choice error: {err.get('message') or err.get('code') or 'unspecified'}"
+    if first.get("finish_reason") == "error":
+        return "finish_reason is 'error'"
+    return None
+
+
 def request_key(endpoint: str, body: Mapping[str, Any]) -> str:
     """SHA-256 of the canonical JSON of ``{endpoint, body}``; the cache file name."""
     payload = json.dumps(
@@ -301,6 +329,9 @@ class Stats:
     cost_known: bool = True
     wall_s: float = 0.0
     recorded_wall_s: float = 0.0
+    #: Chat replies the provider marked as failed (``finish_reason: "error"``, an ``error``
+    #: object) and this client refused to take as an answer; each was retried.
+    provider_failures: int = 0
 
     @property
     def hit_rate(self) -> float:
@@ -328,6 +359,7 @@ class Stats:
             cost_known=self.cost_known and earlier.cost_known,
             wall_s=self.wall_s - earlier.wall_s,
             recorded_wall_s=self.recorded_wall_s - earlier.recorded_wall_s,
+            provider_failures=self.provider_failures - earlier.provider_failures,
         )
 
     def copy(self) -> Stats:
@@ -379,6 +411,7 @@ class LLMClient:
         embed_batch_size: int = 64,
         request_usage: bool = True,
         clock: Callable[[], float] = time.perf_counter,
+        retry_sleep: Callable[[float], None] = time.sleep,
     ) -> None:
         self.chat_model = chat_model
         self.embed_model = embed_model
@@ -390,6 +423,7 @@ class LLMClient:
         self.embed_batch_size = max(1, int(embed_batch_size))
         self.request_usage = bool(request_usage)
         self._clock = clock
+        self._retry_sleep = retry_sleep
         self.stats = Stats()
         self._lock = threading.RLock()
         if transport is None:
@@ -411,12 +445,20 @@ class LLMClient:
         key = request_key(endpoint, body)
         hit = self.cache.get(key)
         recorded = float(hit.get("latency_s") or 0.0) if hit is not None else 0.0
+        usable = hit is not None and isinstance(hit.get("response"), dict)
+        if usable and provider_failure(endpoint, hit["response"]) is not None:
+            # A failed reply that an earlier run cached (before this check existed) is not an
+            # answer: treat it as a miss and fetch again, so the store built from it heals.
+            usable = False
+            with self._lock:
+                self.stats.provider_failures += 1
         with self._lock:
             self.stats.calls += 1
-            if hit is not None and isinstance(hit.get("response"), dict):
+            if usable:
                 self.stats.cache_hits += 1
                 self.stats.recorded_wall_s += recorded
-        if hit is not None and isinstance(hit.get("response"), dict):
+        if usable:
+            assert hit is not None
             return hit["response"], True, recorded
         if self.offline:
             raise OfflineCacheMiss(
@@ -426,13 +468,28 @@ class LLMClient:
         if endpoint == "/chat/completions" and self.request_usage:
             # OpenRouter returns usage.cost when asked; other providers ignore the field.
             wire["usage"] = {"include": True}
-        t0 = self._clock()
-        response = self.transport.post(endpoint, wire)
-        latency = self._clock() - t0
-        with self._lock:
-            self.stats.network_calls += 1
-            self.stats.wall_s += latency
-            self.stats.recorded_wall_s += latency
+        latency = 0.0
+        for attempt in range(MAX_ATTEMPTS):
+            t0 = self._clock()
+            response = self.transport.post(endpoint, wire)
+            latency = self._clock() - t0
+            with self._lock:
+                self.stats.network_calls += 1
+                self.stats.wall_s += latency
+                self.stats.recorded_wall_s += latency
+            why = provider_failure(endpoint, response)
+            if why is None:
+                break
+            # The provider answered 200 with a failure inside: not cached, retried with the
+            # same backoff the transport uses for a failing status, then reported.
+            with self._lock:
+                self.stats.provider_failures += 1
+            if attempt + 1 >= MAX_ATTEMPTS:
+                raise LLMError(
+                    f"{endpoint} request {key[:12]} failed {MAX_ATTEMPTS} times at the provider "
+                    f"({why}); the reply was not cached"
+                )
+            self._retry_sleep(min(60.0, 2.0**attempt))
         self.cache.put(
             key,
             {

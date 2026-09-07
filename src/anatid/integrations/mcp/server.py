@@ -150,6 +150,7 @@ from .backend import (
 from .embedding import add_cli_arguments as add_embedding_arguments
 from .embedding import describe_embedder
 from .ingest import (
+    AppliedPatch,
     ExtractorConfigError,
     PendingPatches,
     describe_extractor,
@@ -237,7 +238,8 @@ that mean an existing entity) resolved against what the graph already holds, and
 patch, its diff and a patch_id without writing anything. Show the diff to the person you are
 working for. `apply_patch(patch_id)` commits it in one transaction, with the note stored as the
 episode every new row cites; pass an edited `patch` to change it first. To decline, do not
-call apply_patch."""
+call apply_patch. apply_patch is safe to repeat: a patch_id applied already is answered with
+the receipt of that apply, `already_applied` true, and nothing is written twice."""
 
 #: Appended to :data:`INSTRUCTIONS` only when the operator opted the escape hatch in, so a model
 #: talking to a default server is never told about a tool that is not there.
@@ -350,6 +352,7 @@ def _hits(hits: RecallHits) -> dict[str, Any]:
         "count": len(hits),
         "arms": list(hits.arms),
         "seeds": list(hits.seeds),
+        "weights": dict(hits.weights),
         "bm25_available": hits.bm25_available,
         "bm25_stale": hits.bm25_stale,
         "pending_fts_rows": hits.pending_fts_rows,
@@ -367,6 +370,27 @@ def _asof_json(scope: AsOf | None) -> dict[str, Any] | None:
         "is_current": scope.is_current,
     }
 
+
+
+def _applied_patch(applied: AppliedPatch, *, already_applied: bool) -> dict[str, Any]:
+    """The ``apply_patch`` result: the receipt, and whether this call wrote it or replayed it."""
+    receipt = applied.receipt
+    out: dict[str, Any] = {
+        "applied": True,
+        "already_applied": already_applied,
+        "patch_id": wire_id(applied.patch_id),
+        "summary": receipt.describe(),
+        "diff": receipt.patch.describe(),
+        "changes": receipt.changes,
+        **receipt.to_dict(),
+    }
+    if already_applied:
+        out["note"] = (
+            f"patch {applied.patch_id} was applied already, at {receipt.at.isoformat()}; this is "
+            f"the receipt of that apply and nothing was written now. To store a changed version "
+            f"of the note, call ingest again."
+        )
+    return out
 
 def _receipt(r: ForgetReceipt) -> dict[str, Any]:
     return {
@@ -1157,8 +1181,11 @@ def build_server(
                     "when the patch corrects a memory or removes a relation: those close the "
                     "old version, the way `supersede` and `unrelate` do, and delete nothing. "
                     "The result is the receipt: every id created or closed, as decimal strings, "
-                    "and `summary` in one sentence. An unknown or already applied patch_id is "
-                    "an error; call `ingest` again to propose afresh."
+                    "and `summary` in one sentence. A patch is applied at most once, even when "
+                    "two calls name it at the same moment: a patch_id applied already is "
+                    "answered with the receipt of that apply, `already_applied` true and "
+                    "nothing written, so repeating a call whose reply was lost is safe. An "
+                    "unknown patch_id is an error; call `ingest` again to propose afresh."
                 ),
             )
             @_guard
@@ -1167,26 +1194,29 @@ def build_server(
                 patch: dict[str, Any] | None = None,
                 writer: str | None = None,
             ) -> dict[str, Any]:
-                entry = pending_patches.get(int(patch_id))
-                to_apply = (
-                    entry.patch if patch is None
-                    else MemoryPatch.from_dict(patch, source_text=entry.text)
-                )
-                receipt = to_apply.apply(
-                    handle,
-                    writer=writer or entry.writer or "anatid-mcp",
-                    episode=entry.text,
-                    source=entry.source,
-                )
-                pending_patches.discard(entry.patch_id)
-                return {
-                    "applied": True,
-                    "patch_id": wire_id(entry.patch_id),
-                    "summary": receipt.describe(),
-                    "diff": to_apply.describe(),
-                    "changes": receipt.changes,
-                    **receipt.to_dict(),
-                }
+                # `claim` takes the proposal out of the table before anything is written and
+                # is the only way to get it, so a second call for the same id, concurrent or a
+                # retry, cannot apply it again: it waits for this call's outcome and is handed
+                # the receipt, or the proposal back when this call failed.
+                claimed = pending_patches.claim(int(patch_id))
+                if isinstance(claimed, AppliedPatch):
+                    return _applied_patch(claimed, already_applied=True)
+                entry = claimed
+                try:
+                    to_apply = (
+                        entry.patch if patch is None
+                        else MemoryPatch.from_dict(patch, source_text=entry.text)
+                    )
+                    receipt = to_apply.apply(
+                        handle,
+                        writer=writer or entry.writer or "anatid-mcp",
+                        episode=entry.text,
+                        source=entry.source,
+                    )
+                except BaseException:
+                    pending_patches.restore(entry)
+                    raise
+                return _applied_patch(pending_patches.settle(entry, receipt), already_applied=False)
 
     # ------------------------------------------------------------------ reads
 
@@ -1196,8 +1226,11 @@ def build_server(
         description=(
             "Hybrid retrieval over this tenant's memories: BM25 over the text, graph expansion "
             "(up to `hops`) from seed_entity, and cosine over `embedding` if you supply one or "
-            "the server has an embedder -- whichever arms have input, fused with Reciprocal Rank "
-            "Fusion. With a query and no seed_entity the graph arm seeds itself: entity names "
+            "the server has an embedder -- whichever arms have input, fused with weighted "
+            "Reciprocal Rank Fusion: the vector arm leads when it runs (vector 1.0, graph 0.5, "
+            "text 0.25), the text arm otherwise (text 1.0, graph 0.5), and `weights` in the "
+            "result says what was used; pass `arm_weights` such as {\"text\": 0} to override a "
+            "weight by name. With a query and no seed_entity the graph arm seeds itself: entity names "
             "that occur in the query, longest first, at most three, and `seeds` in the result "
             "says which; name a seed_entity to expand from exactly that one. Pass `as_of` "
             "(ISO-8601) to ask what the database believed at that time. The result reports which "
@@ -1217,6 +1250,7 @@ def build_server(
         as_of: str | None = None,
         embedding: list[float] | None = None,
         candidates: int = 50,
+        arm_weights: dict[str, float] | None = None,
     ) -> dict[str, Any]:
         hits = db.recall(
             query,
@@ -1227,6 +1261,7 @@ def build_server(
             as_of=_parse_ts(as_of, field="as_of"),
             embedding=embedding,
             candidates=int(candidates),
+            arm_weights=arm_weights or None,
         )
         return _hits(hits)
 

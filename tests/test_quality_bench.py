@@ -414,6 +414,30 @@ def test_fused_recall_and_existing_facts_are_the_same_on_every_call(tmp_path):
     system.close()
 
 
+def test_extraction_context_does_not_follow_answer_fusion_defaults(tmp_path, monkeypatch):
+    import anatid.recall as recall
+    from anatid import Anatid
+
+    llm = make_llm(tmp_path)
+    with Anatid.open(":memory:", tenant=1, embedding_dim=DIM, embedder=llm.embedder()) as db:
+        for content in (
+            "Deployments require a reviewed change.",
+            "Deployments happen on Tuesdays.",
+            "Releases need the operations team's approval.",
+        ):
+            db.remember(content)
+        query = "deployment approval policy"
+        before = [m.memory_id for m in H.existing_facts(db, query)]
+        assert before, "exercise the retrieval fallback, with no named entities"
+        current = [m.memory_id for m in H.fused_recall(db, query)[0]]
+        assert before == current, "the pinned policy preserves this release's context"
+
+        monkeypatch.setattr(recall, "default_arm_weights", lambda arms: dict.fromkeys(arms, 0.0))
+        monkeypatch.setattr(recall, "RRF_K", 1)
+        assert H.fused_recall(db, query)[0] == [], "answer-time retrieval uses the new defaults"
+        assert [m.memory_id for m in H.existing_facts(db, query)] == before
+
+
 def test_the_extractor_sees_existing_facts_newest_first_by_id():
     from anatid import Memory
 
@@ -801,3 +825,194 @@ def test_the_seed_selects_the_corpus(tmp_path):
         check=False,
     )
     assert proc.returncode == 0 and "--seed" in proc.stdout
+
+
+def test_a_provider_failure_reply_is_retried_and_never_cached(tmp_path):
+    """OpenRouter can answer HTTP 200 with ``finish_reason: "error"`` and no content when the
+    upstream model fails.  The 0.4.0 build of the committed corpus cached one such reply as a
+    note's extraction and lost the note on every replay.  The client must retry it, count it,
+    and cache only a real answer; a failed reply an older run cached is refetched."""
+    replies = iter(
+        [
+            {"content": "", "finish_reason": "error"},
+            {"content": "", "finish_reason": "error"},
+            {"content": "Atlas", "finish_reason": "stop"},
+        ]
+    )
+    transport = FakeTransport(reply=lambda body: next(replies))
+    naps: list[float] = []
+    llm = LLMClient(
+        transport=transport,
+        cache_dir=tmp_path / "cache",
+        embed_dim=DIM,
+        counter=TokenCounter(prefer_tiktoken=False),
+        retry_sleep=naps.append,
+    )
+    messages = H.build_messages("Which team owns the ledger?", ["- [2025-01-08] s: Atlas owns it."])
+    result = llm.chat(messages, max_tokens=50)
+    assert result.content == "Atlas" and result.finish_reason == "stop" and not result.cached
+    assert transport.calls == 3 and naps == [1.0, 2.0]
+    assert llm.stats.provider_failures == 2 and llm.stats.network_calls == 3
+    # only the answer went into the cache: a replay finds it and makes no call
+    again = llm.chat(messages, max_tokens=50)
+    assert again.cached and again.content == "Atlas" and transport.calls == 3
+
+    # a failed reply that an older run cached is a miss, not an answer
+    key = request_key(
+        "/chat/completions",
+        {"model": llm.chat_model, "messages": messages, "temperature": 0.0, "max_tokens": 51},
+    )
+    llm.cache.put(
+        key,
+        {
+            "endpoint": "/chat/completions",
+            "body": {},
+            "response": {"choices": [{"message": {"content": ""}, "finish_reason": "error"}]},
+            "latency_s": 0.1,
+        },
+    )
+    replies = iter([{"content": "Boreal", "finish_reason": "stop"}])
+    healed = llm.chat(messages, max_tokens=51)
+    assert healed.content == "Boreal" and not healed.cached and transport.calls == 4
+    assert llm.stats.provider_failures == 3
+    assert llm.chat(messages, max_tokens=51).cached, "the healed answer replaced the failure"
+
+    # a provider that keeps failing is an error, not an empty answer
+    always = FakeTransport(reply={"content": "", "finish_reason": "error"})
+    stubborn = LLMClient(
+        transport=always,
+        cache_dir=tmp_path / "cache2",
+        embed_dim=DIM,
+        counter=TokenCounter(prefer_tiktoken=False),
+        retry_sleep=lambda s: None,
+    )
+    with pytest.raises(Exception, match="failed 6 times at the provider"):
+        stubborn.chat(messages, max_tokens=50)
+    assert always.calls == 6 and not list((tmp_path / "cache2").rglob("*.json"))
+
+
+def test_support_coverage_is_computed_offline_over_a_finished_run(tmp_path):
+    """The offline proxy: does the budgeted block hold a memory from every supporting note?"""
+    from anatid.ingest import AddFact, Correction, MemoryPatch, Relation
+
+    from bench.quality import coverage as C
+
+    llm = make_llm(tmp_path)
+    notes = [
+        note(1, "For the record, the ledger service is owned by the Atlas team.", 8),
+        note(2, "Ownership of the ledger moves from Atlas to Boreal as of today.", 20),
+        note(3, "Boreal holds its planning meeting on Thursdays.", 21),
+    ]
+    patches = [
+        {
+            "note_id": "n001",
+            "patch": MemoryPatch(
+                add_facts=(AddFact("Atlas owns the ledger", ("Atlas", "ledger")),),
+                add_relations=(Relation("Atlas", "ledger", rel_kind="owns"),),
+            ).to_dict(),
+        },
+        {
+            "note_id": "n002",
+            "patch": MemoryPatch(
+                corrections=(
+                    Correction(
+                        "Boreal owns the ledger",
+                        old_text="Atlas owns the ledger",
+                        entities=("Boreal", "ledger"),
+                    ),
+                ),
+            ).to_dict(),
+        },
+        {
+            "note_id": "n003",
+            "patch": MemoryPatch(
+                add_facts=(AddFact("Boreal plans on Thursdays", ("Boreal",)),),
+            ).to_dict(),
+        },
+    ]
+    questions = [
+        question(
+            "q1", "knowledge_update", "Which team owns the ledger?", "Boreal", support=["n002"]
+        ),
+        question(
+            "q2",
+            "temporal",
+            "Who owned the ledger before Boreal?",
+            "Atlas",
+            support=["n001", "n002"],
+        ),
+        question("q3", "single_fact", "When does Boreal plan?", "Thursdays", support=["n003"]),
+        question("q4", "abstention", "Who manages Atlas?", "I don't know"),
+    ]
+    run_dir = tmp_path / "results" / "s1-b1200"
+    data = run_dir / "data"
+    data.mkdir(parents=True)
+    with (data / "notes.jsonl").open("w", encoding="utf-8") as fh:
+        for n in notes:
+            fh.write(json.dumps(n.to_dict()) + "\n")
+    with (data / "questions.jsonl").open("w", encoding="utf-8") as fh:
+        for q in questions:
+            fh.write(
+                json.dumps({**q.to_dict(), "category": q.category, "subtype": q.subtype}) + "\n"
+            )
+    system = H.AnatidSystem(llm, extractor="gold", gold_patches=patches)
+    system.workdir = run_dir / "anatid"
+    system.ingest(notes)
+    system.close()
+    (run_dir / "anatid" / "scores.jsonl").write_text(
+        "\n".join(
+            json.dumps({"qid": q.qid, "judge": {"correct": q.qid != "q3"}}) for q in questions
+        ),
+        encoding="utf-8",
+    )
+
+    with C.CoverageLab(run_dir, system="anatid", llm=llm) as lab:
+        product = lab.evaluate("product")
+        assert product["q1"][0] and product["q2"][0] and product["q3"][0]
+        assert product["q4"] == (True, 1.0, product["q4"][2]), "no support: covered by definition"
+        # the corrected fact's chain shows both notes' memories in one line
+        shown, lines = lab.block(lab.ranking(questions[1], "product"))
+        assert lab.covered(questions[1], shown) == (True, 1.0) and lines >= 1
+        # a block too small for any line covers nothing
+        tiny, kept = lab.block(lab.ranking(questions[0], "product"), budget=1)
+        assert kept == 0 and lab.covered(questions[0], tiny) == (False, 0.0)
+        for variant in ("equal", "vector", "text", "graph"):
+            lab.evaluate(variant)
+        weighted = lab.evaluate("weighted", weights={"text": 0.0})
+        assert set(weighted) == {q.qid for q in questions}
+        summary = lab.summary(product)
+        assert summary["all"] == 1.0 and summary["knowledge_update"] == 1.0
+        assert summary["multi_hop"] != summary["multi_hop"], "no question in that category: NaN"
+        assert lab.judge_verdicts() == {"q1": True, "q2": True, "q3": False, "q4": True}
+        assert lab.judge_verdicts("anatid-vector") is None
+        with pytest.raises(ValueError, match="unknown variant"):
+            lab.ranking(questions[0], "bm25")
+    assert C.parse_weights("vector=1,text=0.25,graph=0.5") == {
+        "vector": 1.0,
+        "text": 0.25,
+        "graph": 0.5,
+    }
+    with pytest.raises(ValueError):
+        C.parse_weights("vector")
+    out_json = tmp_path / "cov.json"
+    assert (
+        C.main(
+            [
+                "--run",
+                "s1-b1200",
+                "--results-dir",
+                str(tmp_path / "results"),
+                "--cache-dir",
+                str(tmp_path / "cache"),
+                "--embed-dim",
+                str(DIM),
+                "--json",
+                str(out_json),
+                "--weights",
+                "text=0",
+            ]
+        )
+        == 0
+    )
+    written = json.loads(out_json.read_text(encoding="utf-8"))
+    assert set(written) >= {"product", "equal", "vector", "text", "graph", "weighted text=0"}

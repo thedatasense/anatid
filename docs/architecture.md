@@ -415,9 +415,16 @@ apart from "what did we know then". Three consequences follow:
 
 ## 6. The `recall()` pipeline
 
-`recall()` runs up to three independent retrieval arms and fuses them with Reciprocal Rank Fusion
-(k=60). An arm runs only when its input is present, so `recall(query="x")` is pure BM25 and
-`recall(seed_entity="Ada")` is pure graph.
+`recall()` runs up to three independent retrieval arms and fuses them with weighted Reciprocal
+Rank Fusion (k=60). An arm runs only when its input is present, so `recall(seed_entity="Ada")` with
+no query is pure graph and `recall(query="x", seed_entity=None)` is pure BM25. The weights are not
+equal: when the vector arm runs it leads (vector 1.0, graph 0.5, text 0.25), otherwise the text arm
+does (text 1.0, graph 0.5), and `arm_weights=` overrides any of them by name. Before the fusion the
+graph arm's candidates are reordered by the query's own signal, cosine with an embedding and BM25
+without one, instead of newest first, so the arm votes for what the question is about rather than
+for what was written last. Both settings come from the answer-quality benchmark
+([`quality.md`](quality.md)), where equal votes and a newest-first graph arm cost the fusion
+questions the vector arm alone had right; `hits.weights` reports what was used.
 
 ```
                      db.recall(query="coffee roast",
@@ -442,17 +449,20 @@ apart from "what did we know then". Three consequences follow:
   │ score is      │              │ one corpus over  │            │ ORDER BY created_at │
   │ always exact  │              │ base + journal   │            │ DESC, memory_id DESC│
   └───────┬───────┘              └────────┬─────────┘            └──────────┬──────────┘
-          │ top `candidates` (50)         │ top 50                          │ top 50
+          │ top `candidates` (50)         │ top 50                          │ top 50, then
+          │                               │                                 │ re-ranked by cosine
+          │                               │                                 │ (or BM25) to the query
           └───────────────┬───────────────┴─────────────────┬───────────────┘
                           ▼                                 │
               ┌──────────────────────┐                      │
               │  RRF fuse, k=60      │◄─────────────────────┘
-              │  score = Σ 1/(60+r)  │   every arm's rank kept, per hit
+              │  score = Σ w/(60+r)  │   every arm's rank kept, per hit; w from
+              │                      │   default_arm_weights() or arm_weights=
               └──────────┬───────────┘
                          ▼
         hydrate(memories)  +  about_names(edges_about ⋈ entities)
                          ▼
-        RecallHits  ── .arms  .bm25_stale  .pending_fts_rows  .notes
+        RecallHits  ── .arms  .weights  .seeds  .bm25_stale  .pending_fts_rows  .notes
           └─ RecallHit(memory, score, rank, vector_rank, text_rank, graph_rank,
                        vector_score, text_score, about)
 

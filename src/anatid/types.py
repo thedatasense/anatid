@@ -37,7 +37,7 @@ from __future__ import annotations
 import datetime as _dt
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Iterable, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 
 __all__ = [
     "utcnow",
@@ -465,10 +465,15 @@ class RecallHits(list):
         The entity names the graph arm expanded from, in the order they ran: the entities
         found in the query under ``seed_entity="auto"``, or the one the caller named.  Empty
         when the graph arm did not run.
+    ``weights``
+        The fusion weight each arm that ran was given, ``{"vector": 1.0, "graph": 0.5,
+        "text": 0.25}`` by default when the vector arm ran and ``{"text": 1.0, "graph": 0.5}``
+        when it did not (:func:`anatid.recall.default_arm_weights`), or what the caller's
+        ``arm_weights`` set.
     """
 
     __slots__ = ("bm25_available", "bm25_stale", "pending_fts_rows", "arms", "as_of", "notes",
-                 "seeds")
+                 "seeds", "weights")
 
     def __init__(
         self,
@@ -481,6 +486,7 @@ class RecallHits(list):
         as_of: AsOf = CURRENT,
         notes: tuple[str, ...] = (),
         seeds: tuple[str, ...] = (),
+        weights: Mapping[str, float] | None = None,
     ) -> None:
         super().__init__(hits)
         self.bm25_available = bm25_available
@@ -490,6 +496,7 @@ class RecallHits(list):
         self.as_of = as_of
         self.notes = notes
         self.seeds = seeds
+        self.weights: dict[str, float] = dict(weights or {})
 
     @property
     def memory_ids(self) -> list[int]:

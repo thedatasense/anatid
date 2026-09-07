@@ -881,21 +881,26 @@ def test_an_embedder_gives_every_new_memory_a_vector(db):
     assert db.get(r1.memories_created[0], with_embedding=True).embedding is None
 
 
-def test_the_offline_example_runs_with_no_key(tmp_path):
+def run_example(cwd: Path, *args: str, script: Path = EXAMPLE) -> subprocess.CompletedProcess:
+    """``examples/ingest_notes.py`` in a subprocess with no model key in reach."""
     env = {
         k: v
         for k, v in os.environ.items()
         if k.upper() not in ("OPEN_ROUTER_KEY", "OPENROUTER_API_KEY", "OPENAI_API_KEY")
     }
     env["PYTHONIOENCODING"] = "utf-8"
-    done = subprocess.run(
-        [sys.executable, str(EXAMPLE), "--db", str(tmp_path / "demo.anatid")],
+    return subprocess.run(
+        [sys.executable, str(script), *args],
         capture_output=True,
         text=True,
         timeout=180,
         env=env,
-        cwd=str(tmp_path),
+        cwd=str(cwd),
     )
+
+
+def test_the_offline_example_runs_with_no_key(tmp_path):
+    done = run_example(tmp_path, "--db", str(tmp_path / "demo.anatid"))
     assert done.returncode == 0, done.stderr
     out = done.stdout
     assert "~ correction  memory" in out
@@ -906,3 +911,214 @@ def test_the_offline_example_runs_with_no_key(tmp_path):
     assert "Bo maintains the ingest service" in april
     assert "Cy maintains" not in april
     assert (tmp_path / "demo.anatid").exists()
+
+
+def test_the_example_refuses_to_delete_a_database_it_did_not_make(tmp_path):
+    """``--db`` pointed at an existing file used to be deleted before the run, silently."""
+    mine = tmp_path / "mine.anatid"
+    with Anatid.open(mine, tenant=1, embedding_dim=8) as db:
+        kept = db.remember("the memory I meant to keep", entities=["me"], writer="me")
+    before = mine.stat().st_size
+
+    refused = run_example(tmp_path, "--db", str(mine))
+    assert refused.returncode != 0
+    assert str(mine) in refused.stderr and "--reset" in refused.stderr
+    assert "1. Ingest three notes" not in refused.stdout, "nothing ran"
+    assert mine.stat().st_size == before
+    with Anatid.open(mine, tenant=1, embedding_dim=8) as db:
+        assert db.get(kept.memory_id) is not None and db.stats()["memories"] == 1
+
+    reset = run_example(tmp_path, "--db", str(mine), "--reset")
+    assert reset.returncode == 0, reset.stderr
+    with Anatid.open(mine, tenant=1, embedding_dim=8) as db:
+        assert db.get(kept.memory_id) is None, "--reset is the explicit way to start over"
+        assert db.stats()["episodes"] == 3
+
+
+def test_the_example_recreates_its_own_database_on_every_run(tmp_path):
+    """Without ``--db`` the file beside the script is the script's own and is replaced."""
+    script = tmp_path / "ingest_notes.py"
+    shutil.copy(EXAMPLE, script)
+    own = tmp_path / "ingest_demo.anatid"
+    for _ in range(2):
+        done = run_example(tmp_path, script=script)
+        assert done.returncode == 0, done.stderr
+        assert f"database: {own}" in done.stdout
+    with Anatid.open(own, tenant=1, embedding_dim=8) as db:
+        assert db.stats()["episodes"] == 3, "one run's worth, not two"
+
+
+# --------------------------------------------------------------------------------------
+# Handovers: a corrected fact's edges follow it.
+# --------------------------------------------------------------------------------------
+
+
+def handover_store(db):
+    """A graph the way a model's patches leave one: facts with edges from their own notes."""
+    MemoryPatch(
+        add_facts=(
+            AddFact("Atlas owns the ledger", ("Atlas", "ledger")),
+            AddFact("Priya is on call for Atlas", ("Priya", "Atlas")),
+        ),
+        add_relations=(
+            Relation("Atlas", "ledger", "owns"),
+            Relation("Priya", "Atlas", "on_call_for"),
+        ),
+        source_text="handover/2025-01-08: Atlas owns the ledger; Priya has the pager.",
+    ).apply(db, writer="w", now=T1)
+    MemoryPatch(
+        add_facts=(AddFact("Diego reports to Oskar", ("Diego", "Oskar")),),
+        add_relations=(Relation("Diego", "Oskar", "reports_to"),),
+        source_text="standup/2025-01-09: Diego reports to Oskar.",
+    ).apply(db, writer="w", now=T1 + _dt.timedelta(minutes=1))
+    MemoryPatch(
+        add_facts=(AddFact("Diego wrote the handover doc for Oskar", ("Diego", "Oskar", "doc")),),
+        source_text="standup/2025-01-10: Diego wrote the handover doc for Oskar.",
+    ).apply(db, writer="w", now=T1 + _dt.timedelta(minutes=2))
+
+
+def test_a_handover_correction_moves_the_edge_to_the_new_owner(db):
+    """The extraction model corrects the fact and forgets the edge; the pipeline moves it."""
+    handover_store(db)
+    proposed = MemoryPatch(
+        corrections=(
+            Correction(
+                "Cinder owns the ledger",
+                old_text="Atlas owns the ledger",
+                entities=("Cinder", "ledger"),
+            ),
+        ),
+        source_text="handover/2025-10-13: Cinder takes the ledger over from Atlas.",
+    )
+    patch = prepare(proposed, db)
+    assert patch.remove_relations == (Relation("Atlas", "ledger", "owns"),)
+    assert patch.add_relations == (Relation("Cinder", "ledger", "owns"),)
+    (note,) = [n for n in patch.notes if n.startswith("handover:")]
+    assert "closed and opened owns between 'Atlas' and 'ledger' for 'Cinder'" in note
+    receipt = patch.apply(db, writer="w", now=T2)
+    assert len(receipt.relations_closed) == 1 and len(receipt.relations_opened) == 1
+    edges = current_edges(db)
+    assert ("Cinder", "ledger", "owns") in edges and ("Atlas", "ledger", "owns") not in edges
+    assert ("Priya", "Atlas", "on_call_for") in edges, "an edge the fact is not about stays"
+
+
+def test_the_moved_edge_keeps_its_direction_when_the_replaced_entity_is_the_target(db):
+    handover_store(db)
+    patch = prepare(
+        MemoryPatch(
+            corrections=(
+                Correction(
+                    "Tomasz is on call for Atlas",
+                    old_text="Priya is on call for Atlas",
+                    entities=("Tomasz", "Atlas"),
+                ),
+                Correction(
+                    "Atlas owns the vault",
+                    old_text="Atlas owns the ledger",
+                    entities=("Atlas", "vault"),
+                ),
+            ),
+            source_text="rotation and rename",
+        ),
+        db,
+    )
+    assert set(patch.remove_relations) == {
+        Relation("Priya", "Atlas", "on_call_for"),
+        Relation("Atlas", "ledger", "owns"),
+    }
+    assert set(patch.add_relations) == {
+        Relation("Tomasz", "Atlas", "on_call_for"),
+        Relation("Atlas", "vault", "owns"),
+    }
+
+
+def test_no_edge_moves_without_a_clean_one_for_one_swap_or_from_another_note(db):
+    handover_store(db)
+    kept = MemoryPatch(
+        corrections=(
+            Correction("Atlas still owns the ledger", old_text="Atlas owns the ledger"),
+            Correction(
+                "Atlas owns the ledger, as of today",
+                old_text="Atlas owns the ledger",
+                entities=("Atlas", "ledger"),
+            ),
+        ),
+        source_text="reminder",
+    )
+    # (two corrections of one memory would be refused by apply; prepare alone is under test)
+    assert prepare(kept, db).remove_relations == () and prepare(kept, db).add_relations == ()
+    two_swapped = MemoryPatch(
+        corrections=(
+            Correction(
+                "Cinder owns the vault",
+                old_text="Atlas owns the ledger",
+                entities=("Cinder", "vault"),
+            ),
+        ),
+        source_text="everything changed",
+    )
+    assert prepare(two_swapped, db).remove_relations == ()
+    # the reports_to edge came from another note than the doc fact: not what this is about
+    other_note = MemoryPatch(
+        corrections=(
+            Correction(
+                "Farah wrote the handover doc for Oskar",
+                old_text="Diego wrote the handover doc for Oskar",
+                entities=("Farah", "Oskar", "doc"),
+            ),
+        ),
+        source_text="correction",
+    )
+    prepared = prepare(other_note, db)
+    assert prepared.remove_relations == () and prepared.add_relations == ()
+    assert not [n for n in prepared.notes if n.startswith("handover:")]
+
+
+def test_a_move_the_patch_already_states_is_not_stated_twice(db):
+    handover_store(db)
+    explicit = MemoryPatch(
+        corrections=(
+            Correction(
+                "Cinder owns the ledger",
+                old_text="Atlas owns the ledger",
+                entities=("Cinder", "ledger"),
+            ),
+        ),
+        remove_relations=(Relation("ledger", "Atlas", "owns"),),  # either direction counts
+        add_relations=(Relation("Cinder", "ledger", "owns"),),
+        source_text="handover, spelled out",
+    )
+    patch = prepare(explicit, db)
+    assert patch.remove_relations == (Relation("ledger", "Atlas", "owns"),)
+    assert patch.add_relations == (Relation("Cinder", "ledger", "owns"),)
+    assert not [n for n in patch.notes if n.startswith("handover:")]
+
+
+def test_the_pipeline_moves_edges_end_to_end_through_ingest(db):
+    handover_store(db)
+    extractor = ScriptedExtractor(
+        [
+            MemoryPatch(
+                corrections=(
+                    Correction(
+                        "Cinder owns the ledger",
+                        old_text="Atlas owns the ledger",
+                        entities=("Cinder", "ledger"),
+                    ),
+                ),
+            )
+        ]
+    )
+    receipt = ingest(
+        db,
+        "Cinder takes the ledger over from Atlas.",
+        extractor=extractor,
+        writer="notes-bot",
+        now=T2,
+    )
+    assert receipt is not None and len(receipt.relations_closed) == 1
+    assert receipt.patch.add_relations == (Relation("Cinder", "ledger", "owns"),)
+    assert ("Cinder", "ledger", "owns") in current_edges(db)
+    assert [m.content for m in db.as_of(T1 + _dt.timedelta(minutes=5)).context("ledger")] == [
+        "Atlas owns the ledger"
+    ]

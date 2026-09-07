@@ -167,6 +167,12 @@ def test_remember_then_recall_returns_the_memory(server, mcp_db):
     ok(call(server, "rebuild_fts_index"))
 
     hits = ok(call(server, "recall", {"query": "Analytical Engine algorithm", "k": 5}))
+    assert set(hits["weights"]) == set(hits["arms"]) and hits["weights"]["text"] == 1.0
+    quiet = ok(call(server, "recall", {"query": "Analytical Engine algorithm", "k": 5,
+                                       "arm_weights": {"text": 0}}))
+    assert quiet["weights"]["text"] == 0.0 and all(h.get("text_rank") is None for h in quiet["hits"])
+    bad = call(server, "recall", {"query": "x", "arm_weights": {"bm25": 1}})
+    assert bad.is_error is True and "unknown arm" in _text(bad)
     assert "text" in hits["arms"]
     assert memory_id in [h["memory_id"] for h in hits["hits"]], hits
     top = next(h for h in hits["hits"] if h["memory_id"] == memory_id)

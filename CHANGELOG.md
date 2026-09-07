@@ -3,6 +3,74 @@
 All notable changes to anatid are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); anatid uses semantic versioning.
 
+## [Unreleased]
+
+### Changed
+
+- `recall()` fuses its arms with weights, and the graph arm votes for what the question is about.
+  With a vector arm running the weights are vector 1.0, graph 0.5, text 0.25; without one, text
+  1.0, graph 0.5 (`anatid.recall.default_arm_weights`). Before the fusion the graph arm's
+  candidates are ordered by cosine similarity to the query, or by BM25 without an embedding,
+  instead of newest first (`anatid.recall.rank_graph_candidates`). `recall(arm_weights={"text":
+  0})` overrides any weight by name, on the handle, on `AnatidClient`, through the server's
+  verb table and as the MCP `recall` tool's `arm_weights`; `RecallHits.weights` and the tool
+  result's `weights` report what was used. Both settings come from the
+  answer-quality benchmark in `docs/quality.md`, where equal votes let a BM25 arm over short
+  extracted sentences outvote the vector arm and a newest-first graph arm crowded the memory
+  block with whatever was written last; the product review had found that anatid's own vector
+  arm beat the fusion on the same memories. Chosen with an offline support-coverage proxy
+  (`python -m bench.quality.coverage`) on the two published worlds and confirmed on a third the
+  choice never saw, the fusion is worth three to five points of coverage on every store. Under the
+  LLM judge anatid went from 82% to 89% on the committed corpus and from 91% to 89% on seed 7,
+  where rebuilding the store re-rolled the extraction, and answers 88% on the held-out world, one
+  point above its own vector arm; the gold-extracted oracle answers 96%, 96% and 99%. `rrf_fuse`
+  takes `weights=`; `hybrid_recall` takes `arm_weights=`; the RRF score of a hit is now
+  `sum(weight / (60 + rank))`.
+- `anatid.ingest.prepare` gained a step, `move_relations`, between `resolve_corrections` and
+  `dedupe`: a correction that swaps exactly one entity of the old fact for one new entity is a
+  handover, and every edge between the replaced entity and a kept one that the old fact's own
+  note opened is closed and reopened with the new entity in its place, unless the patch already
+  says so. Edges other notes stated do not move. The benchmark's extraction model corrected the
+  fact and left the old edge open in most handovers, so the graph arm kept walking through the
+  previous owner.
+
+### Added
+
+- The benchmark's extraction context uses a versioned `weighted-v1` fusion policy with explicit
+  weights, RRF constant and candidate budget. Changing answer-time default weights no longer
+  changes the extractor's context. Ingestion reports record the policy; changes to the underlying
+  graph ordering or ingestion semantics can still require a rebuild.
+- An `anatid` console script, the MCP server under the package's own name beside `anatid-mcp`.
+  A client that installs from the MCP Registry runs `uvx <runtimeArguments> anatid@<version>`, and
+  `uvx` runs the executable named like the package; `uvx anatid` failed with "an executable named
+  `anatid` is not provided by package `anatid`". `mcp-registry/server.json` now says
+  `runtimeHint: uvx` and passes `--with anatid[mcp]==<version>`, because the base wheel does not
+  require `mcp` and the server cannot import without it. `tests/test_mcp_registry.py` holds the
+  manifest, the scripts table, the version and the README's ownership marker together, and
+  `docs/mcp-registry.md` describes the launch. Verified against a locally built wheel with the exact
+  command VS Code assembles.
+
+### Fixed
+
+- The answer-quality benchmark's model client (`bench/quality/llm.py`) cached a provider failure
+  as an answer: OpenRouter can return HTTP 200 with `finish_reason: "error"` and no content when
+  the upstream model fails, and one such reply, for the note that moves Marcus to Atlas and hands
+  the Boreal pager to Lena, was stored as that note's extraction in the 0.4.0 build of the
+  committed corpus. Six questions rest on that note, and every offline replay reproduced the
+  loss. The client now refuses such a reply, retries it with the transport's backoff, counts it
+  in `Stats.provider_failures`, never caches it, and treats one an older run cached as a miss.
+- `examples/ingest_notes.py` deleted whatever database `--db` pointed at before it started, so
+  pointing the demo at a memory you meant to keep emptied it, and the run reported success. The
+  script now recreates only its own `ingest_demo.anatid` beside itself; a path given with `--db`
+  must not exist yet, and `--reset` is the explicit way to have it deleted first.
+- Two MCP `apply_patch` calls for one `patch_id`, concurrent or a retry after a lost reply,
+  could both commit the proposal, leaving two copies of every memory and every edge in the graph.
+  The server now takes the proposal out of the pending table before it writes anything, puts it
+  back if the apply fails, and keeps the receipt of a committed one: a second call for the same
+  id is answered with that receipt, `already_applied` true and a `note` that nothing was written.
+  `PendingPatches` gained `claim`, `settle` and `restore` for this, and `AppliedPatch` is the
+  record it keeps.
+
 ## [0.4.1] - 2026-09-05
 
 Nothing yet.

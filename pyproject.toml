@@ -107,6 +107,14 @@ Issues = "https://github.com/thedatasense/anatid/issues"
 
 [project.scripts]
 anatid-mcp = "anatid.integrations.mcp.server:main"
+# The same server under the package's own name, for the MCP Registry.  A client that installs
+# from the registry runs `uvx <runtimeArguments> anatid@<version> <packageArguments>` (VS Code's
+# mcpManagementService assembles exactly that), and uvx runs the executable NAMED LIKE THE
+# PACKAGE, so without this entry `uvx anatid` fails with "an executable named `anatid` is not
+# provided by package `anatid`".  mcp-registry/server.json pairs it with `--with anatid[mcp]`,
+# because the mcp extra is what makes the server importable; tests/test_mcp_registry.py holds
+# the manifest, this table and the version together.
+anatid = "anatid.integrations.mcp.server:main"
 # The server profile's operator surface: start, stop, status, backup, restore, doctor.  Also
 # reachable as `python -m anatid.server` (src/anatid/server/__main__.py) for the environments
 # where a console script is not on PATH.

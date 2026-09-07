@@ -310,6 +310,13 @@ def test_the_verbs_come_back_as_the_types_the_embedded_handle_returns(client):
     hits = client.recall("tea")
     assert isinstance(hits, RecallHits)
     assert hits.arms and isinstance(hits.bm25_available, bool)
+    assert hits.weights == {arm: (1.0 if arm == "text" else 0.5) for arm in hits.arms}, (
+        "the fusion weights cross the wire with the hits"
+    )
+    quiet = client.recall("tea", arm_weights={"text": 0.0})
+    assert quiet.weights["text"] == 0.0 and all(h.text_rank is None for h in quiet)
+    with pytest.raises(Exception, match="unknown arm"):
+        client.recall("tea", arm_weights={"bm25": 1.0})
     assert isinstance(client.get_entity("Ada"), Entity)
     assert isinstance(client.info(), SchemaInfo)
     assert isinstance(client.fts_status(), FtsStatus)

@@ -631,11 +631,21 @@ def test_recall_fuses_the_three_arms_with_rrf(db):
     assert "graph" in by_id[graphy.memory_id].sources
     assert hits == sorted(hits, key=lambda h: (-h.score, h.memory_id))
     assert [h.rank for h in hits] == list(range(1, len(hits) + 1))
-    # RRF: a memory only in one arm at rank 1 scores 1/(60+1)
+    # weighted RRF: each arm votes weight / (60 + rank), and with a vector arm running the
+    # weights are vector 1.0, graph 0.5, text 0.25 (anatid.recall.default_arm_weights)
+    assert hits.weights == {"vector": 1.0, "text": 0.25, "graph": 0.5}
     assert pytest.approx(by_id[texty.memory_id].score, rel=1e-9) == \
-        sum(1.0 / (60 + r) for r in (by_id[texty.memory_id].text_rank,
-                                     by_id[texty.memory_id].vector_rank)
+        sum(hits.weights[arm] / (60 + r)
+            for arm, r in (("text", by_id[texty.memory_id].text_rank),
+                           ("vector", by_id[texty.memory_id].vector_rank))
             if r is not None)
+    # equal votes are one keyword away
+    equal = db.recall("dark roast", embedding=vec(1, 0), seed_entity="Ada", k=5,
+                      arm_weights={"text": 1.0, "graph": 1.0})
+    assert equal.weights == {"vector": 1.0, "text": 1.0, "graph": 1.0}
+    e_texty = next(h for h in equal if h.memory_id == texty.memory_id)
+    assert pytest.approx(e_texty.score, rel=1e-9) == \
+        sum(1.0 / (60 + r) for r in (e_texty.text_rank, e_texty.vector_rank) if r is not None)
 
 
 def test_recall_reports_that_bm25_is_stale_rather_than_hiding_it(legacy_db, caplog):

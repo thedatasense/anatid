@@ -938,31 +938,33 @@ class AnatidClient:
         include_about: bool = True,
         on_stale_fts: str = "report",
         allow_slow: bool = False,
+        arm_weights: Mapping[str, float] | None = None,
     ) -> RecallHits:
         """Fused vector, text and graph retrieval.  The call this profile exists to serve.
 
         Measured at 25.0 ms over the socket against 25.4 ms in process on a 3,001-memory tenant
-        at 384 dimensions: the round trip disappears into the vector arm's scan.
+        at 384 dimensions: the round trip disappears into the vector arm's scan.  ``arm_weights``
+        travels only when given, so a client built after 0.4.1 still talks to a server built
+        before it for every call that leaves the default weights alone.
         """
-        return self._invoke(
-            "recall",
-            {
-                "query": query,
-                "k": k,
-                "embedding": embedding,
-                "seed_entity": seed_entity,
-                "hops": hops,
-                "as_of": as_of,
-                "kinds": kinds,
-                "candidates": candidates,
-                "rrf_k": rrf_k,
-                "with_embedding": with_embedding,
-                "include_about": include_about,
-                "on_stale_fts": on_stale_fts,
-                "allow_slow": allow_slow,
-            },
-            tenant=tenant,
-        )
+        args: dict[str, Any] = {
+            "query": query,
+            "k": k,
+            "embedding": embedding,
+            "seed_entity": seed_entity,
+            "hops": hops,
+            "as_of": as_of,
+            "kinds": kinds,
+            "candidates": candidates,
+            "rrf_k": rrf_k,
+            "with_embedding": with_embedding,
+            "include_about": include_about,
+            "on_stale_fts": on_stale_fts,
+            "allow_slow": allow_slow,
+        }
+        if arm_weights is not None:
+            args["arm_weights"] = dict(arm_weights)
+        return self._invoke("recall", args, tenant=tenant)
 
     def recall_2hop(
         self,

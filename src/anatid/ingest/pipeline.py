@@ -36,6 +36,7 @@ from ..types import Memory
 from ..visibility import current_row_sql, tenant_sql
 from .extract import Extractor, KnownFact
 from .patch import (
+    ALIAS_REL_KIND,
     AddFact,
     Correction,
     MemoryPatch,
@@ -277,6 +278,100 @@ def resolve_corrections(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -
     )
 
 
+def move_relations(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -> MemoryPatch:
+    """Carry a corrected fact's edges over to its replacement.
+
+    A correction that keeps some of the old memory's entities and swaps exactly one of them for
+    exactly one new entity is a handover: "Atlas owns the ledger" corrected to "Cinder owns the
+    ledger", "Priya is on call for Atlas" to "Tomasz is on call for Atlas", "Tomasz is a member
+    of Dune" to "Tomasz is a member of Cinder".  Every current ``RELATES_TO`` edge between the
+    replaced entity and a kept one that the old memory's own note opened is closed, and the
+    same edge, same kind and same direction, is opened with the new entity in the replaced
+    one's place, unless the patch already says so.  Each move is a note.
+
+    Two things keep this from guessing.  Only edges the old fact's own episode opened move: an
+    edge another note stated ("Diego reports to Oskar") is not what a correction of "Diego
+    wrote the doc for Oskar" is about.  And a correction that swaps two entities, or none, or
+    keeps none, moves nothing.  The answer-quality benchmark (docs/quality.md) is where the
+    need showed: the extraction model corrected the fact and left the old edge open in most
+    handovers, so the graph arm kept walking through the previous owner.
+    """
+    ns = db.resolve_tenant(tenant)
+    notes: list[str] = []
+    remove: list[Relation] = list(patch.remove_relations)
+    add: list[Relation] = list(patch.add_relations)
+
+    def key(name: str) -> str:
+        return entity_key(name) or ""
+
+    def stated(rels: Sequence[Relation], src: str, dst: str, kind: str | None) -> bool:
+        for rel in rels:
+            if rel.rel_kind != kind:
+                continue
+            pair = {key(rel.src), key(rel.dst)}
+            if pair == {key(src), key(dst)}:
+                return True
+        return False
+
+    for corr in patch.corrections:
+        if corr.old_id is None or corr.entities is None:
+            continue
+        old = db.get(corr.old_id, tenant=ns, with_embedding=False)
+        if old is None or old.episode_id is None:
+            continue
+        old_names = {key(e.name): e.name for e in db.entities_of(corr.old_id, tenant=ns)}
+        new_names = {key(n): n for n in corr.entities if key(n)}
+        replaced = [n for k, n in old_names.items() if k not in new_names]
+        added = [n for k, n in new_names.items() if k not in old_names]
+        kept = [n for k, n in old_names.items() if k in new_names]
+        if len(replaced) != 1 or len(added) != 1 or not kept:
+            continue
+        gone, comes = replaced[0], added[0]
+        gone_entity = db.get_entity(gone, tenant=ns)
+        if gone_entity is None:
+            continue
+        for other in kept:
+            other_entity = db.get_entity(other, tenant=ns)
+            if other_entity is None:
+                continue
+            rows = db.execute(
+                f"SELECT src, dst, rel_kind FROM edges_relates "
+                f"WHERE ((src = ? AND dst = ?) OR (src = ? AND dst = ?)) AND episode_id = ? "
+                f"AND {tenant_sql()} AND {current_row_sql()} ORDER BY edge_id",
+                [
+                    gone_entity.entity_id,
+                    other_entity.entity_id,
+                    other_entity.entity_id,
+                    gone_entity.entity_id,
+                    int(old.episode_id),
+                    ns.tenant_id,
+                ],
+            ).fetchall()
+            for src_id, _dst_id, kind in rows:
+                if kind == ALIAS_REL_KIND:
+                    continue
+                gone_is_src = int(src_id) == gone_entity.entity_id
+                src, dst = (gone, other) if gone_is_src else (other, gone)
+                new_src, new_dst = (comes, other) if gone_is_src else (other, comes)
+                moved = []
+                if not stated(remove, src, dst, kind):
+                    remove.append(Relation(src, dst, kind))
+                    moved.append("closed")
+                if not stated(add, new_src, new_dst, kind):
+                    add.append(Relation(new_src, new_dst, kind))
+                    moved.append("opened")
+                if moved:
+                    notes.append(
+                        f"handover: {' and '.join(moved)} {kind} between {gone!r} and "
+                        f"{other!r} for {comes!r}, from the correction of memory {corr.old_id}"
+                    )
+    if not notes:
+        return patch
+    return patch.replace(
+        remove_relations=tuple(remove), add_relations=tuple(add), notes=patch.notes + tuple(notes)
+    )
+
+
 def dedupe(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -> MemoryPatch:
     """Drop what the graph already holds, and say so.
 
@@ -355,9 +450,11 @@ def dedupe(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -> MemoryPatch
 
 
 def prepare(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -> MemoryPatch:
-    """:func:`resolve_entities`, then :func:`resolve_corrections`, then :func:`dedupe`."""
+    """:func:`resolve_entities`, :func:`resolve_corrections`, :func:`move_relations`, then
+    :func:`dedupe`."""
     patch = resolve_entities(patch, db, tenant=tenant)
     patch = resolve_corrections(patch, db, tenant=tenant)
+    patch = move_relations(patch, db, tenant=tenant)
     return dedupe(patch, db, tenant=tenant)
 
 

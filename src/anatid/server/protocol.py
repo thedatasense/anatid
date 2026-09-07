@@ -719,6 +719,7 @@ def _encode_recall_hits(value: _types.RecallHits, opts: _EncodeOptions) -> Any:
         "as_of": _encode(value.as_of, opts),
         "notes": list(value.notes),
         "seeds": list(value.seeds),
+        "weights": dict(getattr(value, "weights", {}) or {}),
     }
 
 
@@ -735,6 +736,8 @@ def _decode_recall_hits(raw: Any) -> _types.RecallHits:
         notes=tuple(raw.get("notes", ())),
         # A 0.3.0 server sends no seeds; the attribute defaults to () on the embedded handle too.
         seeds=tuple(raw.get("seeds", ())),
+        # A server built before 0.4.2 sends no weights; the attribute is then empty.
+        weights={str(k): float(v) for k, v in (raw.get("weights") or {}).items()},
     )
 
 

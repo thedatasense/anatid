@@ -58,7 +58,7 @@ import itertools
 import json
 import threading
 import time
-from collections.abc import Callable, Iterable, Iterator, Sequence
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
@@ -138,6 +138,11 @@ PRF_FEEDBACK_NOTES = 3
 #: anatid's own ``EXISTING_LIMIT`` and ``ENTITY_SCAN_LIMIT``.
 EXISTING_LIMIT = 40
 ENTITY_SCAN_LIMIT = 25
+#: The extraction context used to build the three reported worlds. Keep these values independent
+#: of answer-time tuning. Changing the extraction policy deliberately requires a new version and
+#: a rebuild; changing the product's default fusion weights does not.
+EXTRACTION_CONTEXT_VERSION = "weighted-v1"
+EXTRACTION_ARM_WEIGHTS = (("vector", 1.0), ("text", 0.25), ("graph", 0.5))
 #: Completion cap for an answer.  The chat model reasons before it answers and those tokens
 #: count against the cap, so this is generous on purpose; the instruction keeps answers short.
 #: An answer that comes back empty because the reasoning used the whole cap is asked once more
@@ -733,24 +738,32 @@ def fused_recall(
     k: int = RECALL_K,
     candidates: int = RECALL_CANDIDATES,
     tenant_id: int = 1,
+    arm_weights: Mapping[str, float] | None = None,
+    rrf_k: int | None = None,
 ) -> tuple[list[Any], dict[str, Any]]:
     """anatid's three retrieval arms, fused with anatid's Reciprocal Rank Fusion, tie order pinned.
 
     This is :func:`anatid.recall.hybrid_recall` assembled in the open: the same
     :func:`~anatid.recall.bm25_arm`, :func:`~anatid.recall.vector_arm`, graph expansion from the
-    entities the query names (:func:`~anatid.recall.auto_seeds`), the same
-    :func:`~anatid.recall.rrf_fuse` with ``k = 60`` and ties on memory id, and the same
-    :func:`~anatid.recall.hydrate`.  Two things differ, both for reproducibility: each arm's list
-    goes through :func:`pin_ties`, and the lists are long enough (``candidates``) to hold the
-    whole store, so an arm's cut-off never decides membership.  Returns the hydrated memories in
-    fused order and a record of which arms ran and from which seeds.
+    entities the query names (:func:`~anatid.recall.auto_seeds`) with its candidates ranked by
+    the query's own signal (:func:`~anatid.recall.rank_graph_candidates`), the same
+    :func:`~anatid.recall.rrf_fuse` with ``k = 60``, the product's default weights
+    (:func:`~anatid.recall.default_arm_weights`) and ties on memory id, and the same
+    :func:`~anatid.recall.hydrate`.  Two things differ, both for reproducibility: the vector and
+    text lists go through :func:`pin_ties`, and the lists are long enough (``candidates``) to
+    hold the whole store, so an arm's cut-off never decides membership.  Returns the hydrated
+    memories in fused order and a record of which arms ran, from which seeds and with which
+    weights. Explicit ``arm_weights`` and ``rrf_k`` pin the extraction context's fusion while
+    answer-time retrieval continues to follow the product defaults.
     """
     from anatid.recall import (
         RRF_K,
         auto_seeds,
         bm25_arm,
+        default_arm_weights,
         hybrid_recall,
         hydrate,
+        rank_graph_candidates,
         rrf_fuse,
         vector_arm,
     )
@@ -794,21 +807,50 @@ def fused_recall(
                 seed_entity=[sid for sid, _name in found],
                 backend=db.csr,
                 on_stale_fts="ignore",
+                arm_weights={"graph": 1.0},
             )
-            lists["graph"] = [
-                (h.memory_id, float(len(graph_hits) - i)) for i, h in enumerate(graph_hits)
-            ]
-    fused = rrf_fuse(lists, k=RRF_K, top=k)
+            graph = [(h.memory_id, float(len(graph_hits) - i)) for i, h in enumerate(graph_hits)]
+            # As the product does: the neighbourhood votes in the order of the query's own
+            # signal, cosine when the vector arm ran and BM25 when the text arm did.  Cosine
+            # over stored vectors is deterministic, so this list needs no pinning; ties fall
+            # back to the newest-first order, which is pinned by memory id.
+            if embedding is not None and "vector" in wanted:
+                graph = rank_graph_candidates(
+                    con,
+                    graph,
+                    tenant_id=tenant_id,
+                    embedding=embedding,
+                    dim=db.config.embedding_dim,
+                )
+            elif "text" in lists:
+                graph = rank_graph_candidates(
+                    con, graph, tenant_id=tenant_id, text_hits=dict(lists["text"])
+                )
+            lists["graph"] = graph
+    weights = (
+        default_arm_weights(lists)
+        if arm_weights is None
+        else {name: float(arm_weights[name]) for name in lists}
+    )
+    fused = rrf_fuse(lists, k=RRF_K if rrf_k is None else rrf_k, top=k, weights=weights)
     ids = [mid for mid, _score, _ranks, _scores in fused]
     rows = hydrate(con, ids, tenant_id=tenant_id)
     memories = [rows[mid] for mid in ids if mid in rows]
-    return memories, {"arms_ran": list(lists), "seeds": seeds, "hits": len(memories)}
+    return memories, {
+        "arms_ran": list(lists),
+        "seeds": seeds,
+        "hits": len(memories),
+        "weights": weights,
+    }
 
 
 def existing_facts(db: Any, text: str, *, tenant_id: int = 1) -> list[Any]:
     """The current facts about the entities ``text`` names, plus the text-search hits, as
     :func:`anatid.ingest.existing_context` assembles them, with :func:`fused_recall` in place of
-    ``db.recall`` so the list is the same on every run.
+    ``db.recall`` so the list is the same on every run. Its fusion is pinned to
+    :data:`EXTRACTION_CONTEXT_VERSION`, independent of the product's default weights and RRF
+    constant. The current graph ordering and low-level retrieval primitives are shared; changes
+    to those, extraction or ingestion semantics can still require a new build.
 
     An entity counts as named when its canonical key occurs in the text as a whole word; its
     facts come newest first; at most :data:`EXISTING_LIMIT` facts in all.  Each is a
@@ -851,7 +893,15 @@ def existing_facts(db: Any, text: str, *, tenant_id: int = 1) -> list[Any]:
         for memory in db.context(name, limit=EXISTING_LIMIT):
             if take(memory):
                 return out
-    hits, _info = fused_recall(db, text, k=min(EXISTING_LIMIT, 20), tenant_id=tenant_id)
+    hits, _info = fused_recall(
+        db,
+        text,
+        k=20,
+        candidates=200,
+        tenant_id=tenant_id,
+        arm_weights=dict(EXTRACTION_ARM_WEIGHTS),
+        rrf_k=60,
+    )
     for memory in hits:
         if take(memory):
             break
@@ -985,6 +1035,7 @@ class AnatidSystem(BaseSystem):
         report: dict[str, Any] = {
             "notes": len(notes),
             "extractor": self.extractor_kind,
+            "context_policy": EXTRACTION_CONTEXT_VERSION,
             "memories_created": 0,
             "memories_closed": 0,
             "relations_opened": 0,

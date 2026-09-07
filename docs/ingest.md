@@ -44,6 +44,15 @@ embedder=None)` runs four steps. Each is a public function you can call on its o
      correction that names its memory by text becomes one by id when exactly one current
      memory reads that way. A correction whose memory cannot be found, or is no longer
      current, is downgraded to a new fact and noted.
+   - `move_relations` carries a corrected fact's edges over to its replacement. A correction
+     that keeps some of the old memory's entities and swaps exactly one for exactly one new
+     entity is a handover ("Atlas owns the ledger" to "Cinder owns the ledger"): every current
+     edge between the replaced entity and a kept one that the old fact's own note opened is
+     closed, and the same edge, same kind and direction, is opened with the new entity in its
+     place, unless the patch already says so. Edges other notes stated do not move, and a
+     correction that swaps two entities or none moves nothing. Every move is a note. The
+     answer-quality benchmark showed the need: the extraction model corrected the fact and
+     left the old edge open in most handovers.
    - `dedupe` drops a fact the graph already holds (same folded content, same entities), a
      fact proposed twice, a relation a current edge already holds, and a relation removal
      that has no current edge to close. Every drop is a note.
@@ -192,7 +201,10 @@ The MCP server registers `ingest` and `apply_patch` when `ANATID_EXTRACT_BASE_UR
 optional), or when `build_server(db, extractor=...)` is given one. `ingest(text)` proposes and
 returns `patch_id`, `diff` and `patch`; `apply_patch(patch_id)` commits, with an edited `patch`
 to change it first; declining is not calling `apply_patch`. A failed apply keeps the proposal
-pending so it can be edited and tried again. Both tools need the embedded handle, because
+pending so it can be edited and tried again, and a proposal is applied at most once: repeating
+`apply_patch` for a `patch_id` that landed already, concurrently or after a lost reply, returns
+the receipt of that apply with `already_applied` true and writes nothing. Both tools need the
+embedded handle, because
 `MemoryPatch.apply` runs several verbs in one transaction on the file's own connection, so an
 `anatid-mcp` that talks to a server over a socket refuses the extraction settings at startup.
 [`mcp.md`](mcp.md) has the details.

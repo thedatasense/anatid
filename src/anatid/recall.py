@@ -15,8 +15,13 @@ shapes that mattered are preserved:
   ranking ``match_bm25`` produces and roughly 2x faster, because it skips the extension's
   per-document correlated lookup.  The statement moved to :mod:`anatid.fts` in 0.2, where the
   text arm became a derived index; see "The text arm" below.
-* The arms are fused with Reciprocal Rank Fusion, ``score = sum 1 / (k + rank)``, k = 60,
-  1-based ranks, ties broken by ``memory_id ASC``.
+* The arms are fused with Reciprocal Rank Fusion, ``score = sum weight / (k + rank)``, k = 60,
+  1-based ranks, ties broken by ``memory_id ASC``.  The weights are not equal:
+  :func:`default_arm_weights` lets the vector arm lead when it ran (1.0, graph 0.5, text 0.25)
+  and the text arm lead otherwise (1.0, graph 0.5), and the graph arm's candidates are ordered
+  by cosine or BM25 rather than by recency before they vote (:func:`rank_graph_candidates`).
+  Both were chosen on the answer-quality benchmark (docs/quality.md), where equal votes and a
+  newest-first graph arm cost the fusion questions the vector arm alone had right.
 
 Where the graph arm's seeds come from
 ------------------------------------
@@ -92,9 +97,10 @@ from __future__ import annotations
 
 import datetime as _dt
 import logging
+import math
 import re
 import string
-from typing import Iterable, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 
 from . import fts as _fts
 from .csr import CsrBackend, _num, frontier_sql
@@ -115,6 +121,12 @@ log = logging.getLogger("anatid.recall")
 
 __all__ = [
     "RRF_K",
+    "ARM_NAMES",
+    "ARM_WEIGHTS_WITH_VECTOR",
+    "ARM_WEIGHTS_WITHOUT_VECTOR",
+    "default_arm_weights",
+    "check_arm_weights",
+    "rank_graph_candidates",
     "DEFAULT_CANDIDATES",
     "AUTO_SEED",
     "AUTO_SEED_LIMIT",
@@ -144,6 +156,16 @@ __all__ = [
 
 RRF_K = 60
 DEFAULT_CANDIDATES = 50          # size of each arm's candidate list (spike R2_TOPN)
+
+#: The three arms, in the order the fusion reports them.
+ARM_NAMES = ("vector", "text", "graph")
+#: Arm weights the fusion uses when the vector arm ran: the vector arm leads, the graph arm
+#: seconds it, the text arm breaks ties.  Chosen on the answer-quality benchmark
+#: (docs/quality.md): with equal votes a BM25 arm over short extracted sentences ranked the
+#: wrong memories first often enough to cost the fusion questions the vector arm had right.
+ARM_WEIGHTS_WITH_VECTOR: dict[str, float] = {"vector": 1.0, "graph": 0.5, "text": 0.25}
+#: ... and when it did not: the text arm leads and the graph arm seconds it.
+ARM_WEIGHTS_WITHOUT_VECTOR: dict[str, float] = {"text": 1.0, "graph": 0.5}
 
 #: ``seed_entity="auto"``: find the graph arm's seeds in the query (:func:`auto_seeds`).  It is
 #: the default of :meth:`anatid.Anatid.recall`; ``None`` disables the graph arm when no entity
@@ -619,25 +641,112 @@ def rebuild_fts_index(con, *, now: _dt.datetime | None = None,
 
 # --------------------------------------------------------------------------- fusion
 
+def default_arm_weights(arms: Iterable[str]) -> dict[str, float]:
+    """The fusion weights for the arms that ran: :data:`ARM_WEIGHTS_WITH_VECTOR` when
+    ``"vector"`` is among them, :data:`ARM_WEIGHTS_WITHOUT_VECTOR` otherwise, 1.0 for a name
+    neither table knows."""
+    names = list(dict.fromkeys(arms))
+    base = ARM_WEIGHTS_WITH_VECTOR if "vector" in names else ARM_WEIGHTS_WITHOUT_VECTOR
+    return {name: float(base.get(name, 1.0)) for name in names}
+
+
+def check_arm_weights(weights: Mapping[str, Any]) -> dict[str, float]:
+    """A caller's ``arm_weights``, validated: names from :data:`ARM_NAMES`, finite numbers >= 0."""
+    if not isinstance(weights, Mapping):
+        raise TypeError(
+            f"arm_weights must be a mapping of arm name to weight, got {type(weights).__name__}"
+        )
+    out: dict[str, float] = {}
+    for name, value in weights.items():
+        if name not in ARM_NAMES:
+            raise ValueError(f"arm_weights names an unknown arm {name!r}; the arms are {ARM_NAMES}")
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError(f"arm_weights[{name!r}] must be a number, got {value!r}")
+        w = float(value)
+        if not math.isfinite(w) or w < 0:
+            raise ValueError(f"arm_weights[{name!r}] must be finite and >= 0, got {value!r}")
+        out[name] = w
+    return out
+
+
+def rank_graph_candidates(
+    con,
+    rows: Sequence[tuple[int, float]],
+    *,
+    tenant_id: int,
+    as_of: AsOf = CURRENT,
+    embedding: Sequence[float] | None = None,
+    dim: int | None = None,
+    text_hits: Mapping[int, float] | None = None,
+) -> list[tuple[int, float]]:
+    """The graph arm's candidates in the order of the query's own relevance signal.
+
+    ``rows`` are ``[(memory_id, recency_score)]`` newest first, as :func:`graph_arm` returns
+    them: everything filed under an entity within ``hops`` of the seeds, which for a busy
+    entity is most of what is known about it.  Newest first is the right order for a pure
+    graph read and the wrong one for a question: the fusion then votes for whatever was written
+    last.  With ``embedding`` (and ``dim``), each candidate is scored by the cosine similarity
+    of its stored vector to the query's and the list is reordered by that, highest first;
+    candidates with no stored vector follow, newest first.  With ``text_hits`` instead (the
+    text arm's ``{memory_id: bm25}``), the candidates that arm scored come first by that score
+    and the rest follow newest first.  With neither the rows come back unchanged.  Measured on
+    the answer-quality benchmark (docs/quality.md), where it is what lets the graph arm add
+    multi-hop questions to the fusion instead of crowding it.
+
+    The score returned with each id is the cosine or BM25 score where one applied and the
+    recency score otherwise; the fusion uses the order alone.
+    """
+    if not rows:
+        return []
+    recency = {int(mid): i for i, (mid, _s) in enumerate(rows)}
+    scored: dict[int, float] = {}
+    if embedding is not None:
+        if dim is None:
+            raise ValueError("rank_graph_candidates needs dim together with embedding")
+        w, wp = Visibility.at(tenant_id, as_of).predicate("m")
+        sql = (
+            f"SELECT m.memory_id, array_cosine_similarity(m.embedding, ?::FLOAT[{int(dim)}]) "
+            f"FROM memories m WHERE m.memory_id IN ({_int_list(list(recency))}) "
+            f"AND m.embedding IS NOT NULL AND {w}"
+        )
+        for mid, score in con.execute(sql, [embedding_literal(embedding), *wp]).fetchall():
+            if score is not None and score == score:      # a NaN would poison the sort
+                scored[int(mid)] = float(score)
+    elif text_hits:
+        scored = {int(mid): float(s) for mid, s in text_hits.items() if int(mid) in recency}
+    else:
+        return list(rows)
+    ordered = sorted(
+        rows, key=lambda r: (r[0] not in scored, -scored.get(r[0], 0.0), recency[int(r[0])])
+    )
+    return [(int(mid), scored.get(int(mid), float(s))) for mid, s in ordered]
+
+
 def rrf_fuse(
     arms: dict[str, list[tuple[int, float]]],
     *,
     k: int = RRF_K,
     top: int | None = None,
+    weights: Mapping[str, float] | None = None,
 ) -> list[tuple[int, float, dict[str, int], dict[str, float]]]:
     """Reciprocal Rank Fusion of any number of ranked candidate lists.
 
     ``arms`` maps an arm name to its ``[(memory_id, arm_score)]`` list, already in rank order.
     Returns ``[(memory_id, rrf_score, {arm: rank}, {arm: arm_score})]`` ordered by
     ``rrf_score DESC, memory_id ASC``.  Ranks are 1-based; a memory appearing in several arms
-    accumulates ``1 / (k + rank)`` from each.
+    accumulates ``weight / (k + rank)`` from each, where ``weights`` gives the arm's weight
+    (1.0 for an arm it does not name, and for every arm when it is None).  An arm weighted 0
+    contributes nothing and records no rank, as if it had not run.
     """
     fused: dict[int, float] = {}
     ranks: dict[int, dict[str, int]] = {}
     scores: dict[int, dict[str, float]] = {}
     for arm, rows in arms.items():
+        weight = 1.0 if weights is None else float(weights.get(arm, 1.0))
+        if weight == 0.0:
+            continue
         for i, (mid, score) in enumerate(rows, start=1):
-            fused[mid] = fused.get(mid, 0.0) + 1.0 / (k + i)
+            fused[mid] = fused.get(mid, 0.0) + weight / (k + i)
             ranks.setdefault(mid, {})[arm] = i
             scores.setdefault(mid, {})[arm] = score
     out = sorted(fused.items(), key=lambda kv: (-kv[1], kv[0]))
@@ -734,8 +843,16 @@ def hybrid_recall(
     allow_slow: bool = False,
     vector_index=None,
     on_ceiling: str = "error",
+    arm_weights: Mapping[str, float] | None = None,
 ) -> RecallHits:
     """Hybrid retrieval: cosine top-N + BM25 top-N + optional k-hop graph expansion, fused by RRF.
+
+    The fusion is weighted: :func:`default_arm_weights` gives the vector arm the lead when it
+    ran (vector 1.0, graph 0.5, text 0.25) and the text arm the lead otherwise (text 1.0,
+    graph 0.5).  ``arm_weights`` overrides any of them by name; an arm it does not name keeps
+    its default.  The graph arm's candidates are ordered by the query's own signal before the
+    fusion, cosine with an embedding and BM25 without one (:func:`rank_graph_candidates`),
+    rather than newest first.  ``RecallHits.weights`` reports the weights that were used.
 
     Arms run only when their input is present: the vector arm needs ``embedding``, the BM25 arm
     needs ``query`` **and** an fts index, the graph arm needs a seed.  With no usable arm the
@@ -849,10 +966,19 @@ def hybrid_recall(
                 seeds.append((sid, entity_name(con, tenant_id=tenant_id, entity_id=sid)
                               or str(sid)))
     if seeds:
-        arms["graph"] = _graph_candidates(con, tenant_id=tenant_id,
-                                          seed_entity_ids=[sid for sid, _n in seeds],
-                                          hops=hops, topn=candidates, as_of=as_of,
-                                          backend=backend, kinds=kinds)
+        graph = _graph_candidates(con, tenant_id=tenant_id,
+                                  seed_entity_ids=[sid for sid, _n in seeds],
+                                  hops=hops, topn=candidates, as_of=as_of,
+                                  backend=backend, kinds=kinds)
+        # Newest first is the order of a pure graph read; for a fusion the neighbourhood is
+        # ranked by the query's own signal, so the arm votes for what the question is about.
+        if embedding is not None:
+            graph = rank_graph_candidates(con, graph, tenant_id=tenant_id, as_of=as_of,
+                                          embedding=embedding, dim=dim)
+        elif "text" in arms:
+            graph = rank_graph_candidates(con, graph, tenant_id=tenant_id, as_of=as_of,
+                                          text_hits=dict(arms["text"]))
+        arms["graph"] = graph
 
     if query and status.stale:
         # What "stale" MEANS depends on which half of anatid.fts answered, so the sentence comes
@@ -865,7 +991,10 @@ def hybrid_recall(
             log.warning("%s", msg)
             notes.append(msg)
 
-    fused = rrf_fuse(arms, k=rrf_k, top=k)
+    weights = default_arm_weights(arms)
+    if arm_weights is not None:
+        weights.update({a: w for a, w in check_arm_weights(arm_weights).items() if a in arms})
+    fused = rrf_fuse(arms, k=rrf_k, top=k, weights=weights)
     ids = [mid for mid, _s, _r, _sc in fused]
     rows = hydrate(con, ids, tenant_id=tenant_id, with_embedding=with_embedding, as_of=as_of)
     names = (about_names(con, ids, tenant_id=tenant_id, as_of=as_of)
@@ -892,4 +1021,5 @@ def hybrid_recall(
         as_of=as_of,
         notes=tuple(notes),
         seeds=tuple(name for _sid, name in seeds),
+        weights=weights,
     )

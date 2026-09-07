@@ -23,6 +23,15 @@ so find its absolute path first; the config block below needs it.
 which anatid-mcp
 ```
 
+With [uv](https://docs.astral.sh/uv/) there is nothing to install or to locate: `uvx` fetches the
+release, the `mcp` extra and the `anatid` executable, which is the same server under the package's
+own name, and this is also the command a client that installs anatid from the MCP Registry runs
+([`mcp-registry.md`](mcp-registry.md)).
+
+```sh
+uvx --with "anatid[mcp]" anatid --db ~/.anatid/memory.anatid
+```
+
 ## The config block
 
 All three clients use the same `mcpServers` shape. Paste this, replacing
@@ -231,7 +240,7 @@ tools do not branch on which. Close it yourself.
 | `rebuild_fts_index` | write | Fold the journal into a new BM25 generation. See "Text search" below. |
 | `ingest` | read-only | With an extractor configured: propose a memory patch from text, returning `patch_id`, `diff` and `patch`. Writes nothing. Sends the text to the extraction model. |
 | `apply_patch` | destructive | Commit a proposed patch, unchanged or edited, in one transaction with the note stored as the episode. Destructive when the patch corrects a memory or removes a relation. |
-| `recall` | read-only | Hybrid retrieval: BM25 + graph expansion + cosine when an embedding or an embedder is at hand, fused with RRF. With a query and no `seed_entity` the graph arm seeds itself from the entity names in the query, and `seeds` in the result says which. |
+| `recall` | read-only | Hybrid retrieval: BM25 + graph expansion + cosine when an embedding or an embedder is at hand, fused with weighted RRF (vector 1.0, graph 0.5, text 0.25 when the vector arm runs; text 1.0, graph 0.5 otherwise). `arm_weights` overrides a weight by name and `weights` in the result says what was used. With a query and no `seed_entity` the graph arm seeds itself from the entity names in the query, and `seeds` in the result says which. |
 | `context` | read-only | Everything about one entity. `hops=0` direct, `1` neighbors, `2` two hops. |
 | `get` | read-only | One memory by id, with its entities. |
 | `provenance` | read-only | Walk the SUPERSEDES chain back to the original assertion and its source text. |
@@ -296,9 +305,14 @@ memory patch: 1 fact, 1 correction, 2 relation(s) added, 1 relation(s) removed
 first as an episode, then aliases, new facts, corrections, edges closed and edges opened, every
 row citing that episode. Pass an edited `patch` to change the proposal first; memory ids in it
 stay decimal strings. If any step fails nothing lands and the proposal stays pending. Declining
-is not calling `apply_patch`. Proposals live in the server's memory, at most 64 at a time, and
-are gone when the process exits. [`ingest.md`](ingest.md) describes the pipeline and the patch
-schema.
+is not calling `apply_patch`. A proposal is applied at most once: the server takes it out of
+the pending table before writing, so two calls that name the same `patch_id` at the same moment
+cannot both commit it, and a `patch_id` that was applied already is answered with the receipt
+of that apply, `already_applied` set to true and a `note` saying nothing was written. That
+makes a call repeated after a lost reply safe; to store a changed version of the note, call
+`ingest` again. Proposals live in the server's memory, at most 64 at a time, as do the receipts
+of the last 64 applied, and both are gone when the process exits. [`ingest.md`](ingest.md)
+describes the pipeline and the patch schema.
 
 Every read takes `as_of` (an ISO-8601 timestamp) to ask what the database believed at that time.
 Time travel is anatid's own filter over the valid-time and transaction-time columns. DuckDB has no

@@ -10,12 +10,15 @@ and as_of in April answers with the owner the database believed at the time.
 
 Run it:
 
-    python examples/ingest_notes.py            # offline: a scripted extractor, no key
-    python examples/ingest_notes.py --live     # GLM 5.3 Flash through OpenRouter proposes the patches
-    python examples/ingest_notes.py --db PATH  # write the database somewhere else
+    python examples/ingest_notes.py                    # offline: a scripted extractor, no key
+    python examples/ingest_notes.py --live             # GLM 5.3 Flash through OpenRouter proposes the patches
+    python examples/ingest_notes.py --db PATH          # write the database somewhere else; PATH must not exist
+    python examples/ingest_notes.py --db PATH --reset  # delete PATH first
 
 Live mode reads OPEN_ROUTER_KEY from the environment or open_router_key= from a .env file.
-The script writes ./ingest_demo.anatid beside itself and deletes it on the next run.
+The script writes ./ingest_demo.anatid beside itself and recreates it on every run. A path
+given with --db is a database of yours as far as the script knows: it refuses one that exists
+unless --reset says to delete it, so a demo cannot empty a memory you meant to keep.
 """
 
 from __future__ import annotations
@@ -226,16 +229,46 @@ def show_memories(memories: Sequence, *, prefix: str = "    ") -> None:
 # --------------------------------------------------------------------------------------
 
 
-def main(argv: Sequence[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("--live", action="store_true", help="use GLM through OpenRouter")
-    parser.add_argument("--db", type=pathlib.Path, default=DB_PATH, help="database path")
-    args = parser.parse_args(argv)
+def fresh_database(path: pathlib.Path | None, *, reset: bool = False) -> pathlib.Path:
+    """Where this run writes, empty, without deleting a database the script did not make.
 
-    db_path: pathlib.Path = args.db
+    The script's own file beside it (``path`` None) is recreated on every run. Any other path
+    was chosen by the person running the demo and may hold memory they want: it must not exist
+    yet, unless ``reset`` says to delete it. Refusing is a ``SystemExit`` with the reason.
+    """
+    own = path is None
+    db_path = DB_PATH if path is None else path
+    if db_path.exists() and not (own or reset):
+        raise SystemExit(
+            f"{db_path} exists. This demo writes a fresh database and will not delete one it "
+            f"did not make: pass --reset to delete it first, or choose another --db path."
+        )
     for stale in (db_path, pathlib.Path(f"{db_path}.wal")):
         if stale.exists():
             stale.unlink()
+    return db_path
+
+
+def main(argv: Sequence[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser.add_argument("--live", action="store_true", help="use GLM through OpenRouter")
+    parser.add_argument(
+        "--db",
+        type=pathlib.Path,
+        default=None,
+        help=(
+            f"database path; must not exist yet (default: {DB_PATH.name} beside this script, "
+            f"recreated on every run)"
+        ),
+    )
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="delete the database at --db before the run instead of refusing it",
+    )
+    args = parser.parse_args(argv)
+
+    db_path = fresh_database(args.db, reset=args.reset)
 
     extractor = make_extractor(args.live)
     mode = f"live, {MODEL} via OpenRouter" if args.live else "offline, scripted extractor"

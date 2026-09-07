@@ -10,8 +10,9 @@ to the wins.
 
 Everything here is produced by one command, `python -m bench.quality.run`, from the code under
 `bench/quality/`. Every model call is cached on disk, so a rerun costs nothing and gives the same
-numbers; `--offline` refuses the network to prove it. The numbers below are for two seeds of the
-corpus generator, because one world turned out not to be enough to rank the systems.
+numbers; `--offline` refuses the network to prove it. The numbers below are for three seeds of the
+corpus generator: two that the retrieval settings were chosen on, because one world turned out not
+to be enough to rank the systems, and a third the choice never saw.
 
 ## Limitations, first
 
@@ -27,10 +28,11 @@ corpus generator, because one world turned out not to be enough to rank the syst
    against each other; they agree on 95% to 100% of answers per system.
 3. **n is small.** 150 questions, 25 per category, over about 178 notes. One question in a
    category is 4% of that category. Differences of a few questions between systems are noise, and
-   the two seeds below disagree about the order of the middle of the table.
+   the seeds below disagree about the order of the middle of the table.
 4. **One seed is one world.** The generator writes a different organisation for every seed, with
-   the same shape. We ran two. Where the two agree, the finding is probably about the systems;
-   where they disagree, it is about the world, and both are shown.
+   the same shape. We ran three: the committed corpus and seed 7, on which the fusion weights were
+   chosen, and seed 11, held out until the choice was made. Where the worlds agree, the finding is
+   probably about the systems; where they disagree, it is about the world, and all are shown.
 5. **The budget is what makes the comparison a comparison.** The whole corpus is about 6,300 tokens
    with headers, so it fits in a prompt, and the unbudgeted Markdown variant that receives all of it
    is the upper bound of "just put everything in the prompt". That variant would not exist at ten
@@ -55,6 +57,25 @@ corpus generator, because one world turned out not to be enough to rank the syst
     rounds arm scores to six decimals and breaks ties by memory id, for anatid's arms and for the
     BM25 and vector baselines alike, so a rerun asks the same prompts. Ranking is otherwise
     unchanged.
+12. **A rebuild re-rolls the extraction.** The extractor's prompt lists the current facts about the
+    entities a note names. Anything that changes that list for one note, a healed cache entry, an
+    edge the pipeline now moves, a different fusion in the context lookup, changes the prompt for
+    every later note, and the model, at temperature 0, writes a different patch for a different
+    prompt. The S4 stores behind this report were rebuilt that way, and seed 7's came out with
+    more restated facts than 0.4.1's: five points less support coverage under every fusion, with
+    nothing in retrieval to blame. The S4 rows are therefore one draw of the extraction, not the
+    extraction; the coverage tables, which hold the store fixed, are where a retrieval change is
+    measured.
+
+The harness now pins extraction's context fusion as `weighted-v1`: vector 1.0, text 0.25,
+graph 0.5, RRF constant 60, 200 candidates per arm and at most 20 fallback hits, after the
+existing named-entity lookup. These are the settings that built the three stores reported here.
+Answer-time weight experiments follow the product defaults; they no longer change extraction's
+fusion or its model prompts. New ingestion reports record `context_policy`. This pins the
+fusion settings, not the corpus or the model: changes to graph ordering, retrieval primitives,
+the extractor or the handover pipeline can still change the context and require a new build.
+For those experiments, use the fixed stores with `bench.quality.coverage` to measure retrieval
+separately, and version any intentional extraction-policy change.
 
 ## Method
 
@@ -154,11 +175,20 @@ or `.env` and is not part of any cache key, cache file or result file. Every pro
 context and every answer is saved under `bench/quality/results/<run>/<system>/`, and the report is
 rendered from `summary.json` with nothing typed in by hand.
 
+A reply the provider marks as failed is not an answer. OpenRouter can return HTTP 200 with
+`finish_reason: "error"` and no content when the upstream model fails mid-request; the 0.4.0 build
+of the committed corpus cached one such reply as the extraction of the note that moves Marcus to
+Atlas and hands the Boreal pager to Lena, six questions rest on that note, and every offline replay
+reproduced the loss. The client now refuses such a reply, retries it with the transport's backoff,
+counts it in `provider_failures`, never caches it, and treats one an older run cached as a miss.
+
 ## Results
 
-Two worlds: the committed corpus (seed 20260905, 178 notes) and a second organisation from the
-same generator (seed 7, 177 notes). Both have 150 questions, 25 per category, the same budget and
-the same model. Accuracy is the share of questions the LLM judge marked correct; "false refusals"
+Three worlds: the committed corpus (seed 20260905, 178 notes), a second organisation from the
+same generator (seed 7, 177 notes), and a third (seed 11, 178 notes) held out until the retrieval
+settings were chosen. Each has 150 questions, 25 per category, the same budget and the same model.
+The S4 stores were rebuilt for this run with the pipeline's handover step and the healed cache
+(limitation 12); the 0.4.1 numbers they replace are in "What changed since 0.4.1" below. Accuracy is the share of questions the LLM judge marked correct; "false refusals"
 are `I don't know` on questions the notes do answer; "stale" is a knowledge-update or temporal
 question answered with a value that was once true. Context tokens are the mean size of the memory
 block; answer cost is the provider's price for the 150 answer calls.
@@ -173,11 +203,11 @@ block; answer cost is the provider's price for the 150 answer calls.
 | vector (S3) | 92% | 90% | 83% | 5 (4%) | 0 | 1178 | $0.03 |
 | hybrid bm25+vector (S2+S3) | 91% | 91% | 86% | 4 (3%) | 0 | 1179 | $0.03 |
 | vector with feedback (S3, PRF) | 93% | 91% | 86% | 4 (3%) | 0 | 1178 | $0.03 |
-| anatid (S4) | 82% | 77% | 58% | 18 (14%) | 3 | 1096 | $0.02 |
-| anatid, text arm (S4t) | 81% | 77% | 54% | 21 (17%) | 3 | 1069 | $0.03 |
-| anatid, vector arm (S4v) | 89% | 86% | 69% | 11 (9%) | 2 | 1071 | $0.03 |
-| anatid, graph arm (S4g) | 27% | 27% | 19% | 106 (85%) | 0 | 646 | $0.02 |
-| anatid from gold patches (S5, oracle) | 94% | 94% | 81% | 6 (5%) | 0 | 1066 | $0.02 |
+| anatid (S4) | 89% | 89% | 69% | 11 (9%) | 2 | 1098 | $0.02 |
+| anatid, text arm (S4t) | 84% | 84% | 57% | 19 (15%) | 2 | 1122 | $0.03 |
+| anatid, vector arm (S4v) | 91% | 89% | 71% | 10 (8%) | 1 | 1090 | $0.02 |
+| anatid, graph arm (S4g) | 30% | 30% | 20% | 103 (82%) | 0 | 568 | $0.01 |
+| anatid from gold patches (S5, oracle) | 96% | 96% | 86% | 4 (3%) | 0 | 1004 | $0.02 |
 
 ### Headline, seed 7
 
@@ -189,27 +219,82 @@ block; answer cost is the provider's price for the 150 answer calls.
 | vector (S3) | 93% | 91% | 86% | 4 (3%) | 0 | 1179 | $0.03 |
 | hybrid bm25+vector (S2+S3) | 91% | 91% | 89% | 3 (2%) | 0 | 1179 | $0.02 |
 | vector with feedback (S3, PRF) | 92% | 91% | 89% | 3 (2%) | 0 | 1179 | $0.02 |
-| anatid (S4) | 91% | 87% | 69% | 11 (9%) | 1 | 1102 | $0.02 |
-| anatid, text arm (S4t) | 84% | 82% | 57% | 19 (15%) | 1 | 1055 | $0.02 |
-| anatid, vector arm (S4v) | 93% | 88% | 74% | 9 (7%) | 0 | 1075 | $0.03 |
-| anatid, graph arm (S4g) | 21% | 21% | 18% | 117 (94%) | 0 | 590 | $0.0076 |
-| anatid from gold patches (S5, oracle) | 96% | 95% | 86% | 4 (3%) | 0 | 1098 | $0.02 |
+| anatid (S4) | 89% | 87% | 71% | 10 (8%) | 1 | 1078 | $0.03 |
+| anatid, text arm (S4t) | 77% | 77% | 50% | 25 (20%) | 1 | 1041 | $0.02 |
+| anatid, vector arm (S4v) | 87% | 85% | 71% | 10 (8%) | 2 | 1079 | $0.03 |
+| anatid, graph arm (S4g) | 22% | 21% | 18% | 115 (92%) | 0 | 625 | $0.01 |
+| anatid from gold patches (S5, oracle) | 96% | 96% | 83% | 5 (4%) | 0 | 1018 | $0.02 |
 
-Three things hold in both worlds. Under the budget, every retriever beats the recency-ordered
-Markdown file by a wide margin: the file answers 39% and 41%, because the answer is rarely among
-the most recent 35 notes, and it refuses two answerable questions in three. The whole file in the
-prompt beats every budgeted system (92% and 99%), which is the honest result at 6,300 tokens of
-notes and says nothing about ten times that. And the raw-note retrievers land within a few
-questions of each other: BM25 at 88% to 89%, vectors at 92% to 93%, their fusion at 91%, vectors
-with one feedback round at 92% to 93%.
+### Headline, seed 11 (held out)
 
-anatid's place in the table is what the two worlds disagree about. On the committed corpus it
-answers 82%, trails every budgeted retriever by seven to eleven points, refuses 14% of answerable
-questions and gives three stale answers. On seed 7 it answers 91%, level with the fused baselines
-and two points behind vectors alone, with 9% false refusals and one stale answer. Its own vector
-arm over the same memories beats the fused recall in both worlds (89% and 93%). The gold-extracted
-oracle is the best budgeted system in both worlds (94% and 96%), so anatid's retrieval is not the
-limit; the model's extraction is.
+| system | LLM judge | lexical | abstention precision | false refusals | stale | context tokens | answer cost |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| markdown (S1) | 40% | 39% | 23% | 80 (64%) | 0 | 1176 | $0.01 |
+| markdown, whole file (S1, no budget) | 100% | 100% | 100% | 0 (0%) | 0 | 6467 | $0.03 |
+| bm25 (S2) | 93% | 92% | 83% | 5 (4%) | 0 | 1152 | $0.02 |
+| vector (S3) | 96% | 95% | 93% | 2 (2%) | 0 | 1178 | $0.03 |
+| hybrid bm25+vector (S2+S3) | 95% | 95% | 93% | 2 (2%) | 0 | 1180 | $0.03 |
+| vector with feedback (S3, PRF) | 97% | 95% | 89% | 3 (2%) | 0 | 1179 | $0.03 |
+| anatid (S4) | 88% | 88% | 66% | 13 (10%) | 1 | 1040 | $0.03 |
+| anatid, text arm (S4t) | 79% | 77% | 48% | 27 (22%) | 1 | 1076 | $0.03 |
+| anatid, vector arm (S4v) | 87% | 86% | 64% | 14 (11%) | 2 | 1048 | $0.03 |
+| anatid, graph arm (S4g) | 35% | 35% | 21% | 94 (75%) | 0 | 698 | $0.01 |
+| anatid from gold patches (S5, oracle) | 99% | 99% | 93% | 2 (2%) | 0 | 1027 | $0.03 |
+
+Three things hold in all three worlds. Under the budget, every retriever beats the recency-ordered
+Markdown file by a wide margin: the file answers 39%, 41% and 40%, because the answer is rarely
+among the most recent 35 notes, and it refuses two answerable questions in three. The whole file
+in the prompt beats every budgeted system (92%, 99% and 100%), which is the honest result at 6,300
+tokens of notes and says nothing about ten times that. And the raw-note retrievers land within a
+few questions of each other: BM25 at 88% to 93%, vectors at 92% to 96%, their fusion at 91% to
+95%, vectors with one feedback round at 92% to 97%. In the two worlds 0.4.1 ran, none of the
+baselines changed; their answers came from the cache.
+
+anatid answers 89%, 89% and 88%: three and four points behind vectors over the raw notes in the
+two worlds the fusion was chosen on and eight behind on the held-out world, where every raw-note
+retriever does unusually well, with 9%, 8% and 10% false refusals and two, one and one stale
+answers. Its fused recall is within two points of its own vector arm on the committed corpus (91%)
+and ahead of it on seed 7 (87%) and seed 11 (87%), where 0.4.1's fusion trailed its vector arm by
+seven and two. The gold-extracted oracle is the best budgeted system in every world (96%, 96% and
+99%), so anatid's retrieval is not the limit; the model's extraction is, and on the held-out world
+it is eleven points.
+
+### What changed since 0.4.1
+
+Three things changed between the 0.4.1 report and this one, and the LLM judge sees their sum:
+the fusion weights and the graph arm's ordering (next section), a step in the ingestion pipeline
+that moves a corrected fact's edges to its replacement, and a healed cache entry: 0.4.1's build of
+the committed corpus had stored a provider error as the extraction of the note that moves Marcus
+to Atlas and hands the Boreal pager to Lena, and six questions rest on that note. Rebuilding the
+S4 stores with all three also re-extracted every note whose prompt they changed (limitation 12).
+
+| system | committed, 0.4.1 | committed, now | seed 7, 0.4.1 | seed 7, now |
+| --- | ---: | ---: | ---: | ---: |
+| anatid (S4) | 82% | 89% | 91% | 89% |
+| anatid, vector arm (S4v) | 89% | 91% | 93% | 87% |
+| anatid, text arm (S4t) | 81% | 84% | 84% | 77% |
+| anatid from gold patches (S5) | 94% | 96% | 96% | 96% |
+
+The proxy of the next section separates the parts, because it holds the store fixed. Support
+coverage, the share of the 125 answerable questions whose supporting notes all reach the memory
+block:
+
+| store | equal votes, graph newest first (0.4.1's fusion) | the fusion now | vector arm alone |
+| --- | ---: | ---: | ---: |
+| committed, 0.4.1 store | 78% | 85% | 86% |
+| committed, rebuilt store | 87% | 90% | 92% |
+| seed 7, 0.4.1 store | 89% | 94% | 93% |
+| seed 7, rebuilt store | 86% | 89% | 88% |
+| seed 11, held out, built once | 80% | 85% | 82% |
+
+The fusion is worth three to five points on every store; on the rebuilt stores it is two points
+below the vector arm alone on the committed corpus, one above it on seed 7 and three above it on
+the held-out world, whose store was built once, after the choice. The rebuild is
+worth nine points on the committed corpus, the healed note's six questions among them, and costs
+three on seed 7, where the re-extraction wrote more restated facts (263 memories against 247) and
+the block holds fewer distinct ones. The gold store,
+which the pipeline change touches but the extractor does not, gained two points on the committed
+corpus and held on seed 7.
 
 ### Accuracy per category, LLM judge
 
@@ -223,11 +308,11 @@ Seed 20260905:
 | vector (S3) | 100% | 100% | 100% | 52% | 100% | 100% | 92% |
 | hybrid bm25+vector (S2+S3) | 100% | 100% | 100% | 48% | 100% | 100% | 91% |
 | vector with feedback (S3, PRF) | 100% | 100% | 100% | 60% | 100% | 96% | 93% |
-| anatid (S4) | 92% | 88% | 80% | 40% | 92% | 100% | 82% |
-| anatid, text arm (S4t) | 92% | 88% | 76% | 36% | 96% | 100% | 81% |
-| anatid, vector arm (S4v) | 96% | 92% | 96% | 56% | 96% | 100% | 89% |
-| anatid, graph arm (S4g) | 12% | 16% | 0% | 16% | 16% | 100% | 27% |
-| anatid from gold patches (S5, oracle) | 100% | 100% | 88% | 76% | 100% | 100% | 94% |
+| anatid (S4) | 88% | 100% | 92% | 52% | 100% | 100% | 89% |
+| anatid, text arm (S4t) | 84% | 88% | 80% | 52% | 100% | 100% | 84% |
+| anatid, vector arm (S4v) | 88% | 100% | 96% | 64% | 100% | 96% | 91% |
+| anatid, graph arm (S4g) | 16% | 20% | 4% | 12% | 28% | 100% | 30% |
+| anatid from gold patches (S5, oracle) | 100% | 100% | 92% | 84% | 100% | 100% | 96% |
 
 Seed 7:
 
@@ -239,46 +324,41 @@ Seed 7:
 | vector (S3) | 100% | 100% | 100% | 56% | 100% | 100% | 93% |
 | hybrid bm25+vector (S2+S3) | 96% | 100% | 100% | 48% | 100% | 100% | 91% |
 | vector with feedback (S3, PRF) | 96% | 100% | 100% | 56% | 100% | 100% | 92% |
-| anatid (S4) | 96% | 96% | 100% | 60% | 96% | 100% | 91% |
-| anatid, text arm (S4t) | 88% | 92% | 88% | 40% | 96% | 100% | 84% |
-| anatid, vector arm (S4v) | 100% | 96% | 100% | 68% | 92% | 100% | 93% |
-| anatid, graph arm (S4g) | 12% | 4% | 0% | 8% | 4% | 100% | 21% |
+| anatid (S4) | 100% | 96% | 96% | 56% | 88% | 100% | 89% |
+| anatid, text arm (S4t) | 80% | 84% | 88% | 12% | 96% | 100% | 77% |
+| anatid, vector arm (S4v) | 92% | 96% | 92% | 60% | 88% | 96% | 87% |
+| anatid, graph arm (S4g) | 12% | 8% | 0% | 8% | 4% | 100% | 22% |
 | anatid from gold patches (S5, oracle) | 100% | 100% | 92% | 84% | 100% | 100% | 96% |
 
-The categories separate the systems more than the totals do. Single facts, current values, dates
-and provenance are solved by every raw-note retriever in both worlds (92% to 100%): one note holds
-the answer, and BM25 or cosine finds that note. anatid is a few questions behind on each of those
-on the committed corpus (92%, 88%, 80%, 92%) and closer on seed 7 (96%, 96%, 100%, 96%). The
-misses are facts the extractor did not write down or attached to the wrong entity; the stale
-answers are handovers and rotations whose old edge was never closed.
+Seed 11 (held out):
 
-Multi-hop is where the systems are told apart, and it is also where n is smallest: 25 questions,
-so one question is four points. anatid answers 10 of 25 on the committed corpus, behind vectors
-at 13 and vectors with feedback at 15, and 15 of 25 on seed 7, ahead of vectors and vectors with
-feedback at 14 and the fusion at 12. Its vector arm alone does better in both worlds, 14 and 17.
-The oracle answers 19 and 21, so the chain is in the graph when the graph is right. The
-model-built graph opened about as many edges as the gold (86 and 87 against 95 and 99) but closed
-under half as many (29 and 25 against 61 and 65), so a service that changed owner tends to keep
-its old owner as a second edge, and a chain through it lands on a stale team. The whole file answers
-22 and 24 of 25, which says the model can chain the facts when all of them are in front of it.
-
-The lexical scorer's tables are in each run's `REPORT.md`. It agrees with the judge on 95% to
-100% of answers per system; the systems it disagrees with most are the anatid ones, whose answers
-are more often a paraphrase or a longer list than the gold string, which the judge accepts and a
-whole-word match does not.
+| system | single_fact | knowledge_update | temporal | multi_hop | provenance | abstention | all |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| markdown (S1) | 16% | 56% | 28% | 28% | 16% | 96% | 40% |
+| markdown, whole file (S1, no budget) | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| bm25 (S2) | 100% | 100% | 100% | 60% | 100% | 100% | 93% |
+| vector (S3) | 100% | 100% | 100% | 76% | 100% | 100% | 96% |
+| hybrid bm25+vector (S2+S3) | 100% | 100% | 100% | 72% | 100% | 100% | 95% |
+| vector with feedback (S3, PRF) | 100% | 100% | 100% | 80% | 100% | 100% | 97% |
+| anatid (S4) | 96% | 96% | 100% | 44% | 92% | 100% | 88% |
+| anatid, text arm (S4t) | 88% | 88% | 88% | 28% | 80% | 100% | 79% |
+| anatid, vector arm (S4v) | 96% | 96% | 96% | 48% | 84% | 100% | 87% |
+| anatid, graph arm (S4g) | 24% | 32% | 20% | 12% | 24% | 100% | 35% |
+| anatid from gold patches (S5, oracle) | 100% | 100% | 100% | 92% | 100% | 100% | 99% |
 
 ### Knowing when to stop
 
 The instruction to say `I don't know` works: every system refused every abstention question in
-both worlds, with one exception (vectors with feedback answered one on the committed corpus, naming
-a previous owner the notes never recorded), so abstention recall is 96% to 100% across the board.
+all three worlds, with two exceptions (vectors with feedback answered one on the committed corpus,
+naming a previous owner the notes never recorded, and the budgeted Markdown file one on seed 11),
+so abstention recall is 96% to 100% across the board.
 The difference is on the other side. The budgeted Markdown file refuses most answerable questions
 because the answer is rarely among the most recent 35 notes (68% and 61% false refusals). The
-raw-note retrievers refuse 2% to 4% of answerable questions. anatid refuses 14% and 9% of them,
-and its text arm alone more, because a fact the extractor did not write down, or wrote down
-attached to the wrong entity, is a fact recall cannot find. The graph arm alone refuses almost
-everything: it returns only memories about the entities the question names, and for the 64 and 70
-questions where the automatic seeding matched no entity it returns nothing at all.
+raw-note retrievers refuse 2% to 4% of answerable questions. anatid refuses 9%, 8% and 10% of
+them (14% and 9% in 0.4.1), and its text arm alone more, because a fact the extractor did not write
+down, or wrote down attached to the wrong entity, is a fact recall cannot find. The graph arm alone
+refuses almost everything: it returns only memories about the entities the question names, and for
+the 58, 70 and 47 questions where the automatic seeding matched no entity it returns nothing at all.
 
 ### Which arm earns its place
 
@@ -288,36 +368,91 @@ Seed 20260905:
 
 | system | single_fact | knowledge_update | temporal | multi_hop | provenance | abstention | all |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| anatid (S4) | 92% | 88% | 80% | 40% | 92% | 100% | 82% |
-| anatid, text arm (S4t) | 92% | 88% | 76% | 36% | 96% | 100% | 81% |
-| anatid, vector arm (S4v) | 96% | 92% | 96% | 56% | 96% | 100% | 89% |
-| anatid, graph arm (S4g) | 12% | 16% | 0% | 16% | 16% | 100% | 27% |
+| anatid (S4) | 88% | 100% | 92% | 52% | 100% | 100% | 89% |
+| anatid, text arm (S4t) | 84% | 88% | 80% | 52% | 100% | 100% | 84% |
+| anatid, vector arm (S4v) | 88% | 100% | 96% | 64% | 100% | 96% | 91% |
+| anatid, graph arm (S4g) | 16% | 20% | 4% | 12% | 28% | 100% | 30% |
 
 Seed 7:
 
 | system | single_fact | knowledge_update | temporal | multi_hop | provenance | abstention | all |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| anatid (S4) | 96% | 96% | 100% | 60% | 96% | 100% | 91% |
-| anatid, text arm (S4t) | 88% | 92% | 88% | 40% | 96% | 100% | 84% |
-| anatid, vector arm (S4v) | 100% | 96% | 100% | 68% | 92% | 100% | 93% |
-| anatid, graph arm (S4g) | 12% | 4% | 0% | 8% | 4% | 100% | 21% |
+| anatid (S4) | 100% | 96% | 96% | 56% | 88% | 100% | 89% |
+| anatid, text arm (S4t) | 80% | 84% | 88% | 12% | 96% | 100% | 77% |
+| anatid, vector arm (S4v) | 92% | 96% | 92% | 60% | 88% | 96% | 87% |
+| anatid, graph arm (S4g) | 12% | 8% | 0% | 8% | 4% | 100% | 22% |
 
-The vector arm carries the system. Alone it beats the fused recall by seven points on the
-committed corpus and by two on seed 7, in every category but provenance. The text arm alone is
-one to seven points behind the fusion: BM25 over short extracted sentences has fewer terms to work
-with than BM25 over the notes they came from, and the corpus's three names for every service cost
-it more than they cost the embedding. The graph arm alone answers 27% and 21%. That is less the
-graph failing to answer than the graph rarely being asked: the arm expands from the entities the
-question names, and the automatic seeding matched an entity for 86 of the 150 questions on the
-committed corpus and 80 on seed 7; for the rest the arm returns nothing and the model refuses.
-Where it did fire, the fusion used it. Both seed 7 wins are graph chains: the on-call engineer of
-the team that owns search-indexer, and the complete list of six services Dune owns, which every
-raw-note system truncated.
+Seed 11 (held out):
 
-Reciprocal rank fusion gives each arm an equal vote, so a text arm that ranks the wrong memories
-first costs the fusion questions the vector arm had right. A weighted fusion, or a text arm that
-stands down when the vector arm is confident, is the obvious next experiment; it is not done
-here.
+| system | single_fact | knowledge_update | temporal | multi_hop | provenance | abstention | all |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| anatid (S4) | 96% | 96% | 100% | 44% | 92% | 100% | 88% |
+| anatid, text arm (S4t) | 88% | 88% | 88% | 28% | 80% | 100% | 79% |
+| anatid, vector arm (S4v) | 96% | 96% | 96% | 48% | 84% | 100% | 87% |
+| anatid, graph arm (S4g) | 24% | 32% | 20% | 12% | 24% | 100% | 35% |
+
+The vector arm still carries the system, but the fusion no longer throws its work away. In 0.4.1
+the vector arm alone beat the fused recall by seven points on the committed corpus and by two on
+seed 7; now the fusion is two behind it on the committed corpus (89% against 91%), two ahead on
+seed 7 (89% against 87%) and one ahead on the held-out world (88% against 87%), with the graph arm
+adding chains that the vector arm alone misses. The text arm alone is five to twelve points behind the fusion: BM25 over short extracted
+sentences has fewer terms to work with than BM25 over the notes they came from, and the corpus's
+three names for every service cost it more than they cost the embedding. The graph arm alone
+answers 30%, 22% and 35%. That is less the graph failing to answer than the graph rarely being
+asked: the arm expands from the entities the question names, and the automatic seeding matched an
+entity for 92 of the 150 questions on the committed corpus, 80 on seed 7 and 103 on seed 11; for
+the rest the arm returns nothing and the model refuses. Where it fires, the fusion now weighs it at half a vote and ranks
+its candidates by the question, which is what the next section measures.
+
+Reciprocal rank fusion with equal votes let a text arm that ranks the wrong memories first cost
+the fusion questions the vector arm had right. The next section is how the fusion was changed; its
+coverage table is on the 0.4.1 stores the choice was made on, and the tables above are the rebuilt
+stores read through the fusion as it is now.
+
+### Choosing the fusion offline
+
+Whether a question is answerable from a memory block can be read off the block without a model:
+does it hold, for every note the gold answer rests on, a memory that was extracted from that
+note, as a head line or in its `earlier:` chain? Call that **support coverage**.
+`python -m bench.quality.coverage --run <run-id>` computes it for a finished run's store, with
+the question embeddings from the cache, for any fusion; `bench/quality/coverage.py` has the
+variants. On the 0.4.1 stores the LLM judge marked 98% and 97% of the covered questions correct
+(committed corpus and seed 7) and 11% and 29% of the uncovered ones, and the vector arm alone
+reproduces the same split (98% and 97% against 18% and 11%), so the proxy ranks retrieval
+variants the way the judge would, at no cost. Coverage over the 125 questions with support
+notes, on the four 0.4.1 stores and, once the choice was made, on a fifth world (seed 11,
+gold store) that no choice had seen:
+
+| fusion | S4 committed | S4 seed 7 | S5 committed | S5 seed 7 | S5 seed 11 (held out) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| equal votes, graph arm newest first (0.4.1) | 78% | 89% | 95% | 96% | 95% |
+| vector arm alone | 86% | 93% | 94% | 95% | 97% |
+| text arm alone | 76% | 77% | 85% | 86% | 86% |
+| weights vector 1, text 0.25, graph 0.25; graph newest first | 84% | 93% | 96% | 97% | |
+| weights vector 1, text 0, graph 0.5; graph newest first | 86% | 92% | 96% | 96% | |
+| weights vector 1, text 0.25, graph 0.5; graph ranked by cosine | **85%** | **94%** | **97%** | **97%** | **98%** |
+
+Multi-hop coverage on the same five stores, in the same order: 44%, 76%, 84%, 84% and 92% for
+the chosen fusion, against 32%, 52%, 76%, 80% and 76% for equal votes and 52%, 68%, 68%, 76% and
+84% for the vector arm alone. The model-built store of the held-out world, which did not exist
+when the choice was made, reads 85% under the chosen fusion against 80% under equal votes and 82%
+under the vector arm alone, with multi-hop at 48% against 32% and 44%.
+
+Two things did the work. The text arm's vote is cut to a quarter when a vector arm runs: BM25
+over short extracted sentences, with three names for every service, ranks the wrong memories
+first often enough that at full weight it costs more questions than it adds, and at zero it
+gives up exact-token matches for nothing. And the graph arm's candidates are ordered by cosine
+similarity to the question before they vote, instead of newest first: the neighbourhood of a
+busy entity is most of what is known about it, and newest first made the arm vote for whatever
+was written last, which is why it crowded the block on the committed corpus. Ranked by the
+query's own signal the same neighbourhood adds the multi-hop chains the vector arm misses.
+Seeding the graph arm from the entities of the strongest vector matches, and a text arm that
+stands down when the vector arm is confident, were both tried and were not better. Without an
+embedder the same shape holds: text 1.0, graph 0.5, and the graph arm ranked by the text arm's
+BM25 score, which is 76%, 79%, 96% and 93% coverage on the four stores against 70%, 72%, 94%
+and 90% for 0.4.1's equal votes. These are now `recall()`'s defaults
+(`anatid.recall.default_arm_weights`, `anatid.recall.rank_graph_candidates`); `arm_weights=`
+overrides them by name.
 
 ### The cost of extraction: S4 against the S5 oracle
 
@@ -329,45 +464,67 @@ Seed 20260905:
 
 | category | S4 anatid | S5 gold (oracle) | gap |
 | --- | ---: | ---: | ---: |
-| single_fact | 92% | 100% | +8% |
-| knowledge_update | 88% | 100% | +12% |
-| temporal | 80% | 88% | +8% |
-| multi_hop | 40% | 76% | +36% |
-| provenance | 92% | 100% | +8% |
-| abstention | 100% | 100% | 0% |
-| all | 82% | 94% | +12% |
+| single_fact | 88% | 100% | +12% |
+| knowledge_update | 100% | 100% | +0% |
+| temporal | 92% | 92% | +0% |
+| multi_hop | 52% | 84% | +32% |
+| provenance | 100% | 100% | +0% |
+| abstention | 100% | 100% | +0% |
+| all | 89% | 96% | +7% |
 
 | store | memories created | superseded | downgraded corrections | dedupe drops | failures |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| anatid (S4) | 259 | 80 | 0 | 17 | 1 |
+| anatid (S4) | 252 | 74 | 0 | 19 | 0 |
 | anatid from gold patches (S5, oracle) | 187 | 64 | 0 | 35 | 0 |
 
 Seed 7:
 
 | category | S4 anatid | S5 gold (oracle) | gap |
 | --- | ---: | ---: | ---: |
-| single_fact | 96% | 100% | +4% |
+| single_fact | 100% | 100% | +0% |
 | knowledge_update | 96% | 100% | +4% |
-| temporal | 100% | 92% | -8% |
-| multi_hop | 60% | 84% | +24% |
-| provenance | 96% | 100% | +4% |
-| abstention | 100% | 100% | 0% |
-| all | 91% | 96% | +5% |
+| temporal | 96% | 92% | -4% |
+| multi_hop | 56% | 84% | +28% |
+| provenance | 88% | 100% | +12% |
+| abstention | 100% | 100% | +0% |
+| all | 89% | 96% | +7% |
 
 | store | memories created | superseded | downgraded corrections | dedupe drops | failures |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| anatid (S4) | 247 | 77 | 0 | 24 | 0 |
+| anatid (S4) | 263 | 69 | 0 | 30 | 0 |
 | anatid from gold patches (S5, oracle) | 191 | 68 | 0 | 35 | 0 |
 
-Same retrieval, same rendering, same budget; only the patches differ. On the committed corpus
-perfect extraction is worth twelve points overall and 36 on multi-hop; on seed 7, five and 24. The
-model's build wrote more memories than the gold (259 and 247 against 187 and 191) and dropped
-fewer duplicates, so restated facts landed as new memories next to the old ones; it superseded old
-facts about as often as the gold and closed far fewer edges. One note on the committed corpus came
-back from the model with no content and was stored as an episode with no facts. No correction was
-downgraded in either build: when the model named the memory a note corrects, the pipeline found
-it. The temporal row runs the other way on seed 7, the oracle at 92% against the model at 100%,
-which is two questions and is noise.
+Seed 11 (held out):
+
+| category | S4 anatid | S5 gold (oracle) | gap |
+| --- | ---: | ---: | ---: |
+| single_fact | 96% | 100% | +4% |
+| knowledge_update | 96% | 100% | +4% |
+| temporal | 100% | 100% | +0% |
+| multi_hop | 44% | 92% | +48% |
+| provenance | 92% | 100% | +8% |
+| abstention | 100% | 100% | +0% |
+| all | 88% | 99% | +11% |
+
+| store | memories created | superseded | downgraded corrections | dedupe drops | failures |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| anatid (S4) | 279 | 77 | 0 | 18 | 0 |
+| anatid from gold patches (S5, oracle) | 193 | 70 | 0 | 35 | 0 |
+
+Same retrieval, same rendering, same budget; only the patches differ. Perfect extraction is worth
+seven points overall in the two worlds the fusion was chosen on and eleven on the held-out world,
+and 32, 28 and 48 on multi-hop, against twelve and five, and 36 and 24, in 0.4.1: the retrieval
+change and the healed note closed part of the gap, and the rest is the extractor. The model's
+build still wrote more memories than the gold (252, 263 and 279 against 187, 191 and 193) and
+dropped fewer duplicates, so restated facts landed as new memories next to the old ones. It
+superseded old facts about as often as the gold, and it closed 29, 35 and 34 edges against the
+gold's 61, 65 and 67: the pipeline's handover step moves an edge when a correction swaps exactly
+one entity of the old fact, and on seed 7 that took the services with more than one open owner
+from three to one, but the model also corrects facts by adding a third entity, or adds a new fact
+instead of correcting, and those edges stay open. On the held-out world the model never wrote down
+findably that the notifier and webhooks depend on the event bus, and eleven of anatid's fifteen
+losses there rest on that one note. No note failed to extract in any build, and no correction was
+downgraded: when the model named the memory a note corrects, the pipeline found it.
 
 ### Where anatid lost, and where it won
 
@@ -376,61 +533,76 @@ S4 alone answered correctly and a loss is one S4 got wrong while at least one ba
 right. The full lists, with every answer, are in each run's `REPORT.md` and `summary.json`.
 
 **Committed corpus.** anatid alone right on no question; wrong where at least one baseline was
-right on 21. Thirteen of the 21 are refusals on facts the store does not hold in a findable form:
-an approval rule, an incident date, a current owner, an owner and an on-call engineer at a past
-date, a team before a move, three deploy windows two hops away, three chains through a dependency,
-and the note behind a move. Three are stale values: the previous pager holder, the previous team,
-an earlier on-call engineer. The other five are a handover dated to a later restatement, two chains
-that landed on the wrong person, a list of a team's services with one missing, and a provenance
-answer that named a later note than the first record. On fourteen of the 21, all four raw-note
+right on 11, down from 21 in 0.4.1. Six of the 11 are refusals on facts the store does not hold
+in a findable form: a decision's reason, an incident's date, a version pin, two chains through a
+dependency and a deploy window two hops away. Two are stale values, a past on-call engineer and a
+past owner. Three are lists of a team's services with one missing, one extra, or the event bus
+named as "the bus", which is what the extractor called it. On six of the 11, all four raw-note
 retrievers were right.
 
-**Seed 7.** anatid alone right on two questions, both multi-hop, both graph chains; wrong where a
-baseline was right on eight. Six of the eight are refusals: five multi-hop chains through a
-dependency and one decision reason the extractor did not record. One is a stale owner. One is a
-provenance question answered with the date of a later restatement instead of the first record. On
-six of the eight, all four raw-note retrievers were right.
+**Seed 7.** anatid alone right on no question; wrong where a baseline was right on nine, up from
+eight in 0.4.1. Five are refusals: a past on-call engineer, two chains through a dependency, the
+note that corrected a wrongly recorded owner, and the date of an incident review. Two are stale
+values, a current owner and an on-call engineer reached through a chain. One is a team's service
+list with one extra, and one a provenance question answered with a later note than the first
+record. On six of the nine, all four raw-note retrievers were right.
+
+**Seed 11 (held out).** anatid alone right on no question; wrong where a baseline was right on
+15. Eleven are refusals, and all but one of them ask, directly or through a chain, what the
+notifier or webhooks depend on, which note first said so, or what follows from it: the owner of
+that dependency, its on-call engineer, its deploy window. The extractor did not write the
+dependency down in a findable form, so no arm can reach it. The other four are three lists of a
+team's services with an extra entry and one stale owner. On eight of the 15, all four raw-note
+retrievers were right.
 
 ### Cost and time
 
 Building the anatid store is the one expensive step: about 600 model calls per world (one
 extraction call per note, one embedding per memory written, one per context lookup), $0.14 and
-$0.09 at the provider's price, and 54 and 69 minutes of model time when first made. The vector
-index costs 178 embeddings, under one cent and under nine seconds; BM25 and the Markdown file cost
-nothing. Answering costs about the same everywhere, one to five cents for 150 questions; anatid's
-memory block is the shortest of the budgeted retrievers, about 1,100 tokens against 1,180, and its
-answers cost two to three cents in both worlds, in the same range as the raw-note retrievers'.
-Retrieval takes under ten seconds for all 150 questions on every system; the 56 seconds for vectors
-with feedback on the committed corpus is the network time of the 150 feedback embeddings the first
-time they were made.
+$0.09 at the provider's price and 54 and 69 minutes of model time when first made in 0.4.1. The
+rebuilds behind this report re-extracted the notes whose prompts had changed: 327 and 326 network
+calls, $0.08 and $0.09, 42 and 50 minutes. The vector index costs 178 embeddings, under one cent
+and under nine seconds; BM25 and the Markdown file cost nothing. Answering costs about the same
+everywhere, one to five cents for 150 questions; anatid's memory block is the shortest of the
+budgeted retrievers, about 1,080 to 1,100 tokens against 1,180, and its answers cost two to three
+cents in every world, in the same range as the raw-note retrievers'. Retrieval takes under ten
+seconds for all 150 questions on every system.
 
-A cold run of one world costs about half a dollar in model calls, of which the judge is six to
-seven cents. The runs behind these tables charged $0.04 and $0.05, for the two fused baselines'
-answers and their judging; everything else came from the cache. An offline replay charges nothing
-and reports the same numbers.
+A cold run of one world costs under half a dollar in model calls: the held-out world, run cold,
+charged $0.37, of which the store was $0.10 and 53 minutes and the judge one and a half cents. The
+two rebuilt worlds charged $0.19 and $0.21: the rebuilt stores, the 750 answers of the five anatid
+systems, and a judge that found nearly every verdict in the cache, because the baselines' answers
+had not changed. An offline replay charges nothing and reports the same numbers.
 
 ## What to take from it
 
-On this corpus, at this budget, with this model, an agent does not answer better from anatid
-than from a vector index over the raw notes, and on one of the two worlds it answers clearly
-worse. The gap is extraction, not retrieval: the same store built from perfect patches is the
-best budgeted system in both worlds, and anatid's own vector arm over the model's memories is
-level with the vector baseline. What anatid buys is visible where it wins, which is chains and
-complete lists, and in the size of its context. What it costs is a model pass over every note, a
-refusal rate two to four times the baselines', and stale edges the extractor did not close. The
-next things to try are in the extractor and the fusion rather than the storage: close edges on
-handovers, weight the arms, seed the graph arm from more than exact entity names. Until those are
-done, these are the numbers.
+On this corpus, at this budget, with this model, an agent answers worse from anatid than from a
+vector index over the raw notes: three and four points worse in the two worlds the fusion was
+chosen on (89% against 92% and 93%, where 0.4.1 answered 82% and 91%) and eight points worse on
+the held-out world (88% against 96%). The gap is extraction, not retrieval. The same store built
+from perfect patches is the best budgeted system in every world at 96%, 96% and 99%, the fusion
+now stands within two points of or above anatid's own vector arm on every store, and what remains
+is the extractor writing restated facts next to the old ones, missing a decision's reason, an
+incident's date or a whole dependency, naming one service three ways, and leaving open the edges
+a correction that adds a third entity does not touch. What anatid buys is
+visible where it wins, which is chains and complete lists, and in the size of its context. What it
+costs is a model pass over every note, a refusal rate two to four times the baselines', and an
+extraction whose quality moves by a few points from one build to the next. The next things to try
+are in the extractor: show it the graph's existing edges so it closes what it changes, canonicalise
+service names against the entities it already has, and keep the raw note reachable from retrieval
+so a fact the extractor dropped can still be found. Until those are done, these are the numbers.
 
 ## Reproduce
 
 ```
 python -m bench.quality.run --run-id s20260905-b1200 --seed 20260905 --budget 1200 --counter chars4 --family builtin
 python -m bench.quality.run --run-id s7-b1200 --seed 7 --budget 1200 --counter chars4 --family builtin
+python -m bench.quality.run --run-id s11-b1200 --seed 11 --budget 1200 --counter chars4 --family builtin
+python -m bench.quality.coverage --run s20260905-b1200     # support coverage of the fusion variants, offline
 ```
 
-The first command runs on the committed corpus (`bench/quality/data/`); the second generates and
-verifies the seed 7 corpus into its run directory first, deterministically. Each reads the key
+The first command runs on the committed corpus (`bench/quality/data/`); the others generate and
+verify the seed 7 and seed 11 corpora into their run directories first, deterministically. Each reads the key
 from `OPEN_ROUTER_KEY` or `.env`, caches every model call under `bench/quality/cache/`, writes
 every prompt, context and answer under `bench/quality/results/<run>/<system>/`, and renders
 `bench/quality/results/REPORT.md` and a copy in the run directory. Add `--offline` to prove a rerun

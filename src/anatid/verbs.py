@@ -47,7 +47,7 @@ import datetime as _dt
 import logging
 import math
 import numbers
-from typing import Any, Callable, Sequence, TypeVar
+from typing import Any, Callable, Mapping, Sequence, TypeVar
 
 import duckdb
 
@@ -1359,12 +1359,20 @@ class MemoryVerbs(VerbHostMixin):
         include_about: bool = True,
         on_stale_fts: str = "report",
         allow_slow: bool = False,
+        arm_weights: Mapping[str, float] | None = None,
     ) -> RecallHits:
-        """Hybrid retrieval: cosine + BM25 + graph expansion, fused with RRF (k=60).
+        """Hybrid retrieval: cosine + BM25 + graph expansion, fused with weighted RRF (k=60).
 
         Arms run when their input exists -- ``embedding`` for the vector arm, ``query`` plus an
         fts index for BM25, a seed for the graph arm -- and are fused by Reciprocal Rank
-        Fusion.  Two of those inputs can come from the handle rather than from the call:
+        Fusion.  The fusion is weighted: when the vector arm runs it leads (vector 1.0, graph
+        0.5, text 0.25), otherwise the text arm does (text 1.0, graph 0.5); the graph arm's
+        candidates are ranked by the query's own signal, cosine or BM25, rather than newest
+        first, before they vote.  Both were chosen on the answer-quality benchmark
+        (``docs/quality.md``).  ``arm_weights`` overrides any weight by name (``{"text": 0}``
+        silences the text arm; an arm it does not name keeps its default) and
+        ``hits.weights`` reports what was used.  Two of those inputs can come from the handle
+        rather than from the call:
 
         * ``seed_entity="auto"`` (the default) finds the graph arm's seeds in the query: the
           tenant's entity names that appear in it, case-insensitive, longest first, up to
@@ -1410,6 +1418,8 @@ class MemoryVerbs(VerbHostMixin):
         candidates = _check_positive("candidates", candidates)
         rrf_k = _check_positive("rrf_k", rrf_k)
         hops = _check_non_negative("hops", hops)
+        if arm_weights is not None:
+            arm_weights = _recall.check_arm_weights(arm_weights)
         seed: int | str | None
         if seed_entity is None or (
             isinstance(seed_entity, str) and seed_entity == _recall.AUTO_SEED
@@ -1447,6 +1457,7 @@ class MemoryVerbs(VerbHostMixin):
             on_stale_fts=on_stale_fts,
             allow_slow=allow_slow,
             on_ceiling=on_ceiling,
+            arm_weights=arm_weights,
         )
 
     def as_of(

@@ -16,4 +16,5 @@ from a `.env` file in the repository root; none of them prints the key.
 | [`studio/`](studio/README.md) | A local web UI that runs `dinner_party.py` one step at a time and shows the database at each step. See its README. | optional |
 
 Each script that writes a database puts it beside itself (`*.anatid`, ignored by git) and
-deletes it on the next run.
+deletes it on the next run. That is the only file a script deletes: `ingest_notes.py --db PATH`
+refuses a `PATH` that already exists unless `--reset` says to delete it first.

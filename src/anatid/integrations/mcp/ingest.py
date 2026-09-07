@@ -12,7 +12,11 @@ the two pieces the tools in :mod:`anatid.integrations.mcp.server` need for that:
   ``ANATID_EXTRACT_MODEL`` and ``ANATID_EXTRACT_API_KEY``, or returns None when none of them is
   set.  The ingest tools are registered only when there is an extractor, so a server nobody
   configured for ingestion does not offer a tool that would fail on first use.
-* :class:`PendingPatches`, the bounded in-memory table of proposed patches keyed by id.
+* :class:`PendingPatches`, the bounded in-memory table of proposed patches keyed by id.  It
+  hands a proposal to exactly one ``apply_patch`` call (:meth:`~PendingPatches.claim`) and keeps
+  the receipt of an applied one (:meth:`~PendingPatches.settle`), so two calls that name the
+  same ``patch_id``, concurrently or as a retry after a lost reply, write it once and both get
+  the same receipt.
 
 The endpoint settings are environment-only, like the embedding ones: a URL, a model and a key
 are exactly what an MCP client's config block carries, and a key on a command line is visible
@@ -41,7 +45,7 @@ from typing import Any, Mapping
 
 from anatid.errors import NotFoundError
 from anatid.ids import new_id
-from anatid.ingest import Extractor, MemoryPatch, OpenAICompatibleExtractor
+from anatid.ingest import Extractor, MemoryPatch, OpenAICompatibleExtractor, PatchReceipt
 from anatid.types import utcnow
 
 __all__ = [
@@ -49,6 +53,7 @@ __all__ = [
     "ENV_EXTRACT_BASE_URL",
     "ENV_EXTRACT_MODEL",
     "ENV_EXTRACT_REASONING",
+    "AppliedPatch",
     "ExtractorConfigError",
     "PendingPatch",
     "PendingPatches",
@@ -62,8 +67,9 @@ ENV_EXTRACT_MODEL = "ANATID_EXTRACT_MODEL"
 ENV_EXTRACT_API_KEY = "ANATID_EXTRACT_API_KEY"
 ENV_EXTRACT_REASONING = "ANATID_EXTRACT_REASONING"
 
-#: How many proposed patches one server keeps.  The oldest is dropped when the table is full; a
-#: client that proposes and never applies does not grow the process without bound.
+#: How many proposed patches one server keeps, and separately how many receipts of applied ones.
+#: The oldest is dropped when a table is full; a client that proposes and never applies does not
+#: grow the process without bound, and neither does one that applies forever.
 DEFAULT_PENDING_LIMIT = 64
 
 _TRUE = ("1", "true", "yes", "on")
@@ -148,11 +154,34 @@ class PendingPatch:
     proposed_at: _dt.datetime
 
 
+@dataclass(frozen=True)
+class AppliedPatch:
+    """A proposal ``apply_patch`` committed, kept so a repeated call is answered with its receipt.
+
+    ``receipt.patch`` is the version that landed, edited or not, and ``receipt.at`` is when.
+    """
+
+    proposal: PendingPatch
+    receipt: PatchReceipt
+
+    @property
+    def patch_id(self) -> int:
+        return self.proposal.patch_id
+
+
 class PendingPatches:
     """Proposed patches keyed by id, newest kept, thread safe.
 
     The id is an anatid id (63-bit, minted by :func:`anatid.ids.new_id`), so it crosses the
     wire as a decimal string like every other id the tools hand out.
+
+    A proposal is applied at most once.  :meth:`claim` takes it out of the table before anything
+    is written, so two calls that name the same id cannot both apply it: the second waits for
+    the first to finish and is handed its :class:`AppliedPatch`, or, when the first failed and
+    :meth:`restore` put the proposal back, claims the proposal itself.  :meth:`settle` records
+    the receipt, and the newest ``limit`` receipts are kept, so a client that retries an
+    ``apply_patch`` whose reply it lost gets the receipt again rather than a second copy of
+    every memory.  ``len`` and ``in`` count and find the proposals still waiting.
     """
 
     def __init__(self, *, limit: int = DEFAULT_PENDING_LIMIT) -> None:
@@ -160,7 +189,11 @@ class PendingPatches:
             raise ValueError("limit must be at least 1")
         self.limit = int(limit)
         self._items: OrderedDict[int, PendingPatch] = OrderedDict()
+        self._applied: OrderedDict[int, AppliedPatch] = OrderedDict()
+        self._in_flight: set[int] = set()
         self._lock = threading.Lock()
+        #: Signalled whenever an in-flight proposal is settled or restored.
+        self._outcome = threading.Condition(self._lock)
 
     def put(
         self,
@@ -181,8 +214,7 @@ class PendingPatches:
         )
         with self._lock:
             self._items[entry.patch_id] = entry
-            while len(self._items) > self.limit:
-                self._items.popitem(last=False)
+            self._trim(self._items)
         return entry
 
     def get(self, patch_id: int) -> PendingPatch:
@@ -190,12 +222,49 @@ class PendingPatches:
         with self._lock:
             entry = self._items.get(int(patch_id))
         if entry is None:
-            raise NotFoundError(
-                f"no pending patch {patch_id}: it was applied already, was never proposed by this "
-                f"server, or was dropped after {self.limit} newer proposals. Call ingest again "
-                f"to propose a fresh one."
-            )
+            raise NotFoundError(self._missing(patch_id))
         return entry
+
+    def claim(self, patch_id: int) -> PendingPatch | AppliedPatch:
+        """Take a proposal out of the table to apply it, or the record of its apply.
+
+        Exactly one caller is handed the :class:`PendingPatch`: while that caller holds it the
+        proposal is in neither table, and the caller must follow with :meth:`settle` or
+        :meth:`restore`.  A call for an id another thread holds blocks until that thread's
+        outcome is known, then gets the :class:`AppliedPatch` or, after a failure, the proposal.
+        An id that is neither pending, in flight nor applied raises
+        :class:`~anatid.errors.NotFoundError`.
+        """
+        key = int(patch_id)
+        with self._outcome:
+            while key in self._in_flight:
+                self._outcome.wait()
+            applied = self._applied.get(key)
+            if applied is not None:
+                return applied
+            entry = self._items.pop(key, None)
+            if entry is None:
+                raise NotFoundError(self._missing(key))
+            self._in_flight.add(key)
+            return entry
+
+    def restore(self, entry: PendingPatch) -> None:
+        """Put a claimed proposal back, after applying it failed, so it can be edited and retried."""
+        with self._outcome:
+            self._in_flight.discard(entry.patch_id)
+            self._items[entry.patch_id] = entry
+            self._trim(self._items)
+            self._outcome.notify_all()
+
+    def settle(self, entry: PendingPatch, receipt: PatchReceipt) -> AppliedPatch:
+        """Record that a claimed proposal was applied, and return the record."""
+        applied = AppliedPatch(proposal=entry, receipt=receipt)
+        with self._outcome:
+            self._in_flight.discard(entry.patch_id)
+            self._applied[entry.patch_id] = applied
+            self._trim(self._applied)
+            self._outcome.notify_all()
+        return applied
 
     def discard(self, patch_id: int) -> bool:
         """Forget a proposal.  Returns whether one was there."""
@@ -209,3 +278,15 @@ class PendingPatches:
     def __contains__(self, patch_id: object) -> bool:
         with self._lock:
             return isinstance(patch_id, int) and patch_id in self._items
+
+    def _trim(self, table: OrderedDict[int, Any]) -> None:
+        """Drop the oldest entries until ``table`` fits.  Called with the lock held."""
+        while len(table) > self.limit:
+            table.popitem(last=False)
+
+    def _missing(self, patch_id: int) -> str:
+        return (
+            f"no pending patch {patch_id}: it was never proposed by this server, or it was "
+            f"proposed or applied more than {self.limit} proposals ago and has been forgotten. "
+            f"Call ingest again to propose a fresh one."
+        )

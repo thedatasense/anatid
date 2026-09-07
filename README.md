@@ -231,7 +231,7 @@ dish. Word search alone returns the recipe cards and stops.
 | verb | what it does |
 |---|---|
 | `remember(content, entities=[...])` | write a fact and the ABOUT edges that make it reachable |
-| `recall(query, embedding=, seed_entity="auto")` | hybrid retrieval: cosine, BM25 and 2-hop graph, fused with reciprocal rank fusion; the graph arm seeds itself from the entity names in the query |
+| `recall(query, embedding=, seed_entity="auto", arm_weights=)` | hybrid retrieval: cosine, BM25 and 2-hop graph, fused with weighted reciprocal rank fusion; the graph arm seeds itself from the entity names in the query and ranks its candidates by the query's own signal |
 | `recall_2hop(seed)` / `context(entity)` | pure graph recall; `context` defaults to 0 hops |
 | `supersede(old_id, content)` | replace a belief, keeping the old one closed and linked |
 | `correct(old_id, content, add_relations=, remove_relations=)` | supersede a belief and move the edges that change with it, in one transaction |
@@ -260,7 +260,12 @@ expand from exactly that entity, or `seed_entity=None` to run without the graph 
 runs when you pass an `embedding`, or when the handle was opened with an embedder:
 `Anatid.open(path, embedder=OpenAICompatibleEmbedder(base_url, api_key, model, dim))` embeds
 every `remember` and every query it is not given a vector for, so all three arms run with no
-application code. `HashEmbedder(dim)` is an offline stand-in for demos and tests.
+application code. `HashEmbedder(dim)` is an offline stand-in for demos and tests. The arms do not
+vote equally: with a vector arm it leads (vector 1.0, graph 0.5, text 0.25), without one the text
+arm does (text 1.0, graph 0.5), and the graph arm ranks its neighbourhood by cosine or BM25 to the
+query before it votes, not newest first. `arm_weights={"text": 0}` overrides a weight by name and
+`hits.weights` reports what was used. The weights come from the answer-quality benchmark in
+[`docs/quality.md`](docs/quality.md).
 
 Write verbs accept `now=` and the temporal read verbs accept `as_of=`, which keeps tests
 deterministic. Function forms exist as well, through `from anatid.verbs import remember`. And
@@ -401,9 +406,10 @@ over eighteen months: handovers, on-call rotations, incidents, decisions, and th
 corrected weeks later) with the same model, `z-ai/glm-5.3-flash` at temperature 0, the same prompt
 and the same 1,200-token memory budget. A judge that never learns which system answered grades each
 answer against an exact gold, a lexical scorer is reported next to it, and every model call is
-cached so one command reproduces every number. Two seeds of the generator give two worlds. Accuracy
-under the judge, then multi-hop accuracy, false refusals (`I don't know` on a question the notes do
-answer) and mean context size, each as seed 20260905 / seed 7:
+cached so one command reproduces every number. Two seeds of the generator give the two worlds the
+retrieval settings were chosen on; a third, held out until then, is reported below the table.
+Accuracy under the judge, then multi-hop accuracy, false refusals (`I don't know` on a question the
+notes do answer) and mean context size, each as seed 20260905 / seed 7:
 
 | memory system | accuracy, seed 20260905 | accuracy, seed 7 | multi-hop | false refusals | context tokens |
 |---|---:|---:|---:|---:|---:|
@@ -413,38 +419,41 @@ answer) and mean context size, each as seed 20260905 / seed 7:
 | vectors over the notes | 92% | 93% | 52% / 56% | 4% / 3% | 1178 / 1179 |
 | BM25 and vectors fused | 91% | 91% | 48% / 48% | 3% / 2% | 1179 / 1179 |
 | vectors with one feedback round | 93% | 92% | 60% / 56% | 3% / 2% | 1178 / 1179 |
-| anatid, every arm | 82% | 91% | 40% / 60% | 14% / 9% | 1096 / 1102 |
-| anatid, text arm only | 81% | 84% | 36% / 40% | 17% / 15% | 1069 / 1055 |
-| anatid, vector arm only | 89% | 93% | 56% / 68% | 9% / 7% | 1071 / 1075 |
-| anatid, graph arm only | 27% | 21% | 16% / 8% | 85% / 94% | 646 / 590 |
-| anatid built from gold patches (oracle) | 94% | 96% | 76% / 84% | 5% / 3% | 1066 / 1098 |
+| anatid, every arm | 89% | 89% | 52% / 56% | 9% / 8% | 1098 / 1078 |
+| anatid, text arm only | 84% | 77% | 52% / 12% | 15% / 20% | 1122 / 1041 |
+| anatid, vector arm only | 91% | 87% | 64% / 60% | 8% / 8% | 1090 / 1079 |
+| anatid, graph arm only | 30% | 22% | 12% / 8% | 82% / 92% | 568 / 625 |
+| anatid built from gold patches (oracle) | 96% | 96% | 84% / 84% | 3% / 4% | 1004 / 1018 |
 
-Where anatid wins. On seed 7 it answers more of the 25 multi-hop questions than any raw-note
-system (15 against 14 for vectors), and its two outright wins are graph chains no raw-note system
-got: the on-call engineer of the team that owns a service, and the complete list of six services a
-team owns, which every other budgeted system truncated. Its memory block is smaller than any
-raw-note system's, at about 1,100 tokens against 1,180, for answers that cost the same two to three
-cents per 150 questions. It refused every unanswerable question in both worlds, as did nearly every
-other system. And the same store built from gold patches instead of the
-model's, an oracle for extraction rather than a product, is the best budgeted system in both worlds
-at 94% and 96%, so the retrieval is not the limit.
+Where anatid wins. It answers as many of the 25 multi-hop questions as vectors over the raw notes
+in both worlds (13 and 14 against 13 and 14), its memory block is smaller than any raw-note
+system's, at about 1,080 to 1,100 tokens against 1,180, for answers that cost the same two to three
+cents per 150 questions, and it refused every unanswerable question in both worlds, as did nearly
+every other system. The same store built from gold patches instead of the model's, an oracle for
+extraction rather than a product, is the best budgeted system in both worlds at 96%, so the
+retrieval is not the limit. Its fused recall now stands within two points of its own vector arm on
+the committed corpus and two points above it on seed 7; in 0.4.1 the vector arm alone beat the
+fusion by seven and two, which is what changing the fusion weights and the graph arm's ordering
+bought. On the held-out world (seed 11), built and answered once after that choice, anatid answers
+88% with every arm and 87% with its vector arm alone, vectors over the raw notes 96%, and the gold
+store 99%.
 
-Where anatid loses. On the committed corpus it trails every budgeted retriever, by ten points
-against vectors alone and eleven against vectors with a feedback round; it wins no question outright
-and loses 21, thirteen of them refusals on facts the extractor never wrote down in a findable form,
-three of them stale values from handover edges it never closed. On seed 7 it is level with the fused
-baselines and two points behind vectors, with two wins and eight losses. In both worlds it refuses
-answerable questions two to four times as often as the raw-note systems, and its own vector arm
-alone beats its fused recall. Building the store costs a model pass over every note, about $0.10
-and an hour of model time for 178 notes, where the vector index costs a cent. The whole file in the
-prompt beats everything at this corpus size, which is the honest answer at 6,300 tokens of notes
-and says nothing about 60,000.
+Where anatid loses. It trails vectors over the raw notes by three points on the committed corpus
+and four on seed 7, wins no question outright in either world, and loses 11 and nine: six and five
+of them refusals on facts the extractor never wrote down in a findable form, the rest stale
+values, team-service lists with one entry wrong, and provenance answered with a later note. In
+both worlds it refuses answerable questions two to four times as often as the raw-note systems.
+Building the store costs a model pass over every note, about $0.10 and 40 to 70 minutes of model
+time for 178 notes, where the vector index costs a cent, and a rebuild re-rolls the extraction by a
+few points either way. The whole file in the prompt beats everything at this corpus size, which is
+the honest answer at 6,300 tokens of notes and says nothing about 60,000.
 
 The corpus is ours, the judge is the answering model, and 25 questions per category means one
 question is four points, so the differences among the raw-note systems are noise and anatid's
-ten-point gap on the committed corpus probably is not. The method, the per-category tables, the arm
-ablations, every loss question by question and the one command that reproduces it all are in
-[`docs/quality.md`](docs/quality.md).
+three-to-four-point gap is at the edge of it; 0.4.1's ten-point gap on the committed corpus, part
+of it a note lost to a cached provider error, was not. The method, the per-category tables, the arm
+ablations, every loss question by question, the offline coverage proxy the fusion was chosen with,
+and the one command that reproduces it all are in [`docs/quality.md`](docs/quality.md).
 
 ## OpenAI Agents SDK integration
 
