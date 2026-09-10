@@ -1122,3 +1122,85 @@ def test_the_pipeline_moves_edges_end_to_end_through_ingest(db):
     assert [m.content for m in db.as_of(T1 + _dt.timedelta(minutes=5)).context("ledger")] == [
         "Atlas owns the ledger"
     ]
+
+
+def test_a_handover_moves_only_the_edge_the_corrected_fact_names_when_a_note_states_several(db):
+    """One standup says Ada reports to Bo and Ada mentors Bo.  Correcting the manager to Cy
+    must move ``reports_to`` and leave ``mentors`` where it is: the edge belongs to the other
+    fact, which still says Ada mentors Bo."""
+    MemoryPatch(
+        add_facts=(
+            AddFact("Ada reports to Bo", ("Ada", "Bo")),
+            AddFact("Ada mentors Bo", ("Ada", "Bo")),
+        ),
+        add_relations=(Relation("Ada", "Bo", "reports_to"), Relation("Ada", "Bo", "mentors")),
+        source_text="standup/2025-01-08: Ada reports to Bo, and Bo is her mentor.",
+    ).apply(db, writer="w", now=T1)
+    patch = prepare(
+        MemoryPatch(
+            corrections=(
+                Correction(
+                    "Ada reports to Cy", old_text="Ada reports to Bo", entities=("Ada", "Cy")
+                ),
+            ),
+            source_text="org change",
+        ),
+        db,
+    )
+    assert patch.remove_relations == (Relation("Ada", "Bo", "reports_to"),)
+    assert patch.add_relations == (Relation("Ada", "Cy", "reports_to"),)
+    left = [n for n in patch.notes if n.startswith("handover: left mentors")]
+    assert len(left) == 1 and "2 facts about them" in left[0]
+    patch.apply(db, writer="w", now=T2)
+    edges = current_edges(db)
+    assert ("Ada", "Cy", "reports_to") in edges and ("Ada", "Bo", "reports_to") not in edges
+    assert ("Ada", "Bo", "mentors") in edges, "the mentorship was not what changed"
+    assert "Ada mentors Bo" in current_contents(db)
+
+
+def test_a_handover_survives_an_earlier_wording_correction(db):
+    """Atlas owns the ledger; a later note clarifies the wording; a third hands the ledger to
+    Cinder.  The ownership edge kept the first note's episode while the fact moved on to the
+    second's, so the lookup has to follow the fact's supersede chain."""
+    MemoryPatch(
+        add_facts=(AddFact("Atlas owns the ledger", ("Atlas", "ledger")),),
+        add_relations=(Relation("Atlas", "ledger", "owns"),),
+        source_text="handover/2025-01-08: Atlas owns the ledger.",
+    ).apply(db, writer="w", now=T1)
+    reworded = prepare(
+        MemoryPatch(
+            corrections=(
+                Correction(
+                    "Atlas owns the ledger, weekends included",
+                    old_text="Atlas owns the ledger",
+                    entities=("Atlas", "ledger"),
+                ),
+            ),
+            source_text="standup/2025-02-01: to be clear, Atlas owns the ledger on weekends too.",
+        ),
+        db,
+    )
+    assert reworded.remove_relations == () and reworded.add_relations == (), (
+        "same entities: no move"
+    )
+    reworded.apply(db, writer="w", now=T1 + _dt.timedelta(days=24))
+
+    handover = prepare(
+        MemoryPatch(
+            corrections=(
+                Correction(
+                    "Cinder owns the ledger",
+                    old_text="Atlas owns the ledger, weekends included",
+                    entities=("Cinder", "ledger"),
+                ),
+            ),
+            source_text="handover/2025-10-13: Cinder takes the ledger over from Atlas.",
+        ),
+        db,
+    )
+    assert handover.remove_relations == (Relation("Atlas", "ledger", "owns"),)
+    assert handover.add_relations == (Relation("Cinder", "ledger", "owns"),)
+    handover.apply(db, writer="w", now=T2)
+    edges = current_edges(db)
+    assert ("Cinder", "ledger", "owns") in edges and ("Atlas", "ledger", "owns") not in edges
+    assert [m.content for m in db.context("ledger")] == ["Cinder owns the ledger"]

@@ -26,7 +26,7 @@ from anatid.recall import (
     rank_graph_candidates,
     rrf_fuse,
 )
-from conftest import DIM, T0
+from conftest import DIM, T0, vec
 
 MINUTE = _dt.timedelta(minutes=1)
 
@@ -177,3 +177,45 @@ def test_arm_weights_override_by_name_and_are_reported(town):
 
     empty = RecallHits()
     assert empty.weights == {} and empty.seeds == () and empty.arms == ()
+
+
+# ============================================================================ an arm that found nothing
+
+
+def test_an_empty_vector_arm_casts_no_vote_and_leaves_the_text_arm_leading():
+    """Three memories with no embeddings.  Passing a query embedding makes the vector arm run and
+    find nothing; before this it still quartered the text arm's weight and switched the graph
+    arm from BM25 to a cosine order it could not compute, and a picnic note outranked the
+    ownership fact the text arm had first."""
+    db = Anatid.open(":memory:", tenant=1, embedding_dim=DIM)
+    try:
+        db.remember("Atlas owns the ledger", entities=["Atlas", "ledger"], now=T0)
+        db.relate("Atlas", "ledger", rel_kind="owns", now=T0)
+        db.remember(
+            "The Atlas team picnic is on Friday", entities=["Atlas", "picnic"], now=T0 + MINUTE
+        )
+        db.remember(
+            "Atlas will bring a kite to the picnic",
+            entities=["Atlas", "picnic"],
+            now=T0 + 2 * MINUTE,
+        )
+        query = "who owns the ledger"
+
+        plain = db.recall(query, k=3)
+        assert plain.arms == ("text", "graph") and plain[0].content == "Atlas owns the ledger"
+
+        with_vector = db.recall(query, k=3, embedding=vec(1, 0))
+        assert with_vector.arms == ("vector", "text", "graph"), "the vector arm ran"
+        assert with_vector.weights == {"text": 1.0, "graph": 0.5}, "and cast no vote"
+        assert with_vector[0].content == "Atlas owns the ledger"
+        assert [h.content for h in with_vector] == [h.content for h in plain]
+        assert all(h.vector_rank is None for h in with_vector)
+        assert any("vector arm scored no memory" in n for n in with_vector.notes)
+
+        # a caller's weight for the empty arm is ignored, not applied to nothing
+        forced = db.recall(
+            query, k=3, embedding=vec(1, 0), arm_weights={"vector": 5.0, "text": 2.0}
+        )
+        assert forced.weights == {"text": 2.0, "graph": 0.5}
+    finally:
+        db.close()

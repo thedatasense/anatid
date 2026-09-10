@@ -76,6 +76,14 @@ bench = [
     "pyarrow>=14",
 ]
 
+# What re-executing examples/notebooks/*.ipynb needs, beyond the integrations the notebooks
+# import: `jupyter execute --inplace examples/notebooks/*.ipynb` (the command nbclient provides).
+notebooks = [
+    "nbformat>=5.10",
+    "nbclient>=0.10",
+    "ipykernel>=6.29",
+]
+
 # Pinned exactly: a lint job that changes verdict when a new ruff lands is a broken lint job.
 # 0.16.5 is the release the ratchet lists below were measured against.
 lint = ["ruff==0.16.5"]
@@ -211,6 +219,10 @@ extend-exclude = [
     # are prose; their snippets are hand-aligned (trailing comments in a column) for reading,
     # not for import, and rewriting them is a documentation decision, not a lint one.
     "*.md",
+    # The example notebooks are the same kind of thing: prose with executed cells, printing as
+    # they go, laid out to be read top to bottom.  They are rebuilt by executing them, not by a
+    # formatter (examples/README.md says how).
+    "examples/notebooks/*.ipynb",
 ]
 
 [tool.ruff.format]

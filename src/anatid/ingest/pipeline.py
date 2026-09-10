@@ -285,16 +285,23 @@ def move_relations(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -> Mem
     exactly one new entity is a handover: "Atlas owns the ledger" corrected to "Cinder owns the
     ledger", "Priya is on call for Atlas" to "Tomasz is on call for Atlas", "Tomasz is a member
     of Dune" to "Tomasz is a member of Cinder".  Every current ``RELATES_TO`` edge between the
-    replaced entity and a kept one that the old memory's own note opened is closed, and the
-    same edge, same kind and same direction, is opened with the new entity in the replaced
-    one's place, unless the patch already says so.  Each move is a note.
+    replaced entity and a kept one that the fact's own note opened is closed, and the same edge,
+    same kind and same direction, is opened with the new entity in the replaced one's place,
+    unless the patch already says so.  Each move is a note.
 
-    Two things keep this from guessing.  Only edges the old fact's own episode opened move: an
-    edge another note stated ("Diego reports to Oskar") is not what a correction of "Diego
-    wrote the doc for Oskar" is about.  And a correction that swaps two entities, or none, or
-    keeps none, moves nothing.  The answer-quality benchmark (docs/quality.md) is where the
-    need showed: the extraction model corrected the fact and left the old edge open in most
-    handovers, so the graph arm kept walking through the previous owner.
+    Three things keep this from guessing.  Only edges the fact's own note opened move: an edge
+    another note stated ("Diego reports to Oskar") is not what a correction of "Diego wrote the
+    doc for Oskar" is about.  "The fact's own note" follows the fact through its corrections: a
+    wording correction gives the fact a new episode while the edge keeps the episode of the note
+    that first stated it, so the lookup spans the fact's whole supersede chain.  And when those
+    notes state more than one fact about the pair ("Ada reports to Bo" and "Ada mentors Bo" in
+    one standup), an edge moves only when the correction's wording names its kind: correcting
+    the manager moves ``reports_to`` and leaves ``mentors`` alone, with a note saying so.  A
+    correction that swaps two entities, or none, or keeps none, moves nothing.
+
+    The answer-quality benchmark (docs/quality.md) is where the need showed: the extraction
+    model corrected the fact and left the old edge open in most handovers, so the graph arm kept
+    walking through the previous owner.
     """
     ns = db.resolve_tenant(tenant)
     notes: list[str] = []
@@ -317,7 +324,11 @@ def move_relations(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -> Mem
         if corr.old_id is None or corr.entities is None:
             continue
         old = db.get(corr.old_id, tenant=ns, with_embedding=False)
-        if old is None or old.episode_id is None:
+        if old is None:
+            continue
+        chain = db.provenance(corr.old_id, tenant=ns).chain
+        episodes = sorted({int(m.episode_id) for m in chain if m.episode_id is not None})
+        if not episodes:
             continue
         old_names = {key(e.name): e.name for e in db.entities_of(corr.old_id, tenant=ns)}
         new_names = {key(n): n for n in corr.entities if key(n)}
@@ -330,25 +341,50 @@ def move_relations(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -> Mem
         gone_entity = db.get_entity(gone, tenant=ns)
         if gone_entity is None:
             continue
+        wording = _words(old.content) | _words(corr.new_content)
+        episode_list = ", ".join(str(e) for e in episodes)
         for other in kept:
             other_entity = db.get_entity(other, tenant=ns)
             if other_entity is None:
                 continue
             rows = db.execute(
                 f"SELECT src, dst, rel_kind FROM edges_relates "
-                f"WHERE ((src = ? AND dst = ?) OR (src = ? AND dst = ?)) AND episode_id = ? "
+                f"WHERE ((src = ? AND dst = ?) OR (src = ? AND dst = ?)) "
+                f"AND episode_id IN ({episode_list}) "
                 f"AND {tenant_sql()} AND {current_row_sql()} ORDER BY edge_id",
                 [
                     gone_entity.entity_id,
                     other_entity.entity_id,
                     other_entity.entity_id,
                     gone_entity.entity_id,
-                    int(old.episode_id),
                     ns.tenant_id,
                 ],
             ).fetchall()
+            if not rows:
+                continue
+            # How many current facts from those notes are about this pair?  One, and the edge
+            # can only belong to the fact being corrected.  More, and the note said several
+            # things about the two: an edge then moves only when the correction names its kind.
+            siblings = db.execute(
+                f"SELECT count(*) FROM memories m "
+                f"WHERE m.episode_id IN ({episode_list}) AND {tenant_sql('m')} "
+                f"AND {current_row_sql('m')} "
+                f"AND EXISTS (SELECT 1 FROM edges_about a WHERE a.src = m.memory_id "
+                f"            AND a.dst = ? AND {current_row_sql('a')}) "
+                f"AND EXISTS (SELECT 1 FROM edges_about a WHERE a.src = m.memory_id "
+                f"            AND a.dst = ? AND {current_row_sql('a')})",
+                [ns.tenant_id, gone_entity.entity_id, other_entity.entity_id],
+            ).fetchone()
+            siblings = int(siblings[0]) if siblings else 0
             for src_id, _dst_id, kind in rows:
                 if kind == ALIAS_REL_KIND:
+                    continue
+                if siblings > 1 and not _names_relation(kind, wording):
+                    notes.append(
+                        f"handover: left {kind} between {gone!r} and {other!r} alone; the note "
+                        f"states {siblings} facts about them and the correction of memory "
+                        f"{corr.old_id} does not name that relation"
+                    )
                     continue
                 gone_is_src = int(src_id) == gone_entity.entity_id
                 src, dst = (gone, other) if gone_is_src else (other, gone)
@@ -370,6 +406,25 @@ def move_relations(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -> Mem
     return patch.replace(
         remove_relations=tuple(remove), add_relations=tuple(add), notes=patch.notes + tuple(notes)
     )
+
+
+def _words(text: str | None) -> set[str]:
+    """The lower-cased words of ``text``, each also without a trailing ``s``, so a relation
+    kind matches the fact's wording across ``reports``/``report`` and ``mentors``/``mentor``."""
+    out: set[str] = set()
+    for word in re.findall(r"[a-z0-9]+", (text or "").lower()):
+        out.add(word)
+        if len(word) > 3 and word.endswith("s"):
+            out.add(word[:-1])
+    return out
+
+
+def _names_relation(rel_kind: str | None, wording: set[str]) -> bool:
+    """Whether every word of ``rel_kind`` (``reports_to``, ``on_call_for``) is in ``wording``."""
+    parts = re.findall(r"[a-z0-9]+", (rel_kind or "").lower())
+    if not parts:
+        return False
+    return all(p in wording or (len(p) > 3 and p.rstrip("s") in wording) for p in parts)
 
 
 def dedupe(patch: MemoryPatch, db: Anatid, *, tenant: Any = None) -> MemoryPatch:

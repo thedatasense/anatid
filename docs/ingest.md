@@ -47,12 +47,17 @@ embedder=None)` runs four steps. Each is a public function you can call on its o
    - `move_relations` carries a corrected fact's edges over to its replacement. A correction
      that keeps some of the old memory's entities and swaps exactly one for exactly one new
      entity is a handover ("Atlas owns the ledger" to "Cinder owns the ledger"): every current
-     edge between the replaced entity and a kept one that the old fact's own note opened is
+     edge between the replaced entity and a kept one that the fact's own note opened is
      closed, and the same edge, same kind and direction, is opened with the new entity in its
-     place, unless the patch already says so. Edges other notes stated do not move, and a
-     correction that swaps two entities or none moves nothing. Every move is a note. The
-     answer-quality benchmark showed the need: the extraction model corrected the fact and
-     left the old edge open in most handovers.
+     place, unless the patch already says so. "The fact's own note" follows the fact through
+     its corrections, so a wording correction in between does not hide the edge. When those
+     notes state more than one fact about the pair ("Ada reports to Bo" and "Ada mentors Bo"
+     in one standup), an edge moves only when the correction's wording names its kind:
+     correcting the manager moves `reports_to` and leaves `mentors` alone, with a note.
+     Edges other notes stated do not move, and a correction that swaps two entities or none
+     moves nothing. Every move, and every edge left alone, is a note. The answer-quality
+     benchmark showed the need: the extraction model corrected the fact and left the old edge
+     open in most handovers.
    - `dedupe` drops a fact the graph already holds (same folded content, same entities), a
      fact proposed twice, a relation a current edge already holds, and a relation removal
      that has no current edge to close. Every drop is a note.

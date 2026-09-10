@@ -466,10 +466,11 @@ class RecallHits(list):
         found in the query under ``seed_entity="auto"``, or the one the caller named.  Empty
         when the graph arm did not run.
     ``weights``
-        The fusion weight each arm that ran was given, ``{"vector": 1.0, "graph": 0.5,
-        "text": 0.25}`` by default when the vector arm ran and ``{"text": 1.0, "graph": 0.5}``
-        when it did not (:func:`anatid.recall.default_arm_weights`), or what the caller's
-        ``arm_weights`` set.
+        The fusion weight each arm that returned candidates was given, ``{"vector": 1.0,
+        "graph": 0.5, "text": 0.25}`` by default when the vector arm found something and
+        ``{"text": 1.0, "graph": 0.5}`` when it did not run or found nothing
+        (:func:`anatid.recall.default_arm_weights`), or what the caller's ``arm_weights`` set.
+        An arm that ran and found nothing is in ``arms`` and not here; it cast no vote.
     """
 
     __slots__ = ("bm25_available", "bm25_stale", "pending_fts_rows", "arms", "as_of", "notes",

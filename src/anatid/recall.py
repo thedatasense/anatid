@@ -852,7 +852,10 @@ def hybrid_recall(
     graph 0.5).  ``arm_weights`` overrides any of them by name; an arm it does not name keeps
     its default.  The graph arm's candidates are ordered by the query's own signal before the
     fusion, cosine with an embedding and BM25 without one (:func:`rank_graph_candidates`),
-    rather than newest first.  ``RecallHits.weights`` reports the weights that were used.
+    rather than newest first.  ``RecallHits.weights`` reports the weights that were used, for
+    the arms that returned candidates: an arm that ran and found nothing, such as a vector arm
+    over memories that have no embeddings, is listed in ``arms``, casts no vote, and leaves the
+    others' weights as they would be without it.
 
     Arms run only when their input is present: the vector arm needs ``embedding``, the BM25 arm
     needs ``query`` **and** an fts index, the graph arm needs a seed.  With no usable arm the
@@ -972,10 +975,12 @@ def hybrid_recall(
                                   backend=backend, kinds=kinds)
         # Newest first is the order of a pure graph read; for a fusion the neighbourhood is
         # ranked by the query's own signal, so the arm votes for what the question is about.
-        if embedding is not None:
+        # A vector arm that scored nothing (no memory has an embedding) is no signal: the text
+        # arm's BM25 ranks the neighbourhood then, as it does without an embedding.
+        if embedding is not None and arms.get("vector"):
             graph = rank_graph_candidates(con, graph, tenant_id=tenant_id, as_of=as_of,
                                           embedding=embedding, dim=dim)
-        elif "text" in arms:
+        elif arms.get("text"):
             graph = rank_graph_candidates(con, graph, tenant_id=tenant_id, as_of=as_of,
                                           text_hits=dict(arms["text"]))
         arms["graph"] = graph
@@ -991,10 +996,17 @@ def hybrid_recall(
             log.warning("%s", msg)
             notes.append(msg)
 
-    weights = default_arm_weights(arms)
+    # An arm that ran and returned nothing casts no vote and must not change the others': a
+    # vector arm over memories that have no embeddings would otherwise quarter the text arm's
+    # weight, the one arm that found anything.  It stays in `arms` (it ran) and out of `weights`.
+    evidence = {name: rows for name, rows in arms.items() if rows}
+    if "vector" in arms and not arms["vector"]:
+        notes.append("vector arm scored no memory (none in reach has an embedding); the text arm "
+                     "led the fusion")
+    weights = default_arm_weights(evidence)
     if arm_weights is not None:
-        weights.update({a: w for a, w in check_arm_weights(arm_weights).items() if a in arms})
-    fused = rrf_fuse(arms, k=rrf_k, top=k, weights=weights)
+        weights.update({a: w for a, w in check_arm_weights(arm_weights).items() if a in evidence})
+    fused = rrf_fuse(evidence, k=rrf_k, top=k, weights=weights)
     ids = [mid for mid, _s, _r, _sc in fused]
     rows = hydrate(con, ids, tenant_id=tenant_id, with_embedding=with_embedding, as_of=as_of)
     names = (about_names(con, ids, tenant_id=tenant_id, as_of=as_of)

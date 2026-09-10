@@ -218,7 +218,9 @@ index, and `db.index_health()` reports whether that is due, and why.
 
 A longer commented walkthrough covering `recall_2hop`, `forget(hard=True)` and `stats()` lives in
 [`examples/quickstart.py`](examples/quickstart.py). It needs no API key and finishes in under a
-second. [`examples/README.md`](examples/README.md) lists every example and which ones need a key.
+second. [`examples/README.md`](examples/README.md) lists every example and which ones need a key,
+and [`examples/notebooks/`](examples/notebooks/) walks through the same material as four executed
+Jupyter notebooks.
 
 For something closer to how memory tends to fail in practice, run
 [`examples/dinner_party.py`](examples/dinner_party.py). Six months of ordinary household facts, a

@@ -36,6 +36,11 @@ All notable changes to anatid are recorded here. The format follows
 
 ### Added
 
+- Four executed example notebooks under `examples/notebooks/`: the core verbs in ten minutes, the
+  ingestion pipeline step by step, how recall's three arms and their fusion work, and the Agents
+  SDK and MCP integrations driven offline. Outputs are saved, so they read without running; the
+  cells that talk to a model are guarded. `pip install "anatid[notebooks]"` installs what
+  re-executing them needs.
 - The benchmark's extraction context uses a versioned `weighted-v1` fusion policy with explicit
   weights, RRF constant and candidate budget. Changing answer-time default weights no longer
   changes the extractor's context. Ingestion reports record the policy; changes to the underlying
@@ -52,6 +57,20 @@ All notable changes to anatid are recorded here. The format follows
 
 ### Fixed
 
+- The ingestion pipeline's handover step could move an edge that belonged to another fact. When
+  one note stated "Ada reports to Bo" and "Ada mentors Bo", correcting the manager to Cy moved
+  the mentorship edge too, while the stored fact still said Ada mentors Bo. When the notes behind
+  a fact state more than one fact about a pair, an edge now moves only when the correction's
+  wording names its kind, and the edge left alone is noted.
+- The same step missed the edge after an earlier wording correction: "Atlas owns the ledger",
+  then a clarification that kept the entities, then "Cinder owns the ledger" left the graph
+  naming Atlas, because the clarification gave the fact a new episode while the edge kept the
+  first note's. The lookup now follows the fact's whole supersede chain.
+- A vector arm that ran and found nothing, over memories that have no embeddings, still
+  quartered the text arm's weight and ordered the graph arm by a cosine it could not compute, so
+  supplying a query embedding could push the right memory behind unrelated newer ones. An arm
+  that returns no candidates now casts no vote: the text arm leads, the graph arm is ranked by
+  BM25, `hits.weights` omits the empty arm and `hits.notes` says so.
 - The answer-quality benchmark's model client (`bench/quality/llm.py`) cached a provider failure
   as an answer: OpenRouter can return HTTP 200 with `finish_reason: "error"` and no content when
   the upstream model fails, and one such reply, for the note that moves Marcus to Atlas and hands
