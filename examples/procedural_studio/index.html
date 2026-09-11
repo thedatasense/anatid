@@ -5,24 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f6f5f1">
   <meta name="description" content="Explore how anatid stores, repairs, and replays a procedural graph through a synthetic medical-device manufacturing review.">
-  <title>anatid — Cedar manufacturing review</title>
+  <title>anatid: medical device manufacturing</title>
   <link rel="icon" href="/brand/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="#" aria-label="Anatid — back to top"><img src="/brand/anatid-logo.svg" width="140" height="48" alt="anatid"></a>
+    <a class="brand" href="#" aria-label="Anatid: back to top"><img src="/brand/anatid-logo.svg" width="140" height="48" alt="anatid"></a>
     <span class="header-divider"></span><span class="header-label">PROCEDURAL STUDIO</span>
     <div class="header-right"><span class="status-dot"></span> Cedar manufacturing <span class="mode-label">SYNTHETIC LOT REVIEW</span></div>
   </header>
 
   <main>
     <section class="intro">
-      <div><div class="eyebrow"><span class="tiny-rule"></span> MEDICAL-DEVICE MANUFACTURING / CEDAR</div>
-        <h1>A passing test. <em>An incomplete story.</em></h1>
-        <p>A fictional infusion-pump lot has a green test report. A linked correction withdraws it.<br class="desktop-break"> Watch the procedure find the gap before the packet advances.</p>
+      <div><div class="eyebrow"><span class="tiny-rule"></span> MEDICAL DEVICE MANUFACTURING / CEDAR</div>
+        <h1>A passing test. <em>A withdrawn report.</em></h1>
+        <p>Cedar lot CED-2409 has a passing final test. A linked correction withdraws it.<br class="desktop-break"> Follow the check that holds the manufacturing packet for human review.</p>
       </div>
-      <div class="intro-note"><span class="note-mark">↳</span><p>Same agent. Same evidence.<br><strong>A better path through it.</strong></p></div>
+      <div class="intro-note"><span class="note-mark">↳</span><p>Check the report’s references.<br><strong>Keep the reason for the hold.</strong></p></div>
     </section>
 
     <div id="error" class="error" role="alert" hidden></div>
@@ -49,11 +49,11 @@
             </div>
           </div>
 
-          <div class="story-card" id="story-card"><div class="story-symbol" id="story-symbol">!</div><div><div class="eyebrow" id="story-eyebrow">THE FAILURE MODE</div><h3 id="story-title">A green test report isn’t the whole packet.</h3><p id="story-copy">The shortcut skips configuration, withdrawal, and nonconformance checks. It can advance a packet with unresolved evidence.</p></div><button id="next-chapter" class="button outline">Validate a repair <span>↗</span></button></div>
+          <div class="story-card" id="story-card"><div class="story-symbol" id="story-symbol">!</div><div><div class="eyebrow" id="story-eyebrow">THE FAILURE MODE</div><h3 id="story-title">The test report has been withdrawn.</h3><p id="story-copy">The shortcut skips configuration, withdrawal, and nonconformance checks. It can advance a packet with unresolved evidence.</p></div><button id="next-chapter" class="button outline">Validate a repair <span>↗</span></button></div>
 
           <section class="evaluation-card" aria-labelledby="evaluation-title">
             <div class="evaluation-heading"><div><span class="eyebrow">MEASURE THE CHANGE</span><h2 id="evaluation-title">One edit. Five lot-review cases.</h2></div><span class="fixture-tag">SCRIPTED FIXTURES</span></div>
-            <div class="evaluation-layout"><div class="score-pair"><div><span class="score-label">ORIGINAL</span><div class="big-score" id="score-before">1<span>/4</span></div><span class="score-note">cases passed</span></div><span class="score-arrow">→</span><div><span class="score-label">REPAIRED</span><div class="big-score repaired" id="score-after">—</div><span class="score-note" id="score-after-note">awaiting repair</span></div></div><table><thead><tr><th scope="col">Test scenario</th><th scope="col">Original</th><th scope="col">Repaired</th></tr></thead><tbody id="test-results"></tbody></table></div>
+            <div class="evaluation-layout"><div class="score-pair"><div><span class="score-label">ORIGINAL</span><div class="big-score" id="score-before">1<span>/5</span></div><span class="score-note">cases passed</span></div><span class="score-arrow">→</span><div><span class="score-label">REPAIRED</span><div class="big-score repaired" id="score-after">?</div><span class="score-note" id="score-after-note">awaiting repair</span></div></div><table><thead><tr><th scope="col">Test scenario</th><th scope="col">Original</th><th scope="col">Repaired</th></tr></thead><tbody id="test-results"></tbody></table></div>
             <p class="evaluation-footnote">Five scripted test cases, separate from validation. Live model guidance is not included in these scores.</p>
           </section>
           <section class="llm-card" aria-labelledby="llm-title">
@@ -66,7 +66,7 @@
           <section class="context-card">
             <div class="eyebrow">THE MANUFACTURING PACKET</div><h2 id="task-title">Can this packet advance?</h2><p class="lot-scope" id="lot-scope"></p>
             <label for="scenario">Choose the evidence</label><select id="scenario"></select>
-            <div class="source-header"><span>CONTROLLED RECORDS</span><span>synthetic exports</span></div><div id="sources"></div>
+            <details class="record-key"><summary>Record identifiers</summary><table><tbody><tr><th>FT</th><td>Final test</td></tr><tr><th>DHR</th><td>Device history record</td></tr><tr><th>COR</th><td>Correction</td></tr><tr><th>TP</th><td>Test plan</td></tr><tr><th>ECO</th><td>Engineering change order</td></tr><tr><th>NCR</th><td>Nonconformance report</td></tr></tbody></table></details><div class="source-header"><span>CONTROLLED RECORDS</span><span>synthetic exports</span></div><div id="sources"></div>
             <div class="answer-card" id="answer-card" aria-live="polite"><span class="eyebrow">AGENT RESPONSE</span><p id="answer">Run the agent to see its answer.</p><small id="answer-detail">Every move follows the selected graph.</small></div>
           </section>
           <section class="guidance-card"><div class="inspector-heading"><span class="eyebrow">CONNECTED GUIDANCE</span><span class="inspector-dot"></span></div><h2 id="inspector-title">Read the passages</h2><div id="guidance"></div></section>
@@ -75,7 +75,7 @@
       </section>
 
       <section class="audit-strip" aria-label="Revision history"><div class="audit-label"><span class="eyebrow">MEMORY HAS A HISTORY</span><span>Nothing quietly overwritten.</span></div><button data-phase="0" class="audit-event"><span class="audit-point"></span><span><strong>01 SEP</strong>Original runbook stored</span></button><div class="audit-connector"></div><button data-phase="1" class="audit-event"><span class="audit-point green"></span><span><strong>02 SEP</strong>Verification added</span></button><div class="audit-connector"></div><button data-phase="2" class="audit-event"><span class="audit-point red"></span><span><strong>03 SEP</strong>Shortcut rejected</span></button></section>
-      <details class="retrieval-note"><summary>Why a connected graph instead of a list of rules? <span>↗</span></summary><div><p>For “review summary,” the database’s top two text matches are:</p><div id="flat-results"></div><p>A ranked list does not guarantee the prerequisite <strong>Read → Reconcile</strong>. The connected neighborhood preserves that check and its review/hold branches. This illustrates connectivity, not a measured accuracy advantage over retrieval.</p></div></details>
+      <details class="retrieval-note"><summary>Why a connected graph instead of a list of rules? <span>↗</span></summary><div><p>For “review summary,” the database’s top two text matches are:</p><div id="flat-results"></div><p>The graph keeps <strong>Read → Reconcile</strong> attached to the action and preserves the review and hold branches. The ranked list can omit that check. No comparison of retrieval accuracy is measured here.</p></div></details>
     </div>
     <footer><span>BUILT ON ANATID <span class="footer-slash">/</span> Evidence · Corrections · History</span><p>Fictional records and review rules. No clinical thresholds or actual release decisions. Scripted evaluation; optional live guidance is separate.</p><a href="https://arxiv.org/abs/2609.09153v1" target="_blank" rel="noreferrer">Inspired by Procedural Graphs ↗</a></footer>
   </main>

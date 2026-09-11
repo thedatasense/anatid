@@ -1455,3 +1455,23 @@ footer a {
 .intro h1 em {
   margin-left: 0.12em;
 }
+
+.record-key {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.record-key summary {
+  cursor: pointer;
+}
+.record-key table {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+}
+.record-key th,
+.record-key td {
+  padding: 5px 6px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}

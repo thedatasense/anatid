@@ -7,6 +7,14 @@ All notable changes to anatid are recorded here. The format follows
 
 ## [Unreleased]
 
+The main walkthrough now follows fictional Cedar infusion-pump lot CED-2409 through a withdrawn
+test and a hold for human review. `python -m examples.manufacturing_review` runs the same stored
+procedure and scripted evaluation as the visual demo. The README and graph guide use this case
+for corrections, evidence, and historical reads. OpenRouter guidance remains available in the visual.
+
+The visual accepts short command options: `-p` for port, `-l` for live guidance, `-m` for model,
+and `-o` for an offline export. Existing command options remain supported.
+
 ## [0.4.3] - 2026-09-10
 
 ### Fixed

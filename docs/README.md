@@ -2,20 +2,21 @@
 
 # Documentation
 
-Local memory for AI agents, with evidence, corrections and history. One DuckDB file.
+Local memory for artificial intelligence (AI) agents. Keep source records and earlier claims in one DuckDB file.
 
-Start with the [quickstart](../README.md#five-minutes-to-a-working-memory), or run the
-[visual manufacturing demo](../examples/procedural_studio/README.md) to see a procedure improve
-while its evidence and earlier revisions remain inspectable.
+The [Cedar manufacturing walkthrough](../README.md#medical-device-manufacturing-a-withdrawn-test)
+follows a withdrawn test through a lot review. The [visual demo](../examples/procedural_studio/README.md)
+shows the procedure repair and its earlier revision. For direct Python calls, use the
+[quickstart](../README.md#five-minutes-to-a-working-memory).
 
 ## Build with anatid
 
 | Guide | What it covers |
 | --- | --- |
-| [Examples](../examples/README.md) | Runnable examples, notebooks, and optional live model calls |
+| [Examples](../examples/README.md) | Manufacturing walkthroughs and integration examples |
 | [Ingest notes](ingest.md) | Propose, review, and apply facts, relations, and corrections |
 | [Procedural graphs](procedural-graphs.md) | Store directed procedures, validate changes, and replay history |
-| [MCP integration](mcp.md) | Give an assistant access to memory with approval-gated writes |
+| [Model Context Protocol (MCP) integration](mcp.md) | Give an assistant access to memory with approval-gated writes |
 | [Shared memory server](server.md) | Run several clients against one memory; operate and monitor it |
 | [MCP Registry](mcp-registry.md) | Manifest, installation, and publishing |
 

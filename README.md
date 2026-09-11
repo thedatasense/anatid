@@ -1,27 +1,37 @@
 <h1><img src="https://raw.githubusercontent.com/thedatasense/anatid/main/assets/brand/anatid-logo.png" alt="anatid" width="280" height="96"></h1>
 
-Local memory for AI agents, with evidence, corrections and history. One DuckDB file.
+Local memory for artificial intelligence (AI) agents. Keep the source behind a claim and the
+history of each correction in one DuckDB file.
 
-anatid is for developers building assistants that have to remember decisions, ownership and
-changing constraints: who owns a service, what was decided and when, which rule still holds. Every
-fact is filed under the entities it names, linked to the raw text it came from, and kept when it
-is corrected rather than overwritten. Retrieval runs three ways at once, through text scoring,
-graph traversal and, with an embedder configured, vector similarity. Nothing runs but your
-process, and the memory is a single file you can copy, back up and query with SQL. MIT licensed.
+A manufacturing assistant needs to know which test applies to a lot, whether a report was
+withdrawn, and what the reviewer knew at the time. anatid stores those connections and preserves
+earlier claims when the evidence changes. Search can follow references between records or rank
+matching text. An embedding model adds vector search. The file can also be queried with
+Structured Query Language (SQL).
 
 [Documentation](https://github.com/thedatasense/anatid/blob/main/docs/README.md) ·
 [Examples](https://github.com/thedatasense/anatid/blob/main/examples/README.md) ·
 [PyPI](https://pypi.org/project/anatid/) ·
 [Releases](https://github.com/thedatasense/anatid/releases)
 
-## Watch a procedure improve
+## Medical device manufacturing: a withdrawn test
 
-A passing test says a fictional infusion-pump lot is ready for review. A linked correction
-withdraws that test. The visual **Procedural Studio** shows how adding a reconciliation step
-changes the outcome, how validation rejects a harmful shortcut, and how anatid preserves the
-original procedure and the evidence behind each revision.
+Cedar is a fictional infusion-pump program. Lot `CED-2409` has a passing final-test report and an
+approved assembly traveler, the record of work performed on the lot. A correction withdraws the
+test because the fixture loaded the wrong firmware image. A replacement test is planned.
 
-<img src="https://raw.githubusercontent.com/thedatasense/anatid/main/assets/procedural-studio.png" alt="Anatid Procedural Studio: a repaired graph reconciles a passing test with its withdrawal, then holds the packet for human review." width="960">
+| Record | What the packet contains |
+| --- | --- |
+| `FT-2409` | Final functional test recorded as passing |
+| `DHR-2409` | Approved assembly traveler in the device history record |
+| `COR-2409` | Withdrawal of `FT-2409` after the firmware error was found |
+| `TP-2409` | Replacement test plan with no completed result |
+
+The original procedure advances the packet after reading the passing report. The repaired
+procedure checks linked corrections and holds the packet for human review. These records and
+review rules are invented. A person retains authority over any device release.
+
+<img src="https://raw.githubusercontent.com/thedatasense/anatid/main/assets/procedural-studio.png" alt="Cedar manufacturing review: the graph follows a test withdrawal and holds the lot packet for human review." width="960">
 
 From a source checkout:
 
@@ -32,90 +42,55 @@ python -m pip install -e .
 python -m examples.procedural_studio
 ```
 
-Open <http://127.0.0.1:8766>. Walk through **The shortcut → The repair → The guardrail**.
-Add `--live` with `OPENROUTER_API_KEY` configured to ask a model for next-step guidance.
-The graph, evidence, and history are read from a real in-memory anatid database. The five
-synthetic test cases improve from **1/5 to 5/5** under a scripted evaluator; live model responses
-are separate from those scores. These are fictional records and review rules, with no actual
-device release decisions.
+Open <http://127.0.0.1:8766>. Follow the original route, validate a repair, then test a proposal
+that removes the check. Each stage shows the records used and the saved procedure revision.
 
-[Run the visual demo](https://github.com/thedatasense/anatid/blob/main/examples/procedural_studio/README.md) ·
-[How procedural graphs map to anatid](https://github.com/thedatasense/anatid/blob/main/docs/procedural-graphs.md)
+| Stage | Route | Result for lot CED-2409 |
+| --- | --- | --- |
+| Original | Search → Read → Review | Misses the withdrawal and advances the packet |
+| Repaired | Search → Read → Reconcile → Hold | Cites the withdrawal and missing retest result |
+| Later proposal | Skip reconciliation again | Validation rejects the change; the repaired graph remains |
+| Historical view | Replay the original graph | Shows the earlier route and its missed evidence |
 
-## The demo
+For the same example in a terminal:
 
-Three project notes, six months apart, go in as prose. What follows is the real output of
-[`examples/ingest_notes.py`](https://github.com/thedatasense/anatid/blob/main/examples/ingest_notes.py), trimmed only for width. It runs offline,
-without a key, in about a second.
-
-The first note says who owns what. A model reads it and proposes a patch; the pipeline shows the
-patch as a diff before anything is written, then applies it in one transaction with the note
-stored as evidence.
-
-```
-2026-03-02  notes/2026-03-02.md
-  > Ada leads the Kestrel team. Kestrel owns the ingest service, and Bo maintains it day to day.
-
-  memory patch: 3 facts, 3 relation(s) added
-    + fact        "Ada leads Kestrel"  about: Ada, Kestrel
-    + fact        "Kestrel owns the ingest service"  about: Kestrel, ingest service
-    + fact        "Bo maintains the ingest service"  about: Bo, ingest service
-    + relation    Ada -leads-> Kestrel
-    + relation    Kestrel -owns-> ingest service
-    + relation    Bo -maintains-> ingest service
-  applied: episode 883936403279032320 stored; 3 memories created; 3 relations opened.
+```bash
+python -m examples.manufacturing_review
 ```
 
-Then the owner changes. The second note does not repeat the old fact; the patch corrects it, and
-the edge from Bo to the service closes in the same transaction that opens the edge from Cy.
+Selected output from that command:
 
-```
-2026-06-15  notes/2026-06-15.md
-  > Bo moved to the platform group. Cy took over the ingest service from Bo this week.
+```text
+Original route: start -> search -> read -> review
+Original outcome: ready_for_review
+Repaired route: start -> search -> read -> reconcile -> hold
+Repaired outcome: hold_for_review
+Evidence: FT-2409, DHR-2409, COR-2409, TP-2409
 
-  memory patch: 1 fact, 1 correction, 2 relation(s) added, 1 relation(s) removed
-    + fact        "Bo works in the platform group"  about: Bo, platform group
-    ~ correction  memory 883936403329363968 "Bo maintains the ingest service"
-                  -> "Cy maintains the ingest service"  about: Cy, ingest service
-    - relation    Bo -maintains-> ingest service
-    + relation    Cy -maintains-> ingest service
-    + relation    Bo -member_of-> platform group
-  applied: episode 883936403509719040 stored; 2 memories created; 1 superseded; 2 relations opened; 1 relations closed.
-```
-
-Ask who maintains the ingest service now, and the assistant answers with the new owner. Ask why,
-and the chain of evidence runs back through both notes.
-
-```
-3. Who maintains the ingest service now, and why
-  now:     Cy maintains the ingest service
-  before:  Bo maintains the ingest service  (valid until 2026-06-15)
-  chain of evidence, newest first:
-    2026-06-15  notes/2026-06-15.md
-      > Bo moved to the platform group. Cy took over the ingest service from Bo this week.
-    2026-03-02  notes/2026-03-02.md
-      > Ada leads the Kestrel team. Kestrel owns the ingest service, and Bo maintains it day to day.
-  writers: notes-bot
+Original procedure: 1/5 scripted test cases passed
+Repaired procedure: 5/5 scripted test cases passed
+Repair accepted: True
+Later shortcut accepted: False
+Rejected proposals retained: 1
 ```
 
-Ask what was true in April, and the previous owner comes back, because the correction closed the
-old fact instead of deleting it.
+The five test cases cover a complete packet and four evidence gaps. The scores come from a
+scripted evaluator. They describe this small simulation and provide no estimate of model accuracy.
+The graph changes are written to an in-memory anatid database, with the earlier revision retained.
 
-```
-4. as_of(2026-04-01): what the database believed about the ingest service in April
-    2026-03-02  Bo maintains the ingest service
-    2026-03-02  Kestrel owns the ingest service
+An optional large language model (LLM) call through OpenRouter asks what to do next. Set
+`OPENROUTER_API_KEY` in the environment, then start the visual with:
 
-5. The same read today
-    2026-08-20  The ingest service must stay on Python 3.10 until the Kestrel migration finishes [constraint]
-    2026-06-15  Cy maintains the ingest service
-    2026-03-02  Kestrel owns the ingest service
+```bash
+python -m examples.procedural_studio -l
 ```
 
-A question about Ada reaches the ingest service too, though no fact about the service mentions
-her: Ada leads Kestrel, Kestrel owns the service, and the graph walk covers the two hops. Run the
-script with `--live` and GLM 5.3 Flash through OpenRouter proposes the patches instead of the
-scripted extractor; the output above is the offline run.
+Choose the repaired graph, advance to **Read**, and select **Ask OpenRouter**. The model receives
+the observed records and the next two graph steps. Its advice appears with citations and request
+usage. It cannot release a lot or change the graph. The scripted scores remain separate.
+
+[Visual guide](https://github.com/thedatasense/anatid/blob/main/examples/procedural_studio/README.md) ·
+[Graph storage and evaluation](https://github.com/thedatasense/anatid/blob/main/docs/procedural-graphs.md)
 
 ## Five minutes to a working memory
 
@@ -142,24 +117,27 @@ says where each client keeps it.
 }
 ```
 
-Or use it from Python. Three statements: open a file, remember a fact with its evidence, ask.
+Or store one manufacturing claim from Python:
 
 ```python
 from anatid import Anatid
-db = Anatid.open("team.anatid", tenant=1)
-db.remember("Cy maintains the ingest service", entities=["Cy", "ingest service"],
-            episode="Handover note, 2026-06-15: Cy took the ingest service over from Bo.")
-print(db.recall("who maintains the ingest service")[0].content)
+
+with Anatid.open(":memory:", tenant=1) as db:
+    db.remember(
+        "Lot CED-2409 needs a completed retest.",
+        entities=["CED-2409", "COR-2409"],
+        episode="COR-2409: the passing test was withdrawn after a firmware error.",
+    )
+    print(db.recall("CED-2409 retest")[0].content)
 ```
 
-```
-Cy maintains the ingest service
+```text
+Lot CED-2409 needs a completed retest.
 ```
 
-That `recall` ran the text arm and the graph arm: the query names the ingest service, so the walk
-started there without anyone naming a seed. `db.provenance(memory_id).source_text` returns the
-handover note. To have text go in as in the demo rather than one fact at a time, see
-[`docs/ingest.md`](https://github.com/thedatasense/anatid/blob/main/docs/ingest.md).
+The query names the lot, so retrieval searches its connected records as well as matching text.
+To propose facts and corrections from full manufacturing notes, see
+[ingestion](https://github.com/thedatasense/anatid/blob/main/docs/ingest.md).
 
 ## What anatid is
 
@@ -216,50 +194,53 @@ run locally before a release.
 
 ## Quickstart
 
+Record a passing test, withdraw the claim, and ask what the database showed before the correction.
+The example uses an in-memory database so each run starts with the same records.
+
 ```python
-from anatid import Anatid, utcnow
+from datetime import datetime
+from anatid import Anatid
 
-vec = [0.0] * 63 + [1.0]                                        # your embedding model's output
+before = datetime(2026, 9, 1)
+after = datetime(2026, 9, 2)
 
-with Anatid.open("agent.anatid", tenant=1, embedding_dim=64) as db:
-    db.relate("Ada", "Kestrel", rel_kind="leads")               # an entity to entity edge
-    m = db.remember("Ada prefers dark roast coffee",            # a fact, filed under 2 entities
-                    entities=["Ada", "coffee"], kind="preference",
-                    embedding=vec, writer="agent-1",
-                    episode="Standup 2026-03-01: Ada takes it dark roast.")  # raw evidence first
-    t0 = utcnow()
-    hits = db.recall("coffee", embedding=vec, seed_entity="Ada", k=3)   # findable already
-    print(hits[0].content, hits[0].sources, "| bm25_stale:", hits.bm25_stale)
-
-    new = db.supersede(m.memory_id, "Ada switched to decaf")    # closes the old row, keeps it
-    print("old still current?", db.get(m.memory_id).is_current) # False, history intact
-    print("at t0:", [x.content for x in db.as_of(t0).recall_2hop("Ada")])
-    print("evidence:", db.provenance(new.memory_id).source_text)
+with Anatid.open(":memory:", tenant=1) as db:
+    db.relate("Cedar pump", "CED-2409", rel_kind="has_lot", now=before)
+    report = db.remember(
+        "FT-2409 records a passing test for lot CED-2409.",
+        entities=["CED-2409", "FT-2409"],
+        episode="FT-2409: final functional test recorded PASS.",
+        now=before,
+    )
+    correction = db.supersede(
+        report.memory_id,
+        "FT-2409 is withdrawn. Lot CED-2409 needs a completed retest.",
+        episode="COR-2409: the test fixture loaded the wrong firmware image.",
+        now=after,
+    )
+    print("Current:", db.get(correction.memory_id).content)
+    print("Original claim current:", db.get(report.memory_id).is_current)
+    print("Before correction:", db.as_of(before).recall_2hop("Cedar pump")[0].content)
+    for source in db.provenance(correction.memory_id).episodes:
+        print("Evidence:", source.content)
 ```
 
+```text
+Current: FT-2409 is withdrawn. Lot CED-2409 needs a completed retest.
+Original claim current: False
+Before correction: FT-2409 records a passing test for lot CED-2409.
+Evidence: COR-2409: the test fixture loaded the wrong firmware image.
+Evidence: FT-2409: final functional test recorded PASS.
 ```
-Ada prefers dark roast coffee ('vector', 'text', 'graph') | bm25_stale: False
-old still current? False
-at t0: ['Ada prefers dark roast coffee']
-evidence: Standup 2026-03-01: Ada takes it dark roast.
-```
 
-Running the block above produces exactly that. Nothing was rebuilt before the `recall` call. The
-write was journalled inside its own transaction and the text arm merged it. Calling
-`db.maintain_indexes()` folds the journal into fresh generations when you want the speed of a built
-index, and `db.index_health()` reports whether that is due, and why.
+The old claim stays available through the historical read. The current claim points to the
+withdrawal, and `provenance()` returns the source records behind the change.
 
-A longer commented walkthrough covering `recall_2hop`, `forget(hard=True)` and `stats()` lives in
-[`examples/quickstart.py`](https://github.com/thedatasense/anatid/blob/main/examples/quickstart.py). It needs no API key and finishes in under a
-second. [`examples/README.md`](https://github.com/thedatasense/anatid/blob/main/examples/README.md) lists every example and which ones need a key,
-and [`examples/notebooks/`](https://github.com/thedatasense/anatid/blob/main/examples/notebooks/) walks through the same material as four executed
-Jupyter notebooks.
-
-For something closer to how memory tends to fail in practice, run
-[`examples/dinner_party.py`](https://github.com/thedatasense/anatid/blob/main/examples/dinner_party.py). Six months of ordinary household facts, a
-cook who asks whether Friday's menu is safe, and an allergy that neither the question nor any
-single stored sentence mentions. The graph walks from the dinner to a guest to an ingredient to the
-dish. Word search alone returns the recipe cards and stops.
+For the packet-review procedure, run
+[`manufacturing_review.py`](https://github.com/thedatasense/anatid/blob/main/examples/manufacturing_review.py).
+The larger [medical-history experiment](https://github.com/thedatasense/anatid/blob/main/examples/medical_history/README.md)
+adds requirement revisions and delayed evidence to the Cedar program. The
+[example catalog](https://github.com/thedatasense/anatid/blob/main/examples/README.md) also contains general integration examples.
 
 ## The verbs
 
@@ -290,7 +271,7 @@ leaves earlier deletions committed. Taking its `dry_run` list first shows what i
 
 `recall(query)` runs the text arm and the graph arm by default. The graph arm's seeds are the
 entity names that occur in the query, matched case-insensitively, longest name first, at most
-three; `hits.seeds` lists them and `hits.arms` says which arms ran. Pass `seed_entity="Ada"` to
+three; `hits.seeds` lists them and `hits.arms` says which arms ran. Pass `seed_entity="CED-2409"` to
 expand from exactly that entity, or `seed_entity=None` to run without the graph arm. The vector arm
 runs when you pass an `embedding`, or when the handle was opened with an embedder:
 `Anatid.open(path, embedder=OpenAICompatibleEmbedder(base_url, api_key, model, dim))` embeds
@@ -305,7 +286,7 @@ query before it votes, not newest first. `arm_weights={"text": 0}` overrides a w
 Write verbs accept `now=` and the temporal read verbs accept `as_of=`, which keeps tests
 deterministic. Function forms exist as well, through `from anatid.verbs import remember`. And
 `db.connection` hands you the raw DuckDB cursor whenever you want SQL. The memory is ordinary
-tables, joinable against your Parquet and CSV files in place.
+tables, joinable against your Parquet and comma-separated values (CSV) files in place.
 
 ## Text in, a reviewed patch out
 
@@ -322,7 +303,7 @@ from anatid.ingest import OpenAICompatibleExtractor, ingest
 
 extractor = OpenAICompatibleExtractor(model="z-ai/glm-5.3-flash",
                                       base_url="https://openrouter.ai/api/v1", api_key=key)
-receipt = ingest(db, note, extractor=extractor, writer="notes-bot", source="notes/2026-06-15.md",
+receipt = ingest(db, note, extractor=extractor, writer="manufacturing-review", source="records/COR-2409.txt",
                  review=lambda patch: patch if input(patch.describe() + "\napply? ") == "y" else None)
 ```
 
@@ -409,7 +390,7 @@ Two-hop recall is the query shape agent memory hits hardest. Over 1,000 queries 
 
 | engine | p50 | p95 | load | on disk | concurrent reads |
 |---|---:|---:|---:|---:|---:|
-| DuckDB with the C++ CSR extension | 2.04 ms | 3.07 ms | 4.8 s | 481 MiB | 825/s |
+| DuckDB with the C++ Compressed Sparse Row (CSR) extension | 2.04 ms | 3.07 ms | 4.8 s | 481 MiB | 825/s |
 | DuckDB, plain SQL | 2.88 ms | 3.50 ms | 4.6 s | 434 MiB | 583/s |
 | LadybugDB 0.20.2, tuned | 7.35 ms | 28.73 ms | 16.2 s | 1,158 MiB | 147/s |
 
@@ -508,12 +489,12 @@ from agents import Agent, Runner
 from anatid import Anatid
 from anatid.integrations.openai_agents import AnatidSession, create_memory_tools
 
-db = Anatid.open("agent.anatid", tenant=1)
+db = Anatid.open("cedar.anatid", tenant=1)
 session = AnatidSession("conv-1", db)                # conversation history, same file as the graph
 tools = create_memory_tools(db, session=session)     # 3 read tools, 6 write tools
 
-agent = Agent(name="assistant", tools=tools)
-result = await Runner.run(agent, "Ada switched to decaf, remember that", session=session)
+agent = Agent(name="manufacturing-review-assistant", tools=tools)
+result = await Runner.run(agent, "Record that COR-2409 withdraws the test for Cedar lot CED-2409.", session=session)
 
 while result.interruptions:                          # writes stop here; reads never do
     state = result.to_state()
@@ -526,12 +507,10 @@ while result.interruptions:                          # writes stop here; reads n
 Writes are gated and reads run straight through. Six tools carry `needs_approval`:
 `anatid_remember`, `anatid_relate`, `anatid_supersede`, `anatid_correct`, `anatid_unrelate` and
 `anatid_forget`. Three do not: `anatid_recall`, `anatid_context` and `anatid_provenance`. Nothing
-reaches the database until somebody approves. The three graph tools exist because memories are
-filed under the entities they name and nothing links those entities until an edge does. Three facts
-stored as "Ada leads Kestrel", "Kestrel owns the ingest service" and "Bo maintains the ingest
-service" are three islands until `anatid_relate` connects them, and when the maintainer changes,
-`anatid_correct` supersedes the fact and moves the edge in one transaction, so the graph never says
-two things at once.
+reaches the database until somebody approves. The graph tools connect facts filed under different record names.
+A lot can link to its test report, and a correction can reference that report without repeating
+the lot number. Those links let a query about the lot reach the withdrawal. `anatid_correct`
+updates a claim and its changed edges in one transaction.
 
 A tenth tool, `anatid_ingest`, appears when `create_memory_tools` is given an
 `extractor`. It takes a note, proposes a patch of facts and edges through the ingestion pipeline,
@@ -659,7 +638,7 @@ DuckDB has no `AS OF SYSTEM TIME` clause. `as_of()` generates a `WHERE` clause o
 `valid_to`, `tx_from` and `tx_to`. It reaches back exactly as far as the rows still present, so a
 hard purge disappears from every historical view as well.
 
-The Compressed Sparse Row (CSR) graph structure still has sharp edges, though fewer than in 0.1. A
+The CSR graph structure still has sharp edges, though fewer than in 0.1. A
 generation numbers its own vertices, so dense entity identifiers are no longer required of you. A
 generation is built in full rather than updated in place, so a large journal eventually costs more
 than the expansion saves, measured at 1.50 ms against 0.88 ms of pure SQL at roughly 550 journal
@@ -673,7 +652,7 @@ names no entity runs the text arm alone as before. The match costs about 1.9 ms 
 entities in a tenant on a laptop, because `entity_key` is a generated column DuckDB's index does not
 serve; below 10,000 entities it is under a millisecond.
 
-This is v0.4. The API may still move, so pin the version.
+This is v0.4. The application programming interface (API) may still move, so pin the version.
 
 ## Documentation
 

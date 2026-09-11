@@ -148,17 +148,21 @@ def handler_for(payload: dict, guide: OpenRouterGuide | None = None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--port", type=int, default=8766)
+    parser.add_argument("-p", "--port", type=int, default=8766)
     parser.add_argument(
+        "-l",
         "--live",
         action="store_true",
         help="Enable server-side OpenRouter guidance using your configured key.",
     )
     parser.add_argument(
-        "--model", default=DEFAULT_MODEL, help="OpenRouter model ID; default routes automatically."
+        "-m",
+        "--model",
+        default=DEFAULT_MODEL,
+        help="OpenRouter model name; default routes automatically.",
     )
     parser.add_argument(
-        "--export", type=Path, help="Write a new, standalone HTML file instead of serving."
+        "-o", "--export", type=Path, help="Write a new, standalone HTML file instead of serving."
     )
     args = parser.parse_args()
     if args.export and args.live:

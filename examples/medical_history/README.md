@@ -3,8 +3,8 @@
 # A fictional medical-device development history
 
 A runnable evidence-retrieval experiment for **Cedar**, an entirely invented infusion-pump
-program. It asks whether a product-history assistant can find the right revision, configuration,
-decision and correction—not just a plausible-sounding test report.
+program. It asks whether an assistant can identify which revision and configuration a test
+supports, and which later record corrects it.
 
 No Medtronic information, patient data, clinical thresholds or proprietary documents are used.
 This is a simulation of engineering records, **not a device simulator, validated medical tool,
@@ -33,17 +33,23 @@ Use `--out /tmp/cedar-run-01` for an explicit output location. The directory mus
 exist; the example never deletes or overwrites previous runs. Without `--out`, it creates a fresh
 temporary directory. It does not read your existing anatid database, repository notes or `.env`.
 
-Each run contains:
+Each run writes these files:
 
-- `REPORT.md`: aggregate results, question-family breakdown and a worked evidence-gap answer.
-- `summary.json`: configuration, source fingerprints, metrics and elapsed time.
-- `seed-N/documents.jsonl`: the complete synthetic source exports.
-- `seed-N/questions.jsonl`: queries and the independent answer/evidence key.
-- `seed-N/results.jsonl`: every system's answer, citations, retrieved record IDs, missing evidence
-  and approximate context size. Join retrieved IDs to `documents.jsonl` to reconstruct contexts.
-- `seed-N/history.anatid`: the actual graph, document embeddings and source provenance.
+| File | Contents |
+| --- | --- |
+| `REPORT.md` | Results by question type and an evidence-gap example |
+| `summary.json` | Configuration and source fingerprints, with metrics and elapsed time |
+| `seed-N/documents.jsonl` | Fictional source records |
+| `seed-N/questions.jsonl` | Questions and the independent evidence key |
+| `seed-N/results.jsonl` | Answers and citations, with retrieved record identifiers and missing evidence |
+| `seed-N/history.anatid` | The stored graph and document embeddings |
+
+The `.json` files use JavaScript Object Notation (JSON). The `.jsonl` files contain one JSON
+record per line. Join identifiers in `results.jsonl` to `documents.jsonl` to recover a context.
 
 ## The pressure-sensor change
+
+Record names use hardware (HW) and firmware (FW) revisions.
 
 The invented program requires an approved passing report for the **exact** requirement revision
 and hardware/firmware configuration. This is a rule of the simulation, not a general regulatory
@@ -76,6 +82,9 @@ impact, decision rationale, a simple owner lookup and an unanswerable requiremen
 
 ## What is actually compared
 
+Text ranking uses Best Match 25 (BM25). The traceability baseline uses Structured Query Language
+(SQL).
+
 Every system gets identical full documents, including their structured fields and explicit
 source references. Every document is embedded once and shared across all systems. Each query
 uses one shared vector, the same product/date scope, candidate cap and context budget.
@@ -99,7 +108,7 @@ Source records are immutable. A withdrawal is another linked source record, not 
 replacement of the original report. Applicability is interpreted explicitly in the example;
 the graph engine does not decide what constitutes valid medical-device evidence.
 
-No LLM extracts these links: they represent links already present in a requirements/test-system
+No large language model (LLM) extracts these links: they represent links already present in a requirements/test-system
 export. No LLM answers or judges questions either. One deterministic interpreter reads **only
 retrieved records**, applying the same documented rules to every system. The answer key comes
 from the simulator's event schedule, before retrieval, and is unavailable to that interpreter.
@@ -124,7 +133,7 @@ simulation rules," never device safety or release readiness.
 The default uses `HashEmbedder`: deterministic **word-overlap hashes, not semantic embeddings**.
 Tokens are approximated by characters / 4, with whole-record prefix packing and a default budget
 of 2,000. DuckDB runs single-threaded to stabilize floating-point ties; this is not a throughput
-benchmark. These metrics must not be presented as a comparison against production semantic RAG.
+benchmark. These metrics must not be presented as a comparison against production semantic retrieval-augmented generation (RAG).
 
 The verified single-threaded three-seed offline run (500 documents / 100 questions per seed) found:
 
@@ -199,6 +208,6 @@ Tests cover truth/source agreement, reproducible noise growth, withheld future k
 anatid time filtering, provenance, two-hop correction discovery, SQL/anatid parity, misleading
 evidence, missing-support scoring, budgets and refusal to overwrite a run.
 
-For public domain context, the FDA's [Generic Infusion Pump research](https://www.fda.gov/medical-devices/infusion-pumps/infusion-pump-software-safety-research-fda)
+For public domain context, the Food and Drug Administration's (FDA) [Generic Infusion Pump research](https://www.fda.gov/medical-devices/infusion-pumps/infusion-pump-software-safety-research-fda)
 is a useful starting point for future independent scenarios. This example does not reproduce
 that reference specification or claim to implement its safety requirements.

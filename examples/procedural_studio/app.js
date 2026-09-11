@@ -260,7 +260,7 @@ function renderSources() {
     .actions.slice(0, state.stepIndex + 1)
     .includes("check");
   $("lot-scope").textContent =
-    `${c.lot} · ${c.configuration} · ${c.instruction}`;
+    `${c.lot} · ${c.configuration.replace("HW-", "Hardware ").replace("FW-", "firmware ")} · ${c.instruction.replace("WI-", "Work instruction ")}`;
   $("sources").innerHTML = c.records
     .map((record, index) => {
       const exception = ["withdrawal", "nonconformance", "test_plan"].includes(
@@ -336,7 +336,7 @@ function renderStory() {
     {
       symbol: "!",
       eyebrow: "THE FAILURE MODE",
-      title: "A green test report isn’t the whole packet.",
+      title: "The test report has been withdrawn.",
       copy: "The shortcut skips configuration, withdrawal, and nonconformance checks. It can advance a packet with unresolved evidence.",
       button: "Validate a repair",
       className: "",
@@ -371,7 +371,7 @@ function renderEvaluation() {
     after = state.data.evaluation.repaired;
   $("score-before").innerHTML = `${before.passed}<span>/${before.total}</span>`;
   $("score-after").innerHTML =
-    state.phase > 0 ? `${after.passed}<span>/${after.total}</span>` : "—";
+    state.phase > 0 ? `${after.passed}<span>/${after.total}</span>` : "?";
   $("score-after-note").textContent =
     state.phase > 0 ? "cases passed" : "awaiting repair";
   const labels = state.data.test_labels;
@@ -380,7 +380,7 @@ function renderEvaluation() {
   $("test-results").innerHTML = before.outcomes
     .map(
       (o, i) =>
-        `<tr><td>${labels[i]}</td><td>${verdict(o.success)}</td><td>${state.phase > 0 ? verdict(after.outcomes[i].success) : '<span class="pending">—</span>'}</td></tr>`,
+        `<tr><td>${labels[i]}</td><td>${verdict(o.success)}</td><td>${state.phase > 0 ? verdict(after.outcomes[i].success) : '<span class="pending">Pending</span>'}</td></tr>`,
     )
     .join("");
 }
