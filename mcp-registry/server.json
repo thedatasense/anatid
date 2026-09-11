@@ -7,18 +7,18 @@
     "url": "https://github.com/thedatasense/anatid",
     "source": "github"
   },
-  "version": "0.4.2",
+  "version": "0.4.3",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "anatid",
-      "version": "0.4.2",
+      "version": "0.4.3",
       "runtimeHint": "uvx",
       "runtimeArguments": [
         {
           "type": "named",
           "name": "--with",
-          "value": "anatid[mcp]==0.4.2",
+          "value": "anatid[mcp]==0.4.3",
           "description": "The mcp extra of the same release: the MCP server imports the mcp package, which the base anatid wheel does not require."
         }
       ],

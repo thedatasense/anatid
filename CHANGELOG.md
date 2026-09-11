@@ -7,6 +7,15 @@ All notable changes to anatid are recorded here. The format follows
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-09-10
+
+### Fixed
+
+- Procedural Studio explicitly reads its HTML, CSS, JavaScript, and local configuration as UTF-8.
+  Standalone export now works on Windows systems whose default text encoding is Windows-1252.
+  The 0.4.2 GitHub release exposed this in its Windows CI check; 0.4.3 includes the branding
+  update and this fix for the PyPI release.
+
 ## [0.4.2] - 2026-09-10
 
 The duck-and-wordmark identity now appears in the README, PyPI description, documentation, and

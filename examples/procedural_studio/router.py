@@ -25,7 +25,7 @@ def load_key() -> str | None:
             return os.environ[name]
     env = Path(__file__).resolve().parents[2] / ".env"
     if env.is_file():
-        for line in env.read_text().splitlines():
+        for line in env.read_text(encoding="utf-8").splitlines():
             name, _, value = line.partition("=")
             if name.strip().lower() in {"open_router_key", "openrouter_api_key"}:
                 return value.strip().strip("\"'") or None

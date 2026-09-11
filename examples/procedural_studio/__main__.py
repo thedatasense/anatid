@@ -29,10 +29,10 @@ def standalone(payload: dict) -> str:
     data = json.dumps(payload).replace("<", "\\u003c").replace("&", "\\u0026")
     html = (
         ROOT.joinpath("index.html")
-        .read_text()
+        .read_text(encoding="utf-8")
         .replace(
             '<link rel="stylesheet" href="/style.css">',
-            "<style>" + ROOT.joinpath("style.css").read_text() + "</style>",
+            "<style>" + ROOT.joinpath("style.css").read_text(encoding="utf-8") + "</style>",
         )
         .replace(
             '<script src="/app.js" defer></script>',
@@ -40,7 +40,7 @@ def standalone(payload: dict) -> str:
             + data
             + "</script>"
             + "<script defer>"
-            + ROOT.joinpath("app.js").read_text()
+            + ROOT.joinpath("app.js").read_text(encoding="utf-8")
             + "</script>",
         )
     )
