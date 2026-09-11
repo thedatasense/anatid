@@ -2,23 +2,23 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.thedatasense/anatid",
   "title": "anatid memory",
-  "description": "Local memory for AI agents, with evidence, corrections and history. One DuckDB file. Bitemporal graph memory with provenance, hybrid recall and approval-gated writes.",
+  "description": "Local memory for AI agents, with evidence, corrections and history. One DuckDB file.",
   "repository": {
     "url": "https://github.com/thedatasense/anatid",
     "source": "github"
   },
-  "version": "0.4.1",
+  "version": "0.4.2",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "anatid",
-      "version": "0.4.1",
+      "version": "0.4.2",
       "runtimeHint": "uvx",
       "runtimeArguments": [
         {
           "type": "named",
           "name": "--with",
-          "value": "anatid[mcp]==0.4.1",
+          "value": "anatid[mcp]==0.4.2",
           "description": "The mcp extra of the same release: the MCP server imports the mcp package, which the base anatid wheel does not require."
         }
       ],
@@ -53,6 +53,15 @@
           "isRequired": false,
           "format": "filepath"
         }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/thedatasense/anatid/main/assets/brand/anatid-icon.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
       ]
     }
   ]

@@ -1,3 +1,7 @@
+<p><a href="../README.md"><img src="../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
+[Documentation](README.md) · [Examples](../examples/README.md)
+
 # Phase 0 benchmark: DuckDB as a graph memory engine
 
 anatid exists because Kuzu was archived on 2025-10-10. Before any of the library was written, a

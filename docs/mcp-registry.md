@@ -1,3 +1,7 @@
+<p><a href="../README.md"><img src="../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
+[Documentation](README.md) · [Examples](../examples/README.md)
+
 # Publishing to the MCP Registry
 
 The Model Context Protocol (MCP) Registry hosts metadata, not artifacts. The package itself stays on
@@ -39,8 +43,12 @@ version of the README that is on PyPI; the 0.4.1 long description carries it.
 The version in `server.json` must match a version that exists on PyPI, in three places: the top-level
 `version`, the package `version`, and the `anatid[mcp]==` pin in `runtimeArguments`. The registry
 test fails when any of them drifts from `anatid.__version__`, so run `pytest tests/test_mcp_registry.py`
-after a bump. The `anatid` console script first ships with the release after 0.4.1; a manifest that
+after a bump. The `anatid` console script first ships in 0.4.2; a manifest that
 names an older release launches nothing, whatever it says.
+
+The manifest also carries the shared [duck icon](../assets/brand/anatid-icon.png). Publishing
+the package does not publish the manifest to the MCP Registry; run the publisher below when
+updating the registry entry.
 
 ```bash
 brew install mcp-publisher                # or the tarball from the registry's GitHub releases

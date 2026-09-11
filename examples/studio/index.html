@@ -4,16 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>anatid studio</title>
+<meta name="theme-color" content="#f6f5f1">
+<link rel="icon" href="/brand/favicon.svg" type="image/svg+xml">
 <style>
   :root {
-    --bg: #f6f6f4;
+    --bg: #f6f5f1;
     --panel: #ffffff;
-    --ink: #1c1c1c;
+    --ink: #242922;
     --muted: #6b6b6b;
     --line: #d9d9d4;
     --line-soft: #ebebe6;
-    --accent: #2457a6;
-    --accent-soft: #dce6f6;
+    --accent: #3c6a51;
+    --accent-soft: #e7eee7;
     --warn: #8a5a00;
     --warn-soft: #fff3d6;
     --bad: #9b2c2c;
@@ -58,7 +60,9 @@
     border-bottom: 1px solid var(--line);
     padding: 12px 20px;
   }
-  header h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
+  header h1 { display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 500; margin: 0 0 4px; }
+  header h1 img { display: block; }
+  header h1 span { color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
   header p.lede { margin: 0 0 8px; color: var(--muted); max-width: 90ch; }
   .head-row { display: flex; flex-wrap: wrap; gap: 4px 20px; align-items: flex-start; justify-content: space-between; }
   .picker { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
@@ -208,7 +212,7 @@
 <header>
   <div class="head-row">
     <div>
-      <h1>anatid studio</h1>
+      <h1><img src="/brand/anatid-logo.svg" alt="anatid" width="140" height="48"><span>studio</span></h1>
       <p class="lede">A guided run of examples/dinner_party.py. The left column runs each step. The panels on the right show what the database did.</p>
     </div>
     <div class="picker">

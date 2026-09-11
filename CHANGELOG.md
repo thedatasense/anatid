@@ -1,9 +1,24 @@
+<p><a href="README.md"><img src="assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
 # Changelog
 
 All notable changes to anatid are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); anatid uses semantic versioning.
 
 ## [Unreleased]
+
+## [0.4.2] - 2026-09-10
+
+The duck-and-wordmark identity now appears in the README, PyPI description, documentation, and
+Procedural Studio. Shared SVG/PNG logos, a favicon, a registry icon, and a GitHub sharing card
+live in `assets/brand`. Documentation now has an index and a brand guide, and ships in the source
+distribution with the example assets.
+
+Procedural Studio rebuilds the procedural-graph example around fictional medical-device
+manufacturing records: reconcile a withdrawn test, validate a repair, reject a shortcut, and
+inspect historical procedures and their evidence. Five scripted test cases improve from 1/5
+to 5/5. Optional server-side OpenRouter calls provide bounded next-step advice separately from
+the evaluator; standalone exports remain offline and contain no API key or session token.
 
 ### Changed
 

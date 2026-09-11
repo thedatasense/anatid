@@ -1,3 +1,7 @@
+<p><a href="../README.md"><img src="../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
+[Documentation](README.md) · [Examples](../examples/README.md)
+
 # anatid architecture
 
 anatid is a Python library over one DuckDB database file. In the default embedded profile there is

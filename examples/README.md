@@ -1,3 +1,5 @@
+<p><a href="../README.md"><img src="../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
 # Examples
 
 Every script runs from the repository root with the package installed (`pip install -e .`).
@@ -9,6 +11,7 @@ uses explicit embedding endpoint flags and does not read `.env`.
 | --- | --- | --- |
 | [`quickstart.py`](quickstart.py) | The verbs in one file: `remember`, `relate`, `recall`, `supersede`, `as_of`, `provenance`, `forget`. Finishes in under a second. | no |
 | [`procedural_graph.py`](procedural_graph.py) | Directed guidance for what to do next, a validated procedure repair, rejection memory and historical replay. Scripted solver and refiner; [design and limits](../docs/procedural-graphs.md). | no |
+| [`procedural_studio/`](procedural_studio/README.md) | Fictional Cedar manufacturing lot review: reconcile passing reports with withdrawals, configuration and open nonconformances; inspect repairs and history. Optional live OpenRouter guidance; offline HTML export. | no; `--live` enables OpenRouter |
 | [`medical_history/`](medical_history/README.md) | A fully synthetic infusion-pump development history: revisions, configuration applicability, retrospective corrections and evidence gaps. Compare raw retrieval, SQL traceability and anatid with a shared source-only interpreter. | no; semantic embeddings are opt-in |
 | [`ingest_notes.py`](ingest_notes.py) | Three project notes ingested as prose. Each becomes a reviewed memory patch applied in one transaction; then `recall_2hop`, `provenance` and `as_of` show the owner changed, why, and what was believed before. Offline by default with a scripted extractor. | no; `--live` uses GLM 5.3 Flash through OpenRouter |
 | [`dinner_party.py`](dinner_party.py) | The flagship demonstration. Six months of household facts, a question that names no guest and no ingredient, and an answer two hops away. `--scenario oncall` runs the on-call story instead. Writes go through an approval gate. | yes (OpenRouter) |

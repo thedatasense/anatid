@@ -1,3 +1,7 @@
+<p><a href="../README.md"><img src="../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
+[Documentation](README.md) · [Examples](../examples/README.md)
+
 # Ingestion: from text to reviewed changes in the graph
 
 The core verbs take one fact or one edge at a time. `anatid.ingest` takes text. A note, a chat

@@ -1,3 +1,7 @@
+<p><a href="../README.md"><img src="../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
+[Documentation](README.md) · [Examples](../examples/README.md)
+
 # The `anatid` DuckDB extension
 
 An optional C++ DuckDB extension. It computes the set of entities within k hops of a seed entity,
@@ -170,7 +174,7 @@ has that column, so a plain three-column edge list still works and is treated as
 
 ## What 0.2.0 added
 
-The extension reports version 0.4.0, matching the package, and its surface is unchanged since
+The extension source reports version 0.4.2, matching the package, and its surface is unchanged since
 0.2.0: every 0.1 call site still works and still means the same thing. Four things were added in
 0.2.0, all for
 `anatid.csr`'s derived index (`docs/architecture.md` §2 and §3):

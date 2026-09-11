@@ -42,8 +42,8 @@ spike/extension
 *.pypirc
 
 # example scratch database
-examples/*.anatid
-examples/*.anatid.*
+examples/**/*.anatid
+examples/**/*.anatid.*
 examples/notebooks/.ipynb_checkpoints/
 .coverage
 .venv-studio/

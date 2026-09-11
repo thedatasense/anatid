@@ -69,6 +69,7 @@ except ImportError:
 
 DB_PATH = HERE / "studio.anatid"
 INDEX_HTML = HERE / "index.html"
+BRAND = HERE.parents[1] / "assets" / "brand"
 MODEL = "z-ai/glm-5.3-flash"
 TENANT = 1
 EMBEDDING_DIM = 64
@@ -788,6 +789,21 @@ class ApproveBody(BaseModel):
 @app.get("/")
 def index() -> FileResponse:
     return FileResponse(INDEX_HTML, media_type="text/html")
+
+
+@app.get("/brand/anatid-logo.svg")
+def logo() -> FileResponse:
+    return FileResponse(BRAND / "anatid-logo.svg", media_type="image/svg+xml")
+
+
+@app.get("/brand/favicon.svg")
+def favicon() -> FileResponse:
+    return FileResponse(BRAND / "favicon.svg", media_type="image/svg+xml")
+
+
+@app.get("/favicon.ico")
+def favicon_ico() -> FileResponse:
+    return FileResponse(BRAND / "favicon.ico", media_type="image/x-icon")
 
 
 @app.get("/api/health")

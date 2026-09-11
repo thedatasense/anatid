@@ -1,4 +1,4 @@
-# anatid
+<h1><img src="https://raw.githubusercontent.com/thedatasense/anatid/main/assets/brand/anatid-logo.png" alt="anatid" width="280" height="96"></h1>
 
 Local memory for AI agents, with evidence, corrections and history. One DuckDB file.
 
@@ -9,10 +9,43 @@ is corrected rather than overwritten. Retrieval runs three ways at once, through
 graph traversal and, with an embedder configured, vector similarity. Nothing runs but your
 process, and the memory is a single file you can copy, back up and query with SQL. MIT licensed.
 
+[Documentation](https://github.com/thedatasense/anatid/blob/main/docs/README.md) ·
+[Examples](https://github.com/thedatasense/anatid/blob/main/examples/README.md) ·
+[PyPI](https://pypi.org/project/anatid/) ·
+[Releases](https://github.com/thedatasense/anatid/releases)
+
+## Watch a procedure improve
+
+A passing test says a fictional infusion-pump lot is ready for review. A linked correction
+withdraws that test. The visual **Procedural Studio** shows how adding a reconciliation step
+changes the outcome, how validation rejects a harmful shortcut, and how anatid preserves the
+original procedure and the evidence behind each revision.
+
+<img src="https://raw.githubusercontent.com/thedatasense/anatid/main/assets/procedural-studio.png" alt="Anatid Procedural Studio: a repaired graph reconciles a passing test with its withdrawal, then holds the packet for human review." width="960">
+
+From a source checkout:
+
+```bash
+git clone https://github.com/thedatasense/anatid.git
+cd anatid
+python -m pip install -e .
+python -m examples.procedural_studio
+```
+
+Open <http://127.0.0.1:8766>. Walk through **The shortcut → The repair → The guardrail**.
+Add `--live` with `OPENROUTER_API_KEY` configured to ask a model for next-step guidance.
+The graph, evidence, and history are read from a real in-memory anatid database. The five
+synthetic test cases improve from **1/5 to 5/5** under a scripted evaluator; live model responses
+are separate from those scores. These are fictional records and review rules, with no actual
+device release decisions.
+
+[Run the visual demo](https://github.com/thedatasense/anatid/blob/main/examples/procedural_studio/README.md) ·
+[How procedural graphs map to anatid](https://github.com/thedatasense/anatid/blob/main/docs/procedural-graphs.md)
+
 ## The demo
 
 Three project notes, six months apart, go in as prose. What follows is the real output of
-[`examples/ingest_notes.py`](examples/ingest_notes.py), trimmed only for width. It runs offline,
+[`examples/ingest_notes.py`](https://github.com/thedatasense/anatid/blob/main/examples/ingest_notes.py), trimmed only for width. It runs offline,
 without a key, in about a second.
 
 The first note says who owns what. A model reads it and proposes a patch; the pipeline shows the
@@ -95,7 +128,7 @@ pip install "anatid[agents]"          # + the OpenAI Agents Software Development
 ```
 
 Give it to an assistant over the Model Context Protocol (MCP). Claude Desktop, Claude Code and
-Cursor all take this block, with the path `which anatid-mcp` prints; [`docs/mcp.md`](docs/mcp.md)
+Cursor all take this block, with the path `which anatid-mcp` prints; [`docs/mcp.md`](https://github.com/thedatasense/anatid/blob/main/docs/mcp.md)
 says where each client keeps it.
 
 ```json
@@ -126,7 +159,7 @@ Cy maintains the ingest service
 That `recall` ran the text arm and the graph arm: the query names the ingest service, so the walk
 started there without anyone naming a seed. `db.provenance(memory_id).source_text` returns the
 handover note. To have text go in as in the demo rather than one fact at a time, see
-[`docs/ingest.md`](docs/ingest.md).
+[`docs/ingest.md`](https://github.com/thedatasense/anatid/blob/main/docs/ingest.md).
 
 ## What anatid is
 
@@ -158,7 +191,7 @@ obvious to go.
 Two-hop recall over 1,000,000 memories has a median latency of 2.88 ms on DuckDB against 7.35 ms on
 a tuned LadybugDB, the maintained MIT fork of Kuzu. That is a factor of 2.5, and the two engines
 return identical result identifier lists. The measurement came before the library, and it is why
-anatid sits on DuckDB. Method and caveats are in [`docs/benchmarks.md`](docs/benchmarks.md).
+anatid sits on DuckDB. Method and caveats are in [`docs/benchmarks.md`](https://github.com/thedatasense/anatid/blob/main/docs/benchmarks.md).
 
 ## Install
 
@@ -217,13 +250,13 @@ write was journalled inside its own transaction and the text arm merged it. Call
 index, and `db.index_health()` reports whether that is due, and why.
 
 A longer commented walkthrough covering `recall_2hop`, `forget(hard=True)` and `stats()` lives in
-[`examples/quickstart.py`](examples/quickstart.py). It needs no API key and finishes in under a
-second. [`examples/README.md`](examples/README.md) lists every example and which ones need a key,
-and [`examples/notebooks/`](examples/notebooks/) walks through the same material as four executed
+[`examples/quickstart.py`](https://github.com/thedatasense/anatid/blob/main/examples/quickstart.py). It needs no API key and finishes in under a
+second. [`examples/README.md`](https://github.com/thedatasense/anatid/blob/main/examples/README.md) lists every example and which ones need a key,
+and [`examples/notebooks/`](https://github.com/thedatasense/anatid/blob/main/examples/notebooks/) walks through the same material as four executed
 Jupyter notebooks.
 
 For something closer to how memory tends to fail in practice, run
-[`examples/dinner_party.py`](examples/dinner_party.py). Six months of ordinary household facts, a
+[`examples/dinner_party.py`](https://github.com/thedatasense/anatid/blob/main/examples/dinner_party.py). Six months of ordinary household facts, a
 cook who asks whether Friday's menu is safe, and an allergy that neither the question nor any
 single stored sentence mentions. The graph walks from the dinner to a guest to an ingredient to the
 dish. Word search alone returns the recipe cards and stops.
@@ -267,7 +300,7 @@ vote equally: with a vector arm it leads (vector 1.0, graph 0.5, text 0.25), wit
 arm does (text 1.0, graph 0.5), and the graph arm ranks its neighbourhood by cosine or BM25 to the
 query before it votes, not newest first. `arm_weights={"text": 0}` overrides a weight by name and
 `hits.weights` reports what was used. The weights come from the answer-quality benchmark in
-[`docs/quality.md`](docs/quality.md).
+[`docs/quality.md`](https://github.com/thedatasense/anatid/blob/main/docs/quality.md).
 
 Write verbs accept `now=` and the temporal read verbs accept `as_of=`, which keeps tests
 deterministic. Function forms exist as well, through `from anatid.verbs import remember`. And
@@ -296,7 +329,7 @@ receipt = ingest(db, note, extractor=extractor, writer="notes-bot", source="note
 `OpenAICompatibleExtractor` talks to any OpenAI-compatible chat endpoint; `ScriptedExtractor`
 returns prepared patches for tests and the offline example. The same pipeline is behind the
 `anatid_ingest` tool in the Agents SDK integration and the `ingest` and `apply_patch` tools in the
-MCP server, described below. [`docs/ingest.md`](docs/ingest.md) has the patch schema and the apply
+MCP server, described below. [`docs/ingest.md`](https://github.com/thedatasense/anatid/blob/main/docs/ingest.md) has the patch schema and the apply
 order.
 
 ## Two deployment profiles
@@ -361,9 +394,9 @@ anatid-server start \
   --tenant 1 --tenant 2
 ```
 
-[`docs/server.md`](docs/server.md) covers the security model, the operator surface, systemd and
+[`docs/server.md`](https://github.com/thedatasense/anatid/blob/main/docs/server.md) covers the security model, the operator surface, systemd and
 launchd units, health and readiness, backup and restore, and what the shutdown guarantees.
-[`examples/server_demo.py`](examples/server_demo.py) demonstrates the lock, the server, and several
+[`examples/server_demo.py`](https://github.com/thedatasense/anatid/blob/main/examples/server_demo.py) demonstrates the lock, the server, and several
 processes writing one memory, in three acts and under a minute.
 
 ## Why DuckDB, with numbers
@@ -396,7 +429,7 @@ from 397 writes per second with writers alone to between 152 and 189 once two re
 LadybugDB with `enable_multi_writes=True` commits more writes per second than DuckDB does.
 
 Full tables covering every phase, the mixed workload, concurrency, correctness, and nine
-limitations of the benchmark itself are in [`docs/benchmarks.md`](docs/benchmarks.md). Raw JSON
+limitations of the benchmark itself are in [`docs/benchmarks.md`](https://github.com/thedatasense/anatid/blob/main/docs/benchmarks.md). Raw JSON
 with per-operation latency arrays sits in `spike/results/`.
 
 ## Does an agent answer better?
@@ -455,7 +488,7 @@ question is four points, so the differences among the raw-note systems are noise
 three-to-four-point gap is at the edge of it; 0.4.1's ten-point gap on the committed corpus, part
 of it a note lost to a cached provider error, was not. The method, the per-category tables, the arm
 ablations, every loss question by question, the offline coverage proxy the fusion was chosen with,
-and the one command that reproduces it all are in [`docs/quality.md`](docs/quality.md).
+and the one command that reproduces it all are in [`docs/quality.md`](https://github.com/thedatasense/anatid/blob/main/docs/quality.md).
 
 ## OpenAI Agents SDK integration
 
@@ -557,7 +590,7 @@ into an ordinary SELECT. Execution then happens inside `BEGIN TRANSACTION READ O
 cursor that is always rolled back.
 
 `from anatid.integrations.mcp import build_server` embeds the server in your own process.
-[`docs/mcp.md`](docs/mcp.md) has the config blocks, every environment variable, and the sharing
+[`docs/mcp.md`](https://github.com/thedatasense/anatid/blob/main/docs/mcp.md) has the config blocks, every environment variable, and the sharing
 recipe.
 
 ## Limitations
@@ -646,22 +679,22 @@ This is v0.4. The API may still move, so pin the version.
 
 | document | what it covers |
 |---|---|
-| [`docs/mcp.md`](docs/mcp.md) | the MCP server: config blocks for each client, every variable, sharing one memory between clients, embeddings, ingestion, the SQL escape hatch |
-| [`docs/ingest.md`](docs/ingest.md) | text in, a reviewed patch out: the pipeline, the patch schema, apply order, the review hook, the extractors |
-| [`docs/server.md`](docs/server.md) | the optional server profile: why it exists, what it costs, the security model, and how to operate it |
-| [`docs/architecture.md`](docs/architecture.md) | storage layout, the visibility predicate, the derived-index framework, graph paths, the isolation contract, the temporal model, the recall pipeline |
-| [`docs/design/derived-index-framework.md`](docs/design/derived-index-framework.md) | the design the accelerators are built to, and what shipped against what was deferred |
-| [`docs/extension.md`](docs/extension.md) | the optional C++ extension: what it accelerates and how to build it |
-| [`docs/benchmarks.md`](docs/benchmarks.md) | Phase 0 method, every result, and what the benchmark does not tell you |
-| [`docs/quality.md`](docs/quality.md) | the answer-quality benchmark: eleven memory systems, one model, one budget, the losses next to the wins, and the command that reproduces it |
-| [`docs/roadmap.md`](docs/roadmap.md) | what comes next, and what is deliberately out of scope |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | how to build it, what we care about in a change, third-party notices |
+| [`docs/mcp.md`](https://github.com/thedatasense/anatid/blob/main/docs/mcp.md) | the MCP server: config blocks for each client, every variable, sharing one memory between clients, embeddings, ingestion, the SQL escape hatch |
+| [`docs/ingest.md`](https://github.com/thedatasense/anatid/blob/main/docs/ingest.md) | text in, a reviewed patch out: the pipeline, the patch schema, apply order, the review hook, the extractors |
+| [`docs/server.md`](https://github.com/thedatasense/anatid/blob/main/docs/server.md) | the optional server profile: why it exists, what it costs, the security model, and how to operate it |
+| [`docs/architecture.md`](https://github.com/thedatasense/anatid/blob/main/docs/architecture.md) | storage layout, the visibility predicate, the derived-index framework, graph paths, the isolation contract, the temporal model, the recall pipeline |
+| [`docs/design/derived-index-framework.md`](https://github.com/thedatasense/anatid/blob/main/docs/design/derived-index-framework.md) | the design the accelerators are built to, and what shipped against what was deferred |
+| [`docs/extension.md`](https://github.com/thedatasense/anatid/blob/main/docs/extension.md) | the optional C++ extension: what it accelerates and how to build it |
+| [`docs/benchmarks.md`](https://github.com/thedatasense/anatid/blob/main/docs/benchmarks.md) | Phase 0 method, every result, and what the benchmark does not tell you |
+| [`docs/quality.md`](https://github.com/thedatasense/anatid/blob/main/docs/quality.md) | the answer-quality benchmark: eleven memory systems, one model, one budget, the losses next to the wins, and the command that reproduces it |
+| [`docs/roadmap.md`](https://github.com/thedatasense/anatid/blob/main/docs/roadmap.md) | what comes next, and what is deliberately out of scope |
+| [`CONTRIBUTING.md`](https://github.com/thedatasense/anatid/blob/main/CONTRIBUTING.md) | how to build it, what we care about in a change, third-party notices |
 | `spike/` | the Phase 0 evidence, kept read-only |
 
 ## License
 
 MIT. Copyright (c) 2026 anatid contributors. Code adapted from DuckDB (MIT), or from Kuzu and
 LadybugDB (MIT, Copyright 2022-2025 Kùzu Inc.), carries its original notice alongside ours. See
-[`CONTRIBUTING.md`](CONTRIBUTING.md#third-party-notices).
+[`CONTRIBUTING.md`](https://github.com/thedatasense/anatid/blob/main/CONTRIBUTING.md#third-party-notices).
 
 <!-- mcp-name: io.github.thedatasense/anatid -->

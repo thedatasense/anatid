@@ -1,3 +1,5 @@
+<p><a href="../README.md"><img src="../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
 # The anatid DuckDB extension
 
 The C++ half of [anatid](../README.md): an in-memory per-tenant CSR over the `RELATES_TO` edge

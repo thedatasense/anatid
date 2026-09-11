@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5f1">
+  <meta name="description" content="Explore how anatid stores, repairs, and replays a procedural graph through a synthetic medical-device manufacturing review.">
+  <title>anatid — Cedar manufacturing review</title>
+  <link rel="icon" href="/brand/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="Anatid — back to top"><img src="/brand/anatid-logo.svg" width="140" height="48" alt="anatid"></a>
+    <span class="header-divider"></span><span class="header-label">PROCEDURAL STUDIO</span>
+    <div class="header-right"><span class="status-dot"></span> Cedar manufacturing <span class="mode-label">SYNTHETIC LOT REVIEW</span></div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div><div class="eyebrow"><span class="tiny-rule"></span> MEDICAL-DEVICE MANUFACTURING / CEDAR</div>
+        <h1>A passing test. <em>An incomplete story.</em></h1>
+        <p>A fictional infusion-pump lot has a green test report. A linked correction withdraws it.<br class="desktop-break"> Watch the procedure find the gap before the packet advances.</p>
+      </div>
+      <div class="intro-note"><span class="note-mark">↳</span><p>Same agent. Same evidence.<br><strong>A better path through it.</strong></p></div>
+    </section>
+
+    <div id="error" class="error" role="alert" hidden></div>
+    <div id="loading" role="status">Preparing the Anatid replay…</div>
+    <div id="app" hidden>
+      <nav class="chapters" aria-label="Demo chapters">
+        <button class="chapter selected" data-phase="0"><span class="chapter-number">01</span><span><strong>The shortcut</strong><small>A passing test. A missed withdrawal.</small></span><span class="chapter-arrow">↗</span></button>
+        <button class="chapter" data-phase="1"><span class="chapter-number">02</span><span><strong>The repair</strong><small>Add a check. Change the outcome.</small></span><span class="chapter-arrow">↗</span></button>
+        <button class="chapter" data-phase="2"><span class="chapter-number">03</span><span><strong>The guardrail</strong><small>Keep what works. Remember what failed.</small></span><span class="chapter-arrow">↗</span></button>
+      </nav>
+
+      <section class="workspace">
+        <div class="main-column">
+          <div class="graph-card">
+            <div class="panel-header"><div><span class="eyebrow">THE PROCEDURAL GRAPH</span><h2 id="graph-title">A shortcut through the evidence</h2></div><span class="revision" id="revision">REVISION 01</span></div>
+            <div class="graph-toolbar"><span id="graph-description">A passing report advances the packet without reconciliation.</span><div class="revision-switch" aria-label="Graph revision"><button id="view-current" class="active">Current</button><button id="view-history" disabled>Original snapshot</button></div></div>
+            <div class="graph-canvas"><svg id="graph" viewBox="0 0 810 345" aria-label="Directed procedure graph"></svg><span class="canvas-note">SELECT A STEP TO EXPLORE ITS GUIDANCE</span></div>
+            <div class="graph-legend"><span><i class="legend-node"></i> Procedure</span><span><i class="legend-line"></i> Next step</span><span id="change-legend"><i class="legend-line dashed"></i> Missing check</span><span class="graph-scope">OUTGOING · 2 HOPS</span></div>
+            <div class="player">
+              <button id="play" class="button primary"><span id="play-icon" aria-hidden="true">▶</span> <span id="play-label">Run the agent</span></button>
+              <button id="step" class="button step-button" aria-label="Advance one step">Step →</button>
+              <div class="progress-area"><div class="progress-track"><div id="progress-fill"></div></div><span id="step-label">Ready to run · 4 steps</span></div>
+              <button id="restart" class="icon-button" aria-label="Restart this run" title="Restart this run">↺</button>
+            </div>
+          </div>
+
+          <div class="story-card" id="story-card"><div class="story-symbol" id="story-symbol">!</div><div><div class="eyebrow" id="story-eyebrow">THE FAILURE MODE</div><h3 id="story-title">A green test report isn’t the whole packet.</h3><p id="story-copy">The shortcut skips configuration, withdrawal, and nonconformance checks. It can advance a packet with unresolved evidence.</p></div><button id="next-chapter" class="button outline">Validate a repair <span>↗</span></button></div>
+
+          <section class="evaluation-card" aria-labelledby="evaluation-title">
+            <div class="evaluation-heading"><div><span class="eyebrow">MEASURE THE CHANGE</span><h2 id="evaluation-title">One edit. Five lot-review cases.</h2></div><span class="fixture-tag">SCRIPTED FIXTURES</span></div>
+            <div class="evaluation-layout"><div class="score-pair"><div><span class="score-label">ORIGINAL</span><div class="big-score" id="score-before">1<span>/4</span></div><span class="score-note">cases passed</span></div><span class="score-arrow">→</span><div><span class="score-label">REPAIRED</span><div class="big-score repaired" id="score-after">—</div><span class="score-note" id="score-after-note">awaiting repair</span></div></div><table><thead><tr><th scope="col">Test scenario</th><th scope="col">Original</th><th scope="col">Repaired</th></tr></thead><tbody id="test-results"></tbody></table></div>
+            <p class="evaluation-footnote">Five scripted test cases, separate from validation. Live model guidance is not included in these scores.</p>
+          </section>
+          <section class="llm-card" aria-labelledby="llm-title">
+            <div class="evaluation-heading"><div><span class="eyebrow">LIVE MODEL / OPENROUTER</span><h2 id="llm-title">What would the agent do next?</h2></div><span id="llm-badge" class="fixture-tag">OFFLINE</span></div>
+            <div class="llm-body"><p id="llm-description">Enable OpenRouter on the local server to ask a model for next-step guidance.</p><div class="llm-controls"><button id="ask-llm" class="button primary" disabled>Ask OpenRouter <span aria-hidden="true">↗</span></button><span id="llm-context">Active step: Start</span></div><div id="llm-output" class="llm-output" aria-live="polite" hidden></div><details id="llm-input-details"><summary>Inspect the source-only model context <span>+</span></summary><pre id="llm-input"></pre></details><p class="llm-footnote">One request sends only this synthetic task, observed records, and local graph context. Provider charges may apply. The model advises; it cannot release a lot or edit the graph.</p></div>
+          </section>
+        </div>
+
+        <aside class="context-column">
+          <section class="context-card">
+            <div class="eyebrow">THE MANUFACTURING PACKET</div><h2 id="task-title">Can this packet advance?</h2><p class="lot-scope" id="lot-scope"></p>
+            <label for="scenario">Choose the evidence</label><select id="scenario"></select>
+            <div class="source-header"><span>CONTROLLED RECORDS</span><span>synthetic exports</span></div><div id="sources"></div>
+            <div class="answer-card" id="answer-card" aria-live="polite"><span class="eyebrow">AGENT RESPONSE</span><p id="answer">Run the agent to see its answer.</p><small id="answer-detail">Every move follows the selected graph.</small></div>
+          </section>
+          <section class="guidance-card"><div class="inspector-heading"><span class="eyebrow">CONNECTED GUIDANCE</span><span class="inspector-dot"></span></div><h2 id="inspector-title">Read the passages</h2><div id="guidance"></div></section>
+          <details class="evidence-card" id="evidence-details"><summary><span>Why did the rule change?</span><span class="plus">+</span></summary><div id="provenance"></div></details>
+        </aside>
+      </section>
+
+      <section class="audit-strip" aria-label="Revision history"><div class="audit-label"><span class="eyebrow">MEMORY HAS A HISTORY</span><span>Nothing quietly overwritten.</span></div><button data-phase="0" class="audit-event"><span class="audit-point"></span><span><strong>01 SEP</strong>Original runbook stored</span></button><div class="audit-connector"></div><button data-phase="1" class="audit-event"><span class="audit-point green"></span><span><strong>02 SEP</strong>Verification added</span></button><div class="audit-connector"></div><button data-phase="2" class="audit-event"><span class="audit-point red"></span><span><strong>03 SEP</strong>Shortcut rejected</span></button></section>
+      <details class="retrieval-note"><summary>Why a connected graph instead of a list of rules? <span>↗</span></summary><div><p>For “review summary,” the database’s top two text matches are:</p><div id="flat-results"></div><p>A ranked list does not guarantee the prerequisite <strong>Read → Reconcile</strong>. The connected neighborhood preserves that check and its review/hold branches. This illustrates connectivity, not a measured accuracy advantage over retrieval.</p></div></details>
+    </div>
+    <footer><span>BUILT ON ANATID <span class="footer-slash">/</span> Evidence · Corrections · History</span><p>Fictional records and review rules. No clinical thresholds or actual release decisions. Scripted evaluation; optional live guidance is separate.</p><a href="https://arxiv.org/abs/2609.09153v1" target="_blank" rel="noreferrer">Inspired by Procedural Graphs ↗</a></footer>
+  </main>
+  <script src="/app.js" defer></script>
+</body>
+</html>

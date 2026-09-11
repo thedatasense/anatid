@@ -1,3 +1,5 @@
+<p><a href="../../README.md"><img src="../../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
 # A fictional medical-device development history
 
 A runnable evidence-retrieval experiment for **Cedar**, an entirely invented infusion-pump

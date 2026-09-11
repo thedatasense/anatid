@@ -1,3 +1,5 @@
+<p><a href="README.md"><img src="assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
 # Contributing to anatid
 
 anatid is an embedded graph database for AI agents, built on DuckDB. It is MIT licensed and
@@ -99,7 +101,7 @@ and that you have the right to license it that way. There is no CLA.
 
 ## Releasing
 
-Publishing uses PyPI trusted publishing, so no API token is stored in the repo or on a laptop.
+The release workflow uses PyPI trusted publishing, so no API token is required in GitHub.
 
 One-time setup at <https://pypi.org/manage/account/publishing/>: add a pending publisher with
 owner `thedatasense`, repository `anatid`, workflow `release.yml`, environment `release`.
@@ -107,10 +109,15 @@ owner `thedatasense`, repository `anatid`, workflow `release.yml`, environment `
 Then for each release:
 
 1. Bump `version` in `pyproject.toml` and the two `__version__` strings (`src/anatid/__init__.py`,
-   `src/anatid/database.py`). They must match.
+   `src/anatid/database.py`). Update the manifest version, package version, and runtime pin in
+   `mcp-registry/server.json` and `ANATID_EXT_VERSION` in `ext/src/anatid_extension.cpp` to match.
 2. Run `python -m pytest tests/`. All of it must pass.
 3. Tag and push: `git tag -a vX.Y.Z -m "vX.Y.Z" && git push origin vX.Y.Z`.
 4. Publish a GitHub Release for that tag. The `release` workflow builds, runs `twine check`,
    smoke-tests the wheel in a clean virtualenv, and only then uploads.
 
 Use the workflow's manual `workflow_dispatch` run with target `testpypi` to rehearse first.
+
+The README is also the PyPI description. Keep its image and file links absolute so they work
+on both sites, and include README changes in a new release to update PyPI. See
+[brand assets](docs/branding.md) for the shared logo, favicon, and GitHub sharing card.

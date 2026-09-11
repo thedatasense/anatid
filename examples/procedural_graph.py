@@ -152,13 +152,17 @@ class ProcedureStore:
     def snapshot(self, as_of: datetime | None = None) -> Graph:
         return Graph(tuple(t for _, t in self.rows(as_of)))
 
-    def seed(self, graph: Graph) -> None:
+    def seed(
+        self,
+        graph: Graph,
+        evidence: str = "Synthetic initial runbook, revision 1: trust the first passage.",
+    ) -> None:
         graph.validate()
         with self.db.transaction():
             if self.rows():
                 raise ValueError("procedure graph already exists")
             for t in graph.transitions:
-                self.add(t, "Synthetic initial runbook, revision 1: trust the first passage.", T0)
+                self.add(t, evidence, T0)
 
 
 INITIAL = Graph(
@@ -298,11 +302,15 @@ def evolve(
     additions: tuple[Transition, ...],
     *,
     now: datetime,
+    training=TRAIN,
+    validation=VALIDATION,
+    evaluator=evaluate,
 ) -> dict:
     """Evaluate a copied candidate, then atomically retain it or record its rejection.
 
     This example replaces one rule and optionally adds rules. Proposals are scripted.
     Validation cases are separate from diagnostic training cases and final test cases.
+    Pass training, validation, and evaluator to use another domain's source interpreter.
     Evaluation is cheap and local, so the transaction spans the read and commit; an
     LLM-backed implementation should evaluate outside it and compare checkpoint versions.
     """
@@ -313,23 +321,23 @@ def evolve(
         candidate = Graph(
             tuple(replacement if t.key == old.key else t for _, t in rows) + additions
         )
-        baseline = evaluate(before, VALIDATION)
+        baseline = evaluator(before, validation)
         error = None
         try:
             candidate.validate()
         except ValueError as exc:
             error = str(exc)
-        outcomes = () if error else evaluate(candidate, VALIDATION)
+        outcomes = () if error else evaluator(candidate, validation)
         accepted = error is None and score(outcomes) >= score(baseline)
         record = {
             "accepted": accepted,
             "structural_error": error,
             "before": score(baseline),
             "candidate": None if error else score(outcomes),
-            "validation_size": len(VALIDATION),
+            "validation_size": len(validation),
             "replacement": asdict(replacement),
             "additions": [asdict(t) for t in additions],
-            "training_traces": [asdict(o) for o in evaluate(before, TRAIN)],
+            "training_traces": [asdict(o) for o in evaluator(before, training)],
             "validation_traces": [asdict(o) for o in outcomes],
         }
         evidence = json.dumps(record, sort_keys=True)

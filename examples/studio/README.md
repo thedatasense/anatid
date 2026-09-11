@@ -1,3 +1,5 @@
+<p><a href="../../README.md"><img src="../../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
 # anatid studio
 
 A local web UI that runs `examples/dinner_party.py` one step at a time and shows what the

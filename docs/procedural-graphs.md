@@ -1,3 +1,7 @@
+<p><a href="../README.md"><img src="../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
+[Documentation](README.md) · [Examples](../examples/README.md)
+
 # Procedural graphs: memory for what to do next
 
 [Lu et al., *Procedural Graphs: Self-Evolving Execution Structures for LLM Agents*](https://arxiv.org/abs/2609.09153v1)
@@ -11,6 +15,13 @@ Anatid can supply the persistent, auditable memory underneath this loop. The run
 existing tables and verbs. It adds no dependency or schema migration.
 
 ## Run the demonstration
+
+For the interactive visual, run `python -m examples.procedural_studio` and open
+http://127.0.0.1:8766. The [visual demo README](../examples/procedural_studio/README.md)
+explains its fictional Cedar medical-device manufacturing scenario, optional `--live`
+OpenRouter guidance, and standalone HTML export. The visual uses a separate manufacturing
+interpreter and five test cases; the generic CLI walkthrough below retains its four-case
+ownership example. Live model guidance is displayed separately from both scripted evaluations.
 
 ```bash
 python examples/procedural_graph.py

@@ -1,3 +1,7 @@
+<p><a href="../../README.md"><img src="../../assets/brand/anatid-logo.png" alt="anatid" width="140" height="48"></a></p>
+
+[Documentation](../README.md) · [Examples](../../examples/README.md)
+
 # Derived index framework
 
 Status: implemented in 0.2.0. See "What shipped in 0.2.0" at the end for the parts that
